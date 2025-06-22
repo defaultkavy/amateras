@@ -1,0 +1,37 @@
+{
+  "name": "amateras",
+  "version": "0.0.1",
+  "description": "Amateras is a DOM Utility library.",
+  "module": "index.ts",
+  "type": "module",
+  "author": {
+    "name": "defaultkavy",
+    "email": "defaultkavy@gmail.com",
+    "url": "https://github.com/defaultkavy"
+  },
+  "bugs": {
+    "url": "https://github.com/defaultkavy/amateras/issues"
+  },
+  "homepage": "https://github.com/defaultkavy/amateras",
+  "license": "MIT",
+  "imports": {
+    "#core": "./src/core.ts",
+    "#node/*": "./src/node/*.ts",
+    "#lib/*": "./src/lib/*.ts",
+    "#structure/*": "./src/structure/*.ts",
+    "#html": "./ext/html/html.ts",
+    "#css": "./ext/css/css.ts",
+    "#css/*": "./ext/css/*.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core.ts",
+    "./node": "./src/node/node.ts",
+    "./node/*": "./src/node/*.ts",
+    "./lib/*": "./src/lib/*.ts",
+    "./structure/*": "./src/structure/*.ts",
+    "./html": "./ext/html/html.ts",
+    "./css": "./ext/css/css.ts",
+    "./css/*": "./ext/css/*.ts"
+  }
+}

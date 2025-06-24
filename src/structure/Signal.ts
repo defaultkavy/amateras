@@ -1,3 +1,5 @@
+import { isUndefined } from "#lib/native";
+
 export class Signal<T> {
     #value: T;
     subscribers = new Set<(value: T) => void>();
@@ -15,7 +17,7 @@ export class Signal<T> {
             return this.#value;
         }
         if (resolver instanceof Function) this.value(resolver(this.#value));
-        else if (resolver !== undefined) {
+        else if (!isUndefined(resolver)) {
             this.#value = resolver;
             this.emit();
         }

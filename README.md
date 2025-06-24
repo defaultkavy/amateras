@@ -1,12 +1,12 @@
 # Amateras
 Amateras is a DOM Utility library.
 
-## Build DOM tree in JS
+## Build DOM Tree in JS
 ```ts
 import 'amateras';
 
 $(document.body).content([
-    $('h1').attr({ class: 'title' }).content('Hello, World')
+    $('h1').class('title').content('Hello, World')
 ])
 ```
 
@@ -81,3 +81,10 @@ $(document.body).content([
     $(NameCard, 'The dancing man', 'https://media.tenor.com/x8v1oNUOmg4AAAAM/rickroll-roll.gif')
 ])
 ```
+
+## Packages
+|-|-|
+|Package name|Size|Size(gzip)|Description|
+|amateras|5.51 kB|2.33 kB|Core
+|amateras/html|0.66 kB|0.28 kB|Import HTMLElement types and methods|
+|[amateras/css](./ext/css/README.md)|3.73 kB|1.4 kB|Style in JS|

@@ -1,11 +1,12 @@
 import { Signal } from "#structure/Signal";
 import { $Node } from "#node/$Node";
+import { _Array_from, _instanceof, _Object_entries, _Object_fromEntries, isUndefined } from "#lib/native";
 
 export class $Element<Ele extends Element = Element> extends $Node {
     listeners = new Map<Function, (event: Event) => void>;
     declare node: Ele
     constructor(resolver: Ele | string) {
-        super(resolver instanceof Element ? resolver : document.createElement(resolver) as unknown as Ele)
+        super(_instanceof(resolver, Element) ? resolver : document.createElement(resolver) as unknown as Ele)
         //@ts-expect-error
         this.node.$ = this;
     }
@@ -13,10 +14,10 @@ export class $Element<Ele extends Element = Element> extends $Node {
     attr(): {[key: string]: string};
     attr(obj: {[key: string]: string | number | boolean | Signal<any>}): this;
     attr(obj?: {[key: string]: string | number | boolean | Signal<any>}) {
-        if (!arguments.length) return Object.fromEntries(Array.from(this.node.attributes).map(attr => [attr.name, attr.value]));
-        if (obj) for (let [key, value] of Object.entries(obj)) {
-            const set = (value: any) => value !== undefined && this.node.setAttribute(key, `${value}`)
-            if (value instanceof Signal) value = value.subscribe(set).value();
+        if (!arguments.length) return _Object_fromEntries(_Array_from(this.node.attributes).map(attr => [attr.name, attr.value]));
+        if (obj) for (let [key, value] of _Object_entries(obj)) {
+            const set = (value: any) => isUndefined(value) && this.node.setAttribute(key, `${value}`)
+            if (_instanceof(value, Signal)) value = value.subscribe(set).value();
             set(value);
         }
         return this;

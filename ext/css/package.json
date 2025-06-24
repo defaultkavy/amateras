@@ -1,0 +1,9 @@
+{
+    "name": "@amateras/css",
+    "peerDependencies": {
+        "amateras": "../../"
+    },
+    "imports": {
+      "#structure/*": "./src/structure/*.ts"
+    }
+}

@@ -3,6 +3,7 @@ import { Signal } from "#structure/Signal";
 import { $Element } from "#node/$Element";
 import { $Node, type $NodeContentTypes } from '#node/$Node';
 import '#node/node';
+import { _instanceof, _Object_defineProperty, _Object_entries, isFunction, isObject, isString, isUndefined } from '#lib/native';
 
 const tagNameMap: {[key: string]: Constructor<$Node>} = {}
 export function $<K extends (...args: any[]) => $Node>(fn: K, ...args: Parameters<K>): ReturnType<K>;
@@ -14,16 +15,16 @@ export function $<K extends Element>(element: K): $Element<K>;
 export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $Element<HTMLElementTagNameMap[K]>
 export function $(tagname: string): $Element<HTMLElement>
 export function $(resolver: string | HTMLElement | $Node | Function | TemplateStringsArray, ...args: any[]) {
-    if (resolver instanceof $Node) return resolver;
-    if (typeof resolver === 'string' && tagNameMap[resolver]) return new tagNameMap[resolver]();
-    if (typeof resolver === 'function') 
+    if (_instanceof(resolver, $Node)) return resolver;
+    if (isString(resolver) && tagNameMap[resolver]) return new tagNameMap[resolver]();
+    if (isFunction(resolver)) 
         if (resolver.prototype?.constructor) return resolver.prototype.constructor(...args); 
         else return resolver(...args);
     if (resolver instanceof Array) {
         const iterate = args.values();
         return resolver.map(str => [str ?? undefined, iterate.next().value]).flat().filter(item => item);
     }
-    if (resolver instanceof Node && resolver.$ instanceof $Node) return resolver.$;
+    if (_instanceof(resolver, Node) && _instanceof(resolver.$, $Node)) return resolver.$;
     return new $Element(resolver);
 }
 
@@ -35,15 +36,15 @@ export namespace $ {
         const signal = new Signal<T>(value);
         const signalFn = function (newValue?: T) {
             if (!arguments.length) return signal.value();
-            if (newValue !== undefined) signal.value(newValue);
+            if (!isUndefined(newValue)) signal.value(newValue);
             return signalFn;
         }
-        Object.defineProperty(signalFn, 'signal', { value: signal });
-        if (value instanceof Object) {
-            for (const [key, val] of Object.entries(value)) {
+        _Object_defineProperty(signalFn, 'signal', { value: signal });
+        if (isObject(value)) {
+            for (const [key, val] of _Object_entries(value)) {
                 const val$ = $.signal(val);
                 val$.signal.subscribe(newValue => { value[key as keyof typeof value] = newValue; signal.emit() });
-                Object.defineProperty(signalFn, `${key}$`, {value: val$});
+                _Object_defineProperty(signalFn, `${key}$`, {value: val$});
             }
         }
         return signalFn as unknown as SignalFunction<T>
@@ -67,7 +68,7 @@ export namespace $ {
             subscribed = true;
             return result;
         }
-        Object.defineProperty(computeFn, 'signal', { value: signalFn.signal });
+        _Object_defineProperty(computeFn, 'signal', { value: signalFn.signal });
         return computeFn as ComputeFunction<T>
     }
 
@@ -77,7 +78,7 @@ export namespace $ {
     }
 
     export function orArrayResolver<T>(item: OrArray<T>): T[] {
-        return item instanceof Array ? item : [item];
+        return _instanceof(item, Array) ? item : [item];
     }
 }
 export type $ = typeof $;

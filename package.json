@@ -31,7 +31,12 @@
     "./lib/*": "./src/lib/*.ts",
     "./structure/*": "./src/structure/*.ts",
     "./html": "./ext/html/html.ts",
-    "./css": "./ext/css/css.ts",
-    "./css/*": "./ext/css/*.ts"
+    "./css": "./ext/css/src/index.ts"
+  },
+  "workspaces": [
+    "./ext/*"
+  ],
+  "peerDependencies": {
+    "@amateras/css": "./ext/css"
   }
 }

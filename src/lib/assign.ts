@@ -1,4 +1,5 @@
 import { Signal } from "../structure/Signal";
+import { _instanceof, _Object_defineProperty, isUndefined } from "./native";
 
 export function assign(target: any, {set, get, fn}: { 
     set?: string[], 
@@ -10,7 +11,7 @@ export function assign(target: any, {set, get, fn}: {
     }
     const list = [...filterAndMap('get', get), ...filterAndMap('set', set), ...filterAndMap('fn', fn)] as [string, string][];
     for (const [type, prop] of list) {
-        Object.defineProperty(target.prototype, prop, {
+        _Object_defineProperty(target.prototype, prop, {
             ...(type === 'get' ? {
                 get() { return this.node[prop as any] }
             } : {
@@ -19,8 +20,8 @@ export function assign(target: any, {set, get, fn}: {
                     // set
                     value: function (this, args: any) {
                         if (!arguments.length) return this.node[prop];
-                        const set = (value: any) => value !== undefined && (this.node[prop] = value);
-                        if (args instanceof Signal) args = args.subscribe(set).value();
+                        const set = (value: any) => !isUndefined(value) && (this.node[prop] = value);
+                        if (_instanceof(args, Signal)) args = args.subscribe(set).value();
                         set(args)
                         return this;
                     }

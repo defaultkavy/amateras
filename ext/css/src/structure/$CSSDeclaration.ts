@@ -9,4 +9,8 @@ export class $CSSDeclaration {
     get property() {
         return this.key.replaceAll(/([A-Z])/g, (_, s1) => `-${s1}`).toLowerCase();
     }
+
+    toString() {
+        return `${this.property}: ${this.value};`
+    }
 }

@@ -1,3 +1,4 @@
+import { _Array_from, _instanceof, isFunction, isNull, isObject, isUndefined } from "#lib/native";
 import { Signal } from "#structure/Signal";
 
 export class $Node {
@@ -9,14 +10,14 @@ export class $Node {
     }
 
     content(children: $NodeContentResolver<this>) {
-        this.node.childNodes.forEach(node => node.remove());
+        _Array_from(this.node.childNodes).forEach(node => node.remove());
         return this.insert(children);
     }
 
     insert(resolver: $NodeContentResolver<this>, position = -1) {
-        if (resolver instanceof Function) {
+        if (isFunction(resolver)) {
             const content = resolver(this);
-            if (content instanceof Promise) content.then(content => $Node.insertChild(this.node, content, position))
+            if (_instanceof(content, Promise)) content.then(content => $Node.insertChild(this.node, content, position))
             else $Node.insertChild(this.node, content, position);
         } else $Node.insertChild(this.node, resolver, position);
         return this;
@@ -36,7 +37,7 @@ export class $Node {
     static insertChild(node: Node, children: OrArray<OrPromise<$NodeContentTypes>>, position = -1) {
         children = $.orArrayResolver(children);
         // get child node at position
-        const positionChild = Array.from(node.childNodes).filter(node => node.nodeType !== node.TEXT_NODE).at(position);
+        const positionChild = _Array_from(node.childNodes).filter(node => node.nodeType !== node.TEXT_NODE).at(position);
         // insert node helper function for depend position
         const append = (child: Node | undefined | null) => {
             if (!child) return;
@@ -44,7 +45,7 @@ export class $Node {
             else node.insertBefore(child, position < 0 ? positionChild.nextSibling : positionChild);
         }
         // process nodes
-        for (const child of children) if (child !== undefined) append($Node.processContent(child))
+        for (const child of children) !isUndefined(child) && append($Node.processContent(child))
     }
 
     static processContent(content: $NodeContentTypes): Node;
@@ -53,19 +54,19 @@ export class $Node {
     static processContent(content: OrPromise<$NodeContentTypes>): Node;
     static processContent(content: OrPromise<$NodeContentTypes | undefined | null>): Node | undefined | null
     static processContent(content: OrPromise<$NodeContentTypes | undefined | null>) {
-        if (content === undefined) return undefined;
-        if (content === null) return null;
+        if (isUndefined(content)) return;
+        if (isNull(content)) return content;
         // is $Element
-        if (content instanceof $Node) return content.node;
+        if (_instanceof(content, $Node)) return content.node;
         // is Promise
-        if (content instanceof Promise) {
+        if (_instanceof(content, Promise)) {
             const async = $('async').await(content, ($async, $child) => $async.replace($child));
             return async.node;
         }
         // is SignalFunction
-        if (content instanceof Function && (content as $.SignalFunction<any>).signal instanceof Signal) {
+        if (isFunction(content) && _instanceof((content as $.SignalFunction<any>).signal ,Signal)) {
             const text = new Text();
-            const set = (value: any) => text.textContent = value instanceof Object ? JSON.stringify(value) : value;
+            const set = (value: any) => text.textContent = isObject(value) ? JSON.stringify(value) : value;
             (content as $.SignalFunction<any>).signal.subscribe(set);
             set((content as $.SignalFunction<any>)());
             return text;

@@ -80,6 +80,10 @@ export namespace $ {
     export function orArrayResolver<T>(item: OrArray<T>): T[] {
         return _instanceof(item, Array) ? item : [item];
     }
+
+    export function span(content: string) {
+        return $('span').content(content);
+    }
 }
 export type $ = typeof $;
 globalThis.$ = $;

@@ -84,7 +84,7 @@ $(document.body).content([
 
 ## Packages
 | Package name | Size | Size(gzip) | Description |
-| --- | --- |
+| --- | --- | --- | --- |
 | amateras | 5.56 kB | 2.35 kB | Core |
 | amateras/html | 0.66 kB | 0.28 kB | Import HTMLElement types and methods |
 | [amateras/css](./ext/css/README.md) | 3.74 kB | 1.40 kB | Style in JS |

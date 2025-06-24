@@ -90,8 +90,9 @@ function createKeyframesRule(name: string, options: $CSSKeyframesType) {
 function insertRule(rule: $CSSRule, recursive = false) {
     if (_instanceof(rule, $CSSStyleRule) && !CSS.supports(`selector(${rule.selector})`)) return rule;
     stylesheet.insertRule(rule.css, stylesheet.cssRules.length);
-    if (!_instanceof(rule, $CSSMediaRule)) rule.rules.forEach(rule => insertRule(rule))
-    else if (!recursive) rule.mediaRules.forEach(rule => insertRule(rule, true))
+    if (_instanceof(rule, $CSSKeyframesRule)) return rule;
+    if (!_instanceof(rule, $CSSMediaRule)) rule.rules.forEach(rule => insertRule(rule));
+    else if (!recursive) rule.mediaRules.forEach(rule => insertRule(rule, true));
     return rule;
 }
 

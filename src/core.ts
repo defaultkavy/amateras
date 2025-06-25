@@ -3,7 +3,7 @@ import { Signal } from "#structure/Signal";
 import { $Element } from "#node/$Element";
 import { $Node, type $NodeContentTypes } from '#node/$Node';
 import '#node/node';
-import { _instanceof, _Object_defineProperty, _Object_entries, isFunction, isObject, isString, isUndefined } from '#lib/native';
+import { _instanceof, _Object_defineProperty, _Object_entries, isFunction, isNull, isObject, isString, isUndefined } from '#lib/native';
 
 const tagNameMap: {[key: string]: Constructor<$Node>} = {}
 export function $<K extends (...args: any[]) => $Node>(fn: K, ...args: Parameters<K>): ReturnType<K>;
@@ -40,7 +40,7 @@ export namespace $ {
             return signalFn;
         }
         _Object_defineProperty(signalFn, 'signal', { value: signal });
-        if (isObject(value)) {
+        if (isObject(value) && !isNull(value)) {
             for (const [key, val] of _Object_entries(value)) {
                 const val$ = $.signal(val);
                 val$.signal.subscribe(newValue => { value[key as keyof typeof value] = newValue; signal.emit() });

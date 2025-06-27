@@ -1,4 +1,4 @@
-import { isUndefined } from "#lib/native";
+import { _instanceof, isUndefined } from "#lib/native";
 
 export class Signal<T> {
     #value: T;
@@ -16,7 +16,7 @@ export class Signal<T> {
             Signal.listeners.forEach(fn => fn(this));
             return this.#value;
         }
-        if (resolver instanceof Function) this.value(resolver(this.#value));
+        if (_instanceof(resolver, Function)) this.value(resolver(this.#value));
         else if (!isUndefined(resolver)) {
             this.#value = resolver;
             this.emit();

@@ -3,7 +3,7 @@ import { Signal } from "#structure/Signal";
 import { $Element } from "#node/$Element";
 import { $Node, type $NodeContentTypes } from '#node/$Node';
 import '#node/node';
-import { _instanceof, _Object_defineProperty, _Object_entries, isFunction, isNull, isObject, isString, isUndefined } from '#lib/native';
+import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty } from '#lib/native';
 
 const tagNameMap: {[key: string]: Constructor<$Node>} = {}
 export function $<K extends (...args: any[]) => $Node>(fn: K, ...args: Parameters<K>): ReturnType<K>;
@@ -14,7 +14,7 @@ export function $<K extends $Node>($node: K): K;
 export function $<K extends Element>(element: K): $Element<K>;
 export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $Element<HTMLElementTagNameMap[K]>
 export function $(tagname: string): $Element<HTMLElement>
-export function $(resolver: string | HTMLElement | $Node | Function | TemplateStringsArray, ...args: any[]) {
+export function $(resolver: string | Element | $Node | Function | TemplateStringsArray, ...args: any[]) {
     if (_instanceof(resolver, $Node)) return resolver;
     if (isString(resolver) && tagNameMap[resolver]) return new tagNameMap[resolver]();
     if (isFunction(resolver)) 
@@ -30,16 +30,15 @@ export function $(resolver: string | HTMLElement | $Node | Function | TemplateSt
 
 export namespace $ {
     type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
-    export type SignalFunction<T> = ({(value: ((newValue: T) => T) | T): SignalFunction<T>, (): T}) & { signal: Signal<T> } & SignalProcess<T>;
+    export type SignalFunction<T> = {signal: Signal<T>, set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>} & (() => T) & SignalProcess<T>;
     export function signal<T>(value: T): SignalFunction<T>
     export function signal<T>(value: T) {
         const signal = new Signal<T>(value);
-        const signalFn = function (newValue?: T) {
-            if (!arguments.length) return signal.value();
-            if (!isUndefined(newValue)) signal.value(newValue);
-            return signalFn;
-        }
-        _Object_defineProperty(signalFn, 'signal', { value: signal });
+        const signalFn = function () { return signal.value(); }
+        _Object_assign(signalFn, {
+            signal,
+            set(newValue: T) { return signal.value(newValue), signalFn; }
+        })
         if (isObject(value) && !isNull(value)) {
             for (const [key, val] of _Object_entries(value)) {
                 const val$ = $.signal(val);
@@ -55,12 +54,12 @@ export namespace $ {
         let subscribed = false;
         const signalFn: SignalFunction<any> = $.signal(null);
         function computeFn() {
-            if (!subscribed) return signalFn(subscribe())();
-            else return signalFn(process())();
+            if (!subscribed) return signalFn.set(subscribe())();
+            else return signalFn.set(process())();
         }
         function subscribe () {
             const signalHandler = (signal: Signal<any>) => { 
-                signal.subscribe(() => signalFn(process())) 
+                signal.subscribe(() => signalFn.set(process())) 
             }
             Signal.listeners.add(signalHandler);
             const result = process();

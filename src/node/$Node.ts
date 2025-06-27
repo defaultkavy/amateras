@@ -2,8 +2,8 @@ import { _Array_from, _instanceof, isFunction, isNull, isObject, isUndefined } f
 import { Signal } from "#structure/Signal";
 
 export class $Node {
-    node: Node;
-    constructor(node: Node) {
+    node: Node & ChildNode;
+    constructor(node: Node & ChildNode) {
         this.node = node;
         //@ts-expect-error
         this.node.$ = this;
@@ -15,67 +15,85 @@ export class $Node {
     }
 
     insert(resolver: $NodeContentResolver<this>, position = -1) {
-        if (isFunction(resolver)) {
-            const content = resolver(this);
-            if (_instanceof(content, Promise)) content.then(content => $Node.insertChild(this.node, content, position))
-            else $Node.insertChild(this.node, content, position);
-        } else $Node.insertChild(this.node, resolver, position);
+        // insert node helper function for depend position
+        const appendChild = (children: OrArray<$Node | undefined | null>) => {
+            // get child node at position
+            const positionChild = _Array_from(this.node.childNodes).filter(node => node.nodeType !== node.TEXT_NODE).at(position);
+            $.orArrayResolver(children).forEach(child => {
+                if (!child) return;
+                if (_instanceof(child, Array)) this.insert(child);
+                else if (!positionChild) this.node.appendChild(child.node);
+                else this.insertBefore(child.node, position < 0 ? positionChild.nextSibling : positionChild);
+            })
+        }
+        // process nodes
+        for (const child of $.orArrayResolver(resolver)) !isUndefined(child) && appendChild(processContent(this, child))
         return this;
     }
 
     await<T>(promise: Promise<T>, callback: ($node: this, result: T) => void): this {
-        promise.then(result => callback(this, result));
+        return promise.then(result => callback(this, result)), this;
+    }
+
+    remove() { 
+        return this.node.remove(), this 
+    }
+
+    replace($node: $NodeContentResolver<$Node>) {
+        if (!$node) return this.remove();
+        const index = _Array_from(this.parentNode!.childNodes).indexOf(this.node) + 1;
+        const parentNode = this.parentNode;
+        this.remove();
+        parentNode?.$.insert($node, index)
         return this;
     }
 
-    replace($node: $NodeContentTypes | undefined | null) {
-        if (!$node) return this;
-        this.node.parentNode?.replaceChild($Node.processContent($node), this.node);
-        return this; 
-    }
-
-    static insertChild(node: Node, children: OrArray<OrPromise<$NodeContentTypes>>, position = -1) {
-        children = $.orArrayResolver(children);
-        // get child node at position
-        const positionChild = _Array_from(node.childNodes).filter(node => node.nodeType !== node.TEXT_NODE).at(position);
-        // insert node helper function for depend position
-        const append = (child: Node | undefined | null) => {
-            if (!child) return;
-            if (!positionChild) node.appendChild(child);
-            else node.insertBefore(child, position < 0 ? positionChild.nextSibling : positionChild);
-        }
-        // process nodes
-        for (const child of children) !isUndefined(child) && append($Node.processContent(child))
-    }
-
-    static processContent(content: $NodeContentTypes): Node;
-    static processContent(content: undefined | null): undefined | null;
-    static processContent(content: OrPromise<undefined | null>): undefined | null;
-    static processContent(content: OrPromise<$NodeContentTypes>): Node;
-    static processContent(content: OrPromise<$NodeContentTypes | undefined | null>): Node | undefined | null
-    static processContent(content: OrPromise<$NodeContentTypes | undefined | null>) {
-        if (isUndefined(content)) return;
-        if (isNull(content)) return content;
-        // is $Element
-        if (_instanceof(content, $Node)) return content.node;
-        // is Promise
-        if (_instanceof(content, Promise)) {
-            const async = $('async').await(content, ($async, $child) => $async.replace($child));
-            return async.node;
-        }
-        // is SignalFunction
-        if (isFunction(content) && _instanceof((content as $.SignalFunction<any>).signal ,Signal)) {
-            const text = new Text();
-            const set = (value: any) => text.textContent = isObject(value) ? JSON.stringify(value) : value;
-            (content as $.SignalFunction<any>).signal.subscribe(set);
-            set((content as $.SignalFunction<any>)());
-            return text;
-        }
-        // is string | number | boolean
-        return new Text(`${content}`);
+    toString() {
+        return this.node.textContent;
     }
 }
 
-export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunction<any>;
-export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<OrArray<$NodeContentTypes>>;
-export type $NodeContentResolver<T extends $Node> = $NodeContentHandler<T> | OrArray<OrPromise<$NodeContentTypes>>
+function processContent<T extends $Node>($node: T, content: OrPromise<$NodeContentTypes | $NodeContentHandler<T>>): OrArray<$Node | undefined | null> {
+    if (isUndefined(content)) return;
+    if (isNull(content)) return content;
+    // is $Element
+    if (_instanceof(content, $Node)) return content;
+    // is Promise
+    if (_instanceof(content, Promise)) return $('async').await(content, ($async, $child) => $async.replace($child as any));
+    // is SignalFunction or ContentHandler
+    if (isFunction(content)) {
+        if (_instanceof((content as $.SignalFunction<any>).signal ,Signal)) {
+            const $text = new $Text();
+            const set = (value: any) => $text.textContent(isObject(value) ? JSON.stringify(value) : value);
+            (content as $.SignalFunction<any>).signal.subscribe(set);
+            set((content as $.SignalFunction<any>)());
+            return $text;
+        } else {
+            const _content = content($node) as $NodeContentResolver<$Node>;
+            if (_instanceof(_content, Promise)) return processContent($node, _content as any);
+            else return $.orArrayResolver(_content).map(content => processContent($node, content) as $Node);
+        }
+    } 
+    // is string | number | boolean
+    return new $Text(`${content}`);
+}
+
+export class $Text extends $Node {
+    constructor(textContent?: string) {
+        super(new Text(textContent));
+    }
+}
+
+export type $NodeContentHandler<T extends $Node> = ($node: T) => $NodeContentResolver<T>;
+export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunction<any> | null | undefined;
+export type $NodeContentResolver<T extends $Node> = OrArray<OrPromise<$NodeContentTypes | $NodeContentHandler<T>>>;
+
+export interface $Node {
+    readonly parentNode?: Node;
+    readonly childNodes: NodeListOf<ChildNode>;
+    appendChild<T extends Node>(node: T): T;
+    insertBefore<T extends Node>(node: T, child: Node | null): T;
+
+    textContent(content: string | null): this;
+    textContent(): string | null;
+}

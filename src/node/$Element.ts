@@ -1,9 +1,9 @@
 import { Signal } from "#structure/Signal";
 import { $Node } from "#node/$Node";
 import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isUndefined } from "#lib/native";
+const EVENT_LISTENERS = new WeakMap<$Element, Map<Function, (event: Event) => void>>();
 
 export class $Element<Ele extends Element = Element> extends $Node {
-    listeners = new Map<Function, (event: Event) => void>;
     declare node: Ele
     constructor(resolver: Ele | string) {
         super(_instanceof(resolver, Element) ? resolver : createNode(resolver) as unknown as Ele)
@@ -45,15 +45,16 @@ export class $Element<Ele extends Element = Element> extends $Node {
 
     on<K extends keyof HTMLElementEventMap>(type: K, listener: ($node: this, event: Event) => void, options?: boolean | AddEventListenerOptions) {
         const handler = (event: Event) => listener(this, event);
-        this.listeners.set(listener, handler);
+        EVENT_LISTENERS.get(this)?.set(listener, handler) ?? EVENT_LISTENERS.set(this, new Map().set(listener, handler));
         this.node.addEventListener(type, handler, options);
         return this;
     }
 
     off<K extends keyof HTMLElementEventMap>(type: K, listener: ($node: this, event: Event) => void, options?: boolean | EventListenerOptions) {
-        const handler = this.listeners.get(listener);
+        const eventMap = EVENT_LISTENERS.get(this);
+        const handler = eventMap?.get(listener);
         if (handler) this.node.removeEventListener(type, handler, options);
-        this.listeners.delete(listener);
+        eventMap?.delete(listener);
         return this;
     }
     
@@ -67,12 +68,11 @@ export class $Element<Ele extends Element = Element> extends $Node {
     }
 
     toString() {
-        const attr = _Object_entries(this.node.attributes).map(([key, value]) => `${key}="${value}"`).join(' ');
-        return `<${this.node.nodeName}${attr ? ` ${attr}` : ''}>${_Array_from(this.node.childNodes).map(node => `${node.$}`).join('')}</${this.node.nodeName}>`
+        return this.node.outerHTML;
     }
 }
 
-function createNode(tagname: string) {
+function createNode(nodeName: string) {
     //@ts-expect-error
-    return !document ? new Node(tagname) as unknown as Node & ChildNode : document.createElement(tagname);
+    return !document ? new Node(nodeName) as unknown as Node & ChildNode : document.createElement(nodeName);
 }

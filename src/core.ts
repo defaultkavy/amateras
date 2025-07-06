@@ -5,18 +5,18 @@ import { $Node, type $NodeContentTypes } from '#node/$Node';
 import '#node/node';
 import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty } from '#lib/native';
 
-const tagNameMap: {[key: string]: Constructor<$Node>} = {}
+const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 export function $<K extends (...args: any[]) => $Node>(fn: K, ...args: Parameters<K>): ReturnType<K>;
 export function $<K extends $NodeContentTypes | undefined | void, F extends () => K, P extends Parameters<F>>(fn: F, ...args: any[]): K;
 export function $<K extends $Node, T extends Constructor<K>, P extends ConstructorParameters<T>>(construct: T, ...args: P): K;
+export function $<K extends $Node>($node: K, ...args: any[]): K;
+export function $<K extends Element>(element: K, ...args: any[]): $Element<K>;
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
-export function $<K extends $Node>($node: K): K;
-export function $<K extends Element>(element: K): $Element<K>;
 export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $Element<HTMLElementTagNameMap[K]>
 export function $(tagname: string): $Element<HTMLElement>
 export function $(resolver: string | Element | $Node | Function | TemplateStringsArray, ...args: any[]) {
     if (_instanceof(resolver, $Node)) return resolver;
-    if (isString(resolver) && tagNameMap[resolver]) return new tagNameMap[resolver]();
+    if (isString(resolver) && nodeNameMap[resolver]) return new nodeNameMap[resolver](...args);
     if (isFunction(resolver)) 
         if (resolver.prototype?.constructor) return resolver.prototype.constructor(...args); 
         else return resolver(...args);
@@ -71,8 +71,11 @@ export namespace $ {
         return computeFn as ComputeFunction<T>
     }
 
-    export function registerTagName(tagname: string, $node: Constructor<$Node>) {
-        tagNameMap[tagname] = $node;
+    export function assign(resolver: [nodeName: string, $node: Constructor<$Node>][]): void;
+    export function assign(nodeName: string, $node: Constructor<$Node>): void;
+    export function assign(resolver: string | [nodeName: string, $node: Constructor<$Node>][], $node?: Constructor<$Node>) {
+        if (isString(resolver)) $node && (nodeNameMap[resolver] = $node);
+        else resolver.forEach(([nodeName, $node]) => nodeNameMap[nodeName] = $node);
         return $;
     }
 

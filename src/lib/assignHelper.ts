@@ -14,6 +14,6 @@ export function assignHelper(targets: [object: Constructor<Node>, target: Constr
         }
         assign(target, {set, get, fn})
         // register tagname
-        if (tagname) $.registerTagName(tagname, target)
+        if (tagname) $.assign(tagname, target)
     }
 }

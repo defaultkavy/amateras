@@ -1,10 +1,9 @@
 import '#core';
 import { $Node } from '#node/$Node';
-import { $HTMLElement } from './node/$HTMLElement';
+import { $HTMLElement } from '#node/$HTMLElement';
 import './node/type';
 import { assignHelper } from '#lib/assignHelper';
 export * from './node/type';
-export * from './node/$HTMLElement';
 
 // create element classes
 export const [
@@ -36,7 +35,6 @@ export const [
 ]
 
 const targets: [object: Constructor<Node>, target: Constructor<$Node>, tagname?: string][] = [
-    [HTMLElement, $HTMLElement],
     [HTMLInputElement, $Input, 'input'],
     [HTMLAnchorElement, $Anchor, 'a'],
     [HTMLImageElement, $Image, 'img'],

@@ -1,4 +1,5 @@
 import { $CSSStyleRule } from "#structure/$CSSStyleRule";
+import { _Array_from } from "../../../../src/lib/native";
 
 export class $CSSKeyframeRule extends $CSSStyleRule {
     keyframe: string
@@ -8,6 +9,6 @@ export class $CSSKeyframeRule extends $CSSStyleRule {
     }
 
     get css(): string {
-        return `${this.keyframe} { ${Array.from(this.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
+        return `${this.keyframe} { ${_Array_from(this.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
     }
 }

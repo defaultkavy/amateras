@@ -18,7 +18,6 @@ declare module 'amateras/core' {
             export function variables(value: string): $CSSVariable;
             export function variables<T extends $CSSVariableType>(options: T, conditions?: $CSSVariableConditionType<T>): { [key in keyof T]: $CSSVariable }
             export function keyframes<T extends { [key: string]: $CSSKeyframesType }>(options: T): { [key in keyof T]: $CSSKeyframesRule };
-            export const stylesheet: CSSStyleSheet;
         }
     }
 }
@@ -37,8 +36,7 @@ function generateId(lettercase?: 'any' | 'lower' | 'upper'): string {
     return id;
 }
 
-const stylesheet = new CSSStyleSheet();
-document.adoptedStyleSheets.push(stylesheet);
+const stylesheet = $.stylesheet;
 
 function processCSSOptions<T extends $CSSStyleRule | $CSSKeyframeRule>(
     rule: T, 
@@ -112,7 +110,6 @@ _Object_assign($, {
 })
 
 _Object_assign($.css, {
-    stylesheet: stylesheet,
     variables<T extends $CSSVariableType | string>(options: T, conditions?: $CSSVariableConditionType<T>) {
         if (isObject(options)) {
             const variables = _Object_fromEntries(_Object_entries(options).map(([key, value]) => [

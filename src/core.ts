@@ -29,6 +29,8 @@ export function $(resolver: string | Element | $Node | Function | TemplateString
 }
 
 export namespace $ {
+    export const stylesheet = new CSSStyleSheet();
+    document?.adoptedStyleSheets.push(stylesheet);
     type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
     export type SignalFunction<T> = {signal: Signal<T>, set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>} & (() => T) & SignalProcess<T>;
     export function signal<T>(value: T): SignalFunction<T>

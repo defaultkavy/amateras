@@ -1,3 +1,4 @@
+import { assignHelper } from "#lib/assignHelper";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Input extends $HTMLElement<HTMLInputElement> {
@@ -7,3 +8,9 @@ export class $Input extends $HTMLElement<HTMLInputElement> {
 }
 
 export interface $Input extends $HTMLElement<HTMLInputElement> {}
+
+assignHelper(HTMLInputElement, $Input, 'input');
+
+declare module '#core' {
+    export function $(nodeName: 'input'): $Input
+}

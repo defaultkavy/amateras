@@ -6,9 +6,7 @@ import { $Node, $Text } from './$Node';
 export * from './$Element';
 export * from './$Node';
 
-assignHelper([
-    [Node, $Node], 
-    [Text, $Text], 
-    [Element, $Element],
-    [HTMLElement, $HTMLElement],
-])
+assignHelper(Node, $Node);
+assignHelper(Text, $Text);
+assignHelper(Element, $Element);
+assignHelper(HTMLElement, $HTMLElement);

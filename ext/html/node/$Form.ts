@@ -1,3 +1,4 @@
+import { assignHelper } from "#lib/assignHelper";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Form extends $HTMLElement<HTMLFormElement> {
@@ -7,3 +8,9 @@ export class $Form extends $HTMLElement<HTMLFormElement> {
 }
 
 export interface $Form extends $HTMLElement<HTMLFormElement> {}
+
+assignHelper(HTMLFormElement, $Form, 'form');
+
+declare module '#core' {
+    export function $(nodeName: 'form'): $Form
+}

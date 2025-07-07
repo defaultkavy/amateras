@@ -19,7 +19,8 @@
     "#node/*": "./src/node/*.ts",
     "#lib/*": "./src/lib/*.ts",
     "#structure/*": "./src/structure/*.ts",
-    "#html": "./ext/html/html.ts"
+    "#html": "./ext/html/html.ts",
+    "#html/*": "./ext/html/node/*.ts"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -29,6 +30,7 @@
     "./lib/*": "./src/lib/*.ts",
     "./structure/*": "./src/structure/*.ts",
     "./html": "./ext/html/html.ts",
+    "./html/*": "./ext/html/node/*.ts",
     "./css": "./ext/css/src/index.ts",
     "./router": "./ext/router/index.ts",
     "./ssr": "./ext/ssr/index.ts"

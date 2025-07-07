@@ -1,4 +1,4 @@
-import { $Anchor } from "#html";
+import { $Anchor } from "#html/$Anchor";
 
 export class RouterAnchor extends $Anchor {
     constructor() {

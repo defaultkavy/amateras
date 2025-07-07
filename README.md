@@ -85,6 +85,7 @@ $(document.body).content([
 ## Packages
 | Package name | Size | Size(gzip) | Description |
 | --- | --- | --- | --- |
-| amateras | 5.50 kB | 2.24 kB | Core |
-| amateras/html | 0.66 kB | 0.28 kB | Import HTMLElement types and methods |
-| [amateras/css](./ext/css/README.md) | 3.74 kB | 1.40 kB | Style in JS |
+| amateras | 5.50 kB | 2.26 kB | Core |
+| amateras/html | 0.97 kB | 0.26 kB | Import HTMLElement types and methods |
+| [amateras/css](./ext/css/README.md) | 3.45 kB | 1.29 kB | Style in JS |
+| [amateras/router](./ext/router/README.md) | 2.92 kB | 1.27 kB | Amateras Router |

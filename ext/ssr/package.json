@@ -1,0 +1,10 @@
+{
+    "name": "@amateras/ssr",
+    "peerDependencies": {
+        "amateras": "../../",
+        "esm-env": "^1.2.2"
+    },
+    "imports": {
+        "#structure/*": "./src/structure/*.ts"
+    }
+}

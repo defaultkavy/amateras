@@ -62,11 +62,13 @@ function processContent<T extends $Node>($node: T, content: OrPromise<$NodeConte
     if (_instanceof(content, Promise)) return $('async').await(content, ($async, $child) => $async.replace($child as any));
     // is SignalFunction or ContentHandler
     if (isFunction(content)) {
-        if (_instanceof((content as $.SignalFunction<any>).signal ,Signal)) {
-            const $text = new $Text();
+        if (_instanceof((content as $.SignalFunction<any>).signal, Signal)) {
+            const signalFn = content as $.SignalFunction<any>;
+            const $text = document ? new $Text() : $('signal').attr({ type: typeof signalFn.signal.value() });
             const set = (value: any) => $text.textContent(isObject(value) ? JSON.stringify(value) : value);
-            (content as $.SignalFunction<any>).signal.subscribe(set);
-            set((content as $.SignalFunction<any>)());
+            if (_instanceof($text, $Text)) $text.signals.add(signalFn.signal);
+            signalFn.signal.subscribe(set);
+            set(signalFn());
             return $text;
         } else {
             const _content = content($node) as $NodeContentResolver<$Node>;
@@ -79,6 +81,7 @@ function processContent<T extends $Node>($node: T, content: OrPromise<$NodeConte
 }
 
 export class $Text extends $Node {
+    signals = new Set<Signal<any>>();
     constructor(textContent?: string) {
         super(new Text(textContent));
     }

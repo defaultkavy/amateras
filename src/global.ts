@@ -1,6 +1,7 @@
 import type { $Element } from '#node/$Element';
 import type { $Node } from '#node/$Node';
 import * as core from '#core';
+import type { Signal } from '#structure/Signal';
 
 declare global {
     export import $ = core.$;
@@ -10,6 +11,7 @@ declare global {
     type OrPromise<T> = T | Promise<T>;
     type OrNullish<T> = T | Nullish;
     type Constructor<T> = { new (...args: any[]): T }
+    type $Parameter<T> = T | undefined | Signal<T> | Signal<T | undefined>
     type Prettify<T> = {
         [K in keyof T]: T[K];
     } & {};

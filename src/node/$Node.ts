@@ -84,7 +84,7 @@ export class $Text extends $Node {
     }
 }
 
-export type $NodeContentHandler<T extends $Node> = ($node: T) => $NodeContentResolver<T>;
+export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$NodeContentResolver<T>>;
 export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunction<any> | null | undefined;
 export type $NodeContentResolver<T extends $Node> = OrArray<OrPromise<$NodeContentTypes | $NodeContentHandler<T>>>;
 

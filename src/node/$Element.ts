@@ -1,7 +1,6 @@
 import { Signal } from "#structure/Signal";
 import { $Node } from "#node/$Node";
-import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isUndefined } from "#lib/native";
-const EVENT_LISTENERS = new WeakMap<$Element, Map<Function, (event: Event) => void>>();
+import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isFunction, isString, isUndefined } from "#lib/native";
 
 export class $Element<Ele extends Element = Element> extends $Node {
     declare node: Ele
@@ -12,10 +11,12 @@ export class $Element<Ele extends Element = Element> extends $Node {
     }
 
     attr(): {[key: string]: string};
+    attr(key: string): string | null;
     attr(obj: {[key: string]: string | number | boolean | Signal<any>}): this;
-    attr(obj?: {[key: string]: string | number | boolean | Signal<any>}) {
+    attr(resolver?: {[key: string]: string | number | boolean | Signal<any>} | string) {
         if (!arguments.length) return _Object_fromEntries(_Array_from(this.node.attributes).map(attr => [attr.name, attr.value]));
-        if (obj) for (let [key, value] of _Object_entries(obj)) {
+        if (isString(resolver)) return this.node.getAttribute(resolver);
+        if (resolver) for (let [key, value] of _Object_entries(resolver)) {
             const set = (value: any) => !isUndefined(value) && this.node.setAttribute(key, `${value}`)
             if (_instanceof(value, Signal)) value = value.subscribe(set).value();
             set(value);
@@ -43,25 +44,20 @@ export class $Element<Ele extends Element = Element> extends $Node {
         return this;
     }
 
-    on<K extends keyof HTMLElementEventMap>(type: K, listener: ($node: this, event: Event) => void, options?: boolean | AddEventListenerOptions) {
-        const handler = (event: Event) => listener(this, event);
-        EVENT_LISTENERS.get(this)?.set(listener, handler) ?? EVENT_LISTENERS.set(this, new Map().set(listener, handler));
-        this.node.addEventListener(type, handler, options);
+    on<K extends keyof HTMLElementEventMap>(type: K, listener: $EventListener<Ele> | $EventListenerObject<Ele>, options?: boolean | AddEventListenerOptions) {
+        this.node.addEventListener(type, listener as EventListener, options);
         return this;
     }
 
-    off<K extends keyof HTMLElementEventMap>(type: K, listener: ($node: this, event: Event) => void, options?: boolean | EventListenerOptions) {
-        const eventMap = EVENT_LISTENERS.get(this);
-        const handler = eventMap?.get(listener);
-        if (handler) this.node.removeEventListener(type, handler, options);
-        eventMap?.delete(listener);
+    off<K extends keyof HTMLElementEventMap>(type: K, listener: $EventListener<Ele> | $EventListenerObject<Ele>, options?: boolean | EventListenerOptions) {
+        this.node.removeEventListener(type, listener as EventListener, options);
         return this;
     }
     
-    once<K extends keyof HTMLElementEventMap>(type: K, listener: ($node: this, event: Event) => void, options?: boolean | AddEventListenerOptions) {
-        const handler = ($node: this, event: Event) => {
+    once<K extends keyof HTMLElementEventMap>(type: K, listener: $EventListener<Ele> | $EventListenerObject<Ele>, options?: boolean | AddEventListenerOptions) {
+        const handler = (event: Event) => {
             this.off(type, handler, options);
-            listener($node, event);
+            isFunction(listener) ? listener(event as any) : listener.handleEvent(event as any);
         }
         this.on(type, handler, options);
         return this;
@@ -71,6 +67,10 @@ export class $Element<Ele extends Element = Element> extends $Node {
         return this.node.outerHTML;
     }
 }
+
+export type $Event<E extends Element> = Event & {target: E};
+export type $EventListener<E extends Element> = (event: $Event<E>) => void;
+export type $EventListenerObject<E extends Element> = { handleEvent(object: $Event<E>): void; }
 
 function createNode(nodeName: string) {
     //@ts-expect-error

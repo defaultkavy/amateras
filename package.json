@@ -30,6 +30,7 @@
     "./structure/*": "./src/structure/*.ts",
     "./html": "./ext/html/html.ts",
     "./css": "./ext/css/src/index.ts",
+    "./router": "./ext/router/index.ts",
     "./ssr": "./ext/ssr/index.ts"
   },
   "workspaces": [

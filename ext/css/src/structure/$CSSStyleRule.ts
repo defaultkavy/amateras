@@ -1,6 +1,6 @@
 import type { $CSSDeclaration } from "#structure/$CSSDeclaration";
 import { $CSSRule } from "#structure/$CSSRule";
-import { _Array_from, _instanceof } from "amateras/lib/native";
+import { _Array_from, _instanceof, forEach } from "amateras/lib/native";
 
 export class $CSSStyleRule extends $CSSRule {
     context: string[] = [];
@@ -17,7 +17,7 @@ export class $CSSStyleRule extends $CSSRule {
 
     get selector() {
         const ctx: string[][] = [];
-        this.context.forEach((part, i) => ctx.push(part.split(',').map(sel => ctx[i - 1] ? ctx[i - 1]!.map(prefix => `${prefix} ${sel.trim()}`) : [sel.trim()]).flat()))
+        forEach(this.context, (part, i) => ctx.push(part.split(',').map(sel => ctx[i - 1] ? ctx[i - 1]!.map(prefix => `${prefix} ${sel.trim()}`) : [sel.trim()]).flat()))
         return ctx.at(-1)?.join(', ')
     }
 }

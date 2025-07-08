@@ -1,4 +1,4 @@
-import { _instanceof } from "amateras/lib/native";
+import { _instanceof, forEach } from "amateras/lib/native";
 import { $CSSMediaRule } from "#structure/$CSSMediaRule";
 
 export abstract class $CSSRule {
@@ -10,7 +10,7 @@ export abstract class $CSSRule {
     
     get mediaRules() {
         const rules: $CSSMediaRule[] = []
-        this.rules.forEach(rule => {
+        forEach(this.rules, rule => {
             if (_instanceof(rule, $CSSMediaRule)) rules.push(rule);
             rules.push(...rule.mediaRules)
         })

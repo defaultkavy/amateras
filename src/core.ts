@@ -3,7 +3,7 @@ import { Signal } from "#structure/Signal";
 import { $Element, type $Event } from "#node/$Element";
 import { $Node, type $NodeContentTypes } from '#node/$Node';
 import '#node/node';
-import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty } from '#lib/native';
+import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach } from '#lib/native';
 import type { $HTMLElement } from '#node/$HTMLElement';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
@@ -82,11 +82,11 @@ export namespace $ {
     export function assign(nodeName: string, $node: Constructor<$Node>): void;
     export function assign(resolver: string | [nodeName: string, $node: Constructor<$Node>][], $node?: Constructor<$Node>) {
         if (isString(resolver)) $node && (nodeNameMap[resolver] = $node);
-        else resolver.forEach(([nodeName, $node]) => nodeNameMap[nodeName] = $node);
+        else forEach(resolver, ([nodeName, $node]) => nodeNameMap[nodeName] = $node);
         return $;
     }
 
-    export function orArrayResolver<T>(item: OrArray<T>): T[] {
+    export function toArray<T>(item: OrArray<T>): T[] {
         return _instanceof(item, Array) ? item : [item];
     }
 

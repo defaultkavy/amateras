@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, isFunction, isNull, isObject, isUndefined } from "#lib/native";
+import { _Array_from, _instanceof, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
 import { Signal } from "#structure/Signal";
 
 export class $Node {
@@ -10,7 +10,7 @@ export class $Node {
     }
 
     content(children: $NodeContentResolver<this>) {
-        _Array_from(this.node.childNodes).forEach(node => node.remove());
+        forEach(_Array_from(this.node.childNodes), node => node.remove());
         return this.insert(children);
     }
 
@@ -19,7 +19,7 @@ export class $Node {
         const appendChild = (children: OrArray<$Node | undefined | null>) => {
             // get child node at position
             const positionChild = _Array_from(this.node.childNodes).filter(node => node.nodeType !== node.TEXT_NODE).at(position);
-            $.orArrayResolver(children).forEach(child => {
+            forEach($.toArray(children), child => {
                 if (!child) return;
                 if (_instanceof(child, Array)) this.insert(child);
                 else if (!positionChild) this.node.appendChild(child.node);
@@ -27,7 +27,7 @@ export class $Node {
             })
         }
         // process nodes
-        for (const child of $.orArrayResolver(resolver)) !isUndefined(child) && appendChild(processContent(this, child))
+        for (const child of $.toArray(resolver)) !isUndefined(child) && appendChild(processContent(this, child))
         return this;
     }
 
@@ -73,7 +73,7 @@ function processContent<T extends $Node>($node: T, content: OrPromise<$NodeConte
         } else {
             const _content = content($node) as $NodeContentResolver<$Node>;
             if (_instanceof(_content, Promise)) return processContent($node, _content as any);
-            else return $.orArrayResolver(_content).map(content => processContent($node, content) as $Node);
+            else return $.toArray(_content).map(content => processContent($node, content) as $Node);
         }
     } 
     // is string | number | boolean

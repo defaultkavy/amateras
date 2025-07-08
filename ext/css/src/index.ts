@@ -1,4 +1,4 @@
-import { _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isObject, isUndefined } from "amateras/lib/native";
+import { _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined } from "amateras/lib/native";
 import { randomId } from "amateras/lib/randomId";
 import { $Element } from "amateras/node/$Element";
 import { $CSSDeclaration } from "#structure/$CSSDeclaration";
@@ -71,7 +71,7 @@ function createStyleRule<T extends $CSSOptions>(options: T, context: string[] = 
 function createMediaRule(condition: string, options: $CSSOptions, context: string[] = [], global: boolean) {
     const rule = new $CSSMediaRule(condition);
     // create media rule from $.CSS
-    if (global) _Object_entries(options).forEach(([key, value]) => rule.addRule( createRule(key, value, context) ))
+    if (global) forEach(_Object_entries(options), ([key, value]) => rule.addRule( createRule(key, value, context) ))
     // create from $.css
     else rule.addRule( createStyleRule(options, context) );
     return rule;
@@ -79,7 +79,7 @@ function createMediaRule(condition: string, options: $CSSOptions, context: strin
 
 function createKeyframesRule(name: string, options: $CSSKeyframesType) {
     const rule = new $CSSKeyframesRule(name);
-    _Object_entries(options).forEach(([key, value]) => {
+    forEach(_Object_entries(options), ([key, value]) => {
         rule.addRule( processCSSOptions(new $CSSKeyframeRule(key), value) );
     })
     return rule;
@@ -89,8 +89,8 @@ function insertRule(rule: $CSSRule, recursive = false) {
     if (_instanceof(rule, $CSSStyleRule) && !CSS.supports(`selector(${rule.selector})`)) return rule;
     stylesheet.insertRule(rule.css, stylesheet.cssRules.length);
     if (_instanceof(rule, $CSSKeyframesRule)) return rule;
-    if (!_instanceof(rule, $CSSMediaRule)) rule.rules.forEach(rule => insertRule(rule));
-    else if (!recursive) rule.mediaRules.forEach(rule => insertRule(rule, true));
+    if (!_instanceof(rule, $CSSMediaRule)) forEach(rule.rules, rule => insertRule(rule));
+    else if (!recursive) forEach(rule.mediaRules, rule => insertRule(rule, true));
     return rule;
 }
 
@@ -143,7 +143,7 @@ _Object_assign($.css, {
 
 _Object_assign($Element.prototype, {
     css(this: $Element, ...options: $CSSOptions[]) {
-        options.forEach(options => {
+        forEach(options, options => {
             const rule = $.css(options);
             this.addClass(rule.context[0]?.slice(1) as string);
         })

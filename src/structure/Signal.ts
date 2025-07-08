@@ -1,4 +1,4 @@
-import { _instanceof, isUndefined } from "#lib/native";
+import { _instanceof, forEach, isUndefined } from "#lib/native";
 
 export class Signal<T> {
     #value: T;
@@ -13,7 +13,7 @@ export class Signal<T> {
     value(callback: (oldValue: T) => T): this;
     value(resolver?: T | ((oldValue: T) => T)) {
         if (!arguments.length) {
-            Signal.listeners.forEach(fn => fn(this));
+            forEach(Signal.listeners, fn => fn(this));
             return this.#value;
         }
         if (_instanceof(resolver, Function)) this.value(resolver(this.#value));
@@ -25,7 +25,7 @@ export class Signal<T> {
     }
 
     emit() {
-        this.subscribers.forEach(subs => subs(this.#value))
+        forEach(this.subscribers, subs => subs(this.#value))
         return this;
     }
 

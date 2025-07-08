@@ -7,6 +7,13 @@ export const _Object_defineProperty = Object.defineProperty;
 export const _Object_getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors;
 // Array
 export const _Array_from = Array.from;
+export function forEach<N extends Node>(set: NodeListOf<N>, fn: (value: N, index: number, parent: NodeListOf<N>) => any, thisArgs?: any): void;
+export function forEach<K, V>(set: Map<K, V>, fn: (value: V, key: K, index: number, map: Map<K, V>) => any, thisArgs?: any): void;
+export function forEach<T>(set: Set<T>, fn: (value: T, index: number, set: Set<T>) => any, thisArgs?: any): void;
+export function forEach<T>(arr: Array<T>, fn: (value: T, index: number, array: Array<T>) => any, thisArgs?: any): void;
+export function forEach<T>(arr: any, fn: any, thisArgs?: any) {
+    arr.forEach(fn, thisArgs)
+}
 // typeof
 export function _typeof(target: any, type: 'string' | 'number' | 'object' | 'boolean' | 'function' | 'bigint' | 'symbol' | 'undefined') {
     return typeof target === type;

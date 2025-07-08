@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof } from "amateras/lib/native";
+import { _Array_from, _instanceof, forEach } from "amateras/lib/native";
 import { $CSSRule } from "#structure/$CSSRule";
 import { $CSSStyleRule } from "./$CSSStyleRule";
 
@@ -18,7 +18,7 @@ export class $CSSMediaRule extends $CSSRule {
         }
         
         function findChildRules(rule: $CSSRule, rules: $CSSStyleRule[] = []) {
-            _Array_from(rule.rules).forEach((_rule => {
+            forEach(_Array_from(rule.rules), (_rule => {
                 if (!_instanceof(_rule, $CSSStyleRule)) return;
                 rules.push(_rule);
                 return findChildRules(_rule, rules);

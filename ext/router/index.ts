@@ -1,4 +1,4 @@
-import { _Object_assign } from "#lib/native";
+import { _Object_assign, forEach } from "#lib/native";
 import type { $NodeContentResolver } from "#node/$Node";
 import type { Page } from "./node/Page";
 import { Route } from "./node/Route";
@@ -27,10 +27,10 @@ _Object_assign($, {
     forward: Router.forward.bind(Router)
 });
 // define styles
-[
+forEach([
     `router{display:block}`,
     `page{display:block}`
-].forEach(rule => $.stylesheet.insertRule(rule));
+], rule => $.stylesheet.insertRule(rule));
 // assign nodes
 $.assign([
     ['router', Router],

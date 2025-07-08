@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, _Object_fromEntries } from "#lib/native";
+import { _Array_from, _instanceof, _Object_fromEntries, forEach } from "#lib/native";
 import { Page } from "./Page";
 import { BaseRouteNode, Route } from "./Route";
 
@@ -13,7 +13,7 @@ const historyHandler = (path: string | URL | Nullish, mode: 1 | 2) => {
     const url = toURL(path);
     if (url.origin !== origin) return this;
     history[mode === PUSH ? 'pushState' : 'replaceState']({}, '' , url)
-    Router.routers.forEach(router => router.routes.size && router.resolve(path));
+    forEach(Router.routers, router => router.routes.size && router.resolve(path));
 }
 export class Router extends BaseRouteNode<''> {
     static pageRouters = new Map<Page, Router>();

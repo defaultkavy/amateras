@@ -32,6 +32,8 @@
     "./html": "./ext/html/html.ts",
     "./html/*": "./ext/html/node/*.ts",
     "./css": "./ext/css/src/index.ts",
+    "./css/colors": "./ext/css/src/lib/colors.ts",
+    "./css/color/*": "./ext/css/src/lib/colors/*.ts",
     "./router": "./ext/router/index.ts",
     "./ssr": "./ext/ssr/index.ts"
   },

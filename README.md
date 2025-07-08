@@ -23,7 +23,9 @@ const paragraphStyle = $.css({
 
 $('p').css(paragraphStyle).content([
     'Amateras is a ', 
-    $('span').css({ color: 'blue', fontWeight: 700 }).content('DOM Utility Library.')
+    $('span')
+        .css({ color: 'blue', fontWeight: 700 })
+        .content('DOM Utility Library.')
 ])
 ```
 
@@ -34,7 +36,8 @@ import 'amateras';
 const count$ = $.signal(0);
 
 $(document.body).content([
-    $('button').content('Click me')
+    $('button')
+        .content('Click me')
         .class('class1', 'class2')
         .on('click', () => count$(oldValue => oldValue + 1)),
     $('p').content($`Clicked ${count$} times.`)
@@ -43,7 +46,7 @@ $(document.body).content([
 
 ## State Management
 ```ts
-import 'amateras'
+import 'amateras';
 
 const count$ = $.signal(0);
 const doubleCount$ = $.compute(() => count() * 2);
@@ -54,6 +57,19 @@ $(document.body).content([
     $('p').content($`Count: ${count$}`),
     $('p').content($`Double: ${doubleCount$}`)
 ])
+```
+
+## HTMLElement Methods Import
+```ts
+import 'amateras';
+import 'amateras/html';
+
+// without html package
+$('a').attr({ href: '/user' });
+$('img').attr({ src: '/profile.jpg' });
+// with html package
+$('a').href('/user');
+$('img').src('/profile.jpg');
 ```
 
 ## Custom Components

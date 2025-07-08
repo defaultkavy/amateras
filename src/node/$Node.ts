@@ -53,7 +53,7 @@ export class $Node {
     }
 }
 
-function processContent<T extends $Node>($node: T, content: OrPromise<$NodeContentTypes | $NodeContentHandler<T>>): OrArray<$Node | undefined | null> {
+function processContent<T extends $Node>($node: T, content: $NodeContentResolver<any>): OrArray<$Node | undefined | null> {
     if (isUndefined(content)) return;
     if (isNull(content)) return content;
     // is $Element
@@ -75,7 +75,9 @@ function processContent<T extends $Node>($node: T, content: OrPromise<$NodeConte
             if (_instanceof(_content, Promise)) return processContent($node, _content as any);
             else return $.toArray(_content).map(content => processContent($node, content) as $Node);
         }
-    } 
+    }
+    // is nested array
+    if (_instanceof(content, Array)) return content.map(c => processContent($node, c) as $Node)
     // is string | number | boolean
     return new $Text(`${content}`);
 }
@@ -89,7 +91,7 @@ export class $Text extends $Node {
 
 export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$NodeContentResolver<T>>;
 export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunction<any> | null | undefined;
-export type $NodeContentResolver<T extends $Node> = OrArray<OrPromise<$NodeContentTypes | $NodeContentHandler<T>>>;
+export type $NodeContentResolver<T extends $Node> = OrMatrix<OrPromise<$NodeContentTypes | $NodeContentHandler<T>>>;
 
 export interface $Node {
     readonly parentNode?: Node;

@@ -12,6 +12,7 @@ export function $<F extends (...args: any[]) => $Node>(fn: F, ...args: Parameter
 export function $<C extends $NodeContentTypes | undefined | void, F extends () => C, P extends Parameters<F>>(fn: F, ...args: any[]): C;
 export function $<N extends $Node, T extends Constructor<N>, P extends ConstructorParameters<T>>(construct: T, ...args: P): N;
 export function $<N extends $Node>($node: N, ...args: any[]): N;
+export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLElement<H>;
 export function $<E extends Element>(element: E, ...args: any[]): $Element<E>;
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
 export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;

@@ -8,7 +8,7 @@ import type { $HTMLElement } from '#node/$HTMLElement';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 
-export function $<F extends (...args: any[]) => $Node>(fn: F, ...args: Parameters<F>): ReturnType<F>;
+export function $<F extends (...args: any[]) => OrPromise<$NodeContentTypes>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
 export function $<C extends $NodeContentTypes | undefined | void, F extends () => C, P extends Parameters<F>>(fn: F, ...args: any[]): C;
 export function $<N extends $Node, T extends Constructor<N>, P extends ConstructorParameters<T>>(construct: T, ...args: P): N;
 export function $<N extends $Node>($node: N, ...args: any[]): N;

@@ -15,8 +15,7 @@ export function $<N extends $Node>($node: N, ...args: any[]): N;
 export function $<E extends Element>(element: E, ...args: any[]): $Element<E>;
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
 export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
-export function $<H extends HTMLElement>(tagname: $Event<H>): $HTMLElement<H>;
-export function $<E extends Element>(tagname: $Event<E>): $Element<E>;
+export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['target']['$'];
 export function $(tagname: string): $HTMLElement<HTMLElement>
 export function $(resolver: string | Element | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {
     if (_instanceof(resolver, $Node)) return resolver;

@@ -2,7 +2,7 @@ import { Signal } from "#structure/Signal";
 import { $Node } from "#node/$Node";
 import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isFunction, isString, isUndefined } from "#lib/native";
 
-export class $Element<Ele extends Element = Element> extends $Node {
+export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> extends $Node {
     declare node: Ele
     constructor(resolver: Ele | string) {
         super(_instanceof(resolver, Element) ? resolver : createNode(resolver) as unknown as Ele)
@@ -44,20 +44,20 @@ export class $Element<Ele extends Element = Element> extends $Node {
         return this;
     }
 
-    on<K extends keyof HTMLElementEventMap>(type: K, listener: $EventListener<Ele> | $EventListenerObject<Ele>, options?: boolean | AddEventListenerOptions) {
-        this.node.addEventListener(type, listener as EventListener, options);
+    on<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions) {
+        this.node.addEventListener(type as string, listener as any, options);
         return this;
     }
 
-    off<K extends keyof HTMLElementEventMap>(type: K, listener: $EventListener<Ele> | $EventListenerObject<Ele>, options?: boolean | EventListenerOptions) {
-        this.node.removeEventListener(type, listener as EventListener, options);
+    off<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | EventListenerOptions) {
+        this.node.removeEventListener(type as string, listener as any, options);
         return this;
     }
     
-    once<K extends keyof HTMLElementEventMap>(type: K, listener: $EventListener<Ele> | $EventListenerObject<Ele>, options?: boolean | AddEventListenerOptions) {
-        const handler = (event: Event) => {
+    once<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions) {
+        const handler = (event: $Event<any>) => {
             this.off(type, handler, options);
-            isFunction(listener) ? listener(event as any) : listener.handleEvent(event as any);
+            isFunction(listener) ? listener(event) : listener.handleEvent(event);
         }
         this.on(type, handler, options);
         return this;
@@ -68,16 +68,17 @@ export class $Element<Ele extends Element = Element> extends $Node {
     }
 }
 
-export type $Event<E extends Element> = Event & {target: E};
-export type $EventListener<E extends Element> = (event: $Event<E>) => void;
-export type $EventListenerObject<E extends Element> = { handleEvent(object: $Event<E>): void; }
+export type EventMap = {[key: string]: Event}
+export type $Event<E extends $Element, Ev = any> = Ev & {target: {$: E}};
+export type $EventListener<E extends $Element, Ev> = (event: $Event<E, Ev>) => void;
+export type $EventListenerObject<E extends $Element, Ev> = { handleEvent(object: $Event<E, Ev>): void; }
 
 function createNode(nodeName: string) {
     //@ts-expect-error
     return !document ? new Node(nodeName) as unknown as Node & ChildNode : document.createElement(nodeName);
 }
 
-export interface $Element<Ele extends Element> {
+export interface $Element<Ele extends Element, EvMap> {
     /** {@link Element.attributes} */
     readonly attributes: NamedNodeMap;
     /** {@link Element.clientHeight} */
@@ -134,4 +135,13 @@ export interface $Element<Ele extends Element> {
     /** {@link Element.slot} */
     slot(): string;
     slot(slot: $Parameter<string>): this;
+
+    on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this;
+    on<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions): this;
+
+    off(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | EventListenerOptions): this;
+    off<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | EventListenerOptions): this;
+
+    once(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this;
+    once<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions): this;
 }

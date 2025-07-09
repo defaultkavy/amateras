@@ -37,6 +37,7 @@ function generateId(lettercase?: 'any' | 'lower' | 'upper'): string {
 }
 
 const stylesheet = $.stylesheet;
+const cssTextMap = new Map<string, $CSSOptions>
 
 function processCSSOptions<T extends $CSSStyleRule | $CSSKeyframeRule>(
     rule: T, 
@@ -94,12 +95,17 @@ function insertRule(rule: $CSSRule, recursive = false) {
     return rule;
 }
 
+const stringify = JSON.stringify;
 _Object_assign($, {
     css(options: $CSSOptions) {
         if (_instanceof(options, $CSSRule)) return options;
+        const cssText = stringify(options);
+        const cacheRule = cssTextMap.get(cssText);
+        if (cacheRule) return cacheRule;
         const className = `.${generateId()}`;
         const rule = createStyleRule(options, [className]);
         rule.className = className;
+        cssTextMap.set(stringify(options), rule);
         return insertRule( rule );
     },
     CSS(options: $CSSSelectorType | $CSSMediaRule) {

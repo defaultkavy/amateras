@@ -11,7 +11,7 @@ const [PUSH, REPLACE] = [1, 2] as const;
 const historyHandler = (path: string | URL | Nullish, mode: 1 | 2) => {
     if (!path) return;
     const url = toURL(path);
-    if (url.origin !== origin) return this;
+    if (url.origin !== origin || url.href === _location.href) return this;
     history[mode === PUSH ? 'pushState' : 'replaceState']({}, '' , url)
     forEach(Router.routers, router => router.routes.size && router.resolve(path));
 }

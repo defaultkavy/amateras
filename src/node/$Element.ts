@@ -14,10 +14,10 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
     attr(key: string): string | null;
     attr(obj: {[key: string]: string | number | boolean | Signal<any>}): this;
     attr(resolver?: {[key: string]: string | number | boolean | Signal<any>} | string) {
-        if (!arguments.length) return _Object_fromEntries(_Array_from(this.node.attributes).map(attr => [attr.name, attr.value]));
-        if (isString(resolver)) return this.node.getAttribute(resolver);
+        if (!arguments.length) return _Object_fromEntries(_Array_from(this.attributes).map(attr => [attr.name, attr.value]));
+        if (isString(resolver)) return this.getAttribute(resolver);
         if (resolver) for (let [key, value] of _Object_entries(resolver)) {
-            const set = (value: any) => !isUndefined(value) && this.node.setAttribute(key, `${value}`)
+            const set = (value: any) => !isUndefined(value) && this.setAttribute(key, `${value}`)
             if (_instanceof(value, Signal)) value = value.subscribe(set).value();
             set(value);
         }
@@ -25,17 +25,17 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
     }
 
     class(...token: string[]) {
-        this.node.classList = token.join(' ');
+        this.classList(token.join(' '));
         return this;
     }
 
     addClass(...token: string[]) {
-        this.node.classList.add(...token);
+        this.classList().add(...token);
         return this;
     }
     
     removeClass(...token: string[]) {
-        this.node.classList.remove(...token);
+        this.classList().remove(...token);
         return this;
     }
 
@@ -64,7 +64,7 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
     }
 
     toString() {
-        return this.node.outerHTML;
+        return this.outerHTML();
     }
 }
 

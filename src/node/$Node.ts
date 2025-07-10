@@ -10,7 +10,7 @@ export class $Node {
     }
 
     content(children: $NodeContentResolver<this>) {
-        forEach(_Array_from(this.node.childNodes), node => node.remove());
+        forEach(_Array_from(this.childNodes), node => node.remove());
         return this.insert(children);
     }
 
@@ -18,11 +18,11 @@ export class $Node {
         // insert node helper function for depend position
         const appendChild = (children: OrArray<$Node | undefined | null>) => {
             // get child node at position
-            const positionChild = _Array_from(this.node.childNodes).filter(node => node.nodeType !== node.TEXT_NODE).at(position);
+            const positionChild = _Array_from(this.childNodes).filter(node => node.nodeType !== node.TEXT_NODE).at(position);
             forEach($.toArray(children), child => {
                 if (!child) return;
                 if (_instanceof(child, Array)) this.insert(child);
-                else if (!positionChild) this.node.appendChild(child.node);
+                else if (!positionChild) this.appendChild(child.node);
                 else this.insertBefore(child.node, position < 0 ? positionChild.nextSibling : positionChild);
             })
         }
@@ -35,21 +35,16 @@ export class $Node {
         return promise.then(result => callback(this, result)), this;
     }
 
-    remove() { 
-        return this.node.remove(), this 
-    }
-
     replace($node: $NodeContentResolver<$Node>) {
-        if (!$node) return this.remove();
-        const index = _Array_from(this.parentNode!.childNodes).indexOf(this.node) + 1;
-        const parentNode = this.parentNode;
-        this.remove();
-        parentNode?.$.insert($node, index)
+        if (!$node) return this;
+        this.replaceWith(
+            ...$.toArray(processContent(this, $node)).filter($node => $node).map($node => $node?.node) as Node[]
+        )
         return this;
     }
 
     toString() {
-        return this.node.textContent;
+        return this.textContent();
     }
 }
 
@@ -94,11 +89,72 @@ export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunc
 export type $NodeContentResolver<T extends $Node> = OrMatrix<OrPromise<$NodeContentTypes | $NodeContentHandler<T>>>;
 
 export interface $Node {
-    readonly parentNode?: Node;
+    /** {@link Node.baseURI} */
+    readonly baseURI: string;
+    /** {@link Node.childNodes} */
     readonly childNodes: NodeListOf<ChildNode>;
+    /** {@link Node.firstChild} */
+    readonly firstChild: ChildNode | null;
+    /** {@link Node.isConnected} */
+    readonly isConnected: boolean;
+    /** {@link Node.lastChild} */
+    readonly lastChild: ChildNode | null;
+    /** {@link Node.nextSibling} */
+    readonly nextSibling: ChildNode | null;
+    /** {@link Node.nodeName} */
+    readonly nodeName: string;
+    /** {@link Node.nodeType} */
+    readonly nodeType: number;
+    /** {@link Node.ownerDocument} */
+    readonly ownerDocument: Document | null;
+    /** {@link Node.parentElement} */
+    readonly parentElement?: HTMLElement | null;
+    /** {@link Node.parentNode} */
+    readonly parentNode?: ParentNode | null;
+    /** {@link Node.previousSibling} */
+    readonly previousSibling?: ChildNode | null;
+    
+    /** {@link Node.appendChild} */
     appendChild<T extends Node>(node: T): T;
+    /** {@link Node.cloneNode} */
+    cloneNode(subtree?: boolean): Node;
+    /** {@link Node.compareDocumentPosition} */
+    compareDocumentPosition(other: Node): number;
+    /** {@link Node.getRootNode} */
+    getRootNode(options?: GetRootNodeOptions): Node;
+    /** {@link Node.hasChildNodes} */
+    hasChildNodes(): boolean;
+    /** {@link Node.insertBefore} */
     insertBefore<T extends Node>(node: T, child: Node | null): T;
+    /** {@link Node.isDefaultNamespace} */
+    isDefaultNamespace(namespace: string | null): boolean;
+    /** {@link Node.isEqualNode} */
+    isEqualNode(otherNode: Node | null): boolean;
+    /** {@link Node.isSameNode} */
+    isSameNode(otherNode: Node | null): boolean;
+    /** {@link Node.lookupNamespaceURI} */
+    lookupNamespaceURI(prefix: string | null): string | null;
+    /** {@link Node.lookupPrefix} */
+    lookupPrefix(namespace: string | null): string | null;
+    /** {@link Node.normalize} */
+    normalize(): this;
+    /** {@link Node.removeChild} */
+    removeChild<T extends Node>(child: T): T;
+    /** {@link Node.replaceChild} */
+    replaceChild<T extends Node>(node: Node, child: T): T;
+    /** {@link Node.replaceChild} */
+    after(...nodes: (Node | string)[]): this;
+    /** {@link Node.replaceChild} */
+    before(...nodes: (Node | string)[]): this;
+    /** {@link Node.replaceChild} */
+    remove(): this;
+    /** {@link Node.replaceChild} */
+    replaceWith(...nodes: (Node | string)[]): this;
 
-    textContent(content: string | null): this;
+    /** {@link Node.nodeValue} */
+    nodeValue(nodeValue: $Parameter<string | null>): this;
+    nodeValue(): string | null;
+    /** {@link Node.textContent} */
+    textContent(textContent: $Parameter<string | null>): this;
     textContent(): string | null;
 }

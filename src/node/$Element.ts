@@ -108,6 +108,99 @@ export interface $Element<Ele extends Element, EvMap> {
     /** {@link Element.tagName} */
     readonly tagName: string;
 
+    /** {@link Element.attachShadow} */
+    attachShadow(init: ShadowRootInit): ShadowRoot;
+    /** {@link Element.checkVisibility} */
+    checkVisibility(options?: CheckVisibilityOptions): boolean;
+    /** {@link Element.closest} */
+    closest<K extends keyof HTMLElementTagNameMap>(selector: K): HTMLElementTagNameMap[K] | null;
+    closest<K extends keyof SVGElementTagNameMap>(selector: K): SVGElementTagNameMap[K] | null;
+    closest<K extends keyof MathMLElementTagNameMap>(selector: K): MathMLElementTagNameMap[K] | null;
+    closest<E extends Element = Element>(selectors: string): E | null;
+    /** {@link Element.computedStyleMap} */
+    computedStyleMap(): StylePropertyMapReadOnly;
+    /** {@link Element.getAttribute} */
+    getAttribute(qualifiedName: string): string | null;
+    /** {@link Element.getAttributeNS} */
+    getAttributeNS(namespace: string | null, localName: string): string | null;
+    /** {@link Element.getAttributeNames} */
+    getAttributeNames(): string[];
+    /** {@link Element.getAttributeNode} */
+    getAttributeNode(qualifiedName: string): Attr | null;
+    /** {@link Element.getAttributeNodeNS} */
+    getAttributeNodeNS(namespace: string | null, localName: string): Attr | null;
+    /** {@link Element.getBoundingClientRect} */
+    getBoundingClientRect(): DOMRect;
+    /** {@link Element.getClientRects} */
+    getClientRects(): DOMRectList;
+    /** {@link Element.getElementsByClassName} */
+    getElementsByClassName(classNames: string): HTMLCollectionOf<Element>;
+    /** {@link Element.getElementsByTagName} */
+    getElementsByTagName<K extends keyof HTMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementTagNameMap[K]>;
+    getElementsByTagName<K extends keyof SVGElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<SVGElementTagNameMap[K]>;
+    getElementsByTagName<K extends keyof MathMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<MathMLElementTagNameMap[K]>;
+    getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>;
+    /** {@link Element.getElementsByTagNameNS} */
+    getElementsByTagNameNS(namespaceURI: "http://www.w3.org/1999/xhtml", localName: string): HTMLCollectionOf<HTMLElement>;
+    getElementsByTagNameNS(namespaceURI: "http://www.w3.org/2000/svg", localName: string): HTMLCollectionOf<SVGElement>;
+    getElementsByTagNameNS(namespaceURI: "http://www.w3.org/1998/Math/MathML", localName: string): HTMLCollectionOf<MathMLElement>;
+    getElementsByTagNameNS(namespace: string | null, localName: string): HTMLCollectionOf<Element>;
+    /** {@link Element.getHTML} */
+    getHTML(options?: GetHTMLOptions): string;
+    /** {@link Element.hasAttribute} */
+    hasAttribute(qualifiedName: string): boolean;
+    /** {@link Element.hasAttributeNS} */
+    hasAttributeNS(namespace: string | null, localName: string): boolean;
+    /** {@link Element.hasAttributes} */
+    hasAttributes(): boolean;
+    /** {@link Element.hasPointerCapture} */
+    hasPointerCapture(pointerId: number): boolean;
+    /** {@link Element.insertAdjacentElement} */
+    insertAdjacentElement(where: InsertPosition, element: Element): Element | null;
+    /** {@link Element.insertAdjacentHTML} */
+    insertAdjacentHTML(position: InsertPosition, string: string): this;
+    /** {@link Element.insertAdjacentText} */
+    insertAdjacentText(where: InsertPosition, data: string): this;
+    /** {@link Element.matches} */
+    matches(selectors: string): boolean;
+    /** {@link Element.releasePointerCapture} */
+    releasePointerCapture(pointerId: number): this;
+    /** {@link Element.removeAttribute} */
+    removeAttribute(qualifiedName: string): this;
+    /** {@link Element.removeAttributeNS} */
+    removeAttributeNS(namespace: string | null, localName: string): this;
+    /** {@link Element.removeAttributeNode} */
+    removeAttributeNode(attr: Attr): Attr;
+    /** {@link Element.requestFullscreen} */
+    requestFullscreen(options?: FullscreenOptions): Promise<this>;
+    /** {@link Element.requestPointerLock} */
+    requestPointerLock(options?: PointerLockOptions): Promise<this>;
+    /** {@link Element.scroll} */
+    scroll(options?: ScrollToOptions): this;
+    scroll(x: number, y: number): this;
+    /** {@link Element.scrollBy} */
+    scrollBy(options?: ScrollToOptions): this;
+    scrollBy(x: number, y: number): this;
+    /** {@link Element.scrollIntoView} */
+    scrollIntoView(arg?: boolean | ScrollIntoViewOptions): this;
+    /** {@link Element.scrollTo} */
+    scrollTo(options?: ScrollToOptions): this;
+    scrollTo(x: number, y: number): this;
+    /** {@link Element.setAttribute} */
+    setAttribute(qualifiedName: string, value: string): this;
+    /** {@link Element.setAttributeNS} */
+    setAttributeNS(namespace: string | null, qualifiedName: string, value: string): this;
+    /** {@link Element.setAttributeNode} */
+    setAttributeNode(attr: Attr): Attr | null;
+    /** {@link Element.setAttributeNodeNS} */
+    setAttributeNodeNS(attr: Attr): Attr | null;
+    /** {@link Element.setHTMLUnsafe} */
+    setHTMLUnsafe(html: string): this;
+    /** {@link Element.setPointerCapture} */
+    setPointerCapture(pointerId: number): this;
+    /** {@link Element.toggleAttribute} */
+    toggleAttribute(qualifiedName: string, force?: boolean): boolean;
+
     /** {@link Element.classList} */
     classList(): DOMTokenList;
     classList(value: $Parameter<string>): this;
@@ -135,6 +228,7 @@ export interface $Element<Ele extends Element, EvMap> {
     /** {@link Element.slot} */
     slot(): string;
     slot(slot: $Parameter<string>): this;
+    
 
     on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this;
     on<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions): this;

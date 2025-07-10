@@ -29,7 +29,8 @@ export function assign(target: any, {set, get, fn}: {
                 } : {
                     // fn
                     value: function (this, ...args : any[]) {
-                        return this.node[prop](...args) ?? this;
+                        let result = this.node[prop](...args);
+                        return isUndefined(result) ? this : result;
                     }
                 })
             }),

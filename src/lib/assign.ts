@@ -6,17 +6,18 @@ export function assign(target: any, {set, get, fn}: {
     get?: string[], 
     fn?: string[]
 }) {
+    const [GET, SET, FN] = ['get', 'set', 'fn'] as const;
     const filterAndMap = (type: 'get' | 'set' | 'fn', arr: string[] | undefined) => {
         return arr?.map(prop => [type, prop]) ?? []
     }
-    const list = [...filterAndMap('get', get), ...filterAndMap('set', set), ...filterAndMap('fn', fn)] as [string, string][];
+    const list = [...filterAndMap(GET, get), ...filterAndMap(SET, set), ...filterAndMap(FN, fn)] as [string, string][];
     for (const [type, prop] of list) {
         _Object_defineProperty(target.prototype, prop, {
-            ...(type === 'get' ? {
+            ...(type === GET ? {
                 get() { return this.node[prop as any] }
             } : {
                 writable: true,
-                ...(type === 'set' ? {
+                ...(type === SET ? {
                     // set
                     value: function (this, args: any) {
                         if (!arguments.length) return this.node[prop];

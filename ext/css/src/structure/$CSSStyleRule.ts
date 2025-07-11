@@ -17,7 +17,14 @@ export class $CSSStyleRule extends $CSSRule {
 
     get selector() {
         const ctx: string[][] = [];
-        forEach(this.context, (part, i) => ctx.push(part.split(',').map(sel => ctx[i - 1] ? ctx[i - 1]!.map(prefix => `${prefix} ${sel.trim()}`) : [sel.trim()]).flat()))
-        return ctx.at(-1)?.join(', ')
+        forEach(this.context, (part, i) => 
+            ctx.push(part.split(',').map(sel => 
+                ctx[i - 1] 
+                ? ctx[i - 1]!.map(prefix => `${prefix} ${sel.trim()}`) 
+                : [sel.trim()])
+                .flat()
+            )
+        )
+        return ctx.at(-1)?.join(', ').replaceAll(' &', '')
     }
 }

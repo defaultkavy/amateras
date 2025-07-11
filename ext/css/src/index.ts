@@ -167,7 +167,7 @@ export * from "#structure/$CSSVariable";
 
 type $CSSOptions = $CSSDeclarationType | $CSSSelectorType | $CSSStyleRule | $CSSMediaSelectorType<true>;
 type $CSSValueType = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $CSSVariable
-type $CSSDeclarationType = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] }
+type $CSSDeclarationType = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] } | { [key: string]: $CSSValueType }
 type $CSSSelectorType = { [key: string & {}]: $CSSOptions }
 type $CSSMediaSelectorType<Nested extends boolean> = { [key: `@media ${string}`]: Nested extends true ? $CSSOptions : $CSSSelectorType | $CSSMediaSelectorType<Nested> }
 type $CSSVariableType<T = any> = { [key in keyof T]: $CSSValueType }

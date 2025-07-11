@@ -1,4 +1,4 @@
-import { _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined } from "amateras/lib/native";
+import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined } from "amateras/lib/native";
 import { randomId } from "amateras/lib/randomId";
 import { $Element } from "amateras/node/$Element";
 import { $CSSDeclaration } from "#structure/$CSSDeclaration";
@@ -7,7 +7,6 @@ import { $CSSRule } from "#structure/$CSSRule";
 import { $CSSStyleRule } from "#structure/$CSSStyleRule";
 import { $CSSKeyframesRule } from "#structure/$CSSKeyframesRule";
 import { $CSSVariable } from "#structure/$CSSVariable";
-import { $CSSKeyframeRule } from "#structure/$CSSKeyframeRule";
 
 declare module 'amateras/core' {
     export namespace $ {
@@ -39,15 +38,15 @@ function generateId(lettercase: 'any' | 'lower' | 'upper' = 'any'): string {
 const stylesheet = $.stylesheet;
 const cssTextMap = new Map<string, $CSSOptions>
 
-function processCSSOptions<T extends $CSSStyleRule | $CSSKeyframeRule>(
+function processCSSOptions<T extends $CSSStyleRule>(
     rule: T, 
-    options: $CSSDeclarationType | $CSSSelectorType | $CSSMediaSelectorType<boolean>, 
-    context: string[] = [],
+    options: $CSSOptions, 
 ): T {
     for (const [key, value] of _Object_entries(options)) {
         if (isUndefined(value)) continue;
-        if (isObject(value) && !_instanceof(value, $CSSKeyframesRule) && !_instanceof(value, $CSSVariable)) 
-            rule.addRule( createRule(key, value, context) );
+        else if (_instanceof(value, $CSSStyleRule)) rule.addRule( value.clone(key) );
+        else if (isObject(value) && !_instanceof(value, $CSSKeyframesRule) && !_instanceof(value, $CSSVariable)) 
+            rule.addRule( createRule(key, value, rule.selector) );
         else {
             const declaration = new $CSSDeclaration(key, `${value}`);
             rule.declarations.set(declaration.key, declaration);
@@ -56,43 +55,66 @@ function processCSSOptions<T extends $CSSStyleRule | $CSSKeyframeRule>(
     return rule;
 }
 
-function createRule(selector: string, options: $CSSOptions, context: string[] = [], global = false) {
-    if (selector.startsWith('@media')) return createMediaRule(selector.replace('@media ', ''), options, context, global);
+function createRule(selector: string, options: $CSSOptions, context?: string) {
+    if (selector.startsWith('@media')) return createMediaRule(selector.replace('@media ', ''), options, context);
     if (selector.startsWith('@keyframes')) return createKeyframesRule(selector.replace('@keyframes ', ''), options as $CSSKeyframesType)
-    return createStyleRule(options, [...context, selector]);
+    return createStyleRule(selector, options);
 }
 
-function createStyleRule<T extends $CSSRule>(options: T, context?: string[]): T;
-function createStyleRule<T extends $CSSOptions>(options: T, context?: string[]): $CSSStyleRule;
-function createStyleRule<T extends $CSSOptions>(options: T, context: string[] = []) {
-    if (_instanceof(options, $CSSRule)) return options;
-    return processCSSOptions(new $CSSStyleRule(context), options, context);
+function createStyleRule<T extends $CSSRule>(selector: string, options: T): T;
+function createStyleRule<T extends $CSSOptions>(selector: string, options: T): $CSSStyleRule;
+function createStyleRule<T extends $CSSOptions>(selector: string, options: T) {
+    return processCSSOptions(new $CSSStyleRule(selector), options);
 }
 
-function createMediaRule(condition: string, options: $CSSOptions, context: string[] = [], global: boolean) {
-    const rule = new $CSSMediaRule(condition);
+function createMediaRule(condition: string, options: $CSSOptions, selector?: string) {
+    const rule = new $CSSMediaRule(condition, selector);
     // create media rule from $.CSS
-    if (global) forEach(_Object_entries(options), ([key, value]) => rule.addRule( createRule(key, value, context) ))
+    if (!selector) forEach(_Object_entries(options), ([key, value]) => rule.addRule( createRule(key, value) ))
     // create from $.css
-    else rule.addRule( createStyleRule(options, context) );
+    else rule.addRule( createStyleRule(selector, options) );
     return rule;
 }
 
 function createKeyframesRule(name: string, options: $CSSKeyframesType) {
     const rule = new $CSSKeyframesRule(name);
     forEach(_Object_entries(options), ([key, value]) => {
-        rule.addRule( processCSSOptions(new $CSSKeyframeRule(key), value) );
+        rule.addRule( processCSSOptions(new $CSSStyleRule(key), value) );
     })
     return rule;
 }
 
-function insertRule(rule: $CSSRule, recursive = false) {
-    if (_instanceof(rule, $CSSStyleRule) && !CSS.supports(`selector(${rule.selector})`)) return rule;
-    stylesheet.insertRule(rule.css, stylesheet.cssRules.length);
-    if (_instanceof(rule, $CSSKeyframesRule)) return rule;
-    if (!_instanceof(rule, $CSSMediaRule)) forEach(rule.rules, rule => insertRule(rule));
-    else if (!recursive) forEach(rule.mediaRules, rule => insertRule(rule, true));
-    return rule;
+function insertRule(rule: $CSSRule) {
+    cssText(rule).forEach(text => {
+        stylesheet.insertRule(text, stylesheet.cssRules.length);
+    })
+    return rule
+}
+
+function cssText(rule: $CSSRule, context: string = '', mediaContext: string[] = []): string[] {
+    const split = (str: string) => str.split(',');
+    if (_instanceof(rule, $CSSStyleRule)) {
+        const selectors = split(rule.selector);
+        const selector = split(context).map(ctx => selectors.map(selector => `${ctx} ${selector}`)).join(', ').replaceAll(' &', '');
+        const text = `${selector} { ${_Array_from(rule.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
+        return [text, ..._Array_from(rule.rules).map(childRule => cssText(childRule, selector)).flat()]
+    }
+    if (_instanceof(rule, $CSSMediaRule)) {
+        const condition = [...mediaContext, rule.condition];
+        const media: string[] = [], style: string[] = []
+        forEach(_Array_from(rule.rules)
+        .map(childRule => {
+            return cssText(childRule, '', condition)
+        })
+        .flat(),
+        (childText => childText.startsWith('@media') ? media.push(childText) : style.push(childText)));
+        const text = `@media ${condition.join(' and ')} { ${style.join('\n')} }`
+        return [text, ...media]
+    }
+    if (_instanceof(rule, $CSSKeyframesRule)) {
+        return [`@keyframes ${rule.name} { ${_Array_from(rule.rules).map(childRule => cssText(childRule, context))} }`]
+    }
+    throw '$CSS RULE TYPE ERROR'
 }
 
 const stringify = JSON.stringify;
@@ -103,14 +125,13 @@ _Object_assign($, {
         const cacheRule = cssTextMap.get(cssText);
         if (cacheRule) return cacheRule;
         const className = `.${generateId()}`;
-        const rule = createStyleRule(options, [className]);
-        rule.className = className;
+        const rule = createStyleRule(className, options);
         cssTextMap.set(stringify(options), rule);
         return insertRule( rule );
     },
     CSS(options: $CSSSelectorType | $CSSMediaRule) {
         return _Object_entries(options).map(([selector, declarations]) => {
-            return insertRule( createRule(selector, declarations, [], true) );
+            return insertRule( createRule(selector, declarations) );
         })
     }
 })
@@ -151,14 +172,13 @@ _Object_assign($Element.prototype, {
     css(this: $Element, ...options: $CSSOptions[]) {
         forEach(options, options => {
             const rule = $.css(options);
-            this.addClass(rule.context[0]?.slice(1) as string);
+            this.addClass(rule.selector.replace(/^./, ''));
         })
         return this;
     }
 })
 
 export * from "#structure/$CSSDeclaration";
-export * from "#structure/$CSSKeyframeRule";
 export * from "#structure/$CSSKeyframesRule";
 export * from "#structure/$CSSMediaRule";
 export * from "#structure/$CSSRule";
@@ -171,7 +191,7 @@ type $CSSDeclarationType = { [key in keyof $CSSDeclarationMap]?: $CSSDeclaration
 type $CSSSelectorType = { [key: string & {}]: $CSSOptions }
 type $CSSMediaSelectorType<Nested extends boolean> = { [key: `@media ${string}`]: Nested extends true ? $CSSOptions : $CSSSelectorType | $CSSMediaSelectorType<Nested> }
 type $CSSVariableType<T = any> = { [key in keyof T]: $CSSValueType }
-type $CSSVariableConditionType<T extends $CSSVariableType | string> = T extends string ? { [key: string]: $CSSValueType } : { [key: string]: $CSSVariableType<T> }
+type $CSSVariableConditionType<T extends $CSSVariableType | string> = T extends string ? { [key: string]: $CSSValueType } : { [key: string]: Partial<$CSSVariableType<T>> }
 type $CSSKeyframesSelectorType = { [key: `@keyframes ${string}`]: $CSSKeyframesType }
 type $CSSKeyframesType = { [key: `${number}%`]: $CSSDeclarationType } | { from?: $CSSDeclarationType, to?: $CSSDeclarationType }
 

@@ -3,11 +3,8 @@ import { $CSSMediaRule } from "#structure/$CSSMediaRule";
 
 export abstract class $CSSRule {
     rules = new Set<$CSSRule>();
-    ownerRule: $CSSRule | null = null;
     constructor() {}
 
-    abstract get css(): string;
-    
     get mediaRules() {
         const rules: $CSSMediaRule[] = []
         forEach(this.rules, rule => {
@@ -19,7 +16,6 @@ export abstract class $CSSRule {
 
     addRule(rule: $CSSRule) {
         this.rules.add(rule);
-        rule.ownerRule = this;
         return this;
     }
 }

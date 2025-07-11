@@ -11,8 +11,4 @@ export class $CSSKeyframesRule extends $CSSRule {
     toString(): string {
         return this.name;
     }
-
-    get css() {
-        return `@keyframes ${this.name} { ${_Array_from(this.rules).map(rule => rule.css).join(' ')} }`
-    }
 }

@@ -24,18 +24,18 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
         return this;
     }
 
-    class(...token: string[]) {
-        this.classList(token.join(' '));
+    class(...token: (string | null | undefined)[]) {
+        this.classList(token.filter(isString).join(' '));
         return this;
     }
 
-    addClass(...token: string[]) {
-        this.classList().add(...token);
+    addClass(...token: (string | null | undefined)[]) {
+        this.classList().add(...token.filter(isString));
         return this;
     }
     
-    removeClass(...token: string[]) {
-        this.classList().remove(...token);
+    removeClass(...token: (string | null | undefined)[]) {
+        this.classList().remove(...token.filter(isString));
         return this;
     }
 

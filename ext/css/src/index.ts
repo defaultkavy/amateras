@@ -86,6 +86,9 @@ function createKeyframesRule(name: string, options: $CSSKeyframesType) {
 
 function insertRule(rule: $CSSRule) {
     cssText(rule).forEach(text => {
+        const selector = text.match(/^(.+?) {/)?.[1];
+        if (!selector) return;
+        if (!selector.startsWith('@') && !CSS.supports(`selector(${selector})`)) return;
         stylesheet.insertRule(text, stylesheet.cssRules.length);
     })
     return rule

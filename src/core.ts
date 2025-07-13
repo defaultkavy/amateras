@@ -59,7 +59,7 @@ export namespace $ {
     export type ComputeFunction<T> = ({(): T}) & { signal: Signal<T> };
     export function compute<T>(process: () => T) {
         let subscribed = false;
-        const signalFn: SignalFunction<any> = $.signal(null);
+        const signalFn: SignalFunction<any> = signal(null);
         function computeFn() {
             if (!subscribed) return signalFn.set(subscribe())();
             else return signalFn.set(process())();

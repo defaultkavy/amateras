@@ -10,7 +10,7 @@ const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 
 export function $<F extends (...args: any[]) => OrPromise<$NodeContentTypes>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
 export function $<C extends $NodeContentTypes | undefined | void, F extends () => C, P extends Parameters<F>>(fn: F, ...args: any[]): C;
-export function $<N extends $Node, T extends Constructor<N>, P extends ConstructorParameters<T>>(construct: T, ...args: P): N;
+export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>>(construct: T, ...args: P): InstanceType<T>;
 export function $<N extends $Node>($node: N, ...args: any[]): N;
 export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLElement<H>;
 export function $<E extends Element>(element: E, ...args: any[]): $Element<E>;
@@ -22,7 +22,7 @@ export function $(resolver: string | Element | $Node | Function | TemplateString
     if (_instanceof(resolver, $Node)) return resolver;
     if (isString(resolver) && nodeNameMap[resolver]) return new nodeNameMap[resolver](...args);
     if (isFunction(resolver)) 
-        if (resolver.prototype?.constructor) return resolver.prototype.constructor(...args); 
+        if (resolver.prototype?.constructor) return new resolver.prototype.constructor(...args); 
         else return resolver(...args);
     if (resolver instanceof Array) {
         const iterate = args.values();
@@ -74,7 +74,7 @@ export namespace $ {
             subscribed = true;
             return result;
         }
-        _Object_defineProperty(computeFn, 'signal', { value: signalFn.signal });
+        _Object_assign(computeFn, { signal: signalFn.signal });
         return computeFn as ComputeFunction<T>
     }
 

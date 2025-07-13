@@ -88,7 +88,7 @@ function insertRule(rule: $CSSRule) {
     cssText(rule).forEach(text => {
         const selector = text.match(/^(.+?) {/)?.[1];
         if (!selector) return;
-        if (!selector.startsWith('@') && !CSS.supports(`selector(${selector})`)) return;
+        if (!selector.startsWith('@') && selector.split(',').find(str => !CSS.supports(`selector(${str})`))) return;
         stylesheet.insertRule(text, stylesheet.cssRules.length);
     })
     return rule
@@ -98,7 +98,7 @@ function cssText(rule: $CSSRule, context: string = '', mediaContext: string[] = 
     const split = (str: string) => str.split(',');
     if (_instanceof(rule, $CSSStyleRule)) {
         const selectors = split(rule.selector);
-        const selector = split(context).map(ctx => selectors.map(selector => `${ctx} ${selector}`)).join(', ').replaceAll(' &', '');
+        const selector = split(context).map(ctx => selectors.map(selector => `${ctx ? ctx + ' ' : ''}${selector}`)).join(', ').replaceAll(' &', '');
         const text = `${selector} { ${_Array_from(rule.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
         return [text, ..._Array_from(rule.rules).map(childRule => cssText(childRule, selector)).flat()]
     }

@@ -7,6 +7,7 @@ import { RouterAnchor } from "./node/RouterAnchor";
 export * from "./node/Route";
 export * from "./node/Router";
 export * from "./node/Page";
+export * from "./node/RouterAnchor";
 
 declare module 'amateras/core' {
     export function $<P extends string>(nodeName: 'route', path: P, builder: RouteBuilder<Route<P>, RouteDataResolver<P>>): Route<P>;

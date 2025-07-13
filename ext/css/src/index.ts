@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined } from "amateras/lib/native";
+import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined } from "amateras/lib/native";
 import { randomId } from "amateras/lib/randomId";
 import { $Element } from "amateras/node/$Element";
 import { $CSSDeclaration } from "#structure/$CSSDeclaration";
@@ -120,16 +120,15 @@ function cssText(rule: $CSSRule, context: string = '', mediaContext: string[] = 
     throw '$CSS RULE TYPE ERROR'
 }
 
-const stringify = JSON.stringify;
 _Object_assign($, {
     css(options: $CSSOptions) {
         if (_instanceof(options, $CSSRule)) return options;
-        const cssText = stringify(options);
+        const cssText = _JSON_stringify(options);
         const cacheRule = cssTextMap.get(cssText);
         if (cacheRule) return cacheRule;
         const className = `.${generateId()}`;
         const rule = createStyleRule(className, options);
-        cssTextMap.set(stringify(options), rule);
+        cssTextMap.set(_JSON_stringify(options), rule);
         return insertRule( rule );
     },
     CSS(options: $CSSSelectorType | $CSSMediaRule) {

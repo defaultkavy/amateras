@@ -39,3 +39,5 @@ export function isNull(target: any): target is null {
 export function _instanceof<T>(target: any, instance: abstract new (...args: any[]) => T): target is T {
     return target instanceof instance;
 }
+// JSON
+export const _JSON_stringify = JSON.stringify

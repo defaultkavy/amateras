@@ -1,29 +1,37 @@
 import { _Array_from, _document, _instanceof, _Object_fromEntries, forEach } from "#lib/native";
 import { Page } from "./Page";
 import { BaseRouteNode, Route } from "./Route";
-
+// history index
+let index = 0;
 const _location = location;
 const {origin} = _location;
 const _history = history;
 const documentElement = _document.documentElement;
+const [PUSH, REPLACE] = [1, 2] as const;
+const [FORWARD, BACK] = ['forward', 'back'] as const;
+// disable browser scroll restoration
+_history.scrollRestoration = 'manual';
 const toURL = (path: string | URL) => 
     _instanceof(path, URL) ? path : new URL(path.startsWith(origin) ? path : origin + path);
-const [PUSH, REPLACE] = [1, 2] as const;
 const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2) => {
     if (!path) return;
     const url = toURL(path);
     if (url.origin !== origin || url.href === _location.href) return this;
     _history.replaceState({
+        index: index,
         x: documentElement.scrollLeft,
         y: documentElement.scrollTop
     }, '', _location.href);
-    history[mode === PUSH ? 'pushState' : 'replaceState']({}, '' , url)
+    if (mode === PUSH) index += 1;
+    Router.direction = FORWARD;
+    history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '' , url)
     for (let router of Router.routers) router.routes.size && await router.resolve(path)
 }
 export class Router extends BaseRouteNode<''> {
     static pageRouters = new Map<Page, Router>();
     static routers = new Set<Router>();
     pageMap = new Map<string, Page>();
+    static direction: 'back' | 'forward' = FORWARD;
     constructor(page?: Page) {
         super('', () => [], 'router')
         Router.routers.add(this);
@@ -97,13 +105,19 @@ export class Router extends BaseRouteNode<''> {
             prevPage = page;
             if (route) prevRoute = route;
         }
-        let { x, y }= _history.state ?? {x: 0, y: 0};
+        let { x, y } = _history.state ?? {x: 0, y: 0};
         scrollTo(x, y);
         return this;
     }
 
     listen() {
-        const resolve = () => this.resolve(_location.href);
+        const resolve = () => {
+            const stateIndex = _history.state?.index ?? 0;
+            if (index > stateIndex) Router.direction = BACK;
+            if (index < stateIndex) Router.direction = FORWARD;
+            index = stateIndex;
+            this.resolve(_location.href);
+        }
         addEventListener('popstate', resolve);
         resolve();
         return this;

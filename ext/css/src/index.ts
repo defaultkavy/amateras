@@ -11,7 +11,7 @@ import { $CSSVariable } from "#structure/$CSSVariable";
 declare module 'amateras/core' {
     export namespace $ {
         export function css(options: $CSSOptions): $CSSStyleRule
-        export function CSS(options: $CSSSelectorType | $CSSMediaSelectorType<false> | $CSSKeyframesSelectorType): void
+        export function CSS(options: $CSSMediaSelectorType<false> | $CSSSelectorType | $CSSKeyframesSelectorType): void
 
         export namespace css {
             export function variables(value: string): $CSSVariable;
@@ -44,9 +44,10 @@ function processCSSOptions<T extends $CSSStyleRule>(
 ): T {
     for (const [key, value] of _Object_entries(options)) {
         if (isUndefined(value)) continue;
-        else if (_instanceof(value, $CSSStyleRule)) rule.addRule( value.clone(key) );
-        else if (isObject(value) && !_instanceof(value, $CSSKeyframesRule) && !_instanceof(value, $CSSVariable)) 
-            rule.addRule( createRule(key, value, rule.selector) );
+        else if (_instanceof(value, $CSSStyleRule)) rule.rules.add( value.clone(key) );
+        else if (_instanceof(value, $CSSDeclaration)) rule.declarations.set(value.key, value);
+        else if (isObject(value) && !_instanceof(value, $CSSKeyframesRule, $CSSVariable)) 
+            rule.rules.add( createRule(key, value, rule.selector) );
         else {
             const declaration = new $CSSDeclaration(key, `${value}`);
             rule.declarations.set(declaration.key, declaration);
@@ -55,8 +56,11 @@ function processCSSOptions<T extends $CSSStyleRule>(
     return rule;
 }
 
+/** Create rule with several type depend on selector content.
+ * @param context - for media rule creation, it should be style rule selector same as nested parent of media rule.
+ */
 function createRule(selector: string, options: $CSSOptions, context?: string) {
-    if (selector.startsWith('@media')) return createMediaRule(selector.replace('@media ', ''), options, context);
+    if (selector.startsWith('@media')) return createMediaRule(selector, options, context);
     if (selector.startsWith('@keyframes')) return createKeyframesRule(selector.replace('@keyframes ', ''), options as $CSSKeyframesType)
     return createStyleRule(selector, options);
 }
@@ -67,19 +71,19 @@ function createStyleRule<T extends $CSSOptions>(selector: string, options: T) {
     return processCSSOptions(new $CSSStyleRule(selector), options);
 }
 
-function createMediaRule(condition: string, options: $CSSOptions, selector?: string) {
-    const rule = new $CSSMediaRule(condition, selector);
+function createMediaRule(selector: string, options: $CSSOptions, context?: string) {
+    const rule = new $CSSMediaRule(selector);
     // create media rule from $.CSS
-    if (!selector) forEach(_Object_entries(options), ([key, value]) => rule.addRule( createRule(key, value) ))
+    if (!context) forEach(_Object_entries(options), ([key, value]) => rule.rules.add( createRule(key, value) ))
     // create from $.css
-    else rule.addRule( createStyleRule(selector, options) );
+    else rule.rules.add( createStyleRule(context, options) );
     return rule;
 }
 
 function createKeyframesRule(name: string, options: $CSSKeyframesType) {
     const rule = new $CSSKeyframesRule(name);
     forEach(_Object_entries(options), ([key, value]) => {
-        rule.addRule( processCSSOptions(new $CSSStyleRule(key), value) );
+        rule.rules.add( processCSSOptions(new $CSSStyleRule(key), value) );
     })
     return rule;
 }
@@ -95,8 +99,8 @@ function insertRule(rule: $CSSRule) {
 }
 
 function cssText(rule: $CSSRule, context: string = '', mediaContext: string[] = []): string[] {
-    const split = (str: string) => str.split(',');
     if (_instanceof(rule, $CSSStyleRule)) {
+        const split = (str: string) => str.split(',');
         const selectors = split(rule.selector);
         const selector = split(context).map(ctx => selectors.map(selector => `${ctx ? ctx + ' ' : ''}${selector}`)).join(', ').replaceAll(' &', '');
         const text = `${selector} { ${_Array_from(rule.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
@@ -105,12 +109,14 @@ function cssText(rule: $CSSRule, context: string = '', mediaContext: string[] = 
     if (_instanceof(rule, $CSSMediaRule)) {
         const condition = [...mediaContext, rule.condition];
         const media: string[] = [], style: string[] = []
-        forEach(_Array_from(rule.rules)
-        .map(childRule => {
-            return cssText(childRule, '', condition)
-        })
-        .flat(),
-        (childText => childText.startsWith('@media') ? media.push(childText) : style.push(childText)));
+        forEach(
+            _Array_from(rule.rules)
+                .map(childRule => {
+                    return cssText(childRule, '', condition)
+                })
+                .flat(),
+            (childText => childText.startsWith('@media') ? media.push(childText) : style.push(childText))
+        );
         const text = `@media ${condition.join(' and ')} { ${style.join('\n')} }`
         return [text, ...media]
     }
@@ -187,15 +193,15 @@ export * from "#structure/$CSSRule";
 export * from "#structure/$CSSStyleRule";
 export * from "#structure/$CSSVariable";
 
-type $CSSOptions = $CSSDeclarationType | $CSSSelectorType | $CSSStyleRule | $CSSMediaSelectorType<true>;
-type $CSSValueType = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $CSSVariable
-type $CSSDeclarationType = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] } | { [key: string]: $CSSValueType }
-type $CSSSelectorType = { [key: string & {}]: $CSSOptions }
-type $CSSMediaSelectorType<Nested extends boolean> = { [key: `@media ${string}`]: Nested extends true ? $CSSOptions : $CSSSelectorType | $CSSMediaSelectorType<Nested> }
-type $CSSVariableType<T = any> = { [key in keyof T]: $CSSValueType }
-type $CSSVariableConditionType<T extends $CSSVariableType | string> = T extends string ? { [key: string]: $CSSValueType } : { [key: string]: Partial<$CSSVariableType<T>> }
-type $CSSKeyframesSelectorType = { [key: `@keyframes ${string}`]: $CSSKeyframesType }
-type $CSSKeyframesType = { [key: `${number}%`]: $CSSDeclarationType } | { from?: $CSSDeclarationType, to?: $CSSDeclarationType }
+export type $CSSOptions = $CSSDeclarationType | $CSSSelectorType | $CSSStyleRule | $CSSMediaSelectorType<true>;
+export type $CSSValueType = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $CSSVariable
+export type $CSSDeclarationType = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] } | { [key: string]: $CSSValueType }
+export type $CSSSelectorType = { [key: string & {}]: $CSSOptions }
+export type $CSSMediaSelectorType<Nested extends boolean> = { [key: `@media ${string}`]: Nested extends true ? $CSSOptions : $CSSSelectorType | $CSSMediaSelectorType<Nested> }
+export type $CSSVariableType<T = any> = { [key in keyof T]: $CSSValueType }
+export type $CSSVariableConditionType<T extends $CSSVariableType | string> = T extends string ? { [key: string]: $CSSValueType } : { [key: string]: Partial<$CSSVariableType<T>> }
+export type $CSSKeyframesSelectorType = { [key: `@keyframes ${string}`]: $CSSKeyframesType }
+export type $CSSKeyframesType = { [key: `${number}%`]: $CSSDeclarationType } | { from?: $CSSDeclarationType, to?: $CSSDeclarationType }
 
 type $CSSDeclarationMap = {
     [key in keyof CSSStyleDeclaration]: $CSSValueType;

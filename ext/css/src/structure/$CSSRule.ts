@@ -1,21 +1,13 @@
-import { _instanceof, forEach } from "amateras/lib/native";
-import { $CSSMediaRule } from "#structure/$CSSMediaRule";
+import { _Array_from, _instanceof, _Object_fromEntries } from "amateras/lib/native";
 
 export abstract class $CSSRule {
     rules = new Set<$CSSRule>();
-    constructor() {}
-
-    get mediaRules() {
-        const rules: $CSSMediaRule[] = []
-        forEach(this.rules, rule => {
-            if (_instanceof(rule, $CSSMediaRule)) rules.push(rule);
-            rules.push(...rule.mediaRules)
-        })
-        return rules;
+    selector: string;
+    constructor(selector: string) {
+        this.selector = selector;
     }
 
-    addRule(rule: $CSSRule) {
-        this.rules.add(rule);
-        return this;
+    get options(): {[key: string]: any} {
+        return _Object_fromEntries(_Array_from(this.rules).map(rule => [rule.selector, rule]))
     }
 }

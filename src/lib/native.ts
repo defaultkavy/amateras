@@ -38,8 +38,8 @@ export function isUndefined(target: any): target is undefined {
 export function isNull(target: any): target is null {
     return target === null;
 }
-export function _instanceof<T>(target: any, instance: abstract new (...args: any[]) => T): target is T {
-    return target instanceof instance;
+export function _instanceof<T extends (abstract new (...args: any[]) => any)[]>(target: any, ...instance: T): target is InstanceType<T[number]> {
+    return !!instance.find(i => target instanceof i);
 }
 // JSON
-export const _JSON_stringify = JSON.stringify
+export const _JSON_stringify = JSON.stringify;

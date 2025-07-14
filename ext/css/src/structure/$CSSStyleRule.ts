@@ -1,17 +1,11 @@
 import type { $CSSDeclaration } from "#structure/$CSSDeclaration";
 import { $CSSRule } from "#structure/$CSSRule";
-import { _Array_from, _instanceof } from "amateras/lib/native";
+import { _Array_from, _instanceof, _Object_fromEntries } from "amateras/lib/native";
 
 export class $CSSStyleRule extends $CSSRule {
     declarations = new Map<string, $CSSDeclaration>();
-    selector: string;
     constructor(selector: string) {
-        super();
-        this.selector = selector;
-    }
-
-    get css(): string {
-        return `${this.selector} { ${_Array_from(this.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
+        super(selector);
     }
 
     clone(selector: string) {
@@ -19,5 +13,9 @@ export class $CSSStyleRule extends $CSSRule {
         rule.declarations = this.declarations;
         rule.rules = this.rules;
         return rule
+    }
+
+    get options(): {[key: string]: any} {
+        return {..._Object_fromEntries(_Array_from(this.declarations).map(([_, dec]) => [dec.key, dec])), ...super.options}
     }
 }

@@ -1,3 +1,5 @@
+// document
+export const _document = document;
 // Object
 export const _Object_fromEntries = Object.fromEntries;
 export const _Object_entries = Object.entries;

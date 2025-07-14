@@ -1,6 +1,6 @@
 import './env';
 import 'amateras';
-import { _Array_from, _instanceof, _Object_assign, _Object_defineProperty, forEach } from "amateras/lib/native";
+import { _Array_from, _document, _instanceof, _Object_assign, _Object_defineProperty, forEach } from "amateras/lib/native";
 import { $Element, $Node, $Text } from "amateras/node";
 import { BROWSER, NODE } from 'esm-env';
 
@@ -24,7 +24,7 @@ export function onclient<T>(cb: () => T): T | undefined {
 _Object_assign($, {
     mount(id: string, $node: $Element) {
         if (!BROWSER) return;
-        const node = document.querySelector(`#${id}`);
+        const node = _document.querySelector(`#${id}`);
         if (!node) throw 'Target node of mounting not found';
         getData(node, $node);
         node.replaceWith($node.node);

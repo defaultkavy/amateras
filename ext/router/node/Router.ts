@@ -1,11 +1,11 @@
-import { _Array_from, _instanceof, _Object_fromEntries, forEach } from "#lib/native";
+import { _Array_from, _document, _instanceof, _Object_fromEntries, forEach } from "#lib/native";
 import { Page } from "./Page";
 import { BaseRouteNode, Route } from "./Route";
 
 const _location = location;
 const {origin} = _location;
 const _history = history;
-const documentElement = document.documentElement;
+const documentElement = _document.documentElement;
 const toURL = (path: string | URL) => 
     _instanceof(path, URL) ? path : new URL(path.startsWith(origin) ? path : origin + path);
 const [PUSH, REPLACE] = [1, 2] as const;

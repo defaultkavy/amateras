@@ -5,15 +5,20 @@ import { BaseRouteNode, Route } from "./Route";
 const _location = location;
 const {origin} = _location;
 const _history = history;
+const documentElement = document.documentElement;
 const toURL = (path: string | URL) => 
     _instanceof(path, URL) ? path : new URL(path.startsWith(origin) ? path : origin + path);
 const [PUSH, REPLACE] = [1, 2] as const;
-const historyHandler = (path: string | URL | Nullish, mode: 1 | 2) => {
+const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2) => {
     if (!path) return;
     const url = toURL(path);
     if (url.origin !== origin || url.href === _location.href) return this;
+    _history.replaceState({
+        x: documentElement.scrollLeft,
+        y: documentElement.scrollTop
+    }, '', _location.href);
     history[mode === PUSH ? 'pushState' : 'replaceState']({}, '' , url)
-    forEach(Router.routers, router => router.routes.size && router.resolve(path));
+    for (let router of Router.routers) router.routes.size && await router.resolve(path)
 }
 export class Router extends BaseRouteNode<''> {
     static pageRouters = new Map<Page, Router>();
@@ -92,11 +97,13 @@ export class Router extends BaseRouteNode<''> {
             prevPage = page;
             if (route) prevRoute = route;
         }
+        let { x, y }= _history.state ?? {x: 0, y: 0};
+        scrollTo(x, y);
         return this;
     }
 
     listen() {
-        const resolve = () => this.resolve(_location.href)
+        const resolve = () => this.resolve(_location.href);
         addEventListener('popstate', resolve);
         resolve();
         return this;

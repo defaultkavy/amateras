@@ -115,7 +115,7 @@ function cssText(rule: $CSSRule, context: string = '', mediaContext: string[] = 
         return [text, ...media]
     }
     if (_instanceof(rule, $CSSKeyframesRule)) {
-        return [`@keyframes ${rule.name} { ${_Array_from(rule.rules).map(childRule => cssText(childRule, context))} }`]
+        return [`@keyframes ${rule.name} { ${_Array_from(rule.rules).map(childRule => cssText(childRule, context)).join('\n')} }`]
     }
     throw '$CSS RULE TYPE ERROR'
 }

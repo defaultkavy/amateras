@@ -1,3 +1,4 @@
+import type { AnchorTarget } from "#html/$Anchor";
 import { _Object_assign, forEach } from "#lib/native";
 import type { $NodeContentResolver } from "#node/$Node";
 import type { Page } from "./node/Page";
@@ -14,7 +15,7 @@ declare module 'amateras/core' {
     export function $(nodeName: 'router', page?: Page<any>): Router;
     export function $(nodeName: 'ra'): RouterAnchor;
     export namespace $ {
-        export function open(url: string | URL | Nullish): typeof Router;
+        export function open(url: string | URL | Nullish, target: AnchorTarget): typeof Router;
         export function replace(url: string | URL | Nullish): typeof Router;
         export function back(): typeof Router;
         export function forward(): typeof Router;

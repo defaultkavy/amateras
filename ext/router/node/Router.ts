@@ -1,3 +1,4 @@
+import type { AnchorTarget } from "#html/$Anchor";
 import { _Array_from, _document, _instanceof, _Object_fromEntries, forEach } from "#lib/native";
 import { Page } from "./Page";
 import { BaseRouteNode, Route } from "./Route";
@@ -12,11 +13,12 @@ const [FORWARD, BACK] = ['forward', 'back'] as const;
 // disable browser scroll restoration
 _history.scrollRestoration = 'manual';
 const toURL = (path: string | URL) => 
-    _instanceof(path, URL) ? path : new URL(path.startsWith(origin) ? path : origin + path);
-const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2) => {
+    _instanceof(path, URL) ? path : path.startsWith('http') ? new URL(path) : new URL(path.startsWith(origin) ? path : origin + path);
+const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2, target?: AnchorTarget) => {
     if (!path) return;
     const url = toURL(path);
-    if (url.origin !== origin || url.href === _location.href) return this;
+    if (target && target !== '_self') return open(url, target), this;
+    if (url.origin !== origin || url.href === _location.href) return open(url, target), this;
     _history.replaceState({
         index: index,
         x: documentElement.scrollLeft,
@@ -38,8 +40,8 @@ export class Router extends BaseRouteNode<''> {
         if (page) Router.pageRouters.set(page, this);
     }
 
-    static open(path: string | URL | Nullish) {
-        historyHandler(path, PUSH);
+    static open(path: string | URL | Nullish, target?: AnchorTarget) {
+        historyHandler(path, PUSH, target);
         return this;
     }
 

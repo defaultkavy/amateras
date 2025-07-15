@@ -30,8 +30,8 @@ export interface $Anchor extends $HTMLElement<HTMLAnchorElement> {
     relList(relList: $Parameter<string>): this;
     relList(): DOMTokenList;
     /** {@link HTMLAnchorElement.target} */
-    target(target: $Parameter<string>): this;
-    target(): string;
+    target(target: $Parameter<AnchorTarget>): this;
+    target(): AnchorTarget;
     /** {@link HTMLAnchorElement.text} */
     text(text: $Parameter<string>): this;
     text(): string;
@@ -39,6 +39,8 @@ export interface $Anchor extends $HTMLElement<HTMLAnchorElement> {
     type(type: $Parameter<string>): this;
     type(): string;
 }
+
+export type AnchorTarget = '_self' | '_blank' | '_parent' | '_top' | '_unfenced_top' | '';
 
 declare module '#core' {
     export function $(nodeName: 'a'): $Anchor

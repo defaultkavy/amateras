@@ -8,16 +8,20 @@ import type { $HTMLElement } from '#node/$HTMLElement';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 
+export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>, N extends number>(number: N, fn: F, ...args: Parameters<F>): Repeat<ReturnType<F>, N>;
 export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
+export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>, N extends number>(number: N, construct: T, ...args: P): Repeat<InstanceType<T>, N>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>>(construct: T, ...args: P): InstanceType<T>;
 export function $<N extends $Node>($node: N, ...args: any[]): N;
 export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLElement<H>;
 export function $<E extends Element>(element: E, ...args: any[]): $Element<E>;
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
+export function $<K extends keyof HTMLElementTagNameMap, N extends number>(number: N, tagname: K): Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
 export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
 export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['target']['$'];
+export function $<N extends number>(number: N, tagname: string): Repeat<$HTMLElement<HTMLElement>, N>;
 export function $(tagname: string): $HTMLElement<HTMLElement>
-export function $(resolver: string | Element | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {
+export function $(resolver: string | number | Element | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {
     if (_instanceof(resolver, $Node)) return resolver;
     if (isString(resolver) && nodeNameMap[resolver]) return new nodeNameMap[resolver](...args);
     if (isFunction(resolver)) 
@@ -28,7 +32,8 @@ export function $(resolver: string | Element | $Node | Function | TemplateString
         return resolver.map(str => [str ?? undefined, iterate.next().value]).flat().filter(item => item);
     }
     if (_instanceof(resolver, Node) && _instanceof(resolver.$, $Node)) return resolver.$;
-    if (_instanceof(resolver, Event)) return $(resolver.currentTarget as Element)
+    if (_instanceof(resolver, Event)) return $(resolver.currentTarget as Element);
+    if (isNumber(resolver)) return _Array_from({length: resolver}).map(_ => $(args[0], ...args.slice(1)));
     return new $Element(resolver);
 }
 

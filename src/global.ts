@@ -12,6 +12,10 @@ declare global {
     type OrNullish<T> = T | Nullish;
     type Constructor<T> = { new (...args: any[]): T }
     type $Parameter<T> = T | undefined | Signal<T> | Signal<T | undefined>
+    type Repeat<T, N extends number, Acc extends T[] = []> = 
+        Acc['length'] extends N 
+            ? Acc 
+            : Repeat<T, N, [...Acc, T]>;
     type Prettify<T> = {
         [K in keyof T]: T[K];
     } & {};

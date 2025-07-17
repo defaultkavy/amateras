@@ -3,7 +3,7 @@ import { Signal } from "#structure/Signal";
 import { $Element, type $Event } from "#node/$Element";
 import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
 import '#node/node';
-import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach } from '#lib/native';
+import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, _document } from '#lib/native';
 import type { $HTMLElement } from '#node/$HTMLElement';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
@@ -39,7 +39,7 @@ export function $(resolver: string | number | Element | $Node | Function | Templ
 
 export namespace $ {
     export const stylesheet = new CSSStyleSheet();
-    document?.adoptedStyleSheets.push(stylesheet);
+    _document.adoptedStyleSheets.push(stylesheet);
     type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
     export type SignalFunction<T> = {signal: Signal<T>, set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>} & (() => T) & SignalProcess<T>;
     export function signal<T>(value: T): SignalFunction<T>

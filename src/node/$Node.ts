@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, _JSON_stringify, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
+import { _Array_from, _document, _instanceof, _JSON_stringify, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
 import { Signal } from "#structure/Signal";
 
 export class $Node {
@@ -71,7 +71,7 @@ function processContent<T extends $Node>($node: T, content: $NodeContentResolver
                 return resolver;
             } else {
                 // handler signal other type result
-                const $text = document ? new $Text() : $('signal').attr({ type: typeof signal.value() });
+                const $text = _document ? new $Text() : $('signal').attr({ type: typeof signal.value() });
                 const set = (value: any) => $text.textContent(isObject(value) ? _JSON_stringify(value) : value);
                 if (_instanceof($text, $Text)) $text.signals.add(signal);
                 signal.subscribe(set);

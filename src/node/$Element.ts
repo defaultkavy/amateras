@@ -75,7 +75,7 @@ export type $EventListenerObject<E extends $Element, Ev> = { handleEvent(object:
 
 function createNode(nodeName: string) {
     //@ts-expect-error
-    return !document ? new Node(nodeName) as unknown as Node & ChildNode : _document.createElement(nodeName);
+    return !_document ? new Node(nodeName) as unknown as Node & ChildNode : _document.createElement(nodeName);
 }
 
 export interface $Element<Ele extends Element, EvMap> {

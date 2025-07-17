@@ -99,7 +99,7 @@ export class $Text extends $Node {
 
 export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$NodeContentResolver<T>>;
 export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunction<any> | null | undefined;
-export type $NodeContentResolver<T extends $Node> = OrMatrix<OrPromise<$NodeContentTypes | $NodeContentHandler<T>>>;
+export type $NodeContentResolver<T extends $Node> = OrPromise<$NodeContentTypes | $NodeContentHandler<T> | $NodeContentResolver<T>[]>;
 
 export interface $Node {
     /** {@link Node.baseURI} */

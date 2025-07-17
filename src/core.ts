@@ -1,15 +1,14 @@
 import './global';
 import { Signal } from "#structure/Signal";
 import { $Element, type $Event } from "#node/$Element";
-import { $Node, type $NodeContentTypes } from '#node/$Node';
+import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
 import '#node/node';
 import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach } from '#lib/native';
 import type { $HTMLElement } from '#node/$HTMLElement';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 
-export function $<F extends (...args: any[]) => OrPromise<$NodeContentTypes>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
-export function $<C extends $NodeContentTypes | undefined | void, F extends () => C, P extends Parameters<F>>(fn: F, ...args: any[]): C;
+export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>>(construct: T, ...args: P): InstanceType<T>;
 export function $<N extends $Node>($node: N, ...args: any[]): N;
 export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLElement<H>;

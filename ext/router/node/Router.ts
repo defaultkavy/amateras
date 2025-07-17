@@ -69,7 +69,7 @@ export class Router extends BaseRouteNode<''> {
     }
 
     async resolve(path: string | URL) {
-        const {pathname, searchParams, hash} = toURL(path);
+        const {pathname, searchParams, hash, href} = toURL(path);
         const routeData = { params: {} as {[key: string]: string}, query: _Object_fromEntries(searchParams) }
         const split = (p: string) => p.replaceAll(/\/+/g, '/').split('/').map(path => `/${path}`);
 
@@ -106,12 +106,15 @@ export class Router extends BaseRouteNode<''> {
         // build pages
         let prevPage: null | Page = null, prevRoute: BaseRouteNode<any> = this;
         for (const [route, pathId] of targetRoutes) {
-            const page = await (this.pageMap.get(pathId) ?? (route ? route.build(routeData) : prevRoute.routes.get('404')?.build(routeData) ?? new Route('404', () => null).build()));
-            const _document = document;
+            const page = this.pageMap.get(pathId) ?? new Page(route ?? prevRoute.routes.get('404') ?? new Route('404', () => null), routeData);
+            await route?.build(routeData, page);
             _document && (_document.title = page.pageTitle() ?? _document.title);
             this.pageMap.set(pathId, page);
-            if (prevPage) Router.pageRouters.get(prevPage)?.content(page);
-            else this.content(page);
+
+            if (href === _location.href) {
+                if (prevPage) Router.pageRouters.get(prevPage)?.content(page);
+                else this.content(page);
+            }
             prevPage = page;
             if (route) prevRoute = route;
         }

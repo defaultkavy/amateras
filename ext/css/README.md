@@ -107,3 +107,22 @@ $(document.body).content([
 ])
 
 ```
+
+### CSS Colors Preset
+You can import colors preset from `amateras/color/COLOR_NAME` or `amateras/colors` path. These colors are reference from Tailwind colors, read the [documentation](https://tailwindcss.com/docs/colors) to know about the concepts.
+```ts
+// import black and white color preset
+import 'amateras/color/blackwhite';
+$.color.black; // '#000000'
+$.color.white; // '#ffffff'
+
+// import slate colors preset
+import 'amateras/color/slate';
+$.color.slate[100]; // '#f1f5f9'
+$.color.slate[200]; // '#e2e8f0'
+
+// import all colors preset
+import 'amateras/colors';
+$.color.red[600]; // '#dc2626'
+$.color.zinc[500]; // '#71717a'
+```

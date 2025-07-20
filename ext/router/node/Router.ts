@@ -111,7 +111,7 @@ export class Router extends BaseRouteNode<''> {
         let prevPage: null | Page = null, prevRoute: BaseRouteNode<any> = this;
         for (const [route, pathId] of targetRoutes) {
             const page = this.pageMap.get(pathId) ?? new Page(route ?? prevRoute.routes.get('404') ?? new Route('404', () => null), routeData);
-            await route?.build(routeData, page);
+            if (!page.initial) await route?.build(routeData, page);
             _document && (_document.title = page.pageTitle() ?? _document.title);
             this.pageMap.set(pathId, page);
 

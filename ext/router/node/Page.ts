@@ -9,6 +9,7 @@ export class Page<R extends Route<any> = any, Data extends RouteData = any> exte
     params: Data['params'];
     query: Data['query'];
     #pageTitle: null | string = null;
+    initial = false;
     constructor(route: R, data?: {params: any, query: any}) {
         super('page');
         this.route = route;

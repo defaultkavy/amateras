@@ -37,6 +37,7 @@ export class Route<Path extends string = string> extends BaseRouteNode<Path> {
     async build(data: {params: any, query: any} = {params: {}, query: {}}, page?: Page) {
         page = page ?? new Page(this, data);
         page.params = data.params;
+        page.initial = true;
         let resolver: any = this.builder(page);
         if (_instanceof(resolver, Promise)) {
             const result = await resolver as any;

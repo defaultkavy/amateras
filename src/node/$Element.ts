@@ -200,7 +200,6 @@ export interface $Element<Ele extends Element, EvMap> {
     setPointerCapture(pointerId: number): this;
     /** {@link Element.toggleAttribute} */
     toggleAttribute(qualifiedName: string, force?: boolean): boolean;
-
     /** {@link Element.classList} */
     classList(): DOMTokenList;
     classList(value: $Parameter<string>): this;
@@ -228,6 +227,140 @@ export interface $Element<Ele extends Element, EvMap> {
     /** {@link Element.slot} */
     slot(): string;
     slot(slot: $Parameter<string>): this;
+
+    // ARIAMixin
+    /** {@link ARIAMixin.ariaAtomic} */
+    ariaAtomic(): string | null;
+    ariaAtomic(ariaAtomic: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaAutoComplete} */
+    ariaAutoComplete(): string | null;
+    ariaAutoComplete(ariaAutoComplete: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaBrailleLabel} */
+    ariaBrailleLabel(): string | null;
+    ariaBrailleLabel(ariaBrailleLabel: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaBrailleRoleDescription} */
+    ariaBrailleRoleDescription(): string | null;
+    ariaBrailleRoleDescription(ariaBrailleRoleDescription: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaBusy} */
+    ariaBusy(): string | null;
+    ariaBusy(ariaBusy: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaChecked} */
+    ariaChecked(): string | null;
+    ariaChecked(ariaChecked: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaColCount} */
+    ariaColCount(): string | null;
+    ariaColCount(ariaColCount: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaColIndex} */
+    ariaColIndex(): string | null;
+    ariaColIndex(ariaColIndex: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaColIndexText} */
+    ariaColIndexText(): string | null;
+    ariaColIndexText(ariaColIndexText: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaColSpan} */
+    ariaColSpan(): string | null;
+    ariaColSpan(ariaColSpan: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaCurrent} */
+    ariaCurrent(): string | null;
+    ariaCurrent(ariaCurrent: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaDescription} */
+    ariaDescription(): string | null;
+    ariaDescription(ariaDescription: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaDisabled} */
+    ariaDisabled(): string | null;
+    ariaDisabled(ariaDisabled: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaExpanded} */
+    ariaExpanded(): string | null;
+    ariaExpanded(ariaExpanded: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaHasPopup} */
+    ariaHasPopup(): string | null;
+    ariaHasPopup(ariaHasPopup: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaHidden} */
+    ariaHidden(): string | null;
+    ariaHidden(ariaHidden: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaInvalid} */
+    ariaInvalid(): string | null;
+    ariaInvalid(ariaInvalid: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaKeyShortcuts} */
+    ariaKeyShortcuts(): string | null;
+    ariaKeyShortcuts(ariaKeyShortcuts: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaLabel} */
+    ariaLabel(): string | null;
+    ariaLabel(ariaLabel: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaLevel} */
+    ariaLevel(): string | null;
+    ariaLevel(ariaLevel: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaLive} */
+    ariaLive(): string | null;
+    ariaLive(ariaLive: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaModal} */
+    ariaModal(): string | null;
+    ariaModal(ariaModal: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaMultiLine} */
+    ariaMultiLine(): string | null;
+    ariaMultiLine(ariaMultiLine: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaMultiSelectable} */
+    ariaMultiSelectable(): string | null;
+    ariaMultiSelectable(ariaMultiSelectable: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaOrientation} */
+    ariaOrientation(): string | null;
+    ariaOrientation(ariaOrientation: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaPlaceholder} */
+    ariaPlaceholder(): string | null;
+    ariaPlaceholder(ariaPlaceholder: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaPosInSet} */
+    ariaPosInSet(): string | null;
+    ariaPosInSet(ariaPosInSet: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaPressed} */
+    ariaPressed(): string | null;
+    ariaPressed(ariaPressed: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaReadOnly} */
+    ariaReadOnly(): string | null;
+    ariaReadOnly(ariaReadOnly: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaRelevant} */
+    ariaRelevant(): string | null;
+    ariaRelevant(ariaRelevant: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaRequired} */
+    ariaRequired(): string | null;
+    ariaRequired(ariaRequired: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaRoleDescription} */
+    ariaRoleDescription(): string | null;
+    ariaRoleDescription(ariaRoleDescription: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaRowCount} */
+    ariaRowCount(): string | null;
+    ariaRowCount(ariaRowCount: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaRowIndex} */
+    ariaRowIndex(): string | null;
+    ariaRowIndex(ariaRowIndex: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaRowIndexText} */
+    ariaRowIndexText(): string | null;
+    ariaRowIndexText(ariaRowIndexText: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaRowSpan} */
+    ariaRowSpan(): string | null;
+    ariaRowSpan(ariaRowSpan: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaSelected} */
+    ariaSelected(): string | null;
+    ariaSelected(ariaSelected: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaSetSize} */
+    ariaSetSize(): string | null;
+    ariaSetSize(ariaSetSize: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaSort} */
+    ariaSort(): string | null;
+    ariaSort(ariaSort: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaValueMax} */
+    ariaValueMax(): string | null;
+    ariaValueMax(ariaValueMax: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaValueMin} */
+    ariaValueMin(): string | null;
+    ariaValueMin(ariaValueMin: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaValueNow} */
+    ariaValueNow(): string | null;
+    ariaValueNow(ariaValueNow: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.ariaValueText} */
+    ariaValueText(): string | null;
+    ariaValueText(ariaValueText: $Parameter<string | null>): this;
+    /** {@link ARIAMixin.role} */
+    role(): string | null;
+    role(role: $Parameter<string | null>): this;
     
 
     on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this;

@@ -5,19 +5,27 @@ import { BaseRouteNode, Route } from "./Route";
 
 // history index
 let index = 0;
+const _addEventListener = addEventListener;
 const _location = location;
 const {origin} = _location;
 const _history = history;
 const documentElement = _document.documentElement;
 const [PUSH, REPLACE] = [1, 2] as const;
 const [FORWARD, BACK] = ['forward', 'back'] as const;
-
 // disable browser scroll restoration
 _history.scrollRestoration = 'manual';
 
 /** convert path string to URL object */
 const toURL = (path: string | URL) => 
     _instanceof(path, URL) ? path : path.startsWith('http') ? new URL(path) : new URL(path.startsWith(origin) ? path : origin + path);
+
+const scrollHistoryRecord = () => {
+    _history.replaceState({
+        index: index,
+        x: documentElement.scrollLeft,
+        y: documentElement.scrollTop
+    }, '', _location.href);
+}
 
 /** handle history state with push and replace state. */
 const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2, target?: AnchorTarget) => {
@@ -26,15 +34,11 @@ const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2, target?
     if (url.href === _location.href) return;
     if (target && target !== '_self') return open(url, target);
     if (url.origin !== origin) return open(url, target);
-    _history.replaceState({
-        index: index,
-        x: documentElement.scrollLeft,
-        y: documentElement.scrollTop
-    }, '', _location.href);
+    scrollHistoryRecord();
     if (mode === PUSH) index += 1;
     Router.direction = FORWARD;
-    history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '' , url)
-    for (let router of Router.routers) router.routes.size && await router.resolve(path)
+    _history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '' , url);
+    for (let router of Router.routers) router.routes.size && await router.resolve(path);
 }
 
 export class Router extends BaseRouteNode<''> {
@@ -124,14 +128,16 @@ export class Router extends BaseRouteNode<''> {
     }
 
     listen() {
-        const resolve = () => {
+        const resolve = (e?: PopStateEvent) => {
             const stateIndex = _history.state?.index ?? 0;
             if (index > stateIndex) Router.direction = BACK;
             if (index < stateIndex) Router.direction = FORWARD;
             index = stateIndex;
             this.resolve(_location.href);
         }
-        addEventListener('popstate', resolve);
+        _addEventListener('popstate', resolve);
+        _addEventListener('beforeunload', scrollHistoryRecord);
+        _addEventListener('scroll', scrollHistoryRecord, false);
         resolve();
         return this;
     }

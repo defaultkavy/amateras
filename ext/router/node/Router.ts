@@ -128,16 +128,21 @@ export class Router extends BaseRouteNode<''> {
     }
 
     listen() {
-        const resolve = (e?: PopStateEvent) => {
+        const resolve = () => {
             const stateIndex = _history.state?.index ?? 0;
             if (index > stateIndex) Router.direction = BACK;
             if (index < stateIndex) Router.direction = FORWARD;
             index = stateIndex;
             this.resolve(_location.href);
         }
+        let preventThrottling: ReturnType<typeof setTimeout>;
+        const scrollHandle = () => {
+            if (preventThrottling) clearTimeout(preventThrottling);
+            preventThrottling = setTimeout(scrollHistoryRecord, 50);
+        }
         _addEventListener('popstate', resolve);
         _addEventListener('beforeunload', scrollHistoryRecord);
-        _addEventListener('scroll', scrollHistoryRecord, false);
+        _addEventListener('scroll', scrollHandle, false);
         resolve();
         return this;
     }

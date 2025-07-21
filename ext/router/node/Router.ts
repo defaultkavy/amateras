@@ -137,7 +137,7 @@ export class Router extends BaseRouteNode<''> {
         }
         let preventThrottling: ReturnType<typeof setTimeout>;
         const scrollHandle = () => {
-            if (preventThrottling) clearTimeout(preventThrottling);
+            clearTimeout(preventThrottling);
             preventThrottling = setTimeout(scrollHistoryRecord, 50);
         }
         _addEventListener('popstate', resolve);

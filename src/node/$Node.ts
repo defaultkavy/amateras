@@ -167,6 +167,8 @@ export interface $Node {
     remove(): this;
     /** {@link Node.replaceChild} */
     replaceWith(...nodes: (Node | string)[]): this;
+    /** {@link EventTarget.dispatchEvent} */
+    dispatchEvent(event: Event): boolean;
 
     /** {@link Node.nodeValue} */
     nodeValue(nodeValue: $Parameter<string | null>): this;

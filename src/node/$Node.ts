@@ -34,8 +34,9 @@ export class $Node {
         return this;
     }
 
-    await<T>(promise: Promise<T>, callback: ($node: this, result: T) => void): this {
-        return promise.then(result => callback(this, result)), this;
+    await<T>(promise: OrPromise<T>, callback: ($node: this, result: T) => void): this {
+        if (_instanceof(promise, Promise)) return promise.then(result => callback(this, result)), this;
+        else return callback(this, promise), this;
     }
 
     replace($node: $NodeContentResolver<$Node>) {

@@ -55,12 +55,7 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
     }
     
     once<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions) {
-        const handler = (event: $Event<any>) => {
-            this.off(type, handler, options);
-            isFunction(listener) ? listener(event) : listener.handleEvent(event);
-        }
-        this.on(type, handler, options);
-        return this;
+        return this.on(type, listener, {once: true})
     }
 
     toString() {

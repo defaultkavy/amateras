@@ -17,17 +17,20 @@ export class $Node {
     insert(resolver: $NodeContentResolver<this>, position = -1) {
         // insert node helper function for depend position
         const appendChild = (children: OrArray<$Node | undefined | null>) => {
-            // get child node at position
-            const positionChild = _Array_from(this.childNodes).filter(node => node.nodeType !== node.TEXT_NODE).at(position);
+            // insert each child, child may be an array
             forEach($.toArray(children), child => {
+                // get child node at position
+                let positionChild = _Array_from(this.childNodes).at(position);
                 if (!child) return;
                 if (_instanceof(child, Array)) this.insert(child);
                 else if (!positionChild) this.appendChild(child.node);
                 else this.insertBefore(child.node, position < 0 ? positionChild.nextSibling : positionChild);
+                // if position is positive, add position count for next child
+                position >= 0 && position++
             })
         }
         // process nodes
-        for (const child of $.toArray(resolver)) !isUndefined(child) && appendChild(processContent(this, child))
+        forEach($.toArray(resolver), child => !isUndefined(child) && appendChild(processContent(this, child)));
         return this;
     }
 

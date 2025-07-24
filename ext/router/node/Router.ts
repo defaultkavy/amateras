@@ -124,6 +124,7 @@ export class Router extends BaseRouteNode<''> {
         }
         let { x, y } = _history.state ?? {x: 0, y: 0};
         scrollTo(x, y);
+        _document.dispatchEvent(new Event('routeopen', {bubbles: true}));
         return this;
     }
 

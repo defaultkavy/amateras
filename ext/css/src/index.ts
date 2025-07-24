@@ -10,7 +10,7 @@ import { $CSSVariable } from "#structure/$CSSVariable";
 
 declare module 'amateras/core' {
     export namespace $ {
-        export function css(options: $CSSOptions): $CSSStyleRule
+        export function css(options: $CSSOptions | $CSSStyleRule): $CSSStyleRule
         export function CSS(options: $CSSMediaSelectorType<false> | $CSSSelectorType | $CSSKeyframesSelectorType): void
 
         export namespace css {
@@ -23,7 +23,7 @@ declare module 'amateras/core' {
 
 declare module 'amateras/node/$Element' {
     export interface $Element {
-        css(...options: $CSSOptions[]): this;
+        css(...options: ($CSSOptions | $CSSStyleRule)[]): this;
     }
 }
 
@@ -36,7 +36,7 @@ function generateId(lettercase: 'any' | 'lower' | 'upper' = 'any'): string {
 }
 
 const stylesheet = $.stylesheet;
-const cssTextMap = new Map<string, $CSSOptions>
+const cssTextMap = new Map<string, $CSSStyleRule>();
 
 function processCSSOptions<T extends $CSSStyleRule>(
     rule: T, 
@@ -44,7 +44,6 @@ function processCSSOptions<T extends $CSSStyleRule>(
 ): T {
     for (const [key, value] of _Object_entries(options)) {
         if (isUndefined(value)) continue;
-        else if (_instanceof(value, $CSSStyleRule)) rule.rules.add( value.clone(key) );
         else if (_instanceof(value, $CSSDeclaration)) rule.declarations.set(value.key, value);
         else if (isObject(value) && !_instanceof(value, $CSSKeyframesRule, $CSSVariable)) 
             rule.rules.add( createRule(key, value, rule.selector) );
@@ -127,7 +126,7 @@ function cssText(rule: $CSSRule, context: string = '', mediaContext: string[] = 
 }
 
 _Object_assign($, {
-    css(options: $CSSOptions) {
+    css(options: $CSSOptions | $CSSStyleRule) {
         if (_instanceof(options, $CSSRule)) return options;
         const cssText = _JSON_stringify(options);
         const cacheRule = cssTextMap.get(cssText);
@@ -177,7 +176,7 @@ _Object_assign($.css, {
 })
 
 _Object_assign($Element.prototype, {
-    css(this: $Element, ...options: $CSSOptions[]) {
+    css(this: $Element, ...options: ($CSSOptions | $CSSStyleRule)[]) {
         forEach(options, options => {
             const rule = $.css(options);
             this.addClass(rule.selector.replace(/^./, ''));
@@ -193,7 +192,7 @@ export * from "#structure/$CSSRule";
 export * from "#structure/$CSSStyleRule";
 export * from "#structure/$CSSVariable";
 
-export type $CSSOptions = $CSSDeclarationType | $CSSSelectorType | $CSSStyleRule | $CSSMediaSelectorType<true>;
+export type $CSSOptions = $CSSDeclarationType | $CSSSelectorType | $CSSMediaSelectorType<true>;
 export type $CSSValueType = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $CSSVariable
 export type $CSSDeclarationType = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] } | { [key: string]: $CSSValueType }
 export type $CSSSelectorType = { [key: string & {}]: $CSSOptions }

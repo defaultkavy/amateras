@@ -8,13 +8,6 @@ export class $CSSStyleRule extends $CSSRule {
         super(selector);
     }
 
-    clone(selector: string) {
-        const rule = new $CSSStyleRule(selector)
-        rule.declarations = this.declarations;
-        rule.rules = this.rules;
-        return rule
-    }
-
     get options(): {[key: string]: any} {
         return {..._Object_fromEntries(_Array_from(this.declarations).map(([_, dec]) => [dec.key, dec])), ...super.options}
     }

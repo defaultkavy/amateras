@@ -109,16 +109,14 @@ export class Router extends BaseRouteNode<''> {
         const targetRoutes = determineRoute(this, pathname + '/', hash);
         // build pages
         let prevPage: null | Page = null, prevRoute: BaseRouteNode<any> = this;
+        const appendPage = (prevRouter: Router | undefined, page: Page) => page.parentNode !== prevRouter?.node && prevRouter?.content(page);
+
         for (const [route, pathId] of targetRoutes) {
             const page = this.pageMap.get(pathId) ?? new Page(route ?? prevRoute.routes.get('404') ?? new Route('404', () => null), routeData);
             if (!page.initial) await route?.build(routeData, page);
             _document && (_document.title = page.pageTitle() ?? _document.title);
             this.pageMap.set(pathId, page);
-
-            if (href === _location.href) {
-                if (prevPage) Router.pageRouters.get(prevPage)?.content(page);
-                else this.content(page);
-            }
+            if (href === _location.href) appendPage(prevPage ? Router.pageRouters.get(prevPage) : this, page);
             prevPage = page;
             if (route) prevRoute = route;
         }

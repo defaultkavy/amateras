@@ -8,6 +8,6 @@ export abstract class $CSSRule {
     }
 
     get options(): {[key: string]: any} {
-        return _Object_fromEntries(_Array_from(this.rules).map(rule => [rule.selector, rule]))
+        return _Object_fromEntries(_Array_from(this.rules).map(rule => [rule.selector, rule.options]))
     }
 }

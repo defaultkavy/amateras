@@ -1,7 +1,7 @@
-export class $CSSVariable {
+export class $CSSVariable<V = string> {
     key: string;
-    value: string;
-    constructor(key: string, value: string) {
+    value: V;
+    constructor(key: string, value: V) {
         this.key = key;
         this.value = value;
     }

@@ -14,8 +14,8 @@ declare module 'amateras/core' {
         export function CSS(options: $CSSMediaSelectorType<false> | $CSSSelectorType | $CSSKeyframesSelectorType): void
 
         export namespace css {
-            export function variables(value: string): $CSSVariable;
-            export function variables<T extends $CSSVariableType>(options: T, conditions?: $CSSVariableConditionType<T>): { [key in keyof T]: $CSSVariable }
+            export function variables<V extends string>(value: V): $CSSVariable<V>;
+            export function variables<T extends $CSSVariableType>(options: T, conditions?: $CSSVariableConditionType<T>): { [key in keyof T]: $CSSVariable<T[key]> }
             export function keyframes<T extends { [key: string]: $CSSKeyframesType }>(options: T): { [key in keyof T]: $CSSKeyframesRule };
         }
     }

@@ -1,5 +1,5 @@
 import type { AnchorTarget } from "#html/$Anchor";
-import { _Array_from, _document, _instanceof, _Object_fromEntries, forEach } from "#lib/native";
+import { _Array_from, _document, _instanceof, _JSON_parse, _JSON_stringify, _Object_entries, _Object_fromEntries, forEach, startsWith } from "#lib/native";
 import { Page } from "./Page";
 import { BaseRouteNode, Route } from "./Route";
 
@@ -9,24 +9,23 @@ const _addEventListener = addEventListener;
 const _location = location;
 const {origin} = _location;
 const _history = history;
+const _sessionStorage = sessionStorage;
 const documentElement = _document.documentElement;
 const [PUSH, REPLACE] = [1, 2] as const;
 const [FORWARD, BACK] = ['forward', 'back'] as const;
-// disable browser scroll restoration
-_history.scrollRestoration = 'manual';
-
+const scrollStorageKey = '__scroll__';
 /** convert path string to URL object */
 const toURL = (path: string | URL) => 
-    _instanceof(path, URL) ? path : path.startsWith('http') ? new URL(path) : new URL(path.startsWith(origin) ? path : origin + path);
+    _instanceof(path, URL) ? path : startsWith(path, 'http') ? new URL(path) : new URL(startsWith(path, origin) ? path : origin + path);
 
-const scrollHistoryRecord = () => {
-    _history.replaceState({
-        index: index,
-        x: documentElement.scrollLeft,
-        y: documentElement.scrollTop
-    }, '', _location.href);
+type ScrollData = {[key: number]: {x: number, y: number}};
+const scrollRecord = (e?: Event) => {
+    const data = _JSON_parse(_sessionStorage.getItem(scrollStorageKey) ?? '{}') as ScrollData;
+    data[index] = { x: documentElement.scrollLeft, y: documentElement.scrollTop };
+    // e is Event when called from scroll or beforeload
+    if (!e) forEach(_Object_entries(data), ([i]) => +i > index && delete data[+i])
+    _sessionStorage.setItem(scrollStorageKey, _JSON_stringify(data));
 }
-
 /** handle history state with push and replace state. */
 const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2, target?: AnchorTarget) => {
     if (!path) return;
@@ -34,12 +33,14 @@ const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2, target?
     if (url.href === _location.href) return;
     if (target && target !== '_self') return open(url, target);
     if (url.origin !== origin) return open(url, target);
-    scrollHistoryRecord();
+    scrollRecord();
     if (mode === PUSH) index += 1;
     Router.direction = FORWARD;
     _history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '' , url);
     for (let router of Router.routers) router.routes.size && await router.resolve(path);
 }
+// disable browser scroll restoration
+_history.scrollRestoration = 'manual';
 
 export class Router extends BaseRouteNode<''> {
     static pageRouters = new Map<Page, Router>();
@@ -92,7 +93,7 @@ export class Router extends BaseRouteNode<''> {
                     if (routeSnippet.includes(':')) {
                         if (targetSnippet === '/') continue routeLoop;
                         const [prefix, paramName] = routeSnippet.split(':') as [string, string];
-                        if (!targetSnippet.startsWith(prefix)) continue routeLoop;
+                        if (!startsWith(targetSnippet, prefix)) continue routeLoop;
                         routeData.params[paramName] = targetSnippet.replace(`${prefix}`, '');
                         pass();
                         continue splitLoop;
@@ -120,7 +121,7 @@ export class Router extends BaseRouteNode<''> {
             prevPage = page;
             if (route) prevRoute = route;
         }
-        let { x, y } = _history.state ?? {x: 0, y: 0};
+        let { x, y } = Router.scroll ?? {x: 0, y: 0};
         scrollTo(x, y);
         _document.dispatchEvent(new Event('routeopen', {bubbles: true}));
         return this;
@@ -134,15 +135,14 @@ export class Router extends BaseRouteNode<''> {
             index = stateIndex;
             this.resolve(_location.href);
         }
-        let preventThrottling: ReturnType<typeof setTimeout>;
-        const scrollHandle = () => {
-            clearTimeout(preventThrottling);
-            preventThrottling = setTimeout(scrollHistoryRecord, 50);
-        }
         _addEventListener('popstate', resolve);
-        _addEventListener('beforeunload', scrollHistoryRecord);
-        _addEventListener('scroll', scrollHandle, false);
+        _addEventListener('beforeunload', scrollRecord);
+        _addEventListener('scroll', scrollRecord, false);
         resolve();
         return this;
+    }
+
+    static get scroll(): ScrollData[number] {
+        return _JSON_parse(_sessionStorage.getItem(scrollStorageKey) ?? '{}')[index]
     }
 }

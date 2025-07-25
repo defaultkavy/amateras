@@ -43,3 +43,8 @@ export function _instanceof<T extends (abstract new (...args: any[]) => any)[]>(
 }
 // JSON
 export const _JSON_stringify = JSON.stringify;
+export const _JSON_parse = JSON.parse;
+// String
+export function startsWith(target: string, ...str: string[]) {
+    return !!str.find(s => target.startsWith(s))
+}

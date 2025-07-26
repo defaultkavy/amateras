@@ -1,8 +1,17 @@
+import { _Object_entries, forEach } from "#lib/native";
 import { $Element } from "#node/$Element";
 
 export class $HTMLElement<Ele extends HTMLElement = HTMLElement, EvMap = HTMLElementEventMap> extends $Element<Ele, EvMap> {
     constructor(resolver: string | Ele) {
         super(resolver);
+    }
+    
+    style(style: Partial<Omit<CSSStyleDeclaration, 'parentRule' | 'length' | 'getPropertyPriority' | 'getPropertyValue' | 'item' | 'removeProperty' | 'setProperty'>> | undefined) {
+        let _style = this.node.style
+        if (!arguments.length) return _style
+        if (!style) return this;
+        forEach(_Object_entries(style), ([key, value]) => _style[key as any] = value ?? '')
+        return this;
     }
 }
 
@@ -19,6 +28,8 @@ export interface $HTMLElement<Ele extends HTMLElement = HTMLElement, EvMap = HTM
     readonly offsetTop: number;
     /** {@link HTMLElement.offsetWidth} */
     readonly offsetWidth: number;
+    /** {@link HTMLElement.isContentEditable} */
+    readonly isContentEditable: boolean;
 
     /** {@link HTMLElement.attachInternals} */
     attachInternals(): ElementInternals;
@@ -73,4 +84,13 @@ export interface $HTMLElement<Ele extends HTMLElement = HTMLElement, EvMap = HTM
     /** {@link HTMLElement.writingSuggestions} */
     writingSuggestions(): string;
     writingSuggestions(writingSuggestions: $Parameter<string>): this;
+    /** {@link HTMLElement.contentEditable} */
+    contentEditable(): string;
+    contentEditable(contentEditable: $Parameter<string>): this;
+    /** {@link HTMLElement.enterKeyHint} */
+    enterKeyHint(): string;
+    enterKeyHint(enterKeyHint: $Parameter<string>): this;
+    /** {@link HTMLElement.inputMode} */
+    inputMode(): string;
+    inputMode(inputMode: $Parameter<string>): this;
 }

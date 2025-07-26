@@ -102,8 +102,12 @@ function insertRule(rule: $CSSRule) {
 function cssText(rule: $CSSRule, context: string = '', options?: {mediaContext?: string[], containerContext?: string[]}): string[] {
     if (_instanceof(rule, $CSSStyleRule)) {
         const split = (str: string) => str.split(',');
+        const relation = (str: string, ctx: string): string => {
+            if (str.includes('&')) return str.replaceAll('&', ctx);
+            else return `${ctx ? ctx + ' ': ''}${str}`
+        }
         const selectors = split(rule.selector);
-        const selector = split(context).map(ctx => selectors.map(selector => `${ctx ? ctx + ' ' : ''}${selector}`)).join(', ').replaceAll(' &', '');
+        const selector = split(context).map(ctx => selectors.map(selector => relation(selector, ctx))).join(', ');
         const text = `${selector} { ${_Array_from(rule.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
         return [text, ..._Array_from(rule.rules).map(childRule => cssText(childRule, selector, options)).flat()]
     }

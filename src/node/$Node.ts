@@ -47,6 +47,10 @@ export class $Node {
         return this;
     }
 
+    inDOM() {
+        return _document.contains(this.node);
+    }
+
     toString() {
         return this.textContent();
     }

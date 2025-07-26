@@ -4,7 +4,7 @@ import { $Element, type $Event } from "#node/$Element";
 import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
 import '#node/node';
 import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, _document } from '#lib/native';
-import type { $HTMLElement } from '#node/$HTMLElement';
+import { $HTMLElement } from '#node/$HTMLElement';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 
@@ -21,7 +21,7 @@ export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLEleme
 export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['target']['$'];
 export function $<N extends number>(number: N, tagname: string): Repeat<$HTMLElement<HTMLElement>, N>;
 export function $(tagname: string): $HTMLElement<HTMLElement>
-export function $(resolver: string | number | Element | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {
+export function $(resolver: string | number | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {
     if (_instanceof(resolver, $Node)) return resolver;
     if (isString(resolver) && nodeNameMap[resolver]) return new nodeNameMap[resolver](...args);
     if (isFunction(resolver)) 
@@ -34,7 +34,8 @@ export function $(resolver: string | number | Element | $Node | Function | Templ
     if (_instanceof(resolver, Node) && _instanceof(resolver.$, $Node)) return resolver.$;
     if (_instanceof(resolver, Event)) return $(resolver.currentTarget as Element);
     if (isNumber(resolver)) return _Array_from({length: resolver}).map(_ => $(args[0], ...args.slice(1)));
-    return new $Element(resolver);
+    if (_instanceof(resolver, Element)) return new $Element(resolver);
+    return new $HTMLElement(resolver);
 }
 
 export namespace $ {

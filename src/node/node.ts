@@ -7,6 +7,7 @@ export * from './$Node';
 export * from './$Element';
 export * from './$HTMLElement';
 
+assignHelper(EventTarget, $Node);
 assignHelper(Node, $Node);
 assignHelper(Text, $Text);
 assignHelper(Element, $Element);

@@ -123,7 +123,7 @@ export class Router extends BaseRouteNode<''> {
         }
         let { x, y } = Router.scroll ?? {x: 0, y: 0};
         scrollTo(x, y);
-        _document.dispatchEvent(new Event('routeopen', {bubbles: true}));
+        this.dispatchEvent(new Event('routeopen', {bubbles: true}));
         return this;
     }
 

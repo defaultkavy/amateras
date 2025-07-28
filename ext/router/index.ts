@@ -21,6 +21,13 @@ declare module 'amateras/core' {
         export function forward(): typeof Router;
     }
 }
+
+declare global {
+    interface GlobalEventHandlersEventMap {
+        'routeopen': Event;
+    }
+}
+
 // assign methods
 _Object_assign($, {
     open: Router.open.bind(Router),

@@ -45,12 +45,12 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
     }
 
     on<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions) {
-        this.node.addEventListener(type as string, listener as any, options);
+        this.addEventListener(type as string, listener as any, options);
         return this;
     }
 
     off<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | EventListenerOptions) {
-        this.node.removeEventListener(type as string, listener as any, options);
+        this.removeEventListener(type as string, listener as any, options);
         return this;
     }
     
@@ -63,7 +63,6 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
     }
 }
 
-export type EventMap = {[key: string]: Event}
 export type $Event<E extends $Element, Ev = any> = Ev & {target: {$: E}};
 export type $EventListener<E extends $Element, Ev> = (event: $Event<E, Ev>) => void;
 export type $EventListenerObject<E extends $Element, Ev> = { handleEvent(object: $Event<E, Ev>): void; }
@@ -356,6 +355,10 @@ export interface $Element<Ele extends Element, EvMap> {
     /** {@link ARIAMixin.role} */
     role(): string | null;
     role(role: $Parameter<string | null>): this;
+    addEventListener<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions): void;
+    addEventListener(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): void;
+    removeEventListener<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | EventListenerOptions): void;
+    removeEventListener(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | EventListenerOptions): void;
     
 
     on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this;

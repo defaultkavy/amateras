@@ -171,6 +171,10 @@ export interface $Node {
     remove(): this;
     /** {@link Node.replaceChild} */
     replaceWith(...nodes: (Node | string)[]): this;
+    /** {@link EventTarget.addEventListener} */
+    addEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions | boolean): void;
+    /** {@link EventTarget.removeEventListener} */
+    removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
     /** {@link EventTarget.dispatchEvent} */
     dispatchEvent(event: Event): boolean;
 

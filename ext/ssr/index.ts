@@ -1,8 +1,9 @@
 import './env';
 import 'amateras';
 import { _Array_from, _document, _instanceof, _Object_assign, _Object_defineProperty, forEach } from "amateras/lib/native";
-import { $Element, $Node, $Text } from "amateras/node";
+import { $Element } from 'amateras/node/$Element';
 import { BROWSER, NODE } from 'esm-env';
+import { $Node, $Text } from 'amateras/node/$Node';
 
 declare module 'amateras/core' {
     export namespace $ {

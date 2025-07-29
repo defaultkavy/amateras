@@ -1,5 +1,5 @@
 import { _instanceof, _Object_fromEntries, _Array_from } from "#lib/native";
-import { $Element } from "#node/node";
+import { $Element } from "#node/$Element";
 import type { AsyncRoute, RouteBuilder, RouteDataResolver } from "..";
 import { Page } from "./Page";
 

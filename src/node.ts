@@ -1,11 +1,7 @@
 import { $HTMLElement } from '#node/$HTMLElement';
 import { assignHelper } from '#lib/assignHelper';
 import { $Element } from '#node/$Element';
-import { $Node, $Text } from './$Node';
-
-export * from './$Node';
-export * from './$Element';
-export * from './$HTMLElement';
+import { $Node, $Text } from '#node/$Node';
 
 assignHelper(EventTarget, $Node);
 assignHelper(Node, $Node);

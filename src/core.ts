@@ -1,4 +1,5 @@
 import './global';
+import './node';
 import { Signal } from "#structure/Signal";
 import { $Element, type $Event } from "#node/$Element";
 import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';

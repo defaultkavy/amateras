@@ -6,7 +6,9 @@ export class $HTMLElement<Ele extends HTMLElement = HTMLElement, EvMap = HTMLEle
         super(resolver);
     }
     
-    style(style: Partial<Omit<CSSStyleDeclaration, 'parentRule' | 'length' | 'getPropertyPriority' | 'getPropertyValue' | 'item' | 'removeProperty' | 'setProperty'>> | undefined) {
+    style(): CSSStyleDeclaration;
+    style(style: Partial<CSSStyleDeclarationOptions> | undefined): this
+    style(style?: Partial<CSSStyleDeclarationOptions> | undefined) {
         let _style = this.node.style
         if (!arguments.length) return _style
         if (!style) return this;
@@ -14,6 +16,8 @@ export class $HTMLElement<Ele extends HTMLElement = HTMLElement, EvMap = HTMLEle
         return this;
     }
 }
+
+type CSSStyleDeclarationOptions = Omit<CSSStyleDeclaration, 'parentRule' | 'length' | 'getPropertyPriority' | 'getPropertyValue' | 'item' | 'removeProperty' | 'setProperty'>;
 
 export interface $HTMLElement<Ele extends HTMLElement = HTMLElement, EvMap = HTMLElementEventMap> extends $Element<Ele, EvMap> {
     /** {@link HTMLElement.accessKeyLabel} */

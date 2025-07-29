@@ -39,8 +39,8 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
         return this;
     }
 
-    use(callback: ($ele: this) => void) {
-        callback(this);
+    use<F extends ($ele: this, ...args: any) => void>(callback: F, ...args: F extends ($ele: this, ...args: infer P) => void ? P : never) {
+        callback(this, ...args);
         return this;
     }
 

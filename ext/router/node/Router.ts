@@ -143,6 +143,6 @@ export class Router extends BaseRouteNode<''> {
     }
 
     static get scroll(): ScrollData[number] {
-        return _JSON_parse(_sessionStorage.getItem(scrollStorageKey) ?? '{x: 0, y: 0}')[index]
+        return _JSON_parse(_sessionStorage.getItem(scrollStorageKey) ?? '{}')[index] ?? {x: 0, y: 0}
     }
 }

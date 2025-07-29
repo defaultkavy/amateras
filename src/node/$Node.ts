@@ -15,22 +15,8 @@ export class $Node {
     }
 
     insert(resolver: $NodeContentResolver<this>, position = -1) {
-        // insert node helper function for depend position
-        const appendChild = (children: OrArray<$Node | undefined | null>) => {
-            // insert each child, child may be an array
-            forEach($.toArray(children), child => {
-                // get child node at position
-                let positionChild = _Array_from(this.childNodes).at(position);
-                if (!child) return;
-                if (_instanceof(child, Array)) this.insert(child);
-                else if (!positionChild) this.appendChild(child.node);
-                else this.insertBefore(child.node, position < 0 ? positionChild.nextSibling : positionChild);
-                // if position is positive, add position count for next child
-                position >= 0 && position++
-            })
-        }
         // process nodes
-        forEach($.toArray(resolver), child => !isUndefined(child) && appendChild(processContent(this, child)));
+        forEach($.toArray(resolver), resolve_child => forEach($Node.process(this, resolve_child), $node => $Node.append(this, $node, position)));
         return this;
     }
 
@@ -42,7 +28,7 @@ export class $Node {
     replace($node: $NodeContentResolver<$Node>) {
         if (!$node) return this;
         this.replaceWith(
-            ...$.toArray(processContent(this, $node)).filter($node => $node).map($node => $node?.node) as Node[]
+            ...$.toArray($Node.process(this, $node)).filter($node => $node).map($node => $node?.node) as Node[]
         )
         return this;
     }
@@ -54,48 +40,55 @@ export class $Node {
     toString() {
         return this.textContent();
     }
-}
 
-function processContent<T extends $Node>($node: T, content: $NodeContentResolver<any>): OrArray<$Node | undefined | null> {
-    if (isUndefined(content)) return;
-    if (isNull(content)) return content;
-    // is $Element
-    if (_instanceof(content, $Node)) return content;
-    // is Promise
-    if (_instanceof(content, Promise)) return $('async').await(content, ($async, $child) => $async.replace($child as any));
-    // is SignalFunction or ContentHandler
-    if (isFunction(content)) {
-        const signal = (content as any).signal;
-        if (_instanceof(signal, Signal)) {
-            const resolver = (content as $.SignalFunction<any>)();
-            if (_instanceof(resolver, $Node)) {
-                // handler signal $Node result
-                let node = resolver;
-                const set = (value: any) => {
-                    node.replace(value);
-                    node = value;
+    static process<T extends $Node>($node: T, content: $NodeContentResolver<any>): Array<$Node | undefined | null> {
+        if (isUndefined(content) || isNull(content) || _instanceof(content, $Node)) return [content];
+        // is Promise
+        if (_instanceof(content, Promise)) return [$('async').await(content, ($async, $child) => $async.replace($child as any))];
+        // is SignalFunction or ContentHandler
+        if (isFunction(content)) {
+            const signal = (content as any).signal;
+            if (_instanceof(signal, Signal)) {
+                const resolver = (content as $.SignalFunction<any>)();
+                if (_instanceof(resolver, $Node)) {
+                    // handler signal $Node result
+                    let node = resolver;
+                    const set = (value: any) => {
+                        node.replace(value);
+                        node = value;
+                    }
+                    signal.subscribe(set);
+                    return [resolver];
+                } else {
+                    // handler signal other type result
+                    const $text = _document ? new $Text() : $('signal').attr({ type: typeof signal.value() });
+                    const set = (value: any) => $text.textContent(isObject(value) ? _JSON_stringify(value) : value);
+                    if (_instanceof($text, $Text)) $text.signals.add(signal);
+                    signal.subscribe(set);
+                    set(resolver);
+                    return [$text];
                 }
-                signal.subscribe(set);
-                return resolver;
             } else {
-                // handler signal other type result
-                const $text = _document ? new $Text() : $('signal').attr({ type: typeof signal.value() });
-                const set = (value: any) => $text.textContent(isObject(value) ? _JSON_stringify(value) : value);
-                if (_instanceof($text, $Text)) $text.signals.add(signal);
-                signal.subscribe(set);
-                set(resolver);
-                return $text;
+                const _content = content($node) as $NodeContentResolver<$Node>;
+                if (_instanceof(_content, Promise)) return this.process($node, _content as any);
+                else return $.toArray(_content).map(content => this.process($node, content)).flat();
             }
-        } else {
-            const _content = content($node) as $NodeContentResolver<$Node>;
-            if (_instanceof(_content, Promise)) return processContent($node, _content as any);
-            else return $.toArray(_content).map(content => processContent($node, content) as $Node);
         }
+        // is nested array
+        if (_instanceof(content, Array)) return content.map(c => this.process($node, c)).flat();
+        // is string | number | boolean
+        return [new $Text(`${content}`)];
     }
-    // is nested array
-    if (_instanceof(content, Array)) return content.map(c => processContent($node, c) as $Node)
-    // is string | number | boolean
-    return new $Text(`${content}`);
+
+    /**  */
+    static append($node: $Node, child: $Node | undefined | null, position: number) {
+        // insert each child, child may be an array
+        if (!child) return;
+        // get child node at position
+        let positionChild = _Array_from($node.childNodes).at(position);
+        if (!positionChild) $node.appendChild(child.node);
+        else $node.insertBefore(child.node, position < 0 ? positionChild.nextSibling : positionChild);
+    }
 }
 
 export class $Text extends $Node {

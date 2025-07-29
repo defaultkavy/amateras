@@ -3,8 +3,7 @@ import './node';
 import { Signal } from "#structure/Signal";
 import { $Element, type $Event } from "#node/$Element";
 import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
-import '#node/node';
-import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, _document } from '#lib/native';
+import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, _document, isUndefined } from '#lib/native';
 import { $HTMLElement } from '#node/$HTMLElement';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
@@ -14,15 +13,21 @@ export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>>(fn:
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>, N extends number>(number: N, construct: T, ...args: P): Repeat<InstanceType<T>, N>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>>(construct: T, ...args: P): InstanceType<T>;
 export function $<N extends $Node>($node: N, ...args: any[]): N;
+export function $<N extends $Node>($node: N | null | undefined, ...args: any[]): N | null | undefined;
 export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLElement<H>;
+export function $<H extends HTMLElement>(element: H | null | undefined, ...args: any[]): $HTMLElement<H> | null | undefined;
 export function $<E extends Element>(element: E, ...args: any[]): $Element<E>;
+export function $<E extends Element>(element: E | null | undefined, ...args: any[]): $Element<E> | null | undefined;
+export function $<N extends Node>(node: N, ...args: any[]): $Node;
+export function $<N extends Node>(node: N | null | undefined, ...args: any[]): $Node | null | undefined;
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
 export function $<K extends keyof HTMLElementTagNameMap, N extends number>(number: N, tagname: K): Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
 export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
 export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['target']['$'];
 export function $<N extends number>(number: N, tagname: string): Repeat<$HTMLElement<HTMLElement>, N>;
 export function $(tagname: string): $HTMLElement<HTMLElement>
-export function $(resolver: string | number | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {
+export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {
+    if (isNull(resolver) || isUndefined(resolver)) return null;
     if (_instanceof(resolver, $Node)) return resolver;
     if (isString(resolver) && nodeNameMap[resolver]) return new nodeNameMap[resolver](...args);
     if (isFunction(resolver)) 
@@ -35,6 +40,7 @@ export function $(resolver: string | number | Element | HTMLElement | $Node | Fu
     if (_instanceof(resolver, Node) && _instanceof(resolver.$, $Node)) return resolver.$;
     if (_instanceof(resolver, Event)) return $(resolver.currentTarget as Element);
     if (isNumber(resolver)) return _Array_from({length: resolver}).map(_ => $(args[0], ...args.slice(1)));
+    if (_instanceof(resolver, HTMLElement)) return new $HTMLElement(resolver);
     if (_instanceof(resolver, Element)) return new $Element(resolver);
     return new $HTMLElement(resolver);
 }

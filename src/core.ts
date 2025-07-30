@@ -18,12 +18,12 @@ export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLEleme
 export function $<H extends HTMLElement>(element: H | null | undefined, ...args: any[]): $HTMLElement<H> | null | undefined;
 export function $<E extends Element>(element: E, ...args: any[]): $Element<E>;
 export function $<E extends Element>(element: E | null | undefined, ...args: any[]): $Element<E> | null | undefined;
-export function $<N extends Node>(node: N, ...args: any[]): $Node;
-export function $<N extends Node>(node: N | null | undefined, ...args: any[]): $Node | null | undefined;
+export function $<N extends Node | EventTarget>(node: N, ...args: any[]): $Node;
+export function $<N extends Node | EventTarget>(node: N | null | undefined, ...args: any[]): $Node | null | undefined;
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
 export function $<K extends keyof HTMLElementTagNameMap, N extends number>(number: N, tagname: K): Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
 export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
-export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['target']['$'];
+export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['currentTarget']['$'];
 export function $<N extends number>(number: N, tagname: string): Repeat<$HTMLElement<HTMLElement>, N>;
 export function $(tagname: string): $HTMLElement<HTMLElement>
 export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {

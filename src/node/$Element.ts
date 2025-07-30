@@ -63,7 +63,7 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
     }
 }
 
-export type $Event<E extends $Element, Ev = any> = Ev & {target: {$: E}};
+export type $Event<E extends $Element, Ev = any> = Ev & {currentTarget: {$: E}};
 export type $EventListener<E extends $Element, Ev> = (event: $Event<E, Ev>) => void;
 export type $EventListenerObject<E extends $Element, Ev> = { handleEvent(object: $Event<E, Ev>): void; }
 

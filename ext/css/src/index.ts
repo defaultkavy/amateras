@@ -29,7 +29,7 @@ declare module 'amateras/node/$Element' {
 }
 
 const generatedIds = new Set<string>();
-function generateId(lettercase: 'any' | 'lower' | 'upper' = 'any'): string { 
+const generateId = (lettercase: 'any' | 'lower' | 'upper' = 'any'): string => { 
     const id = randomId({lettercase: lettercase});
     if (generatedIds.has(id)) return generateId(lettercase);
     generatedIds.add(id);
@@ -40,10 +40,10 @@ const stylesheet = $.stylesheet;
 const cssTextMap = new Map<string, $CSSStyleRule>();
 const [MEDIA, KEYFRAMES, CONTAINER] = ['@media', '@keyframes', '@container'] as const;
 
-function processCSSOptions<T extends $CSSStyleRule>(
+const processCSSOptions = <T extends $CSSStyleRule>(
     rule: T, 
     options: $CSSOptions, 
-): T {
+): T => {
     for (const [key, value] of _Object_entries(options)) {
         if (isUndefined(value)) continue;
         else if (_instanceof(value, $CSSDeclaration)) rule.declarations.set(value.key, value);
@@ -60,19 +60,15 @@ function processCSSOptions<T extends $CSSStyleRule>(
 /** Create rule with several type depend on selector content.
  * @param context - for media rule creation, it should be style rule selector same as nested parent of media rule.
  */
-function createRule(selector: string, options: $CSSOptions, context?: string) {
+const createRule = (selector: string, options: $CSSOptions, context?: string) => {
     if (startsWith(selector, CONTAINER, MEDIA)) return createMediaOrContainerRule(selector, options, context);
     if (startsWith(selector, KEYFRAMES)) return createKeyframesRule(selector.replace('@keyframes ', ''), options as $CSSKeyframesType)
     return createStyleRule(selector, options);
 }
 
-function createStyleRule<T extends $CSSRule>(selector: string, options: T): T;
-function createStyleRule<T extends $CSSOptions>(selector: string, options: T): $CSSStyleRule;
-function createStyleRule<T extends $CSSOptions>(selector: string, options: T) {
-    return processCSSOptions(new $CSSStyleRule(selector), options);
-}
+const createStyleRule = <T extends $CSSOptions>(selector: string, options: T) => processCSSOptions(new $CSSStyleRule(selector), options);
 
-function createMediaOrContainerRule(selector: string, options: $CSSOptions, context?: string) {
+const createMediaOrContainerRule = (selector: string, options: $CSSOptions, context?: string) => {
     const rule = startsWith(selector, MEDIA) ? new $CSSMediaRule(selector) : new $CSSContainerRule(selector);
     // create media rule from $.CSS
     if (!context) forEach(_Object_entries(options), ([key, value]) => rule.rules.add( createRule(key, value) ))
@@ -81,7 +77,7 @@ function createMediaOrContainerRule(selector: string, options: $CSSOptions, cont
     return rule;
 }
 
-function createKeyframesRule(name: string, options: $CSSKeyframesType) {
+const createKeyframesRule = (name: string, options: $CSSKeyframesType) => {
     const rule = new $CSSKeyframesRule(name);
     forEach(_Object_entries(options), ([key, value]) => {
         rule.rules.add( processCSSOptions(new $CSSStyleRule(key), value) );
@@ -89,7 +85,7 @@ function createKeyframesRule(name: string, options: $CSSKeyframesType) {
     return rule;
 }
 
-function insertRule(rule: $CSSRule) {
+const insertRule = (rule: $CSSRule) => {
     cssText(rule).forEach(text => {
         const selector = text.match(/^(.+?) {/)?.[1];
         if (!selector) return;
@@ -99,7 +95,7 @@ function insertRule(rule: $CSSRule) {
     return rule
 }
 
-function cssText(rule: $CSSRule, context: string = '', options?: {mediaContext?: string[], containerContext?: string[]}): string[] {
+const cssText = (rule: $CSSRule, context: string = '', options?: {mediaContext?: string[], containerContext?: string[]}): string[] => {
     if (_instanceof(rule, $CSSStyleRule)) {
         const split = (str: string) => str.split(',');
         const relation = (str: string, ctx: string): string => {

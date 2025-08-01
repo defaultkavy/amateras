@@ -1,0 +1,10 @@
+{
+    "name": "@amateras/i18n",
+    "peerDependencies": {
+        "amateras": "amateras@latest"
+    },
+    "imports": {
+      "#structure/*": "./src/structure/*.ts",
+      "#node/*": "./src/node/*.ts"
+    }
+}

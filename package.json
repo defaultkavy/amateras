@@ -34,7 +34,8 @@
     "./css/colors": "./ext/css/src/lib/colors.ts",
     "./css/color/*": "./ext/css/src/lib/colors/*.ts",
     "./router": "./ext/router/index.ts",
-    "./ssr": "./ext/ssr/index.ts"
+    "./ssr": "./ext/ssr/index.ts",
+    "./i18n": "./ext/i18n/src/index.ts"
   },
   "workspaces": [
     "./ext/*"

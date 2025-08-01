@@ -14,6 +14,7 @@ export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>, N e
 export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>, N extends number>(number: N, construct: T, ...args: P): Repeat<InstanceType<T>, N>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>>(construct: T, ...args: P): InstanceType<T>;
+export function $(nodes: NodeListOf<Node | ChildNode>): $Node[];
 export function $<N extends $Node>($node: N, ...args: any[]): N;
 export function $<N extends $Node>($node: N | null | undefined, ...args: any[]): N | null | undefined;
 export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLElement<H>;
@@ -28,7 +29,7 @@ export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLEleme
 export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['currentTarget']['$'];
 export function $<N extends number>(number: N, tagname: string): Repeat<$HTMLElement<HTMLElement>, N>;
 export function $(tagname: string): $HTMLElement<HTMLElement>
-export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event, ...args: any[]) {
+export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event | NodeListOf<Node | ChildNode>, ...args: any[]) {
     if (isNull(resolver) || isUndefined(resolver)) return null;
     if (_instanceof(resolver, $Node)) return resolver;
     if (isString(resolver) && nodeNameMap[resolver]) return new nodeNameMap[resolver](...args);
@@ -44,6 +45,7 @@ export function $(resolver: string | number | null | undefined | Element | HTMLE
     if (isNumber(resolver)) return _Array_from({length: resolver}).map(_ => $(args[0], ...args.slice(1)));
     if (_instanceof(resolver, HTMLElement)) return new $HTMLElement(resolver);
     if (_instanceof(resolver, Element)) return new $Element(resolver);
+    if (_instanceof(resolver, NodeList)) return _Array_from(resolver).map($)
     return new $HTMLElement(resolver);
 }
 

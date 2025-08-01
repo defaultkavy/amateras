@@ -39,11 +39,6 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
         return this;
     }
 
-    use<F extends ($ele: this, ...args: any) => void>(callback: F, ...args: F extends ($ele: this, ...args: infer P) => void ? P : never) {
-        callback(this, ...args);
-        return this;
-    }
-
     on<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions) {
         this.addEventListener(type as string, listener as any, options);
         return this;

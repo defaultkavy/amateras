@@ -41,6 +41,19 @@ export class $Node {
         return this.textContent();
     }
 
+    mounted($parent: $Node) {
+        return this;
+    }
+    
+    use<F extends ($ele: this, ...args: any) => void>(callback: F, ...args: F extends ($ele: this, ...args: infer P) => void ? P : never) {
+        callback(this, ...args);
+        return this;
+    }
+
+    is<T extends (abstract new (...args: any[]) => $Node)>(instance: T): InstanceType<T> | null {
+        return _instanceof(this, instance) ? this : null;
+    }
+
     static process<T extends $Node>($node: T, content: $NodeContentResolver<any>): Array<$Node | undefined | null> {
         if (isUndefined(content) || isNull(content) || _instanceof(content, $Node)) return [content];
         // is Promise

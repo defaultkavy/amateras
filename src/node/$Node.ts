@@ -11,6 +11,7 @@ export class $Node {
     }
 
     content(children: $NodeContentResolver<this>) {
+        if (isUndefined(children)) return this;
         forEach(_Array_from(this.childNodes), node => node.remove());
         return this.insert(children);
     }

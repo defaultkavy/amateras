@@ -13,12 +13,12 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
 
     attr(): {[key: string]: string};
     attr(key: string): string | null;
-    attr(obj: {[key: string]: string | number | boolean | Signal<any>}): this;
-    attr(resolver?: {[key: string]: string | number | boolean | Signal<any>} | string) {
+    attr(obj: {[key: string]: string | number | boolean | Signal<any> | null}): this;
+    attr(resolver?: {[key: string]: string | number | boolean | Signal<any> | null} | string) {
         if (!arguments.length) return _Object_fromEntries(_Array_from(this.attributes).map(attr => [attr.name, attr.value]));
         if (isString(resolver)) return this.getAttribute(resolver);
         if (resolver) for (let [key, value] of _Object_entries(resolver)) {
-            const set = (value: any) => !isUndefined(value) && this.setAttribute(key, `${value}`)
+            const set = (value: any) => !isUndefined(value) && isNull(value) ? this.removeAttribute(key) : this.setAttribute(key, `${value}`)
             if (_instanceof(value, Signal)) value = value.subscribe(set).value();
             set(value);
         }

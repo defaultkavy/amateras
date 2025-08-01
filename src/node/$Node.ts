@@ -1,4 +1,5 @@
-import { _Array_from, _document, _instanceof, _JSON_stringify, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
+import { _document } from "#lib/env";
+import { _Array_from, _instanceof, _JSON_stringify, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
 import { Signal } from "#structure/Signal";
 
 export class $Node {

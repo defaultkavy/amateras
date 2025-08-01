@@ -1,5 +1,6 @@
 import type { AnchorTarget } from "#html/$Anchor";
-import { _Array_from, _document, _instanceof, _JSON_parse, _JSON_stringify, _Object_entries, _Object_fromEntries, forEach, startsWith } from "#lib/native";
+import { _document } from "#lib/env";
+import { _Array_from, _instanceof, _JSON_parse, _JSON_stringify, _Object_entries, _Object_fromEntries, forEach, startsWith } from "#lib/native";
 import { Page } from "./Page";
 import { BaseRouteNode, Route } from "./Route";
 

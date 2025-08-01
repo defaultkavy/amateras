@@ -1,6 +1,7 @@
 import { Signal } from "#structure/Signal";
 import { $Node } from "#node/$Node";
-import { _Array_from, _document, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isFunction, isString, isUndefined } from "#lib/native";
+import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isNull, isString, isUndefined } from "#lib/native";
+import { _document } from "#lib/env";
 
 export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> extends $Node {
     declare node: Ele
@@ -63,8 +64,10 @@ export type $EventListener<E extends $Element, Ev> = (event: $Event<E, Ev>) => v
 export type $EventListenerObject<E extends $Element, Ev> = { handleEvent(object: $Event<E, Ev>): void; }
 
 function createNode(nodeName: string) {
+    return !_document 
     //@ts-expect-error
-    return !_document ? new Node(nodeName) as unknown as Node & ChildNode : _document.createElement(nodeName);
+    ? new Node(nodeName) as unknown as Node & ChildNode 
+    : _document.createElement(nodeName);
 }
 
 export interface $Element<Ele extends Element, EvMap> {

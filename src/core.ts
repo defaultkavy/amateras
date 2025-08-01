@@ -3,8 +3,9 @@ import './node';
 import { Signal } from "#structure/Signal";
 import { $Element, type $Event } from "#node/$Element";
 import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
-import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, _document, isUndefined } from '#lib/native';
+import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined } from '#lib/native';
 import { $HTMLElement } from '#node/$HTMLElement';
+import { _document } from '#lib/env';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 

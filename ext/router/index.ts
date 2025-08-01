@@ -39,7 +39,7 @@ _Object_assign($, {
 forEach([
     `router{display:block}`,
     `page{display:block}`
-], rule => $.stylesheet.insertRule(rule));
+], $.style);
 // assign nodes
 $.assign([
     ['router', Router],

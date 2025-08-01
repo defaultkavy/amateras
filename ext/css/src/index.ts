@@ -90,7 +90,7 @@ const insertRule = (rule: $CSSRule) => {
         const selector = text.match(/^(.+?) {/)?.[1];
         if (!selector) return;
         if (!startsWith(selector, '@') && selector.split(',').find(str => !CSS.supports(`selector(${str})`))) return;
-        stylesheet.insertRule(text, stylesheet.cssRules.length);
+        $.style(text, stylesheet.cssRules.length);
     })
     return rule
 }
@@ -227,6 +227,7 @@ type $CSSDeclarationMap = {
     animationTimingFunction: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear' | 'step-start' | 'step-end';
     animationComposition: 'replace' | 'add' | 'accumulate';
     aspectRatio: string;
+    appearance: 'none' | 'auto' | 'menulist-button' | 'textfield' | 'base-select' | 'button' | 'checkbox';
     backdropFilter: string;
     backfaceVisibility: 'visible' | 'hidden';
     background: string;
@@ -462,7 +463,7 @@ type $CSSDeclarationMap = {
     textAlignLast: 'auto' | 'left' | 'right' | 'center' | 'justify' | 'start' | 'end';
     textAnchor: 'start' | 'middle' | 'end';
     textCombineUpright: 'none' | 'all';
-    textDecoration: string;
+    textDecoration: 'none' | 'underline' | 'overline' | 'line-through' | 'grammar-error' | 'spelling-error' | 'solid' | 'double' | 'dotted' | 'dashed' | 'wavy';
     textDecorationColor: string;
     textDecorationLine: 'none' | 'underline' | 'overline' | 'line-through' | 'grammar-error' | 'spelling-error';
     textDecorationStyle: 'solid' | 'double' | 'dotted' | 'dashed' | 'wavy';

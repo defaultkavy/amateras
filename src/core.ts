@@ -8,6 +8,7 @@ import { $HTMLElement } from '#node/$HTMLElement';
 import { _document } from '#lib/env';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
+const _stylesheet = new CSSStyleSheet();
 
 export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>, N extends number>(number: N, fn: F, ...args: Parameters<F>): Repeat<ReturnType<F>, N>;
 export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
@@ -47,8 +48,9 @@ export function $(resolver: string | number | null | undefined | Element | HTMLE
 }
 
 export namespace $ {
-    export const stylesheet = new CSSStyleSheet();
-    _document.adoptedStyleSheets.push(stylesheet);
+    export const stylesheet = _stylesheet;
+    _document.adoptedStyleSheets.push(_stylesheet);
+    export const style = _stylesheet.insertRule.bind(_stylesheet);
     type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
     export type SignalFunction<T> = {signal: Signal<T>, set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>} & (() => T) & SignalProcess<T>;
     export function signal<T>(value: T): SignalFunction<T>

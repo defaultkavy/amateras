@@ -99,6 +99,20 @@ export interface $Element<Ele extends Element, EvMap> {
     readonly shadowRoot: ShadowRoot | null;
     /** {@link Element.tagName} */
     readonly tagName: string;
+    /** {@link Element.nextElementSibling} */
+    readonly nextElementSibling: Element | null;
+    /** {@link Element.previousElementSibling} */
+    readonly previousElementSibling: Element | null;
+    /** {@link Element.childElementCount} */
+    readonly childElementCount: number;
+    /** {@link Element.children} */
+    readonly children: HTMLCollection;
+    /** {@link Element.firstElementChild} */
+    readonly firstElementChild: Element | null;
+    /** {@link Element.lastElementChild} */
+    readonly lastElementChild: Element | null;
+    /** {@link Element.assignedSlot} */
+    readonly assignedSlot: HTMLSlotElement | null;
 
     /** {@link Element.attachShadow} */
     attachShadow(init: ShadowRootInit): ShadowRoot;
@@ -192,6 +206,25 @@ export interface $Element<Ele extends Element, EvMap> {
     setPointerCapture(pointerId: number): this;
     /** {@link Element.toggleAttribute} */
     toggleAttribute(qualifiedName: string, force?: boolean): boolean;
+    /** {@link Element.animate} */
+    animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions): Animation;
+    /** {@link Element.getAnimations} */
+    getAnimations(options?: GetAnimationsOptions): Animation[];
+    /** {@link Element.append} */
+    append(...nodes: (Node | string)[]): this;
+    /** {@link Element.prepend} */
+    prepend(...nodes: (Node | string)[]): this;
+    /** {@link Element.querySelector} */
+    querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): HTMLElementTagNameMap[K] | null;
+    querySelector<K extends keyof SVGElementTagNameMap>(selectors: K): SVGElementTagNameMap[K] | null;
+    querySelector<K extends keyof MathMLElementTagNameMap>(selectors: K): MathMLElementTagNameMap[K] | null;
+    /** {@link Element.querySelectorAll} */
+    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): NodeListOf<HTMLElementTagNameMap[K]>;
+    querySelectorAll<K extends keyof SVGElementTagNameMap>(selectors: K): NodeListOf<SVGElementTagNameMap[K]>;
+    querySelectorAll<K extends keyof MathMLElementTagNameMap>(selectors: K): NodeListOf<MathMLElementTagNameMap[K]>;
+    /** {@link Element.replaceChildren} */
+    replaceChildren(...nodes: (Node | string)[]): this;
+
     /** {@link Element.classList} */
     classList(): DOMTokenList;
     classList(value: $Parameter<string>): this;

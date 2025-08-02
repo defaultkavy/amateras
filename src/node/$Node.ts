@@ -1,6 +1,6 @@
 import { chain } from "#lib/chain";
 import { _document } from "#lib/env";
-import { _Array_from, _instanceof, _JSON_stringify, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
+import { _Array_from, _instanceof, _JSON_stringify, _null, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
 import { Signal } from "#structure/Signal";
 
 export class $Node {
@@ -12,8 +12,8 @@ export class $Node {
     }
 
     content(children: $NodeContentResolver<this>) {
-        return chain(this, null, null, children, children => {
-            forEach(this.childNodes, node => node.remove());
+        return chain(this, _null, _null, children, children => {
+            forEach(_Array_from(this.childNodes), node => node.remove());
             this.insert(children);
         })
     }

@@ -3,7 +3,7 @@ import './node';
 import { Signal } from "#structure/Signal";
 import { $Element, type $Event } from "#node/$Element";
 import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
-import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined } from '#lib/native';
+import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind } from '#lib/native';
 import { $HTMLElement } from '#node/$HTMLElement';
 import { _document } from '#lib/env';
 
@@ -52,7 +52,7 @@ export function $(resolver: string | number | null | undefined | Element | HTMLE
 export namespace $ {
     export const stylesheet = _stylesheet;
     _document.adoptedStyleSheets.push(_stylesheet);
-    export const style = _stylesheet.insertRule.bind(_stylesheet);
+    export const style = _bind(_stylesheet.insertRule, _stylesheet);
     type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
     export type SignalFunction<T> = {signal: Signal<T>, set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>} & (() => T) & SignalProcess<T>;
     export function signal<T>(value: T): SignalFunction<T>

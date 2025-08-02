@@ -1,3 +1,4 @@
+import { chain } from "#lib/chain";
 import { isUndefined } from "#lib/native";
 import { $HTMLElement } from "#node/$HTMLElement";
 import type { RouteData } from "..";
@@ -21,8 +22,6 @@ export class Page<R extends Route<any> = any, Data extends RouteData = any> exte
     pageTitle(): string | null;
     pageTitle(title: string | null): this;
     pageTitle(title?: string | null) {
-        if (!arguments.length) return this.#pageTitle;
-        if (!isUndefined(title)) this.#pageTitle = title;
-        return this;
+        return chain(this, arguments, () => this.#pageTitle, title, title => this.#pageTitle = title)
     }
 }

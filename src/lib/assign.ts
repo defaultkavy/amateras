@@ -1,5 +1,5 @@
 import { Signal } from "../structure/Signal";
-import { _instanceof, _Object_defineProperty, isUndefined } from "./native";
+import { _instanceof, _Object_defineProperty, forEach, isUndefined } from "./native";
 
 export const assign = (target: any, {set, get, fn}: { 
     set?: string[], 
@@ -9,7 +9,7 @@ export const assign = (target: any, {set, get, fn}: {
     const [GET, SET, FN] = ['get', 'set', 'fn'] as const;
     const filterAndMap = (type: 'get' | 'set' | 'fn', arr: string[] | undefined) => arr?.map(prop => [type, prop]) ?? []
     const list = [...filterAndMap(GET, get), ...filterAndMap(SET, set), ...filterAndMap(FN, fn)] as [string, string][];
-    for (const [type, prop] of list) {
+    forEach(list, ([type, prop]) => 
         _Object_defineProperty(target.prototype, prop, {
             ...(type === GET ? {
                 get() { return this.node[prop as any] }
@@ -34,5 +34,5 @@ export const assign = (target: any, {set, get, fn}: {
             }),
 
         })
-    }
+    )
 }

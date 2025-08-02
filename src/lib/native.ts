@@ -1,3 +1,5 @@
+// Value
+export const _null = null;
 // Object
 export const _Object_fromEntries = Object.fromEntries;
 export const _Object_entries = Object.entries;
@@ -15,15 +17,16 @@ export const isString = (target: any): target is string => _typeof(target, 'stri
 export const isNumber = (target: any): target is number => _typeof(target, 'number')
 export const isObject = (target: any): target is object => _typeof(target, 'object')
 export const isFunction = (target: any): target is Function => _typeof(target, 'function')
-export const isUndefined = (target: any): target is undefined => _typeof(target, 'undefined')
-export const isNull = (target: any): target is null => target === null;
+export const isUndefined = (target: any): target is undefined => target === undefined;
+export const isNull = (target: any): target is null => target === _null;
 export const _instanceof = <T extends (abstract new (...args: any[]) => any)[]>(target: any, ...instance: T): target is InstanceType<T[number]> => !!instance.find(i => target instanceof i);
 // JSON
 export const _JSON_stringify = JSON.stringify;
 export const _JSON_parse = JSON.parse;
 // String
 export const startsWith = (target: string, ...str: string[]) => !!str.find(s => target.startsWith(s));
-
+// Function
+export const _bind = (target: Function, obj: Object) => target.bind(obj);
 interface forEach {
     <T>(arr: Array<T>, fn: (value: T, index: number, array: Array<T>) => any, thisArgs?: any): void;
     <T>(set: Set<T>, fn: (value: T, index: number, set: Set<T>) => any, thisArgs?: any): void;

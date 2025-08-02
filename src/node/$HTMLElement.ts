@@ -11,8 +11,7 @@ export class $HTMLElement<Ele extends HTMLElement = HTMLElement, EvMap = HTMLEle
     style(style?: Partial<CSSStyleDeclarationOptions> | undefined) {
         let _style = this.node.style
         if (!arguments.length) return _style
-        if (!style) return this;
-        forEach(_Object_entries(style), ([key, value]) => _style[key as any] = value ?? '')
+        if (style) forEach(_Object_entries(style), ([key, value]) => _style[key as any] = value ?? '');
         return this;
     }
 }

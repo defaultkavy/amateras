@@ -1,3 +1,4 @@
+import { chain } from "#lib/chain";
 import { _document } from "#lib/env";
 import { _Array_from, _instanceof, _JSON_stringify, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
 import { Signal } from "#structure/Signal";
@@ -11,9 +12,10 @@ export class $Node {
     }
 
     content(children: $NodeContentResolver<this>) {
-        if (isUndefined(children)) return this;
-        forEach(_Array_from(this.childNodes), node => node.remove());
-        return this.insert(children);
+        return chain(this, null, null, children, children => {
+            forEach(this.childNodes, node => node.remove());
+            this.insert(children);
+        })
     }
 
     insert(resolver: $NodeContentResolver<this>, position = -1) {
@@ -23,15 +25,16 @@ export class $Node {
     }
 
     await<T>(promise: OrPromise<T>, callback: ($node: this, result: T) => void): this {
-        if (_instanceof(promise, Promise)) return promise.then(result => callback(this, result)), this;
-        else return callback(this, promise), this;
+        if (_instanceof(promise, Promise)) promise.then(result => callback(this, result));
+        else callback(this, promise);
+        return this;
     }
 
     replace($node: $NodeContentResolver<$Node>) {
-        if (!$node) return this;
-        this.replaceWith(
-            ...$.toArray($Node.process(this, $node)).filter($node => $node).map($node => $node?.node) as Node[]
-        )
+        if ($node) 
+            this.replaceWith(
+                ...$.toArray($Node.process(this, $node)).filter($node => $node).map($node => $node?.node) as Node[]
+            )
         return this;
     }
 
@@ -43,9 +46,7 @@ export class $Node {
         return this.textContent();
     }
 
-    mounted($parent: $Node) {
-        return this;
-    }
+    mounted($parent: $Node) {}
     
     use<F extends ($ele: this, ...args: any) => void>(callback: F, ...args: F extends ($ele: this, ...args: infer P) => void ? P : never) {
         callback(this, ...args);
@@ -97,12 +98,13 @@ export class $Node {
 
     /**  */
     static append($node: $Node, child: $Node | undefined | null, position: number) {
-        // insert each child, child may be an array
-        if (!child) return;
-        // get child node at position
-        let positionChild = _Array_from($node.childNodes).at(position);
-        if (!positionChild) $node.appendChild(child.node);
-        else $node.insertBefore(child.node, position < 0 ? positionChild.nextSibling : positionChild);
+        if (child) {
+            // get child node at position
+            let positionChild = _Array_from($node.childNodes).at(position);
+            if (!positionChild) $node.appendChild(child.node);
+            else $node.insertBefore(child.node, position < 0 ? positionChild.nextSibling : positionChild);
+            child.mounted($node);
+        }
     }
 }
 

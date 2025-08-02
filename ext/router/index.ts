@@ -1,5 +1,5 @@
 import type { AnchorTarget } from "#html/$Anchor";
-import { _Object_assign, forEach } from "#lib/native";
+import { _bind, _Object_assign, forEach } from "#lib/native";
 import type { $NodeContentResolver } from "#node/$Node";
 import type { Page } from "./node/Page";
 import { Route } from "./node/Route";
@@ -30,10 +30,10 @@ declare global {
 
 // assign methods
 _Object_assign($, {
-    open: Router.open.bind(Router),
-    replace: Router.replace.bind(Router),
-    back: Router.back.bind(Router),
-    forward: Router.forward.bind(Router)
+    open: _bind(Router.open, Router),
+    replace: _bind(Router.replace, Router),
+    back: _bind(Router.back, Router),
+    forward: _bind(Router.forward, Router)
 });
 // define styles
 forEach([

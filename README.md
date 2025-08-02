@@ -102,7 +102,7 @@ $(document.body).content([
 The packages size result using Vite 7.0 with default bundle settings, polyfills code size included.
 | Package name | Size | Size(gzip) | Description |
 | --- | --- | --- | --- |
-| amateras | 5.71 kB | 2.48 kB | Core |
+| amateras | 5.64 kB | 2.48 kB | Core |
 | amateras/html | 0.97 kB | 0.25 kB | Import HTMLElement types and methods |
 | [amateras/css](./ext/css/README.md) | 3.65 kB | 1.41 kB | Style in JS |
 | [amateras/router](./ext/router/README.md) | 3.74 kB | 1.69 kB | Amateras Router |

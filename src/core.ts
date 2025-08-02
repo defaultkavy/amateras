@@ -3,7 +3,7 @@ import './node';
 import { Signal } from "#structure/Signal";
 import { $Element, type $Event } from "#node/$Element";
 import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
-import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind } from '#lib/native';
+import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind, _null } from '#lib/native';
 import { $HTMLElement } from '#node/$HTMLElement';
 import { _document } from '#lib/env';
 
@@ -55,8 +55,7 @@ export namespace $ {
     export const style = _bind(_stylesheet.insertRule, _stylesheet);
     type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
     export type SignalFunction<T> = {signal: Signal<T>, set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>} & (() => T) & SignalProcess<T>;
-    export function signal<T>(value: T): SignalFunction<T>
-    export function signal<T>(value: T) {
+    export const signal = <T>(value: T): SignalFunction<T> => {
         const signal = new Signal<T>(value);
         const signalFn = function () { return signal.value(); }
         _Object_assign(signalFn, {
@@ -74,14 +73,14 @@ export namespace $ {
     }
 
     export type ComputeFunction<T> = ({(): T}) & { signal: Signal<T> };
-    export function compute<T>(process: () => T) {
+    export const compute = <T>(process: () => T): ComputeFunction<T> => {
         let subscribed = false;
-        const signalFn: SignalFunction<any> = signal(null);
-        function computeFn() {
+        const signalFn: SignalFunction<any> = signal(_null);
+        const computeFn = () => {
             if (!subscribed) return signalFn.set(subscribe())();
             else return signalFn.set(process())();
         }
-        function subscribe () {
+        const subscribe = () => {
             const signalHandler = (signal: Signal<any>) => { 
                 signal.subscribe(() => signalFn.set(process())) 
             }
@@ -95,21 +94,19 @@ export namespace $ {
         return computeFn as ComputeFunction<T>
     }
 
-    export function assign(resolver: [nodeName: string, $node: Constructor<$Node>][]): void;
-    export function assign(nodeName: string, $node: Constructor<$Node>): void;
-    export function assign(resolver: string | [nodeName: string, $node: Constructor<$Node>][], $node?: Constructor<$Node>) {
+    type assign = {
+        (resolver: [nodeName: string, $node: Constructor<$Node>][]): $;
+        (nodeName: string, $node: Constructor<$Node>): $;
+    }
+    export const assign: assign = (resolver: string | [nodeName: string, $node: Constructor<$Node>][], $node?: Constructor<$Node>) => {
         if (isString(resolver)) $node && (nodeNameMap[resolver] = $node);
         else forEach(resolver, ([nodeName, $node]) => nodeNameMap[nodeName] = $node);
         return $;
     }
 
-    export function toArray<T>(item: OrArray<T>): T[] {
-        return _instanceof(item, Array) ? item : [item];
-    }
+    export const toArray = <T>(item: OrArray<T>): T[] => _instanceof(item, Array) ? item : [item];
 
-    export function span(content: string) {
-        return $('span').content(content);
-    }
+    export const span = (content: string) => $('span').content(content);
 }
 export type $ = typeof $;
 globalThis.$ = $;

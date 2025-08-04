@@ -143,8 +143,8 @@ export interface $Input extends $HTMLElement<HTMLInputElement> {
     step(step: $Parameter<string>): this;
     step(): string;
     /** {@link HTMLInputElement.type} */
-    type(type: $Parameter<string>): this;
-    type(): string;
+    type(type: $Parameter<InputType>): this;
+    type(): InputType;
     /** {@link HTMLInputElement.value} */
     value(value: $Parameter<string>): this;
     value(): string;
@@ -161,6 +161,30 @@ export interface $Input extends $HTMLElement<HTMLInputElement> {
     width(width: $Parameter<number>): this;
     width(): number;
 }
+
+export type InputType =
+  | 'button'
+  | 'checkbox'
+  | 'color'
+  | 'date'
+  | 'datetime-local'
+  | 'email'
+  | 'file'
+  | 'hidden'
+  | 'image'
+  | 'month'
+  | 'number'
+  | 'password'
+  | 'radio'
+  | 'range'
+  | 'reset'
+  | 'search'
+  | 'submit'
+  | 'tel'
+  | 'text'
+  | 'time'
+  | 'url'
+  | 'week';
 
 assignHelper(HTMLInputElement, $Input, 'input');
 

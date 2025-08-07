@@ -33,3 +33,5 @@ interface forEach {
     <K, V>(set: Map<K, V>, fn: (value: V, key: K, index: number, map: Map<K, V>) => any, thisArgs?: any): void;
     <N extends Node>(set: NodeListOf<N>, fn: (value: N, index: number, parent: NodeListOf<N>) => any, thisArgs?: any): void;
 }
+// Promise
+export const _Promise = Promise;

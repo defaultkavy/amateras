@@ -1,6 +1,6 @@
 import { chain } from "#lib/chain";
 import { _document } from "#lib/env";
-import { _Array_from, _instanceof, _JSON_stringify, _null, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
+import { _Array_from, _instanceof, _JSON_stringify, _null, _Promise, forEach, isBoolean, isFunction, isNull, isObject, isUndefined } from "#lib/native";
 import { toArray } from "#lib/toArray";
 import { Signal } from "#structure/Signal";
 
@@ -61,7 +61,7 @@ export class $Node {
     static process<T extends $Node>($node: T, content: $NodeContentResolver<any>): Array<$Node | undefined | null> {
         if (isUndefined(content) || isNull(content) || _instanceof(content, $Node)) return [content];
         // is Promise
-        if (_instanceof(content, Promise)) return [$('async').await(content, ($async, $child) => $async.replace($child as any))];
+        if (_instanceof(content, _Promise)) return [$('async').await(content, ($async, $child) => $async.replace($child as any))];
         // is SignalFunction or ContentHandler
         if (isFunction(content)) {
             const signal = (content as any).signal;
@@ -87,7 +87,7 @@ export class $Node {
                 }
             } else {
                 const _content = content($node) as $NodeContentResolver<$Node>;
-                if (_instanceof(_content, Promise)) return this.process($node, _content as any);
+                if (_instanceof(_content, _Promise)) return this.process($node, _content as any);
                 else return toArray(_content).map(content => this.process($node, content)).flat();
             }
         }

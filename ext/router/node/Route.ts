@@ -1,4 +1,4 @@
-import { _instanceof, _Object_fromEntries, _Array_from } from "#lib/native";
+import { _instanceof, _Object_fromEntries, _Array_from, _Promise } from "#lib/native";
 import { $Element } from "#node/$Element";
 import type { AsyncRoute, RouteBuilder, RouteDataResolver } from "..";
 import { Page } from "./Page";
@@ -39,7 +39,7 @@ export class Route<Path extends string = string> extends BaseRouteNode<Path> {
         page.params = data.params;
         page.initial = true;
         let resolver: any = this.builder(page);
-        if (_instanceof(resolver, Promise)) {
+        if (_instanceof(resolver, _Promise)) {
             const result = await resolver as any;
             // Module import
             if (result[Symbol.toStringTag] === 'Module') {

@@ -12,6 +12,9 @@ declare global {
     type OrNullish<T> = T | Nullish;
     type Constructor<T> = { new (...args: any[]): T }
     type $Parameter<T> = T | undefined | Signal<T> | Signal<T | undefined>
+    type Ok<D> = [data: D, err: null];
+    type Err<E> = [data: null, err: E]
+    type Result<D, E> = Ok<D> | Err<E>
     type Repeat<T, N extends number, Acc extends T[] = []> = 
         Acc['length'] extends N 
             ? Acc 

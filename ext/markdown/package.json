@@ -1,0 +1,8 @@
+{
+    "name": "@amateras/markdown",
+    "peerDependencies": {
+        "amateras": "../../"
+    },
+    "imports": {
+    }
+}

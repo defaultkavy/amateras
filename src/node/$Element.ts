@@ -39,18 +39,6 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
         return this;
     }
 
-    on<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions) {
-        return this.addEventListener(type as string, listener as any, options);
-    }
-
-    off<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | EventListenerOptions) {
-        return this.removeEventListener(type as string, listener as any, options);
-    }
-    
-    once<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions) {
-        return this.on(type, listener, {once: true})
-    }
-
     toString() {
         return this.outerHTML();
     }

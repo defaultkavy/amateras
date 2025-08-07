@@ -58,6 +58,18 @@ export class $Node {
         return _instanceof(this, instance) ? this : null;
     }
 
+    on(type: string, listener: any, options?: boolean | AddEventListenerOptions) {
+        return this.addEventListener(type, listener, options);
+    }
+
+    off(type: string, listener: any, options?: boolean | EventListenerOptions) {
+        return this.removeEventListener(type, listener, options);
+    }
+    
+    once(type: string, listener: any, options?: boolean | AddEventListenerOptions) {
+        return this.on(type, listener, { once: true, ...(isBoolean(options) ? {capture: options} : options ?? {}) })
+    }
+
     static process<T extends $Node>($node: T, content: $NodeContentResolver<any>): Array<$Node | undefined | null> {
         if (isUndefined(content) || isNull(content) || _instanceof(content, $Node)) return [content];
         // is Promise

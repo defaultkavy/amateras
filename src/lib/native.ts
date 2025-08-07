@@ -15,14 +15,13 @@ export const forEach: forEach = <T>(arr: any, fn: any, thisArgs?: any) => arr.fo
 export const _typeof = (target: any, type: 'string' | 'number' | 'object' | 'boolean' | 'function' | 'bigint' | 'symbol' | 'undefined') => typeof target === type;
 export const equal = <T, V extends T>(target: T, ...args: V[]): target is V => !!args.find(a => a === target);
 export const isString = (target: any): target is string => _typeof(target, 'string');
-export const isNumber = (target: any): target is number => _typeof(target, 'number')
-export const isObject = (target: any): target is object => _typeof(target, 'object')
-export const isFunction = (target: any): target is Function => _typeof(target, 'function')
+export const isBoolean = (target: any): target is boolean => _typeof(target, 'boolean');
 export const isNumber = (target: any): target is number => _typeof(target, 'number');
 export const isObject = (target: any): target is object => _typeof(target, 'object');
 export const isFunction = (target: any): target is Function => _typeof(target, 'function');
 export const isUndefined = (target: any): target is undefined => target === undefined;
 export const isNull = (target: any): target is null => target === _null;
+export const isArray = Array.isArray;
 export const _instanceof = <T extends (abstract new (...args: any[]) => any)[]>(target: any, ...instance: T): target is InstanceType<T[number]> => !!instance.find(i => target instanceof i);
 // JSON
 export const _JSON_stringify = JSON.stringify;

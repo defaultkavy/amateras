@@ -1,5 +1,6 @@
 // Value
 export const _null = null;
+export const _undefined = undefined;
 // Object
 export const _Object_fromEntries = Object.fromEntries;
 export const _Object_entries = Object.entries;
@@ -17,6 +18,9 @@ export const isString = (target: any): target is string => _typeof(target, 'stri
 export const isNumber = (target: any): target is number => _typeof(target, 'number')
 export const isObject = (target: any): target is object => _typeof(target, 'object')
 export const isFunction = (target: any): target is Function => _typeof(target, 'function')
+export const isNumber = (target: any): target is number => _typeof(target, 'number');
+export const isObject = (target: any): target is object => _typeof(target, 'object');
+export const isFunction = (target: any): target is Function => _typeof(target, 'function');
 export const isUndefined = (target: any): target is undefined => target === undefined;
 export const isNull = (target: any): target is null => target === _null;
 export const _instanceof = <T extends (abstract new (...args: any[]) => any)[]>(target: any, ...instance: T): target is InstanceType<T[number]> => !!instance.find(i => target instanceof i);

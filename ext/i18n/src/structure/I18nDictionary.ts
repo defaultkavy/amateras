@@ -1,10 +1,10 @@
-import { _instanceof, isObject } from "amateras/lib/native";
+import { _instanceof, isFunction, isObject } from "amateras/lib/native";
 
 export class I18nDictionary {
     #context: I18nDictionaryContext | Promise<I18nDictionaryContext> | null = null;
     #fetch: I18nDictionaryContextImporter | null = null;
     constructor(resolver: I18nDictionaryContext | I18nDictionaryContextImporter) {
-        if (_instanceof(resolver, Function)) this.#fetch = resolver;
+        if (isFunction(resolver)) this.#fetch = resolver;
         else this.#context = resolver;
     }
 

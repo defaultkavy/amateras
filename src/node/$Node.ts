@@ -1,6 +1,7 @@
 import { chain } from "#lib/chain";
 import { _document } from "#lib/env";
 import { _Array_from, _instanceof, _JSON_stringify, _null, forEach, isFunction, isNull, isObject, isUndefined } from "#lib/native";
+import { toArray } from "#lib/toArray";
 import { Signal } from "#structure/Signal";
 
 export class $Node {
@@ -20,7 +21,7 @@ export class $Node {
 
     insert(resolver: $NodeContentResolver<this>, position = -1) {
         // process nodes
-        forEach($.toArray(resolver), resolve_child => forEach($Node.process(this, resolve_child), $node => $Node.append(this, $node, position)));
+        forEach(toArray(resolver), resolve_child => forEach($Node.process(this, resolve_child), $node => $Node.append(this, $node, position)));
         return this;
     }
 
@@ -33,7 +34,7 @@ export class $Node {
     replace($node: $NodeContentResolver<$Node>) {
         if ($node) 
             this.replaceWith(
-                ...$.toArray($Node.process(this, $node)).filter($node => $node).map($node => $node?.node) as Node[]
+                ...toArray($Node.process(this, $node)).filter($node => $node).map($node => $node?.node) as Node[]
             )
         return this;
     }
@@ -87,7 +88,7 @@ export class $Node {
             } else {
                 const _content = content($node) as $NodeContentResolver<$Node>;
                 if (_instanceof(_content, Promise)) return this.process($node, _content as any);
-                else return $.toArray(_content).map(content => this.process($node, content)).flat();
+                else return toArray(_content).map(content => this.process($node, content)).flat();
             }
         }
         // is nested array

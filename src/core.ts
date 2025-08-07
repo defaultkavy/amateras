@@ -6,6 +6,7 @@ import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/
 import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind, _null } from '#lib/native';
 import { $HTMLElement } from '#node/$HTMLElement';
 import { _document } from '#lib/env';
+import { toArray } from '#lib/toArray';
 
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 const _stylesheet = new CSSStyleSheet();
@@ -109,5 +110,7 @@ export namespace $ {
 
     export const span = (content: string) => $('span').content(content);
 }
+
 export type $ = typeof $;
 globalThis.$ = $;
+_Object_assign($, {toArray})

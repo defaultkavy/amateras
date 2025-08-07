@@ -40,7 +40,7 @@ export interface $Anchor extends $HTMLElement<HTMLAnchorElement> {
     type(): string;
 }
 
-export type AnchorTarget = '_self' | '_blank' | '_parent' | '_top' | '_unfenced_top' | '';
+export type AnchorTarget = '_self' | '_blank' | '_parent' | '_top' | '_unfenced_top' | '' | '_replace';
 
 declare module '#core' {
     export function $(nodeName: 'a'): $Anchor

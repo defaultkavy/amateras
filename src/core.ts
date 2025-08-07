@@ -45,6 +45,7 @@ export function $(resolver: string | number | null | undefined | Element | HTMLE
     if (isNumber(resolver)) return _Array_from({length: resolver}).map(_ => $(args[0], ...args.slice(1)));
     if (_instanceof(resolver, HTMLElement)) return new $HTMLElement(resolver);
     if (_instanceof(resolver, Element)) return new $Element(resolver);
+    if (_instanceof(resolver, Node)) return new $Node(resolver as any);
     if (_instanceof(resolver, NodeList)) return _Array_from(resolver).map($)
     return new $HTMLElement(resolver);
 }

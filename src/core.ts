@@ -106,8 +106,6 @@ export namespace $ {
         return $;
     }
 
-    export const toArray = <T>(item: OrArray<T>): T[] => _instanceof(item, Array) ? item : [item];
-
     export const span = (content: string) => $('span').content(content);
 }
 

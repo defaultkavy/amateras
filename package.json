@@ -1,6 +1,6 @@
 {
   "name": "amateras",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Amateras is a DOM Utility library.",
   "module": "index.ts",
   "type": "module",
@@ -37,7 +37,8 @@
     "./ssr": "./ext/ssr/index.ts",
     "./i18n": "./ext/i18n/src/index.ts",
     "./idb": "./ext/idb/src/index.ts",
-    "./idb/core": "./ext/idb/src/core.ts"
+    "./idb/core": "./ext/idb/src/core.ts",
+    "./markdown": "./ext/markdown/index.ts"
   },
   "workspaces": [
     "./ext/*"

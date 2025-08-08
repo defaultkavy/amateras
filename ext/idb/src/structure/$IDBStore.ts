@@ -12,25 +12,30 @@ export class $IDBStore<Config extends $IDBStoreConfig = any> extends $IDBStoreBa
         _Object_assign(this, config);
     }
 
+    /** {@link IDBObjectStore.put} */
     put<V extends $IDBStoreValueResolver<Config>>(...value: V): Promise<$IDBStoreKey<Config>>
     put(value: any, key?: any) {
         return $IDBRequest(this.#store.put(value, key));
     }
 
+    /** {@link IDBObjectStore.add} */
     add<V extends $IDBStoreValueResolver<Config>>(value: V): Promise<$IDBStoreKey<Config>>
     add(value: any, key?: any) {
         return $IDBRequest(this.#store.add(value, key));
     }
 
+    /** {@link IDBObjectStore.delete} */
     delete(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<undefined>;
     delete(query: IDBValidKey | IDBKeyRange) {
         return $IDBRequest(this.#store.delete(query));
     }
 
+    /** {@link IDBObjectStore.clear} */
     clear() {
         return $IDBRequest(this.#store.clear())
     }
 
+    /** Get and return {@link $IDBIndex} */
     index<K extends keyof Config['indexes'] & string>(name: K): $IDBIndex<Config, Config['indexes'][K]>
     index(name: keyof Config['indexes'] & string) {
         return new $IDBIndex(this, this.#store.index(name), this.indexes[name]!)
@@ -44,14 +49,19 @@ export interface $IDBStore<Config extends $IDBStoreConfig = any> {
     readonly keyPath: Config['keyPath'];
     readonly autoIncrement: Config['autoIncrement'];
 
+    /** {@link IDBObjectStore.cursor} */
     cursor(handle: (cursor: $IDBCursor) => void, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<null>
 
+    /** {@link IDBObjectStore.keyCursor} */
     keyCursor(handle: (cursor: $IDBCursor) => void, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<null>
 
+    /** {@link IDBObjectStore.count} */
     count(query?: $IDBStoreKey<Config> | IDBKeyRange): Promise<number>;
 
+    /** {@link IDBObjectStore.get} */
     get(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema']>
 
+    /** {@link IDBObjectStore.getAll} */
     getAll(query?: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema'][]>
 }
 

@@ -24,16 +24,29 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
         _Object_assign(this, config);
     }
 
+    /**
+     * This option helping developer to debug when initializing.
+     * @param dev - Enable dev mode
+     */
     devMode(dev: boolean) {
         this.#devMode = dev;
         return this;
     }
-
+    
+    /**
+     * If set to true, unused store will be deleted when initialize.
+     * @param enable - Enable delete unused stores
+     */
     deleteUnused(enable: boolean) {
         this.#deleteUnused = enable;
         return this;
     }
 
+    /**
+     * Add new store to builder.
+     * @param name - Store name
+     * @param builder - Store builder or builder function
+     */
     store<N extends string, B extends $IDBStoreBuilderFunction>(name: N, builder: B): $IDBBuilder<Prettify<Config & { stores: Config['stores'] & Prettify<Record<N, ReturnType<B>['config']>> }>>
     store<N extends string, B extends $IDBStoreBuilder<any>>(name: N, builder: B): $IDBBuilder<Prettify<Config & { stores: Config['stores'] & Prettify<Record<N, B['config']>> }>>
     store(name: string, builder: $IDBStoreBuilderFunction | $IDBStoreBuilder)
@@ -42,6 +55,9 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
         return this as any;
     }
 
+    /**
+     * Open IDB and initialize, create new IDB if the name of IDB is not exists, or perform the upgrade if version number change.
+     */
     async open(): Promise<$IDB<Config>> {
         return new _Promise<$IDB>((resolve, reject) => {
             const {version: dbVersion, name: dbName, storeMap} = this;

@@ -11,6 +11,11 @@ export class $IDBStoreBuilder<Config extends $IDBStoreConfig = { name: string, k
         this.config = config;
     }
 
+    /**
+     * Define the `keyPath` option of store.
+     * 
+     * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB#structuring_the_database).
+     */
     keyPath<K extends string[]>(keyPath: K): $IDBStoreBuilder<Prettify<Omit<Config, 'keyPath'> & { keyPath: K }>>;
     keyPath<K extends string>(keyPath: K): $IDBStoreBuilder<Prettify<Omit<Config, 'keyPath'> & { keyPath: K }>>;
     keyPath(keyPath: string | string[]) {
@@ -18,15 +23,36 @@ export class $IDBStoreBuilder<Config extends $IDBStoreConfig = { name: string, k
         return this as any;
     }
 
-    autoIncrement<K extends boolean>(keypath: K): $IDBStoreBuilder<Prettify<Omit<Config, 'autoIncrement'> & { autoIncrement: K }>>;
+    /**
+     * Define the `autoIncrement` option of store. 
+     * 
+     * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB#structuring_the_database).
+     */
+    autoIncrement<K extends boolean>(enable: K): $IDBStoreBuilder<Prettify<Omit<Config, 'autoIncrement'> & { autoIncrement: K }>>;
     autoIncrement(enable: boolean) {
         this.config.autoIncrement = enable;
         return this as any;
     }
 
+    /**
+     * Use the generic type to define store object type.
+     *
+     * @example
+     * store.schema<{
+     *     id: number,
+     *     name: string,
+     *     created: Date,
+     *     updated: Date
+     * }>()
+     */
     schema<T extends $IDBStoreBuilderSchema<Config>>(): $IDBStoreBuilder<Prettify<Omit<Config, 'schema'> & { schema: T }>>;
     schema() { return this as any }
 
+    /**
+     * Add new index to store builder.
+     * @param name - Index name
+     * @param config - {@link $IDBIndexOptionalConfig}
+     */
     index<N extends string, C extends $IDBIndexOptionalConfig<Config>>(name: N, config: C): $IDBStoreBuilder<Prettify<Config & { indexes: Config['indexes'] & Prettify<Record<N, Prettify<$IDBIndexOptionalHandle<N, C>>>> }>>
     index<C extends $IDBIndexConfig>(name: string, config: C) {
         this.indexes.set(name, {
@@ -37,6 +63,11 @@ export class $IDBStoreBuilder<Config extends $IDBStoreConfig = { name: string, k
         return this as any;
     }
 
+    /**
+     * Add store upgrade function to store builder. The store upgrade function is used for change object structure when the store is upgrading. 
+     * @param version - Target version of database
+     * @param handle - Upgrade handle function
+     */
     upgrade(version: number, handle: $IDBStoreUpgradeFunction) {
         this.upgrades.set(version, handle);
         return this;
@@ -45,7 +76,13 @@ export class $IDBStoreBuilder<Config extends $IDBStoreConfig = { name: string, k
 }
 
 export type $IDBStoreUpgradeFunction = (objects: {key: IDBValidKey, value: any}[], idb: $IDB<any>) => OrPromise<{key: IDBValidKey, value: any}[]>;
-export type $IDBIndexOptionalConfig<StoreConfig extends $IDBStoreConfig = any> = { keyPath: OrArray<keyof StoreConfig['schema']>, unique?: boolean, multiEntry?: boolean }
+
+export type $IDBIndexOptionalConfig<StoreConfig extends $IDBStoreConfig = any> = { 
+    keyPath: OrArray<keyof StoreConfig['schema']>, 
+    unique?: boolean, 
+    multiEntry?: boolean 
+}
+
 type $IDBIndexOptionalHandle<N extends string, Config extends $IDBIndexOptionalConfig> = {
     name: N;
     keyPath: Config['keyPath'];

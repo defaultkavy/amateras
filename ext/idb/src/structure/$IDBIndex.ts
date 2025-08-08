@@ -17,14 +17,19 @@ export interface $IDBIndex<StoreConfig extends $IDBStoreConfig, Config extends $
     readonly multiEntry: Config['multiEntry'];
     readonly keyPath: Config['keyPath'];
     
+    /** {@link IDBIndex.cursor} */
     cursor(handle: (cursor: $IDBCursor) => void, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<null>
 
+    /** {@link IDBIndex.keyCursor} */
     keyCursor(handle: (cursor: $IDBCursor) => void, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<null>
 
+    /** {@link IDBIndex.count} */
     count(query?: $IDBIndexKey<StoreConfig, Config> | IDBKeyRange): Promise<number>;
 
+    /** {@link IDBIndex.get} */
     get(query: $IDBIndexKey<StoreConfig, Config> | IDBKeyRange): Promise<StoreConfig['schema']>
 
+    /** {@link IDBIndex.getAll} */
     getAll(query?: $IDBIndexKey<StoreConfig, Config> | IDBKeyRange): Promise<StoreConfig['schema'][]>
 }
 

@@ -48,11 +48,11 @@ export interface $IDBStore<Config extends $IDBStoreConfig = any> {
 
     keyCursor(handle: (cursor: $IDBCursor) => void, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<null>
 
-    count(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<number>;
+    count(query?: $IDBStoreKey<Config> | IDBKeyRange): Promise<number>;
 
     get(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema']>
 
-    getAll(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema'][]>
+    getAll(query?: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema'][]>
 }
 
 export type $IDBStoreConfig = {

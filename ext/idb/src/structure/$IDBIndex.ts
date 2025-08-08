@@ -21,11 +21,11 @@ export interface $IDBIndex<StoreConfig extends $IDBStoreConfig, Config extends $
 
     keyCursor(handle: (cursor: $IDBCursor) => void, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<null>
 
-    count(query: $IDBIndexKey<StoreConfig, Config> | IDBKeyRange): Promise<number>;
+    count(query?: $IDBIndexKey<StoreConfig, Config> | IDBKeyRange): Promise<number>;
 
     get(query: $IDBIndexKey<StoreConfig, Config> | IDBKeyRange): Promise<StoreConfig['schema']>
 
-    getAll(query: $IDBIndexKey<StoreConfig, Config> | IDBKeyRange): Promise<StoreConfig['schema'][]>
+    getAll(query?: $IDBIndexKey<StoreConfig, Config> | IDBKeyRange): Promise<StoreConfig['schema'][]>
 }
 
 export type $IDBIndexConfig = {

@@ -24,7 +24,7 @@ export abstract class $IDBStoreBase {
         return $IDBRequest(this.#instance.get(query))
     }
 
-    getAll(query: IDBValidKey | IDBKeyRange) {
+    getAll(query?: IDBValidKey | IDBKeyRange) {
         return $IDBRequest(this.#instance.getAll(query))
     }
 }

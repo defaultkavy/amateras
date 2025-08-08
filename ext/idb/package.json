@@ -1,0 +1,13 @@
+{
+    "name": "@amateras/idb",
+    "peerDependencies": {
+        "amateras": "../../"
+    },
+    "imports": {
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts"
+    },
+    "exports": {
+      "./core": "./src/core.ts"
+    }
+}

@@ -35,7 +35,9 @@
     "./css/color/*": "./ext/css/src/lib/colors/*.ts",
     "./router": "./ext/router/index.ts",
     "./ssr": "./ext/ssr/index.ts",
-    "./i18n": "./ext/i18n/src/index.ts"
+    "./i18n": "./ext/i18n/src/index.ts",
+    "./idb": "./ext/idb/src/index.ts",
+    "./idb/core": "./ext/idb/src/core.ts"
   },
   "workspaces": [
     "./ext/*"

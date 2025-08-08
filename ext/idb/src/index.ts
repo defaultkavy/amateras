@@ -7,15 +7,6 @@ declare module 'amateras/core' {
     }
 }
 
-declare global {
-    interface IDBVersionChangeEvent {
-        target: {
-            transaction: IDBTransaction;
-            result: IDBDatabase;
-        }
-    }
-}
-
 _Object_assign($, {
     idb: (name: string, version: number) => new $IDBBuilder({name, version, stores: {}})
 })

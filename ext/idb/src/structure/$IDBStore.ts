@@ -12,14 +12,12 @@ export class $IDBStore<Config extends $IDBStoreConfig = any> extends $IDBStoreBa
         _Object_assign(this, config);
     }
 
-    put<V extends $IDBStoreKeyValueResolver<Config>>(value: V, key: IDBValidKey): Promise<IDBValidKey>
-    put<V extends $IDBStoreValueResolver<Config>>(value: V): Promise<IDBValidKey>
+    put<V extends $IDBStoreValueResolver<Config>>(...value: V): Promise<$IDBStoreKey<Config>>
     put(value: any, key?: any) {
         return $IDBRequest(this.#store.put(value, key));
     }
 
-    add<V extends $IDBStoreKeyValueResolver<Config>>(value: V, key: IDBValidKey): Promise<IDBValidKey>
-    add<V extends $IDBStoreValueResolver<Config>>(value: V): Promise<IDBValidKey>
+    add<V extends $IDBStoreValueResolver<Config>>(value: V): Promise<$IDBStoreKey<Config>>
     add(value: any, key?: any) {
         return $IDBRequest(this.#store.add(value, key));
     }
@@ -65,8 +63,16 @@ export type $IDBStoreConfig = {
     autoIncrement: boolean;
 }
 
-export type $IDBStoreKeyValueResolver<Config extends $IDBStoreConfig> = Config['keyPath'] extends null ? Config['autoIncrement'] extends false ? Config['schema'] : never : never;
-export type $IDBStoreValueResolver<Config extends $IDBStoreConfig> = Config['keyPath'] extends (string | string[]) ? Config['schema'] : Config['autoIncrement'] extends true ? Config['schema'] : never;
+export type $IDBStoreValueResolver<Config extends $IDBStoreConfig> = 
+Config['keyPath'] extends string
+    ?   Config['autoIncrement'] extends true
+        ?   [Omit<Config['schema'], Config['keyPath']> & {[key in Config['keyPath']]?: Config['schema'][key]}]
+        :   [Config['schema']]
+    :   Config['keyPath'] extends string[]
+        ?   [Config['schema']] 
+        :   Config['autoIncrement'] extends true 
+            ?   [Config['schema']] 
+            :   [Config['schema'], IDBValidKey];
 
 export type $IDBStoreKey<Config extends $IDBStoreConfig> = 
     Config['keyPath'] extends string

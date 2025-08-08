@@ -1,5 +1,5 @@
 import { $IDB, type $IDBConfig } from "#structure/$IDB";
-import { _Array_from, _instanceof, _null, _Object_assign, _Object_fromEntries, _Promise, forEach, isFunction } from "amateras/lib/native";
+import { _Array_from, _instanceof, _JSON_stringify, _null, _Object_assign, _Object_fromEntries, _Promise, forEach, isFunction } from "amateras/lib/native";
 import { $IDBStoreBuilder } from "./$IDBStoreBuilder";
 import type { $IDBIndexConfig } from "#structure/$IDBIndex";
 import type { $IDBStoreConfig } from "#structure/$IDBStore";
@@ -46,9 +46,9 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
         return new _Promise<$IDB>((resolve, reject) => {
             const {version: dbVersion, name: dbName, storeMap} = this;
             const initDBRequest = _indexedDB.open(dbName);
-            const createStoresMap = new Map<string, $IDBStoreBuilder>();
+            const createStoresMap = new Map<string, $IDBStoreBuilder<$IDBStoreConfig>>();
             const createIndexMap = new Map<$IDBStoreBuilder, Map<string, $IDBIndexConfig>>();
-            const upgradeStoreMap = new Map<string, $IDBStoreBuilder>();
+            const upgradeStoreMap = new Map<string, $IDBStoreBuilder<$IDBStoreConfig>>();
             const cachedObjectMap = new Map<string, {key: any, value: any}[]>();
             const unusedStoreNameList: string[] = [];
             const debug = (message: string) => this.#devMode && console.debug(`[$IDBBuilder (${dbName})]`, message);
@@ -98,9 +98,9 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
                     const checkIndexes = () =>
                         forEach(storeBuilder.indexes, (indexBuilder, indexName) => {
                             const [index] = trycatch(() => store?.index(indexName));
-                            const CONFIG_CHANGED = `${indexBuilder.keyPath}` !== `${index?.keyPath}` 
-                                && !!indexBuilder.multiEntry !== index?.multiEntry 
-                                && !!indexBuilder.unique !== index?.unique;
+                            const CONFIG_CHANGED = _JSON_stringify(indexBuilder.keyPath) !== _JSON_stringify(index?.keyPath)
+                                || !!indexBuilder.multiEntry !== index?.multiEntry 
+                                || !!indexBuilder.unique !== index?.unique;
                             if (!index || CONFIG_CHANGED) {
                                 indexMap.set(indexName, indexBuilder);
                                 createIndexMap.set(storeBuilder, indexMap);
@@ -108,17 +108,14 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
                         })
                     // get store from idb
                     const [store] = trycatch(() => transaction?.objectStore(storeName));
+                    // create store and break if idb have no store exist
                     if (!store) return createStoresMap.set(storeName, storeBuilder), checkIndexes();
-                    // create store and break if idb have no record
                     // define matches variables
-                    // const UNDEFINED_CONFIG = [keyPath, autoIncrement, ]
-                    //     isUndefined(keyPath) && isUndefined(autoIncrement) 
-                    //     && isUndefined(currentStore.keyPath) && isUndefined(currentStore.autoIncrement);
                     const OBJECT_UPGRADE = _Array_from(storeBuilder.upgrades).find(([upgradeVersion],) => 
                         dbVersion >= upgradeVersion && idb.version < upgradeVersion
                     )
                     const CONFIG_CHANGED = 
-                        `${keyPath}` !== `${store?.keyPath}` 
+                        _JSON_stringify(keyPath) !== _JSON_stringify(store.keyPath)
                         || autoIncrement !== store?.autoIncrement
                     const UPGRADE_NEEDED = OBJECT_UPGRADE || CONFIG_CHANGED;
                     // add indexes

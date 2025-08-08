@@ -11,9 +11,9 @@ export class $IDBStoreBuilder<Config extends $IDBStoreConfig = { name: string, k
         this.config = config;
     }
 
-    keyPath<K extends string[]>(...keyPath: K): $IDBStoreBuilder<Prettify<Omit<Config, 'keyPath'> & { keyPath: K }>>;
+    keyPath<K extends string[]>(keyPath: K): $IDBStoreBuilder<Prettify<Omit<Config, 'keyPath'> & { keyPath: K }>>;
     keyPath<K extends string>(keyPath: K): $IDBStoreBuilder<Prettify<Omit<Config, 'keyPath'> & { keyPath: K }>>;
-    keyPath(...keyPath: string[]) {
+    keyPath(keyPath: string | string[]) {
         this.config.keyPath = keyPath;
         return this as any;
     }
@@ -55,7 +55,9 @@ type $IDBIndexOptionalHandle<N extends string, Config extends $IDBIndexOptionalC
 
 type $IDBStoreBuilderSchema<Config extends $IDBStoreConfig> = 
     Config['keyPath'] extends string
-        ? { [key in Config['keyPath']]: IDBValidKey } 
-        : Config['keyPath'] extends string
+        ?   Config['autoIncrement'] extends true
+            ?   { [key in Config['keyPath']]: number }
+            :   { [key in Config['keyPath']]: IDBValidKey } 
+        : Config['keyPath'] extends string[]
             ? { [key in Config['keyPath'][number]]: IDBValidKey }
             : any;

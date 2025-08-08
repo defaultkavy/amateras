@@ -1,6 +1,6 @@
 import { _instanceof, _Object_assign, _Promise } from "amateras/lib/native";
 import { $IDBIndex, type $IDBIndexConfig } from "./$IDBIndex";
-import { $IDBRequest } from "#lib/utils";
+import { $IDBRequest } from "#lib/$IDBRequest";
 import { $IDBStoreBase } from "./$IDBStoreBase";
 
 export interface $IDBStore<Config extends $IDBStoreConfig = any> {

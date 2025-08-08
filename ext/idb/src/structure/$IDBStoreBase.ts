@@ -1,5 +1,5 @@
 import { _Array_from, _instanceof, _null, _Promise } from "amateras/lib/native";
-import { $IDBRequest } from "#lib/utils";
+import { $IDBRequest } from "#lib/$IDBRequest";
 import { $IDBCursor } from "./$IDBCursor";
 import type { $IDBStoreConfig, $IDBStoreKey } from "./$IDBStore";
 

@@ -2,15 +2,9 @@ import { _instanceof, _Object_assign, _Promise } from "amateras/lib/native";
 import { $IDBIndex, type $IDBIndexConfig } from "./$IDBIndex";
 import { $IDBRequest } from "#lib/$IDBRequest";
 import { $IDBStoreBase } from "./$IDBStoreBase";
+import type { $IDBCursor } from "./$IDBCursor";
 
-export interface $IDBStore<Config extends $IDBStoreConfig = any> {
-    readonly name: Config['name'];
-    readonly indexes: Config['indexes'];
-    readonly schema: Config['schema'];
-    readonly keyPath: Config['keyPath'];
-    readonly autoIncrement: Config['autoIncrement'];
-}
-export class $IDBStore<Config extends $IDBStoreConfig = any> extends $IDBStoreBase<Config> {
+export class $IDBStore<Config extends $IDBStoreConfig = any> extends $IDBStoreBase {
     #store: IDBObjectStore;
     constructor(store: IDBObjectStore, config: Config) {
         super(store);
@@ -39,9 +33,28 @@ export class $IDBStore<Config extends $IDBStoreConfig = any> extends $IDBStoreBa
         return $IDBRequest(this.#store.clear())
     }
 
+    index<K extends keyof Config['indexes'] & string>(name: K): $IDBIndex<Config, Config['indexes'][K]>
     index(name: keyof Config['indexes'] & string) {
         return new $IDBIndex(this, this.#store.index(name), this.indexes[name]!)
     }
+}
+
+export interface $IDBStore<Config extends $IDBStoreConfig = any> {
+    readonly name: Config['name'];
+    readonly indexes: Config['indexes'];
+    readonly schema: Config['schema'];
+    readonly keyPath: Config['keyPath'];
+    readonly autoIncrement: Config['autoIncrement'];
+
+    cursor(handle: (cursor: $IDBCursor) => void, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<null>
+
+    keyCursor(handle: (cursor: $IDBCursor) => void, query?: IDBValidKey | IDBKeyRange | null, direction?: IDBCursorDirection): Promise<null>
+
+    count(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<number>;
+
+    get(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema']>
+
+    getAll(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema'][]>
 }
 
 export type $IDBStoreConfig = {
@@ -59,16 +72,16 @@ export type $IDBStoreKey<Config extends $IDBStoreConfig> =
     Config['keyPath'] extends string
         ?   Config['schema'][Config['keyPath']]
         :   Config['keyPath'] extends string[]
-            ?   QueryArray<Config['keyPath'], Config>
+            ?   QueryMultipleKeyPath<Config['keyPath'], Config>
             :   Config['autoIncrement'] extends true
                 ?   number
                 :   IDBValidKey;
 
-type QueryArray<T extends string[], Config extends { schema: {} }> = 
+export type QueryMultipleKeyPath<T extends string[], Config extends { schema: {} }> = 
     T extends [infer A, ...infer Rest]
     ?   A extends keyof Config['schema']
         ?   Rest extends string[]
-            ?   [Config['schema'][A], ...QueryArray<Rest, Config>]
+            ?   [Config['schema'][A], ...QueryMultipleKeyPath<Rest, Config>]
             :   [Config['schema'][A]]
         :   never
     : []

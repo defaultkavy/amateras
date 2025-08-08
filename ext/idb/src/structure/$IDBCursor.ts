@@ -9,7 +9,7 @@ export class $IDBCursor<StoreConfig extends $IDBStoreConfig = any> {
     #cursor: IDBCursorWithValue;
     readonly store: $IDBStore<StoreConfig>;
     readonly direction;
-    constructor(store: $IDBStoreBase<StoreConfig>, cursor: IDBCursorWithValue) {
+    constructor(store: $IDBStoreBase, cursor: IDBCursorWithValue) {
         this.#cursor = cursor;
         this.store = _instanceof(store, $IDBIndex<StoreConfig>) ? store.store : store as $IDBStore;
         this.direction = cursor.direction;

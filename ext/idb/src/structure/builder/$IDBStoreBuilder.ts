@@ -45,7 +45,7 @@ export class $IDBStoreBuilder<Config extends $IDBStoreConfig = { name: string, k
 }
 
 export type $IDBStoreUpgradeFunction = (objects: {key: IDBValidKey, value: any}[], idb: $IDB<any>) => OrPromise<{key: IDBValidKey, value: any}[]>;
-export type $IDBIndexOptionalConfig<StoreConfig extends $IDBStoreConfig = any> = { keyPath: keyof StoreConfig['schema'], unique?: boolean, multiEntry?: boolean }
+export type $IDBIndexOptionalConfig<StoreConfig extends $IDBStoreConfig = any> = { keyPath: OrArray<keyof StoreConfig['schema']>, unique?: boolean, multiEntry?: boolean }
 type $IDBIndexOptionalHandle<N extends string, Config extends $IDBIndexOptionalConfig> = {
     name: N;
     keyPath: Config['keyPath'];

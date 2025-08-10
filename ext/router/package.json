@@ -1,0 +1,10 @@
+{
+    "name": "@amateras/router",
+    "peerDependencies": {
+        "amateras": "../../"
+    },
+    "imports": {
+      "#node/*": "./src/node/*.ts",
+      "#structure/*": "./src/structure/*.ts"
+    }
+}

@@ -11,7 +11,9 @@ import { toArray } from '#lib/toArray';
 const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
 const _stylesheet = new CSSStyleSheet();
 
-export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>, N extends number>(number: N, fn: F, ...args: Parameters<F>): Repeat<ReturnType<F>, N>;
+export function $<K extends keyof $.NodeMap, T extends $.NodeMap[K]>(tagname: K, ...args: ConstructorParameters<T>): InstanceType<T>;
+export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
+export function $(tagname: string): $HTMLElement<HTMLElement>
 export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>, N extends number>(number: N, construct: T, ...args: P): Repeat<InstanceType<T>, N>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>>(construct: T, ...args: P): InstanceType<T>;
@@ -25,11 +27,10 @@ export function $<E extends Element>(element: E | null | undefined, ...args: any
 export function $<N extends Node | EventTarget>(node: N, ...args: any[]): $Node;
 export function $<N extends Node | EventTarget>(node: N | null | undefined, ...args: any[]): $Node | null | undefined;
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
-export function $<K extends keyof HTMLElementTagNameMap, N extends number>(number: N, tagname: K): Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
-export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
 export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['currentTarget']['$'];
 export function $<N extends number>(number: N, tagname: string): Repeat<$HTMLElement<HTMLElement>, N>;
-export function $(tagname: string): $HTMLElement<HTMLElement>
+export function $<N extends number, K extends keyof HTMLElementTagNameMap>(number: N, tagname: K): Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
+export function $<N extends number, F extends (...args: any[]) => $NodeContentResolver<$Node>>(number: N, fn: F, ...args: Parameters<F>): Repeat<ReturnType<F>, N>;
 export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event | NodeListOf<Node | ChildNode>, ...args: any[]) {
     if (isNull(resolver) || isUndefined(resolver)) return null;
     if (_instanceof(resolver, $Node)) return resolver;
@@ -52,9 +53,13 @@ export function $(resolver: string | number | null | undefined | Element | HTMLE
 }
 
 export namespace $ {
+    // css
     export const stylesheet = _stylesheet;
     _document.adoptedStyleSheets.push(_stylesheet);
     export const style = _bind(_stylesheet.insertRule, _stylesheet);
+    // node map
+    export interface NodeMap {}
+    // signal
     type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
     export type SignalFunction<T> = {signal: Signal<T>, set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>} & (() => T) & SignalProcess<T>;
     export const signal = <T>(value: T): SignalFunction<T> => {

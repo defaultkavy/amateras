@@ -14,5 +14,5 @@ export const assignHelper = (object: Constructor<EventTarget>, target: Construct
     })
     assign(target, {set, get, fn})
     // register tagname
-    if (tagname) $.assign(tagname, target)
+    if (tagname) $.assign([tagname, target])
 }

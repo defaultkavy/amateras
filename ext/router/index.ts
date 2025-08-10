@@ -41,11 +41,11 @@ forEach([
     `page{display:block}`
 ], $.style);
 // assign nodes
-$.assign([
+$.assign(
     ['router', Router],
     ['route', Route],
     ['ra', RouterAnchor]
-])
+)
 
 export type RouteData = { params: any, query: any }
 export type RouteDataResolver<P extends string> = { params: Prettify<PathParams<P>>, query: Prettify<PathQuery<P>> }

@@ -96,13 +96,8 @@ export namespace $ {
         return computeFn as ComputeFunction<T>
     }
 
-    type assign = {
-        (resolver: [nodeName: string, $node: Constructor<$Node>][]): $;
-        (nodeName: string, $node: Constructor<$Node>): $;
-    }
-    export const assign: assign = (resolver: string | [nodeName: string, $node: Constructor<$Node>][], $node?: Constructor<$Node>) => {
-        if (isString(resolver)) $node && (nodeNameMap[resolver] = $node);
-        else forEach(resolver, ([nodeName, $node]) => nodeNameMap[nodeName] = $node);
+    export const assign = (...resolver: [nodeName: string, $node: Constructor<$Node>][]) => {
+        forEach(resolver, ([nodeName, $node]) => nodeNameMap[nodeName] = $node);
         return $;
     }
 

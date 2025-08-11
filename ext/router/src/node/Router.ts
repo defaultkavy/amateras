@@ -1,10 +1,9 @@
 import { $HTMLElement } from "amateras/node/$HTMLElement";
-import { Route, type RouteBuilder, type RouteParamsStrings, type RoutePath, type RouteParamsResolver } from "../structure/Route";
+import { Route, type RouteBuilder, type RoutePath, type RouteParamsResolver } from "../structure/Route";
 import { _document } from "amateras/lib/env";
-import { _instanceof, startsWith, _JSON_parse, forEach, _Object_entries, _JSON_stringify, _Object_assign, isAsyncFunction, isFunction, _null } from "../../../../src/lib/native";
+import { _instanceof, startsWith, _JSON_parse, forEach, _Object_entries, _JSON_stringify, _Object_assign, isFunction, _null } from "../../../../src/lib/native";
 import type { AnchorTarget } from "../../../html/node/$Anchor";
 import { Page, type PageParams } from "./Page";
-import { PageBuilder } from "#structure/PageBuilder";
 // history index
 let index = 0;
 const _addEventListener = addEventListener;
@@ -41,6 +40,8 @@ const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2, target?
     _history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '' , url);
     forEach(Router.routers, router => router.resolve(path))
 }
+// disable browser scroll restoration
+_history.scrollRestoration = 'manual';
 
 export class Router extends $HTMLElement {
     static direction: 'back' | 'forward' = FORWARD;
@@ -95,7 +96,6 @@ export class Router extends $HTMLElement {
     async resolve(path: string | URL): Promise<this> {
         const {pathname, href} = toURL(path);
         const split = (p: string) => p.replaceAll(/\/+/g, '/').split('/').map(path => `/${path}`);
-
         type RouteData = { route: Route, params: PageParams, pathId: string }
         const searchRoute = (routes: typeof this.routes, targetPath: string): RouteData[] => {
             let targetPathSplit = split(targetPath);
@@ -114,8 +114,8 @@ export class Router extends $HTMLElement {
                         targetPathNodePosition = i;
                         const routeNode = routePathSplit[i];
                         const targetNode = targetPathSplit[i];
-                        // path node undefined, next path
-                        if (!routeNode || !targetNode) continue routePathLoop;
+                        // path node undefined, break path loop
+                        if (!routeNode || !targetNode) break pathNodeLoop;
                         // path node is params node
                         if (routeNode.includes(':')) {
                             // target not matched
@@ -130,8 +130,10 @@ export class Router extends $HTMLElement {
                         if (routeNode !== targetNode) continue routePathLoop;
                         pathId += targetNode;
                     }
+                    // target path node longer than route, next route
+                    if (targetPathSplit[targetPathNodePosition + 1] && !route.routes.size) continue routePathLoop;
                     // all path node passed, route found
-                    return [{route, params, pathId}, ...searchRoute(route.routes, targetPathSplit.slice(targetPathNodePosition + 1).join('/') + '/')]
+                    return [{route, params, pathId}, ...searchRoute(route.routes, targetPathSplit.slice(targetPathNodePosition + 1).join('/'))]
                 }
             }
             // no route passed

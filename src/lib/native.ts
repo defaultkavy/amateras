@@ -15,8 +15,8 @@ interface forEach {
     <T>(arr: Array<T>, fn: (value: T, index: number, array: Array<T>) => void): void;
     <T>(set: Set<T>, fn: (value: T, index: number, set: Set<T>) => Promise<void>): void;
     <T>(set: Set<T>, fn: (value: T, index: number, set: Set<T>) => void): void;
-    <K, V>(map: Map<K, V>, fn: (value: V, key: K, index: number, map: Map<K, V>) => Promise<void>): void;
-    <K, V>(map: Map<K, V>, fn: (value: V, key: K, index: number, map: Map<K, V>) => void): void;
+    <K, V>(map: Map<K, V>, fn: (value: [K, V], index: number, map: Map<K, V>) => Promise<void>): void;
+    <K, V>(map: Map<K, V>, fn: (value: [K, V], index: number, map: Map<K, V>) => void): void;
     <N extends Node>(set: NodeListOf<N>, fn: (value: N, index: number, parent: NodeListOf<N>) => Promise<void>): void;
     <N extends Node>(set: NodeListOf<N>, fn: (value: N, index: number, parent: NodeListOf<N>) => void): void;
 }

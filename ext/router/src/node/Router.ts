@@ -95,7 +95,7 @@ export class Router extends $HTMLElement {
 
     async resolve(path: string | URL): Promise<this> {
         const {pathname, href} = toURL(path);
-        const split = (p: string) => p.replaceAll(/\/+/g, '/').split('/').map(path => `/${path}`);
+        const split = (p: string) => p.replaceAll(/\/+/g, '/').replace(/^\//, '').split('/').map(path => `/${path}`);
         type RouteData = { route: Route, params: PageParams, pathId: string }
         const searchRoute = (routes: typeof this.routes, targetPath: string): RouteData[] => {
             let targetPathSplit = split(targetPath);
@@ -115,7 +115,7 @@ export class Router extends $HTMLElement {
                         const routeNode = routePathSplit[i];
                         const targetNode = targetPathSplit[i];
                         // path node undefined, break path loop
-                        if (!routeNode || !targetNode) break pathNodeLoop;
+                        if (!routeNode || !targetNode) continue routePathLoop;
                         // path node is params node
                         if (routeNode.includes(':')) {
                             // target not matched

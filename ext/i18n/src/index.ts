@@ -30,22 +30,56 @@ _Object_assign($, {
 
 type ResolvedAsyncDictionary<F extends I18nDictionaryContextImporter> = Awaited<ReturnType<F>>['default'];
 
-type DeepKeys<T> = T extends I18nDictionaryContext
-  ? {
-      [K in keyof T]: K extends string
-        ? K extends '_' ? never : `${K}` | `${K}.${DeepKeys<T[K]>}`
-        : never;
-    }[keyof T]
-  : never;
+type I18nTranslationKey<T> = 
+    T extends I18nDictionaryContext
+    ?   {
+            [K in keyof T]: K extends string
+            ?   K extends '_' 
+                ?   never 
+                :   T[K] extends string
+                    ?   `${K}`
+                    :   '_' extends keyof T[K]
+                        ?   `${K}` | `${K}.${I18nTranslationKey<T[K]>}`
+                        :   `${K}.${I18nTranslationKey<T[K]>}`
+            :   never;
+        }[keyof T]
+    :   never;
+
+type I18nTranslationParams<K extends string, T extends I18nDictionaryContext> = 
+    FindTranslationByKey<K, T> extends infer O
+    ?   O extends string
+        ?   FindParam<O>
+        :   never
+    :   never
+
+type FindParam<T extends string> = 
+    T extends `${string}$${infer Param}$${infer Rest}`
+    ?   Param extends `${string}${' '}${string}`
+        ?   Prettify<{} & FindParam<Rest>>
+        :   Prettify<Record<Param, any> & FindParam<Rest>>
+    :   {}
+
+type FindTranslationByKey<K extends string, T extends I18nDictionaryContext> = 
+    K extends `${infer Prefix}.${infer Rest}`
+    ?   Prefix extends keyof T
+        ?   T[Prefix] extends I18nDictionaryContext
+            ?   FindTranslationByKey<Rest, T[Prefix]>
+            :   T[Prefix]
+        :   ''
+    :   T[K] extends object
+        ?   '_' extends keyof T[K]
+            ?   T[K]['_']
+            :   never
+        :   T[K]
 
 declare module "amateras/core" {
     export namespace $ {
         export interface I18nFunction<D extends I18nDictionaryContext = {}> {
-            (path: DeepKeys<D>, ...args: any[]): I18nText;
+            <K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nText;
             i18n: I18n;
             locale(): string;
             locale(lang?: $Parameter<string>): this;
-            add<F extends I18nDictionaryContext | I18nDictionaryContextImporter>(lang: string, dictionary: F): I18nFunction<D | (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>;
+            add<F extends I18nDictionaryContext | I18nDictionaryContextImporter>(lang: string, dictionary: F): I18nFunction<D & (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>;
             delete(lang: string): this;
         }
         export function i18n(defaultLocale: string): I18nFunction;

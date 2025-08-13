@@ -72,6 +72,16 @@ type FindTranslationByKey<K extends string, T extends I18nDictionaryContext> =
             :   never
         :   T[K]
 
+type Mixin<A, B> = 
+    (Omit<A, keyof B> & Omit<B, keyof A>) & {
+        [key in (keyof A & keyof B)]: 
+            A[key] extends object
+            ?   B[key] extends object
+                ?   Mixin<A[key], B[key]>
+                :   A[key] | B[key]
+            :   A[key] | B[key]  
+    }
+
 declare module "amateras/core" {
     export namespace $ {
         export interface I18nFunction<D extends I18nDictionaryContext = {}> {
@@ -79,7 +89,7 @@ declare module "amateras/core" {
             i18n: I18n;
             locale(): string;
             locale(lang?: $Parameter<string>): this;
-            add<F extends I18nDictionaryContext | I18nDictionaryContextImporter>(lang: string, dictionary: F): I18nFunction<D & (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>;
+            add<F extends I18nDictionaryContext | I18nDictionaryContextImporter>(lang: string, dictionary: F): I18nFunction<Mixin<D, (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>>;
             delete(lang: string): this;
         }
         export function i18n(defaultLocale: string): I18nFunction;

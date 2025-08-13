@@ -1,9 +1,10 @@
 import { $HTMLElement } from "amateras/node/$HTMLElement";
-import { Route, type RouteBuilder, type RoutePath, type RouteParamsResolver } from "../structure/Route";
+import { Route, type RouteBuilder, type RoutePath, type RouteParamsResolver, type RouteParams, type RouteParamsStrings, type AsyncPageBuilder } from "../structure/Route";
 import { _document } from "amateras/lib/env";
 import { _instanceof, startsWith, _JSON_parse, forEach, _Object_entries, _JSON_stringify, _Object_assign, isFunction, _null } from "../../../../src/lib/native";
 import type { AnchorTarget } from "../../../html/node/$Anchor";
 import { Page, type PageParams } from "./Page";
+import type { PageBuilder, PageBuilderFunction } from "#structure/PageBuilder";
 // history index
 let index = 0;
 const _addEventListener = addEventListener;
@@ -170,6 +171,20 @@ export class Router extends $HTMLElement {
 }
 
 export interface Router {
+    route<
+        P extends RoutePath, 
+        B extends PageBuilder
+    >(path: P, builder: B, handle?: (route: Route<P, B['params']>) => Route<P>): Router
+    route<
+        K extends RoutePath, 
+        P extends RouteParamsStrings<K>, 
+        F extends PageBuilderFunction<P>
+    >(path: K, builder: F, handle?: (route: Route<K, P>) => Route<K, P>): this
+    route<
+        K extends RoutePath, 
+        P extends RouteParamsStrings<K>, 
+        F extends AsyncPageBuilder<P>
+    >(path: K, builder: F, handle?: (route: Route<K, P>) => Route<K, P>): this
     route<P extends RoutePath>(path: P, builder: RouteBuilder<RouteParamsResolver<P>>, handle?: (route: Route<P>) => Route<P>): Router
     group<P extends RoutePath>(path: P, handle: <R extends Route<P>>(route: R) => R): this;
     notFound(builder: RouteBuilder<RouteParamsResolver<RoutePath>>): this;

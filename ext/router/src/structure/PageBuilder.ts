@@ -4,7 +4,7 @@ import type { $NodeContentResolver } from "../../../../src/node/$Node";
 import type { AsyncPageBuilder, RouteParams } from "./Route";
 
 export class PageBuilder<Params extends RouteParams = any> {
-    #params!: Params
+    params!: Params
     #builder: PageBuilderFunction<Params> | AsyncPageBuilder<Params>;
     constructor(builder: PageBuilderFunction<Params>) {
         this.#builder = builder;

@@ -61,13 +61,22 @@ export namespace $ {
     export interface NodeMap {}
     // signal
     type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
-    export type SignalFunction<T> = {signal: Signal<T>, set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>} & (() => T) & SignalProcess<T>;
+    export type SignalFunction<T> = {
+        signal: Signal<T>, 
+        set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>,
+        value: () => T;
+    } & (() => T) & SignalProcess<T>;
+    const signalComputeListeners = new Set<(signal: Signal<any>) => void>();
     export const signal = <T>(value: T): SignalFunction<T> => {
         const signal = new Signal<T>(value);
-        const signalFn = function () { return signal.value(); }
+        const signalFn = function () { 
+            forEach(signalComputeListeners, fn => fn(signal));
+            return signal.value();
+        }
         _Object_assign(signalFn, {
             signal,
-            set(newValue: T) { return signal.value(newValue), signalFn; }
+            set: (newValue: T) => (signal.value(newValue), signalFn),
+            value: () => signal.value()
         })
         if (isObject(value) && !isNull(value)) {
             for (const [key, val] of _Object_entries(value)) {
@@ -91,9 +100,9 @@ export namespace $ {
             const signalHandler = (signal: Signal<any>) => { 
                 signal.subscribe(() => signalFn.set(process())) 
             }
-            Signal.listeners.add(signalHandler);
+            signalComputeListeners.add(signalHandler);
             const result = process();
-            Signal.listeners.delete(signalHandler);
+            signalComputeListeners.delete(signalHandler);
             subscribed = true;
             return result;
         }

@@ -3,7 +3,6 @@ import { _instanceof, forEach, isFunction, isUndefined } from "#lib/native";
 export class Signal<T> {
     #value: T;
     subscribers = new Set<(value: T) => void>();
-    static listeners = new Set<(signal: Signal<any>) => void>();
     constructor(value: T) {
         this.#value = value;
     }
@@ -12,10 +11,7 @@ export class Signal<T> {
     value(newValue: T): this;
     value(callback: (oldValue: T) => T): this;
     value(resolver?: T | ((oldValue: T) => T)) {
-        if (!arguments.length) {
-            forEach(Signal.listeners, fn => fn(this));
-            return this.#value;
-        }
+        if (!arguments.length) return this.#value;
         if (isFunction(resolver)) this.value(resolver(this.#value));
         else if (!isUndefined(resolver)) {
             this.#value = resolver;

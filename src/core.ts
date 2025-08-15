@@ -1,8 +1,8 @@
 import './global';
 import './node';
 import { Signal } from "#structure/Signal";
-import { $Element, type $Event } from "#node/$Element";
-import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
+import { $Element } from "#node/$Element";
+import { $Node, type $Event, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
 import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind, _null } from '#lib/native';
 import { $HTMLElement } from '#node/$HTMLElement';
 import { _document } from '#lib/env';

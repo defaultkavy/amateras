@@ -58,15 +58,15 @@ export class $Node {
         return _instanceof(this, instance) ? this : null;
     }
 
-    on(type: string, listener: any, options?: boolean | AddEventListenerOptions) {
+    on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {
         return this.addEventListener(type, listener, options);
     }
 
-    off(type: string, listener: any, options?: boolean | EventListenerOptions) {
+    off(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | EventListenerOptions): this {
         return this.removeEventListener(type, listener, options);
     }
     
-    once(type: string, listener: any, options?: boolean | AddEventListenerOptions) {
+    once(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {
         return this.on(type, listener, { once: true, ...(isBoolean(options) ? {capture: options} : options ?? {}) })
     }
 
@@ -132,6 +132,10 @@ export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$Node
 export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunction<any> | null | undefined;
 export type $NodeContentResolver<T extends $Node> = OrPromise<$NodeContentTypes | $NodeContentHandler<T> | $NodeContentResolver<T>[]>;
 
+export type $Event<E extends $Node, Ev = any> = Ev & {currentTarget: {$: E}};
+export type $EventListener<E extends $Node, Ev> = (event: $Event<E, Ev>) => void;
+export type $EventListenerObject<E extends $Node, Ev> = { handleEvent(object: $Event<E, Ev>): void; }
+
 export interface $Node {
     /** {@link Node.baseURI} */
     readonly baseURI: string;
@@ -195,9 +199,9 @@ export interface $Node {
     /** {@link Node.replaceChild} */
     replaceWith(...nodes: (Node | string)[]): this;
     /** {@link EventTarget.addEventListener} */
-    addEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions | boolean): void;
+    addEventListener(type: string, callback: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: AddEventListenerOptions | boolean): this;
     /** {@link EventTarget.removeEventListener} */
-    removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
+    removeEventListener(type: string, callback: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: EventListenerOptions | boolean): this;
     /** {@link EventTarget.dispatchEvent} */
     dispatchEvent(event: Event): boolean;
 

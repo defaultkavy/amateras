@@ -1,4 +1,4 @@
-import { _instanceof } from "amateras/lib/native";
+import { _instanceof, _null } from "amateras/lib/native";
 import { I18nText, type I18nTextOptions } from "#node/I18nText";
 import { I18nDictionary } from "#structure/I18nDictionary";
 
@@ -22,13 +22,13 @@ export class I18n {
     locale(): string;
     locale(locale: string): this;
     locale(locale?: string) {
-        if (!arguments.length) return this.locale$();
+        if (!arguments.length) return this.locale$.value();
         if (locale) this.locale$.set(locale)
         return this;
     }
 
-    dictionary(locale = this.locale$()) {
-        if (!locale) return null;
+    dictionary(locale = this.locale$.value()) {
+        if (!locale) return _null;
         const dictionary = this.map.get(locale);
         return dictionary;
     }

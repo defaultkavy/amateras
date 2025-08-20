@@ -21,7 +21,10 @@ export class $Node {
 
     insert(resolver: $NodeContentResolver<this>, position = -1) {
         // process nodes
-        forEach(toArray(resolver), resolve_child => forEach($Node.process(this, resolve_child), $node => $Node.append(this, $node, position)));
+        forEach(toArray(resolver), resolve_child => forEach($Node.process(this, resolve_child), $node => {
+            $Node.append(this, $node, position);
+            if (position >= 0) position++;
+        }));
         return this;
     }
 

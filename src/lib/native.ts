@@ -46,6 +46,6 @@ export const _JSON_parse = JSON.parse;
 // String
 export const startsWith = (target: string, ...str: string[]) => !!str.find(s => target.startsWith(s));
 // Function
-export const _bind = (target: Function, obj: Object) => target.bind(obj);
+export const _bind = <T extends Function>(target: T, obj: Object): T => target.bind(obj);
 // Promise
 export const _Promise = Promise;

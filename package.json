@@ -38,7 +38,8 @@
     "./i18n": "./ext/i18n/src/index.ts",
     "./idb": "./ext/idb/src/index.ts",
     "./idb/core": "./ext/idb/src/core.ts",
-    "./markdown": "./ext/markdown/index.ts"
+    "./markdown": "./ext/markdown/src/index.ts",
+    "./markdown/syntax/*": "./ext/markdown/src/syntax/*.ts"
   },
   "workspaces": [
     "./ext/*"

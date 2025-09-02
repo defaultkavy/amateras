@@ -1,0 +1,51 @@
+import { blockquoteProcessor, blockquoteTokenizer } from "../syntax/blockquote";
+import { boldProcessor, boldTokenizer } from "../syntax/bold";
+import { codeProcessor, codeTokenizer } from "../syntax/code";
+import { codeblockProcessor, codeblockTokenizer } from "../syntax/codeblock";
+import { headingProcessor, headingTokenizer } from "../syntax/heading";
+import { horizontalRuleProcessor, horizontalRuleTokenizer } from "../syntax/horizontalRule";
+import { imageProcessor, imageTokenizer } from "../syntax/image";
+import { italicProcessor, italicTokenizer } from "../syntax/italic";
+import { linkProcessor, linkTokenizer } from "../syntax/link";
+import { listProcessor, listTokenizer } from "../syntax/list";
+import { textLineProcessor, textProcessor } from "../syntax/text";
+import { MarkdownLexer } from "./MarkdownLexer";
+import { MarkdownParser } from "./MarkdownParser";
+
+export class Markdown {
+    lexer = new MarkdownLexer();
+    parser = new MarkdownParser();
+    constructor() {
+        this.lexer.use(
+            headingTokenizer,
+            codeblockTokenizer,
+            listTokenizer,
+            blockquoteTokenizer,
+            horizontalRuleTokenizer,
+            codeTokenizer,
+            boldTokenizer,
+            italicTokenizer,
+            imageTokenizer,
+            linkTokenizer
+        )
+        
+        this.parser.use(
+            textProcessor,
+            imageProcessor,
+            linkProcessor,
+            codeProcessor,
+            italicProcessor,
+            boldProcessor,
+            textLineProcessor,
+            headingProcessor,
+            codeblockProcessor,
+            listProcessor,
+            blockquoteProcessor,
+            horizontalRuleProcessor
+        )
+    }
+
+    parseHTML(str: string) {
+        return this.parser.parse(this.lexer.blockTokenize(str));
+    }
+}

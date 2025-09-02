@@ -17,6 +17,8 @@ export function $(tagname: string): $HTMLElement<HTMLElement>
 export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>, N extends number>(number: N, construct: T, ...args: P): Repeat<InstanceType<T>, N>;
 export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>>(construct: T, ...args: P): InstanceType<T>;
+export function $(nodes: NodeListOf<HTMLElement>): $HTMLElement[];
+export function $(nodes: NodeListOf<Element>): $Element[];
 export function $(nodes: NodeListOf<Node | ChildNode>): $Node[];
 export function $<N extends $Node>($node: N, ...args: any[]): N;
 export function $<N extends $Node>($node: N | null | undefined, ...args: any[]): N | null | undefined;

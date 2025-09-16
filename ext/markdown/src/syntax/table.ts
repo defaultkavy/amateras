@@ -5,25 +5,30 @@ import type { MarkdownParser } from "#structure/MarkdownParser";
 import { _Array_from } from "amateras/lib/native";
 
 export const tableProcessor = (parser: MarkdownParser) => setProcessor(parser, TABLE, (token) => {
-        let html = '';
+        let thead = '';
+        let tbody = '';
+        let rowIndex = 0;
         for (const row of token.content!) {
             let rowHTML = '';
             for (let i = 0; i < row.content!.length; i++) {
                 const col = row.content![i]!;
-                const align = token.data!.columnAlign[i];
-                const tagname = row === token.content![0] ? 'th' : 'td';
+                const align = token.data!.align[i];
+                const tagname = rowIndex === 0 ? 'th' : 'td';
                 rowHTML += `<${tagname} align="${align ?? 'left'}">${parser.parse(col.content!)}</${tagname}>`
             }
-            html += htmltag('tr', rowHTML)
+            if (rowIndex === 0) thead += htmltag('thead', htmltag('tr', rowHTML));
+            else tbody += htmltag('tr', rowHTML);
+            rowIndex++
         }
-        return htmltag('table', html)
+        tbody = htmltag('tbody', tbody);
+        return htmltag('table', thead + tbody)
     })
 
 export const tableTokenizer = (lexer: MarkdownLexer) => setBlockTokenizer(lexer, TABLE, {
         regex: /\|(?:.+\|)+/,
-        handle(matches, position, lines) {
+        handle(_, position, lines) {
             const tokens: BlockToken[] = [];
-            const columnAlign = []
+            const align = []
             while (position < lines.length) {
                 const row: BlockToken = {
                     type: TABLE_ROW,
@@ -38,7 +43,7 @@ export const tableTokenizer = (lexer: MarkdownLexer) => setBlockTokenizer(lexer,
                     const separator = text.match(/(:)?---+(:)?/);
                     if (separator) {
                         const [_, LEFT, RIGHT] = separator;
-                        columnAlign.push(RIGHT ? LEFT ? 'center' : 'right' : 'left');
+                        align.push(RIGHT ? LEFT ? 'center' : 'right' : 'left');
                         continue;
                     }
                     row.content.push({
@@ -47,12 +52,12 @@ export const tableTokenizer = (lexer: MarkdownLexer) => setBlockTokenizer(lexer,
                         layout: BLOCK
                     })
                 }
-                tokens.push(row);
+                if (row.content.length) tokens.push(row);
                 position++
             }
             return {
                 content: tokens,
-                data: { columnAlign },
+                data: { align },
                 multiLine: {
                     skip: position,
                     tokens: []

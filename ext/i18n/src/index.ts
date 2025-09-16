@@ -22,6 +22,9 @@ _Object_assign($, {
             delete(lang: string) {
                 i18n.map.delete(lang);
                 return this;
+            },
+            dir(path: string) {
+                return (key: string, options?: I18nTextOptions) => i18n.translate(`${path}.${key}`, options)
             }
         })
         return i18nFn
@@ -41,6 +44,17 @@ type I18nTranslationKey<T> =
                     :   '_' extends keyof T[K]
                         ?   `${K}` | `${K}.${I18nTranslationKey<T[K]>}`
                         :   `${K}.${I18nTranslationKey<T[K]>}`
+            :   never;
+        }[keyof T]
+    :   never;
+
+type I18nTranslationDirKey<T> = 
+    T extends I18nDictionaryContext
+    ?   {
+            [K in keyof T]: K extends string
+            ?   T[K] extends string 
+                ?   never
+                :   `${K}` | `${K}.${I18nTranslationDirKey<T[K]>}`
             :   never;
         }[keyof T]
     :   never;
@@ -72,6 +86,17 @@ type FindTranslationByKey<K extends string, T extends I18nDictionaryContext> =
             :   never
         :   T[K]
 
+type GetDictionaryContextByKey<K extends string, T extends I18nDictionaryContext> =
+    K extends `${infer Prefix}.${infer Rest}`
+    ?   Prefix extends keyof T
+        ?   T[Prefix] extends I18nDictionaryContext
+            ?   GetDictionaryContextByKey<Rest, T[Prefix]>
+            :   never
+        :   never
+    :   T[K] extends object
+        ?   T[K]
+        :   never
+
 type Mixin<A, B> = 
     (Omit<A, keyof B> & Omit<B, keyof A>) & {
         [key in (keyof A & keyof B)]: 
@@ -91,6 +116,7 @@ declare module "amateras/core" {
             locale(lang?: $Parameter<string>): this;
             add<F extends I18nDictionaryContext | I18nDictionaryContextImporter>(lang: string, dictionary: F): I18nFunction<Mixin<D, (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>>;
             delete(lang: string): this;
+            dir<K extends I18nTranslationDirKey<D>>(path: K): I18nFunction<GetDictionaryContextByKey<K, D>>
         }
         export function i18n(defaultLocale: string): I18nFunction;
         export type I18nText = _I18nText;

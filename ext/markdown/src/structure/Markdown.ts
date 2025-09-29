@@ -1,3 +1,4 @@
+import { alertProcessor, alertTokenizer } from "../syntax/alert";
 import { blockquoteProcessor, blockquoteTokenizer } from "../syntax/blockquote";
 import { boldProcessor, boldTokenizer } from "../syntax/bold";
 import { codeProcessor, codeTokenizer } from "../syntax/code";
@@ -20,6 +21,7 @@ export class Markdown {
             headingTokenizer,
             codeblockTokenizer,
             listTokenizer,
+            alertTokenizer,
             blockquoteTokenizer,
             horizontalRuleTokenizer,
             codeTokenizer,
@@ -40,6 +42,7 @@ export class Markdown {
             headingProcessor,
             codeblockProcessor,
             listProcessor,
+            alertProcessor,
             blockquoteProcessor,
             horizontalRuleProcessor
         )

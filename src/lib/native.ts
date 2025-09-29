@@ -45,6 +45,12 @@ export const _JSON_stringify = JSON.stringify;
 export const _JSON_parse = JSON.parse;
 // String
 export const startsWith = (target: string, ...str: string[]) => !!str.find(s => target.startsWith(s));
+// String & Array
+interface slice {
+    (target: string, start?: number, end?: number): string;
+    <T>(target: Array<T>, start?: number, end?: number): T[];
+}
+export const slice: slice = (target: any, start?: number, end?: number) => target.slice(start, end);
 // Function
 export const _bind = <T extends Function>(target: T, obj: Object): T => target.bind(obj);
 // Promise

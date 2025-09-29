@@ -4,6 +4,7 @@ export class RouterAnchor extends $Anchor {
     constructor() {
         super();
         this.on('click', e => { 
+            if (e.shiftKey || e.ctrlKey) return;
             e.preventDefault();
             this.target() === '_replace' 
             ?   $.replace(this.href()) 

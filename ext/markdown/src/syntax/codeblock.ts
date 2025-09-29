@@ -1,20 +1,11 @@
 import { BLOCK, CODE_END, CODE_LINE, CODE_START } from "#lib/type";
-import { setBlockTokenizer, setProcessor } from "#lib/util";
+import { htmlEscapeChar, setBlockTokenizer, setProcessor } from "#lib/util";
 import type { BlockToken, MarkdownLexer } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
 
 export const codeblockProcessor = (parser: MarkdownParser) => setProcessor(parser, CODE_START, (token, tokens) => {
         let html = '';
         let i = 1;
-        let escape = (str: string) => {
-            return str
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#39;')
-
-        }
         while (i < tokens.length) {
             const token = tokens[i]!;
             if (token.type === CODE_END) break;
@@ -22,7 +13,7 @@ export const codeblockProcessor = (parser: MarkdownParser) => setProcessor(parse
             i++;
         }
         return {
-            html: `<pre><code${token.data?.lang ? ` lang="${token.data.lang}"` : ''}>${escape(html)}</code></pre>`,
+            html: `<pre><code${token.data?.lang ? ` lang="${token.data.lang}"` : ''}>${htmlEscapeChar(html)}</code></pre>`,
             skipTokens: i
         }
     })

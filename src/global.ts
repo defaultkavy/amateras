@@ -2,6 +2,7 @@ import type { $Element } from '#node/$Element';
 import type { $Node } from '#node/$Node';
 import * as core from '#core';
 import type { Signal } from '#structure/Signal';
+import type { $EventTarget } from '#node/$EventTarget';
 
 declare global {
     export import $ = core.$;
@@ -11,6 +12,9 @@ declare global {
     type OrPromise<T> = T | Promise<T>;
     type OrNullish<T> = T | Nullish;
     type Constructor<T> = { new (...args: any[]): T }
+    type Mutable<T> = {
+        -readonly [P in keyof T]: T[P];
+    }
     type AsyncFunction<T> = () => Promise<T>;
     type $Parameter<T> = T | undefined | Signal<T> | Signal<T | undefined>
     type Ok<D> = [data: D, err: null];
@@ -25,6 +29,9 @@ declare global {
     } & {};
     interface Node {
         readonly $: $Node
+    }
+    interface EventTarget {
+        readonly $: $EventTarget
     }
     interface Element {
         readonly $: $Element

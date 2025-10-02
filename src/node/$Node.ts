@@ -3,13 +3,12 @@ import { _document } from "#lib/env";
 import { _Array_from, _instanceof, _JSON_stringify, _null, _Promise, forEach, isBoolean, isFunction, isNull, isObject, isUndefined } from "#lib/native";
 import { toArray } from "#lib/toArray";
 import { Signal } from "#structure/Signal";
+import { $EventTarget, type $EventListener, type $EventListenerObject } from "./$EventTarget";
 
-export class $Node {
-    node: Node & ChildNode;
+export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
+    declare node: Node & ChildNode;
     constructor(node: Node & ChildNode) {
-        this.node = node;
-        //@ts-expect-error
-        this.node.$ = this;
+        super(node);
     }
 
     content(children: $NodeContentResolver<this>) {
@@ -59,18 +58,6 @@ export class $Node {
 
     is<T extends (abstract new (...args: any[]) => $Node)>(instance: T): InstanceType<T> | null {
         return _instanceof(this, instance) ? this : null;
-    }
-
-    on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {
-        return this.addEventListener(type, listener, options);
-    }
-
-    off(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | EventListenerOptions): this {
-        return this.removeEventListener(type, listener, options);
-    }
-    
-    once(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {
-        return this.on(type, listener, { once: true, ...(isBoolean(options) ? {capture: options} : options ?? {}) })
     }
 
     static process<T extends $Node>($node: T, content: $NodeContentResolver<any>): Array<$Node | undefined | null> {
@@ -135,11 +122,7 @@ export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$Node
 export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunction<any> | null | undefined;
 export type $NodeContentResolver<T extends $Node> = OrPromise<$NodeContentTypes | $NodeContentHandler<T> | $NodeContentResolver<T>[]>;
 
-export type $Event<E extends $Node, Ev = any> = Ev & {currentTarget: {$: E}};
-export type $EventListener<E extends $Node, Ev> = (event: $Event<E, Ev>) => void;
-export type $EventListenerObject<E extends $Node, Ev> = { handleEvent(object: $Event<E, Ev>): void; }
-
-export interface $Node {
+export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {
     /** {@link Node.baseURI} */
     readonly baseURI: string;
     /** {@link Node.childNodes} */
@@ -201,12 +184,6 @@ export interface $Node {
     remove(): this;
     /** {@link Node.replaceChild} */
     replaceWith(...nodes: (Node | string)[]): this;
-    /** {@link EventTarget.addEventListener} */
-    addEventListener(type: string, callback: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: AddEventListenerOptions | boolean): this;
-    /** {@link EventTarget.removeEventListener} */
-    removeEventListener(type: string, callback: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: EventListenerOptions | boolean): this;
-    /** {@link EventTarget.dispatchEvent} */
-    dispatchEvent(event: Event): boolean;
 
     /** {@link Node.nodeValue} */
     nodeValue(nodeValue: $Parameter<string | null>): this;

@@ -1,8 +1,8 @@
-import type { $Node } from "#node/$Node";
+import type { $EventTarget } from "#node/$EventTarget";
 import { assign } from "./assign";
 import { _Object_entries, _Object_getOwnPropertyDescriptors, forEach } from "./native";
 
-export const assignHelper = (object: Constructor<EventTarget>, target: Constructor<$Node>, tagname?: string) => {
+export const assignHelper = (object: Constructor<EventTarget>, target: Constructor<$EventTarget>, tagname?: string) => {
     const [set, get, fn] = [[], [], []] as [string[], string[], string[]]
     // assign native object properties to target
     forEach(_Object_entries(_Object_getOwnPropertyDescriptors(object.prototype)), ([prop, value]) => {

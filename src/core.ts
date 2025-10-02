@@ -2,13 +2,14 @@ import './global';
 import './node';
 import { Signal } from "#structure/Signal";
 import { $Element } from "#node/$Element";
-import { $Node, type $Event, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
+import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
 import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind, _null } from '#lib/native';
 import { $HTMLElement } from '#node/$HTMLElement';
 import { _document } from '#lib/env';
 import { toArray } from '#lib/toArray';
+import { $EventTarget, type $Event } from '#node/$EventTarget';
 
-const nodeNameMap: {[key: string]: Constructor<$Node>} = {}
+const nodeNameMap: {[key: string]: Constructor<$EventTarget>} = {}
 const _stylesheet = new CSSStyleSheet();
 
 export function $<K extends keyof $.NodeMap, T extends $.NodeMap[K]>(tagname: K, ...args: ConstructorParameters<T>): InstanceType<T>;
@@ -26,8 +27,12 @@ export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLEleme
 export function $<H extends HTMLElement>(element: H | null | undefined, ...args: any[]): $HTMLElement<H> | null | undefined;
 export function $<E extends Element>(element: E, ...args: any[]): $Element<E>;
 export function $<E extends Element>(element: E | null | undefined, ...args: any[]): $Element<E> | null | undefined;
-export function $<N extends Node | EventTarget>(node: N, ...args: any[]): $Node;
-export function $<N extends Node | EventTarget>(node: N | null | undefined, ...args: any[]): $Node | null | undefined;
+export function $<D extends Document>(node: D): $Node<DocumentEventMap>;
+export function $<N extends Node>(node: N, ...args: any[]): $Node;
+export function $<N extends Node>(node: N | null | undefined, ...args: any[]): $Node | null | undefined;
+export function $<W extends Window>(node: W): $EventTarget<WindowEventMap>;
+export function $<E extends EventTarget>(node: E, ...args: any[]): $EventTarget;
+export function $<E extends EventTarget>(node: E | null | undefined, ...args: any[]): $EventTarget | null | undefined;
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
 export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['currentTarget']['$'];
 export function $<N extends number>(number: N, tagname: string): Repeat<$HTMLElement<HTMLElement>, N>;
@@ -50,7 +55,8 @@ export function $(resolver: string | number | null | undefined | Element | HTMLE
     if (_instanceof(resolver, HTMLElement)) return new $HTMLElement(resolver);
     if (_instanceof(resolver, Element)) return new $Element(resolver);
     if (_instanceof(resolver, Node)) return new $Node(resolver as any);
-    if (_instanceof(resolver, NodeList)) return _Array_from(resolver).map($)
+    if (_instanceof(resolver, EventTarget)) return new $EventTarget(resolver as any);
+    if (_instanceof(resolver, NodeList)) return _Array_from(resolver).map($);
     return new $HTMLElement(resolver);
 }
 
@@ -112,7 +118,7 @@ export namespace $ {
         return computeFn as ComputeFunction<T>
     }
 
-    export const assign = (...resolver: [nodeName: string, $node: Constructor<$Node>][]) => {
+    export const assign = (...resolver: [nodeName: string, $node: Constructor<$EventTarget>][]) => {
         forEach(resolver, ([nodeName, $node]) => nodeNameMap[nodeName] = $node);
         return $;
     }

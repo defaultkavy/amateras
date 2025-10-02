@@ -6,7 +6,7 @@ import { Signal } from "#structure/Signal";
 import { $EventTarget, type $EventListener, type $EventListenerObject } from "./$EventTarget";
 
 export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
-    declare node: Node & ChildNode;
+    declare node: Node & ChildNode & ParentNode;
     constructor(node: Node & ChildNode) {
         super(node);
     }
@@ -147,6 +147,14 @@ export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {
     readonly parentNode?: ParentNode | null;
     /** {@link Node.previousSibling} */
     readonly previousSibling?: ChildNode | null;
+    /** {@link Node.childElementCount} */
+    readonly childElementCount: number;
+    /** {@link Node.children} */
+    readonly children: HTMLCollection;
+    /** {@link Node.firstElementChild} */
+    readonly firstElementChild: Element | null;
+    /** {@link Node.lastElementChild} */
+    readonly lastElementChild: Element | null;
     
     /** {@link Node.appendChild} */
     appendChild<T extends Node>(node: T): T;
@@ -176,15 +184,31 @@ export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {
     removeChild<T extends Node>(child: T): T;
     /** {@link Node.replaceChild} */
     replaceChild<T extends Node>(node: Node, child: T): T;
-    /** {@link Node.replaceChild} */
+    /** {@link Node.after} */
     after(...nodes: (Node | string)[]): this;
-    /** {@link Node.replaceChild} */
+    /** {@link Node.before} */
     before(...nodes: (Node | string)[]): this;
-    /** {@link Node.replaceChild} */
+    /** {@link Node.remove} */
     remove(): this;
-    /** {@link Node.replaceChild} */
+    /** {@link Node.replaceWith} */
     replaceWith(...nodes: (Node | string)[]): this;
-
+    /** {@link Node.append} */
+    append(...nodes: (Node | string)[]): this;
+    /** {@link Node.prepend} */
+    prepend(...nodes: (Node | string)[]): this;
+    /** {@link Node.querySelector} */
+    querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): HTMLElementTagNameMap[K] | null;
+    querySelector<K extends keyof SVGElementTagNameMap>(selectors: K): SVGElementTagNameMap[K] | null;
+    querySelector<K extends keyof MathMLElementTagNameMap>(selectors: K): MathMLElementTagNameMap[K] | null;
+    querySelector<E extends Element = Element>(selectors: string): E | null;
+    /** {@link Node.querySelectorAll} */
+    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): NodeListOf<HTMLElementTagNameMap[K]>;
+    querySelectorAll<K extends keyof SVGElementTagNameMap>(selectors: K): NodeListOf<SVGElementTagNameMap[K]>;
+    querySelectorAll<K extends keyof MathMLElementTagNameMap>(selectors: K): NodeListOf<MathMLElementTagNameMap[K]>;
+    querySelectorAll<K extends keyof HTMLElementDeprecatedTagNameMap>(selectors: K): NodeListOf<HTMLElementDeprecatedTagNameMap[K]>;
+    querySelectorAll<E extends Element = Element>(selectors: string): NodeListOf<E>;
+    /** {@link Node.replaceChildren} */
+    replaceChildren(...nodes: (Node | string)[]): this;
     /** {@link Node.nodeValue} */
     nodeValue(nodeValue: $Parameter<string | null>): this;
     nodeValue(): string | null;

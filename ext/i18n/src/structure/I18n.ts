@@ -23,7 +23,10 @@ export class I18n {
     locale(locale: string): this;
     locale(locale?: string) {
         if (!arguments.length) return this.locale$.value();
-        if (locale) this.locale$.set(locale)
+        if (locale) {
+            if (!this.map.has(locale)) locale = locale.split('-')[0]!;
+            if (this.map.has(locale)) this.locale$.set(locale)
+        }
         return this;
     }
 

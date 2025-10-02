@@ -4,7 +4,7 @@ export class $EventTarget<EvMap = {}> {
     node: EventTarget;
     constructor(node: EventTarget) {
         this.node = node;
-        (node as Mutable<EventTarget>).$ = this;
+        if (node !== window) (node as Mutable<EventTarget>).$ = this;
     }
     
     on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {

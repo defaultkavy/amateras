@@ -1,5 +1,5 @@
 import { Signal } from "../structure/Signal";
-import { _instanceof, _Object_defineProperty, forEach, isUndefined } from "./native";
+import { _instanceof, _Object_defineProperty, forEach, isFunction, isUndefined } from "./native";
 
 export const assign = (target: any, {set, get, fn}: { 
     set?: string[], 
@@ -20,7 +20,10 @@ export const assign = (target: any, {set, get, fn}: {
                     value(this, args: any) {
                         if (!arguments.length) return this.node[prop];
                         let set = (value: any) => !isUndefined(value) && (this.node[prop] = value);
-                        if (_instanceof(args, Signal)) args = args.subscribe(set).value();
+                        if (isFunction(args) && _instanceof(args.signal, Signal)) {
+                            args.signal.subscribe(set);
+                            args = args();
+                        }
                         set(args)
                         return this;
                     }

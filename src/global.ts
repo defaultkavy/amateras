@@ -16,7 +16,7 @@ declare global {
         -readonly [P in keyof T]: T[P];
     }
     type AsyncFunction<T> = () => Promise<T>;
-    type $Parameter<T> = T | undefined | Signal<T> | Signal<T | undefined>
+    type $Parameter<T> = T | undefined | $.SignalFunction<T> | $.ComputeFunction<T> | Signal<T>
     type Ok<D> = [data: D, err: null];
     type Err<E> = [data: null, err: E]
     type Result<D, E> = Ok<D> | Err<E>

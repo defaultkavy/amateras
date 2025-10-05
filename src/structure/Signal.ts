@@ -2,7 +2,7 @@ import { _instanceof, forEach, isFunction, isUndefined } from "#lib/native";
 
 export class Signal<T> {
     #value: T;
-    subscribers = new Set<(value: T) => void>();
+    #subscribers = new Set<(value: T) => void>();
     constructor(value: T) {
         this.#value = value;
     }
@@ -21,17 +21,17 @@ export class Signal<T> {
     }
 
     emit() {
-        forEach(this.subscribers, subs => subs(this.#value))
+        forEach(this.#subscribers, subs => subs(this.#value))
         return this;
     }
 
     subscribe(callback: (value: T) => void) {
-        this.subscribers.add(callback);
+        this.#subscribers.add(callback);
         return this;
     }
 
     unsubscribe(callback: (value: T) => void) {
-        this.subscribers.delete(callback);
+        this.#subscribers.delete(callback);
         return this;
     }
 

@@ -80,20 +80,29 @@ export namespace $ {
         const signalFn = function () { 
             forEach(signalComputeListeners, fn => fn(signal));
             return signal.value();
-        }
+        } as SignalFunction<T> 
+        nestedComputeFn(value, signalFn);
         _Object_assign(signalFn, {
             signal,
             set: (newValue: T) => (signal.value(newValue), signalFn),
             value: () => signal.value()
         })
+        return signalFn
+    }
+    // experiment feature
+    const signalFnMap = new Map<any, SignalFunction<any> | ComputeFunction<any>>();
+    const nestedComputeFn = (value: any, parentSignalFn: SignalFunction<any> | ComputeFunction<any>) => {
         if (isObject(value) && !isNull(value)) {
             for (const [key, val] of _Object_entries(value)) {
-                const val$ = $.signal(val);
-                val$.signal.subscribe(newValue => { value[key as keyof typeof value] = newValue; signal.emit() });
-                _Object_defineProperty(signalFn, `${key}$`, {value: val$});
+                const cachedFn = signalFnMap.get(val);
+                const val$ = cachedFn ?? $.compute(() => parentSignalFn()[key]);
+                if (!cachedFn && isObject(val)) {
+                    signalFnMap.set(val, val$);
+                    nestedComputeFn(val, val$)
+                }
+                _Object_defineProperty(parentSignalFn, `${key}$`, {value: val$});
             }
         }
-        return signalFn as unknown as SignalFunction<T>
     }
 
     export type ComputeFunction<T> = ({(): T}) & { signal: Signal<T> };
@@ -101,8 +110,8 @@ export namespace $ {
         let subscribed = false;
         const signalFn: SignalFunction<any> = signal(_null);
         const computeFn = () => {
-            if (!subscribed) return signalFn.set(subscribe())();
-            else return signalFn.set(process())();
+            if (!subscribed) return signalFn.set(subscribe()).value();
+            else return signalFn.set(process()).value();
         }
         const subscribe = () => {
             const signalHandler = (signal: Signal<any>) => { 

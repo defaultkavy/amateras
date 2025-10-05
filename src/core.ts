@@ -66,18 +66,20 @@ export namespace $ {
     export const style = _bind(_stylesheet.insertRule, _stylesheet);
     // node map
     export interface NodeMap {}
-    // signal
-    type SignalProcess<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
+
+    // signal function
+    type SignalObject<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
     export type SignalFunction<T> = {
         signal: Signal<T>, 
         set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>,
         value: () => T;
-    } & (() => T) & SignalProcess<T>;
+    } & (() => T) & SignalObject<T>;
     const signalComputeListeners = new Set<(signal: Signal<any>) => void>();
+    const signalEffectListeners = new Set<(signal: Signal<any>) => void>();
     export const signal = <T>(value: T): SignalFunction<T> => {
         const signal = new Signal<T>(value);
         const signalFn = function () { 
-            forEach(signalComputeListeners, fn => fn(signal));
+            forEach([...signalComputeListeners, ...signalEffectListeners], fn => fn(signal));
             return signal.value();
         } as SignalFunction<T> 
         nestedComputeFn(value, signalFn);
@@ -92,18 +94,19 @@ export namespace $ {
     const signalFnMap = new Map<any, SignalFunction<any> | ComputeFunction<any>>();
     const nestedComputeFn = (value: any, parentSignalFn: SignalFunction<any> | ComputeFunction<any>) => {
         if (isObject(value) && !isNull(value)) {
-            for (const [key, val] of _Object_entries(value)) {
+            forEach(_Object_entries(value), ([key, val]) => {
                 const cachedFn = signalFnMap.get(val);
-                const val$ = cachedFn ?? $.compute(() => parentSignalFn()[key]);
+                const val$ = cachedFn ?? compute(() => parentSignalFn()[key]);
                 if (!cachedFn && isObject(val)) {
                     signalFnMap.set(val, val$);
                     nestedComputeFn(val, val$)
                 }
                 _Object_defineProperty(parentSignalFn, `${key}$`, {value: val$});
-            }
+            })
         }
     }
 
+    // compute function
     export type ComputeFunction<T> = ({(): T}) & { signal: Signal<T> };
     export const compute = <T>(process: () => T): ComputeFunction<T> => {
         let subscribed = false;
@@ -113,9 +116,8 @@ export namespace $ {
             else return signalFn.set(process()).value();
         }
         const subscribe = () => {
-            const signalHandler = (signal: Signal<any>) => { 
+            const signalHandler = (signal: Signal<any>) => 
                 signal.subscribe(() => signalFn.set(process())) 
-            }
             signalComputeListeners.add(signalHandler);
             const result = process();
             signalComputeListeners.delete(signalHandler);
@@ -124,6 +126,15 @@ export namespace $ {
         }
         _Object_assign(computeFn, { signal: signalFn.signal });
         return computeFn as ComputeFunction<T>
+    }
+
+    // effect
+    export const effect = (process: () => void) => {
+        const signalHandler = (signal: Signal<any>) => 
+            signal.subscribe(process);
+        signalEffectListeners.add(signalHandler);
+        process();
+        signalEffectListeners.delete(signalHandler);
     }
 
     export const assign = (...resolver: [nodeName: string, $node: Constructor<$EventTarget>][]) => {

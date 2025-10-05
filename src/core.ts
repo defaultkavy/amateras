@@ -6,7 +6,6 @@ import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/
 import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind, _null } from '#lib/native';
 import { $HTMLElement } from '#node/$HTMLElement';
 import { _document } from '#lib/env';
-import { toArray } from '#lib/toArray';
 import { $EventTarget, type $Event } from '#node/$EventTarget';
 
 const nodeNameMap: {[key: string]: Constructor<$EventTarget>} = {}
@@ -137,4 +136,3 @@ export namespace $ {
 
 export type $ = typeof $;
 globalThis.$ = $;
-_Object_assign($, {toArray})

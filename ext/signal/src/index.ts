@@ -42,9 +42,12 @@ declare module 'amateras/core' {
         export function signal<T>(value: T): SignalFunction<T>;
         export function compute<T>(process: () => T): ComputeFunction<T>; 
         export function effect(process: () => void): void;
-        export interface $NodeContentMap<T> {
-            signalFn: SignalFunction<T>;
-            computeFn: ComputeFunction<T>;
+        export interface $NodeContentMap {
+            signalFn: SignalFunction<any>;
+            computeFn: ComputeFunction<any>;
+        }
+        export interface $NodeParameterMap<T> {
+            signalFn: SignalFunction<T>
         }
     }
 }

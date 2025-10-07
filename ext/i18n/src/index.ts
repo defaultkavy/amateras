@@ -137,11 +137,11 @@ declare module "amateras/core" {
         export function i18n(defaultLocale: string): I18nFunction;
         export type I18nTranslation = _I18nTranslation;
 
-        export interface $NodeContentMap<T> {
+        export interface $NodeContentMap {
             i18n: I18nTranslation
         }
 
-        export interface $NodeParameterMap {
+        export interface $NodeParameterMap<T> {
             i18n: I18nTranslation
         }
     }

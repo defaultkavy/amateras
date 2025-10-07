@@ -5,9 +5,9 @@ import { $Node, $Text } from "amateras/node/$Node";
 
 // handle $Node content process
 $Node.processors.add((_, content) => {
-    const signal = (content as any).signal;
+    const signal = (content as SignalFunction<any>)?.signal;
     if (_instanceof(signal, Signal)) {
-        const resolver = signal.value();
+        const resolver = (content as SignalFunction<any>)();
         if (_instanceof(resolver, $Node)) {
             // handler signal $Node result
             let node = resolver;
@@ -30,7 +30,7 @@ $Node.processors.add((_, content) => {
 
 // handle $Node native method setter
 $Node.setters.add((value, set) => {
-    const signal = value.signal
+    const signal = value?.signal
     if (isFunction(value) && _instanceof(signal, Signal)) {
         signal.subscribe(set);
         return value();

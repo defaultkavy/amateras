@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Media extends $HTMLElement<HTMLMediaElement> {
@@ -9,7 +9,7 @@ export class $Media extends $HTMLElement<HTMLMediaElement> {
 
 export interface $Media extends $HTMLElement<HTMLMediaElement> {}
 
-assignHelper(HTMLMediaElement, $Media, 'media');
+assignProperties(HTMLMediaElement, $Media, 'media');
 
 declare module '#core' {
     export function $(nodeName: 'media'): $Media

@@ -1,12 +1,13 @@
 import { chain } from "#lib/chain";
 import { _document } from "#lib/env";
-import { _Array_from, _instanceof, _JSON_stringify, _null, _Promise, forEach, isBoolean, isFunction, isNull, isObject, isUndefined } from "#lib/native";
+import { _Array_from, _instanceof, _JSON_stringify, _null, _Promise, forEach, isFunction, isNull, isUndefined } from "#lib/native";
 import { toArray } from "#lib/toArray";
-import { Signal } from "#structure/Signal";
-import { $EventTarget, type $EventListener, type $EventListenerObject } from "./$EventTarget";
+import { $EventTarget } from "./$EventTarget";
 
 export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
     declare node: Node & ChildNode & ParentNode;
+    static processors = new Set<$NodeContentProcessor>();
+    static setters = new Set<$NodePropertySetHandler>();
     constructor(node: Node & ChildNode) {
         super(node);
     }
@@ -66,37 +67,18 @@ export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
     }
 
     static process<T extends $Node>($node: T, content: $NodeContentResolver<any>): Array<$Node | undefined | null> {
+        for (const processor of this.processors) {
+            const result = processor($node, content);
+            if (result) return result;
+        }
         if (isUndefined(content) || isNull(content) || _instanceof(content, $Node)) return [content];
         // is Promise
         if (_instanceof(content, _Promise)) return [$('async').await(content, ($async, $child) => $async.replace($child as any))];
         // is SignalFunction or ContentHandler
         if (isFunction(content)) {
-            const signal = (content as any).signal;
-            if (_instanceof(signal, Signal)) {
-                const resolver = (content as $.SignalFunction<any>)();
-                if (_instanceof(resolver, $Node)) {
-                    // handler signal $Node result
-                    let node = resolver;
-                    const set = (value: any) => {
-                        node.replace(value);
-                        node = value;
-                    }
-                    signal.subscribe(set);
-                    return [resolver];
-                } else {
-                    // handler signal other type result
-                    const $text = _document ? new $Text() : $('signal').attr({ type: typeof signal.value() });
-                    const set = (value: any) => $text.textContent(isObject(value) ? _JSON_stringify(value) : value);
-                    if (_instanceof($text, $Text)) $text.signals.add(signal);
-                    signal.subscribe(set);
-                    set(resolver);
-                    return [$text];
-                }
-            } else {
-                const _content = content($node) as $NodeContentResolver<$Node>;
-                if (_instanceof(_content, _Promise)) return this.process($node, _content as any);
-                else return toArray(_content).map(content => this.process($node, content)).flat();
-            }
+            const _content = content($node) as $NodeContentResolver<$Node>;
+            if (_instanceof(_content, _Promise)) return this.process($node, _content as any);
+            else return toArray(_content).map(content => this.process($node, content)).flat();
         }
         // is nested array
         if (_instanceof(content, Array)) return content.map(c => this.process($node, c)).flat();
@@ -117,14 +99,15 @@ export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
 }
 
 export class $Text extends $Node {
-    signals = new Set<Signal<any>>();
     constructor(textContent?: string) {
         super(new Text(textContent));
     }
 }
 
+export type $NodePropertySetHandler = (value: any, set: (value: any) => void) => any;
+export type $NodeContentProcessor = <N extends $Node>($node: N, content: $NodeContentResolver<N>) => Array<$Node | undefined | null> | void | undefined;
 export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$NodeContentResolver<T>>;
-export type $NodeContentTypes = $Node | string | number | boolean | $.SignalFunction<any> | null | undefined;
+export type $NodeContentTypes = $Node | string | number | boolean | $.NodeContentTypeExtends<any> | null | undefined;
 export type $NodeContentResolver<T extends $Node> = OrPromise<$NodeContentTypes | $NodeContentHandler<T> | $NodeContentResolver<T>[]>;
 
 export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {

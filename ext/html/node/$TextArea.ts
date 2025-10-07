@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $TextArea extends $HTMLElement<HTMLTextAreaElement> {
@@ -9,7 +9,7 @@ export class $TextArea extends $HTMLElement<HTMLTextAreaElement> {
 
 export interface $TextArea extends $HTMLElement<HTMLTextAreaElement> {}
 
-assignHelper(HTMLTextAreaElement, $TextArea, 'textarea');
+assignProperties(HTMLTextAreaElement, $TextArea, 'textarea');
 
 declare module '#core' {
     export function $(nodeName: 'textarea'): $TextArea

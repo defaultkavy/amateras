@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Anchor extends $HTMLElement<HTMLAnchorElement> {
@@ -46,4 +46,4 @@ declare module '#core' {
     export function $(nodeName: 'a'): $Anchor
 }
 
-assignHelper(HTMLAnchorElement, $Anchor, 'a');
+assignProperties(HTMLAnchorElement, $Anchor, 'a');

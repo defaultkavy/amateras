@@ -13,7 +13,7 @@ declare module 'amateras/core' {
         export function replace(url: string | URL | Nullish): typeof Router;
         export function back(): typeof Router;
         export function forward(): typeof Router;
-        export interface NodeMap {
+        export interface $NodeMap {
             'router': typeof Router;
         }
     }

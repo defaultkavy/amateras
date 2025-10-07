@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Option extends $HTMLElement<HTMLOptionElement> {
@@ -33,7 +33,7 @@ export interface $Option extends $HTMLElement<HTMLOptionElement> {
     value(): string;
 }
 
-assignHelper(HTMLOptionElement, $Option, 'option');
+assignProperties(HTMLOptionElement, $Option, 'option');
 
 declare module '#core' {
     export function $(nodeName: 'option'): $Option

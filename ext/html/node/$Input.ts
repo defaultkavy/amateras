@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Input extends $HTMLElement<HTMLInputElement> {
@@ -186,7 +186,7 @@ export type InputType =
   | 'url'
   | 'week';
 
-assignHelper(HTMLInputElement, $Input, 'input');
+assignProperties(HTMLInputElement, $Input, 'input');
 
 declare module '#core' {
     export function $(nodeName: 'input'): $Input

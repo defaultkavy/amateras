@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Image extends $HTMLElement<HTMLImageElement> {
@@ -65,7 +65,7 @@ export interface $Image extends $HTMLElement<HTMLImageElement> {
     width(): number;
 }
 
-assignHelper(HTMLImageElement, $Image, 'img');
+assignProperties(HTMLImageElement, $Image, 'img');
 
 declare module '#core' {
     export function $(nodeName: 'img'): $Image

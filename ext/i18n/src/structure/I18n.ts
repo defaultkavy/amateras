@@ -1,6 +1,7 @@
 import { _instanceof, _null } from "amateras/lib/native";
 import { I18nText, type I18nTextOptions } from "#node/I18nText";
 import { I18nDictionary } from "#structure/I18nDictionary";
+import 'amateras/signal';
 
 export class I18n {
     locale$ = $.signal<string>('');

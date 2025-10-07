@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Select extends $HTMLElement<HTMLSelectElement> {
@@ -69,7 +69,7 @@ export interface $Select extends $HTMLElement<HTMLSelectElement> {
     showPicker(): this;
 }
 
-assignHelper(HTMLSelectElement, $Select, 'select');
+assignProperties(HTMLSelectElement, $Select, 'select');
 
 declare module '#core' {
     export function $(nodeName: 'select'): $Select

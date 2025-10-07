@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Label extends $HTMLElement<HTMLLabelElement> {
@@ -18,7 +18,7 @@ export interface $Label extends $HTMLElement<HTMLLabelElement> {
     htmlFor(): string;
 }
 
-assignHelper(HTMLLabelElement, $Label, 'label');
+assignProperties(HTMLLabelElement, $Label, 'label');
 
 declare module '#core' {
     export function $(nodeName: 'label'): $Label

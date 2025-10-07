@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $OptGroup extends $HTMLElement<HTMLOptGroupElement> {
@@ -16,7 +16,7 @@ export interface $OptGroup extends $HTMLElement<HTMLOptGroupElement> {
     label(): string;
 }
 
-assignHelper(HTMLOptGroupElement, $OptGroup, 'optgroup');
+assignProperties(HTMLOptGroupElement, $OptGroup, 'optgroup');
 
 declare module '#core' {
     export function $(nodeName: 'optgroup'): $OptGroup

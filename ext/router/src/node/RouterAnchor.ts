@@ -15,7 +15,7 @@ export class RouterAnchor extends $Anchor {
 
 declare module 'amateras/core' {
     export namespace $ {
-        export interface NodeMap {
+        export interface $NodeMap {
             'ra': typeof RouterAnchor;
         }
     }

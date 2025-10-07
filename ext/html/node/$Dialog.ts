@@ -1,4 +1,4 @@
-import { assignHelper } from "#lib/assignHelper";
+import { assignProperties } from "#lib/assignProperties";
 import { $HTMLElement } from "#node/$HTMLElement";
 
 export class $Dialog extends $HTMLElement<HTMLDialogElement> {
@@ -9,7 +9,7 @@ export class $Dialog extends $HTMLElement<HTMLDialogElement> {
 
 export interface $Dialog extends $HTMLElement<HTMLDialogElement> {}
 
-assignHelper(HTMLDialogElement, $Dialog, 'dialog');
+assignProperties(HTMLDialogElement, $Dialog, 'dialog');
 
 declare module '#core' {
     export function $(nodeName: 'dialog'): $Dialog

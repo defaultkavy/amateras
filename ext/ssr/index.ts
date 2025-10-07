@@ -32,10 +32,10 @@ _Object_assign($, {
         node.replaceWith($node.node);
     
         function getData(node: Node, $node: $Node) {
-            if (node.nodeName === 'SIGNAL' && _instanceof(node, Element) && _instanceof($node, $Text)) {
-                const type = $(node).attr()['type'];
-                return forEach($node.signals, signal => signal.value(type === 'number' ? Number(node.textContent) : type === 'boolean' ? node.textContent == 'true' ? true : false : node.textContent));
-            }
+            // if (node.nodeName === 'SIGNAL' && _instanceof(node, Element) && _instanceof($node, $Text)) {
+            //     const type = $(node).attr()['type'];
+            //     return forEach($node.signals, signal => signal.value(type === 'number' ? Number(node.textContent) : type === 'boolean' ? node.textContent == 'true' ? true : false : node.textContent));
+            // }
             if (_instanceof(node, Text)) return $node.textContent(node.textContent);
             if (_instanceof(node, Element) && _instanceof($node, $Element)) $node.attr($(node).attr());
             const arr = _Array_from($node.childNodes);

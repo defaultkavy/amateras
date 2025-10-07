@@ -1,7 +1,8 @@
-import { Signal } from "../structure/Signal";
-import { _instanceof, _Object_defineProperty, forEach, isFunction, isUndefined } from "./native";
+import type { $EventTarget } from "#node/$EventTarget";
+import { $Node } from "#node/$Node";
+import { _Object_defineProperty, _Object_entries, _Object_getOwnPropertyDescriptors, forEach, isUndefined } from "./native";
 
-export const assign = (target: any, {set, get, fn}: { 
+const assigner = (target: any, {set, get, fn}: { 
     set?: string[], 
     get?: string[], 
     fn?: string[]
@@ -20,9 +21,9 @@ export const assign = (target: any, {set, get, fn}: {
                     value(this, args: any) {
                         if (!arguments.length) return this.node[prop];
                         let set = (value: any) => !isUndefined(value) && (this.node[prop] = value);
-                        if (isFunction(args) && _instanceof(args.signal, Signal)) {
-                            args.signal.subscribe(set);
-                            args = args();
+                        for (const setter of $Node.setters) {
+                            const result = setter(args, set);
+                            if (!isUndefined(result)) return set(result), this;
                         }
                         set(args)
                         return this;
@@ -38,4 +39,19 @@ export const assign = (target: any, {set, get, fn}: {
 
         })
     )
+}
+
+export const assignProperties = (object: Constructor<EventTarget>, target: Constructor<$EventTarget>, tagname?: string) => {
+    const [set, get, fn] = [[], [], []] as [string[], string[], string[]]
+    // assign native object properties to target
+    forEach(_Object_entries(_Object_getOwnPropertyDescriptors(object.prototype)), ([prop, value]) => {
+        if (!(prop in target.prototype)) {
+            if (value.get && !value.set) get.push(prop);
+            else if (value.value) fn.push(prop);
+            else if (value.get && value.set) set.push(prop);
+        }
+    })
+    assigner(target, {set, get, fn})
+    // register tagname
+    if (tagname) $.assign([tagname, target])
 }

@@ -1,7 +1,5 @@
-import { Signal } from "#structure/Signal";
 import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isNull, isString, isUndefined } from "#lib/native";
 import { _document } from "#lib/env";
-import type { $EventListener, $EventListenerObject } from "./$EventTarget";
 import { $Node } from "./$Node";
 
 export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> extends $Node<EvMap> {
@@ -14,14 +12,13 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
 
     attr(): {[key: string]: string};
     attr(key: string): string | null;
-    attr(obj: {[key: string]: string | number | boolean | Signal<any> | null | undefined}): this;
-    attr(resolver?: {[key: string]: string | number | boolean | Signal<any> | null | undefined} | string) {
+    attr(obj: {[key: string]: string | number | boolean | null | undefined}): this;
+    attr(resolver?: {[key: string]: string | number | boolean | null | undefined} | string) {
         if (!arguments.length) return _Object_fromEntries(_Array_from(this.attributes).map(attr => [attr.name, attr.value]));
         if (isString(resolver)) return this.getAttribute(resolver);
         if (resolver) for (let [key, value] of _Object_entries(resolver)) {
-            const set = (value: any) => !isUndefined(value) && isNull(value) ? this.removeAttribute(key) : this.setAttribute(key, `${value}`)
-            if (_instanceof(value, Signal)) value = value.subscribe(set).value();
-            set(value);
+            if (!isUndefined(value) && isNull(value)) this.removeAttribute(key);
+            else this.setAttribute(key, `${value}`);
         }
         return this;
     }

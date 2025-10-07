@@ -1,7 +1,7 @@
 import { _instanceof, _null } from "amateras/lib/native";
-import { I18nText, type I18nTextOptions } from "#node/I18nText";
 import { I18nDictionary } from "#structure/I18nDictionary";
 import 'amateras/signal';
+import { I18nTranslation, type I18nTranslationOptions } from "./I18nTranslation";
 
 export class I18n {
     locale$ = $.signal<string>('');
@@ -37,8 +37,8 @@ export class I18n {
         return dictionary;
     }
 
-    translate(key: string, options?: I18nTextOptions) {
-        return new I18nText(this, key, options);
+    translate(key: string, options?: I18nTranslationOptions) {
+        return new I18nTranslation(this, key, options);
     }
 }
 

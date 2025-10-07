@@ -1,13 +1,29 @@
 import { _Array_from, _instanceof, _Object_assign } from "amateras/lib/native"
 import { $ } from "amateras/core"
 import { I18n } from "#structure/I18n"
-import type { I18nText as _I18nText, I18nTextOptions } from "#node/I18nText";
 import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
+import { $Node, $Text } from "amateras/node/$Node";
+import { I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
+
+$Node.processors.add((_, content) => {
+    if (_instanceof(content, I18nTranslation)) {
+        const text = new $Text();
+        $.effect(() => text.textContent(content.content$()))
+        return [text]
+    }
+})
+
+$Node.setters.add((value, set) => {
+    if (_instanceof(value, I18nTranslation)) {
+        value.content$.signal.subscribe(set);
+        return value.content$.value();
+    }
+})
 
 _Object_assign($, {
     i18n(defaultLocale: string) {
         const i18n = new I18n(defaultLocale);
-        const i18nFn = (key: string, options?: I18nTextOptions) => i18n.translate(key, options);
+        const i18nFn = (key: string, options?: I18nTranslationOptions) => i18n.translate(key, options);
         _Object_assign(i18nFn, { 
             i18n,
             locale(locale: string) {
@@ -24,7 +40,7 @@ _Object_assign($, {
                 return this;
             },
             dir(path: string) {
-                return (key: string, options?: I18nTextOptions) => i18n.translate(`${path}.${key}`, options)
+                return (key: string, options?: I18nTranslationOptions) => i18n.translate(`${path}.${key}`, options)
             }
         })
         return i18nFn
@@ -110,7 +126,7 @@ type Mixin<A, B> =
 declare module "amateras/core" {
     export namespace $ {
         export interface I18nFunction<D extends I18nDictionaryContext = {}> {
-            <K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nText;
+            <K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nTranslation;
             i18n: I18n;
             locale(): string;
             locale(lang?: $Parameter<string>): this;
@@ -119,6 +135,13 @@ declare module "amateras/core" {
             dir<K extends I18nTranslationDirKey<D>>(path: K): I18nFunction<GetDictionaryContextByKey<K, D>>
         }
         export function i18n(defaultLocale: string): I18nFunction;
-        export type I18nText = _I18nText;
+
+        export interface $NodeContentMap<T> {
+            i18n: I18nTranslation
+        }
+
+        export interface $NodeParameterMap {
+            i18n: I18nTranslation
+        }
     }
 }

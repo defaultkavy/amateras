@@ -25,7 +25,7 @@ export class I18nTranslation {
             const snippets = target.split(/\$[a-zA-Z0-9_]+\$/);
             if (snippets.length === 1 || !options) { contentUpdate(target); break update }
             const matches = target.matchAll(/(\$([a-zA-Z0-9_]+)\$)/g);
-            const content = snippets.map(text => [text, options[matches.next().value?.at(2)!] ?? null]).join('');
+            const content = snippets.map(text => [text, options[matches.next().value?.at(2)!] ?? null].join('')).join('');
             contentUpdate(content);
         }
         return this;

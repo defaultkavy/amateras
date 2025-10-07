@@ -15,7 +15,7 @@ declare global {
         -readonly [P in keyof T]: T[P];
     }
     type AsyncFunction<T> = () => Promise<T>;
-    type $Parameter<T> = T | undefined | $.NodeContentTypeExtends<T>
+    type $Parameter<T> = T | undefined | $.$NodeParameterExtends
     type Ok<D> = [data: D, err: null];
     type Err<E> = [data: null, err: E]
     type Result<D, E> = Ok<D> | Err<E>

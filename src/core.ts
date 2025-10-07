@@ -67,7 +67,10 @@ export namespace $ {
     export interface $NodeMap {}
     // node content amp
     export interface $NodeContentMap<T> {}
-    export type NodeContentTypeExtends<T> = $NodeContentMap<T>[keyof $NodeContentMap<T>]
+    export type $NodeContentTypeExtends<T> = $NodeContentMap<T>[keyof $NodeContentMap<T>]
+    // attr value map
+    export interface $NodeParameterMap {}
+    export type $NodeParameterExtends = $NodeParameterMap[keyof $NodeParameterMap]
 
     export const assign = (...resolver: [nodeName: string, $node: Constructor<$EventTarget>][]) => {
         forEach(resolver, ([nodeName, $node]) => nodeNameMap[nodeName] = $node);

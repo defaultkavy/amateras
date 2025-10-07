@@ -107,7 +107,7 @@ export class $Text extends $Node {
 export type $NodePropertySetHandler = (value: any, set: (value: any) => void) => any;
 export type $NodeContentProcessor = <N extends $Node>($node: N, content: $NodeContentResolver<N>) => Array<$Node | undefined | null> | void | undefined;
 export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$NodeContentResolver<T>>;
-export type $NodeContentTypes = $Node | string | number | boolean | $.NodeContentTypeExtends<any> | null | undefined;
+export type $NodeContentTypes = $Node | string | number | boolean | $.$NodeContentTypeExtends<any> | null | undefined;
 export type $NodeContentResolver<T extends $Node> = OrPromise<$NodeContentTypes | $NodeContentHandler<T> | $NodeContentResolver<T>[]>;
 
 export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {

@@ -3,10 +3,10 @@ import { $ } from "amateras/core"
 import { I18n } from "#structure/I18n"
 import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
 import { $Node, $Text } from "amateras/node/$Node";
-import { I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
+import { I18nTranslation as _I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
 
 $Node.processors.add((_, content) => {
-    if (_instanceof(content, I18nTranslation)) {
+    if (_instanceof(content, _I18nTranslation)) {
         const text = new $Text();
         $.effect(() => text.textContent(content.content$()))
         return [text]
@@ -14,7 +14,7 @@ $Node.processors.add((_, content) => {
 })
 
 $Node.setters.add((value, set) => {
-    if (_instanceof(value, I18nTranslation)) {
+    if (_instanceof(value, _I18nTranslation)) {
         value.content$.signal.subscribe(set);
         return value.content$.value();
     }
@@ -135,6 +135,7 @@ declare module "amateras/core" {
             dir<K extends I18nTranslationDirKey<D>>(path: K): I18nFunction<GetDictionaryContextByKey<K, D>>
         }
         export function i18n(defaultLocale: string): I18nFunction;
+        export type I18nTranslation = _I18nTranslation;
 
         export interface $NodeContentMap<T> {
             i18n: I18nTranslation

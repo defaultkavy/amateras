@@ -1,0 +1,11 @@
+{
+    "name": "@amateras/ui",
+    "peerDependencies": {
+        "amateras": "../../"
+    },
+    "exports": {
+        "./waterfall": "./node/Waterfall.ts",
+        "./tabs": "./node/Tabs.ts",
+        "./virtual-scroll": "./lib/VirtualScroll.ts"
+    }
+}

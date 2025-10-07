@@ -40,7 +40,8 @@
     "./idb/core": "./ext/idb/src/core.ts",
     "./markdown": "./ext/markdown/src/index.ts",
     "./markdown/syntax/*": "./ext/markdown/src/syntax/*.ts",
-    "./signal": "./ext/signal/src/index.ts"
+    "./signal": "./ext/signal/src/index.ts",
+    "./ui/*": "./ext/ui/*.ts"
   },
   "workspaces": [
     "./ext/*"

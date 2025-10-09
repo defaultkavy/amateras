@@ -29,37 +29,33 @@ $('p').css(paragraphStyle).content([
 ])
 ```
 
-## DOM Operating
-```ts
-import 'amateras';
-
-const count$ = $.signal(0);
-
-$(document.body).content([
-    $('button')
-        .content('Click me')
-        .class('class1', 'class2')
-        .on('click', () => count$(oldValue => oldValue + 1)),
-    $('p').content($`Clicked ${count$} times.`)
-])
-```
-
 ## State Management
 ```ts
 import 'amateras';
+import 'amateras/signal';
 
+// define a signal with value 0
 const count$ = $.signal(0);
-const doubleCount$ = $.compute(() => count() * 2);
 
-setInterval(() => count$(oldValue => oldValue + 1), 1000);
+// this variable will be auto recalculate when count$ changes
+const doubleCount$ = $.compute(() => count$() * 2);
+
+// the console message will fired when count$ changes
+$.effect(() => console.log( count$() ))
 
 $(document.body).content([
-    $('p').content($`Count: ${count$}`),
-    $('p').content($`Double: ${doubleCount$}`)
+    // Display Counts
+    $('p').content( $`Counts: ${count$}` ),
+
+    // Display Double Counts
+    $('p').content( $`Double Counts: ${doubleCount$}` ),
+
+    // Create a button that make counts plus 1 on click
+    $('button').content('Add Count').on('click', () => count$.set(value => value + 1))
 ])
 ```
 
-## HTMLElement Methods Import
+## HTMLElement Native Methods Import
 ```ts
 import 'amateras';
 import 'amateras/html';
@@ -102,10 +98,11 @@ $(document.body).content([
 The packages size result using Vite 7.0 with default bundle settings, polyfills code included.
 | Package name | Size | Size(gzip) | Description |
 | --- | --- | --- | --- |
-| amateras | 5.67 kB | 2.52 kB | Core |
-| amateras/html | 0.99 kB | 0.26 kB | Import HTMLElement types and methods |
-| [amateras/css](./ext/css/README.md) | 3.65 kB | 1.41 kB | Style in JS |
-| [amateras/router](./ext/router/README.md) | 3.79 kB | 1.71 kB | Amateras Router |
-| [amateras/i18n](./ext/i18n/README.md) | 1.48 kB | 0.58 kB | I18n translations |
-| [amateras/idb](./ext/idb/README.md) | 5.35 kB | 2.03 kB | IndexedDB Builder and API Wrapper |
-| amateras/markdown | 1.89 kB | 0.67 kB | Markdown Converter |
+| amateras | 4.79 kB | 2.20 kB | Core |
+| amateras/html | 0.98 kB | 0.26 kB | Import HTMLElement types and methods |
+| [amateras/signal](./ext/signal/README.md) | 1.26 kB | 0.49 kB | Reactive data |
+| [amateras/css](./ext/css/README.md) | 3.70 kB | 1.44 kB | Style in JS |
+| [amateras/router](./ext/router/README.md) | 3.70 kB | 1.64 kB | Amateras Router |
+| [amateras/i18n](./ext/i18n/README.md) | 3.02 kB | 1.13 kB | I18n translations |
+| [amateras/idb](./ext/idb/README.md) | 5.39 kB | 2.06 kB | IndexedDB Builder and API Wrapper |
+| [amateras/markdown](./ext/markdown/README.md) | 6.81 kB | 2.68 kB | Markdown Converter |

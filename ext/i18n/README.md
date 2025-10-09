@@ -51,3 +51,23 @@ const $t = $.i18n()
 // and fetch file automatically from path
 .locale('zh');
 ```
+
+## Directory Shortcut
+
+```ts
+const $t = $.i18n('en')
+.add('en', {
+    page1: {
+        section2: {
+            button3: {
+                text: 'Too deep!'
+            }
+        }
+    }
+})
+
+const $t_button = $t.dir('page1.section2.button3');
+
+$t_button('text') // Too deep!
+$t('page1.section2.button3.text') // Too deep!
+```

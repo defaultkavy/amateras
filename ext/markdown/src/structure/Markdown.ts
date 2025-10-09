@@ -24,11 +24,11 @@ export class Markdown {
             alertTokenizer,
             blockquoteTokenizer,
             horizontalRuleTokenizer,
+            imageTokenizer, // image tokenizer must before link
+            linkTokenizer, // link tokenizer must before bold and italic and code
             codeTokenizer,
             boldTokenizer,
             italicTokenizer,
-            imageTokenizer,
-            linkTokenizer
         )
         
         this.parser.use(

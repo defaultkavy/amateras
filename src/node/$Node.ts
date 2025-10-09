@@ -42,11 +42,6 @@ export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
         return this;
     }
 
-    contains($node: $EventTarget | undefined | null) {
-        if (!$node || !_instanceof($node, $Node)) return false;
-        return this.node.contains($node.node);
-    }
-
     inDOM() {
         return _document.contains(this.node);
     }

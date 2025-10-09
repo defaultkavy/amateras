@@ -1,6 +1,6 @@
 import type { $EventTarget } from "#node/$EventTarget";
 import { $Node } from "#node/$Node";
-import { _Object_defineProperty, _Object_entries, _Object_getOwnPropertyDescriptors, forEach, isUndefined } from "./native";
+import { _instanceof, _null, _Object_defineProperty, _Object_entries, _Object_getOwnPropertyDescriptors, forEach, isUndefined } from "./native";
 
 const assigner = (target: any, {set, get, fn}: { 
     set?: string[], 
@@ -31,7 +31,7 @@ const assigner = (target: any, {set, get, fn}: {
                 } : {
                     // fn
                     value(this, ...args : any[]) {
-                        let result = this.node[prop](...args)
+                        let result = this.node[prop](...args.map(value => _instanceof(value, $Node) ? value.node : value ?? _null))
                         return isUndefined(result) ? this : result;
                     }
                 })

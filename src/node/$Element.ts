@@ -189,22 +189,6 @@ export interface $Element<Ele extends Element, EvMap = ElementEventMap> {
     animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions): Animation;
     /** {@link Element.getAnimations} */
     getAnimations(options?: GetAnimationsOptions): Animation[];
-    /** {@link Element.append} */
-    append(...nodes: (Node | string)[]): this;
-    /** {@link Element.prepend} */
-    prepend(...nodes: (Node | string)[]): this;
-    /** {@link Element.querySelector} */
-    querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): HTMLElementTagNameMap[K] | null;
-    querySelector<K extends keyof SVGElementTagNameMap>(selectors: K): SVGElementTagNameMap[K] | null;
-    querySelector<K extends keyof MathMLElementTagNameMap>(selectors: K): MathMLElementTagNameMap[K] | null;
-    querySelector<E extends Element = Element>(selectors: string): E | null;
-    /** {@link Element.querySelectorAll} */
-    querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): NodeListOf<HTMLElementTagNameMap[K]>;
-    querySelectorAll<K extends keyof SVGElementTagNameMap>(selectors: K): NodeListOf<SVGElementTagNameMap[K]>;
-    querySelectorAll<K extends keyof MathMLElementTagNameMap>(selectors: K): NodeListOf<MathMLElementTagNameMap[K]>;
-    querySelectorAll<E extends Element = Element>(selectors: string): NodeListOf<E>;
-    /** {@link Element.replaceChildren} */
-    replaceChildren(...nodes: (Node | string)[]): this;
 
     /** {@link Element.classList} */
     classList(): DOMTokenList;

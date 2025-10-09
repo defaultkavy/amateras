@@ -7,7 +7,7 @@ import { $EventTarget } from "./$EventTarget";
 export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
     declare node: Node & ChildNode & ParentNode;
     static processors = new Set<$NodeContentProcessor>();
-    static setters = new Set<$NodePropertySetHandler>();
+    static setters = new Set<$NodeSetterHandler>();
     constructor(node: Node & ChildNode) {
         super(node);
     }
@@ -99,7 +99,7 @@ export class $Text extends $Node {
     }
 }
 
-export type $NodePropertySetHandler = (value: any, set: (value: any) => void) => any;
+export type $NodeSetterHandler = (value: any, set: (value: any) => void) => any;
 export type $NodeContentProcessor = <N extends $Node>($node: N, content: $NodeContentResolver<N>) => Array<$Node | undefined | null> | void | undefined;
 export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$NodeContentResolver<T>>;
 export type $NodeContentTypes = $Node | string | number | boolean | $.$NodeContentTypeExtends | null | undefined;
@@ -130,13 +130,13 @@ export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {
     readonly parentNode?: ParentNode | null;
     /** {@link Node.previousSibling} */
     readonly previousSibling?: ChildNode | null;
-    /** {@link Node.childElementCount} */
+    /** {@link ParentNode.childElementCount} */
     readonly childElementCount: number;
-    /** {@link Node.children} */
+    /** {@link ParentNode.children} */
     readonly children: HTMLCollection;
-    /** {@link Node.firstElementChild} */
+    /** {@link ParentNode.firstElementChild} */
     readonly firstElementChild: Element | null;
-    /** {@link Node.lastElementChild} */
+    /** {@link ParentNode.lastElementChild} */
     readonly lastElementChild: Element | null;
     
     /** {@link Node.appendChild} */
@@ -144,7 +144,7 @@ export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {
     /** {@link Node.cloneNode} */
     cloneNode(subtree?: boolean): Node;
     /** {@link Node.compareDocumentPosition} */
-    compareDocumentPosition(other: Node): number;
+    compareDocumentPosition(other: $EventTarget | Node): number;
     /** {@link Node.getRootNode} */
     getRootNode(options?: GetRootNodeOptions): Node;
     /** {@link Node.hasChildNodes} */
@@ -154,9 +154,9 @@ export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {
     /** {@link Node.isDefaultNamespace} */
     isDefaultNamespace(namespace: string | null): boolean;
     /** {@link Node.isEqualNode} */
-    isEqualNode(otherNode: Node | null): boolean;
+    isEqualNode(otherNode: $EventTarget | Node | null): boolean;
     /** {@link Node.isSameNode} */
-    isSameNode(otherNode: Node | null): boolean;
+    isSameNode(otherNode: $EventTarget | Node | null): boolean;
     /** {@link Node.lookupNamespaceURI} */
     lookupNamespaceURI(prefix: string | null): string | null;
     /** {@link Node.lookupPrefix} */
@@ -167,31 +167,35 @@ export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {
     removeChild<T extends Node>(child: T): T;
     /** {@link Node.replaceChild} */
     replaceChild<T extends Node>(node: Node, child: T): T;
-    /** {@link Node.after} */
-    after(...nodes: (Node | string)[]): this;
-    /** {@link Node.before} */
-    before(...nodes: (Node | string)[]): this;
-    /** {@link Node.remove} */
+    /** {@link Node.contains} */
+    contains(other: $EventTarget | Node | null | undefined): boolean;
+
+    /** {@link ChildNode.after} */
+    after(...nodes: ($EventTarget | Node | string)[]): this;
+    /** {@link ChildNode.before} */
+    before(...nodes: ($EventTarget | Node | string)[]): this;
+    /** {@link ChildNode.remove} */
     remove(): this;
-    /** {@link Node.replaceWith} */
-    replaceWith(...nodes: (Node | string)[]): this;
-    /** {@link Node.append} */
-    append(...nodes: (Node | string)[]): this;
-    /** {@link Node.prepend} */
-    prepend(...nodes: (Node | string)[]): this;
-    /** {@link Node.querySelector} */
+    /** {@link ChildNode.replaceWith} */
+    replaceWith(...nodes: ($EventTarget | Node | string)[]): this;
+    /** {@link ParentNode.append} */
+    append(...nodes: ($EventTarget | Node | string)[]): this;
+    /** {@link ParentNode.prepend} */
+    prepend(...nodes: ($EventTarget | Node | string)[]): this;
+    /** {@link ParentNode.querySelector} */
     querySelector<K extends keyof HTMLElementTagNameMap>(selectors: K): HTMLElementTagNameMap[K] | null;
     querySelector<K extends keyof SVGElementTagNameMap>(selectors: K): SVGElementTagNameMap[K] | null;
     querySelector<K extends keyof MathMLElementTagNameMap>(selectors: K): MathMLElementTagNameMap[K] | null;
     querySelector<E extends Element = Element>(selectors: string): E | null;
-    /** {@link Node.querySelectorAll} */
+    /** {@link ParentNode.querySelectorAll} */
     querySelectorAll<K extends keyof HTMLElementTagNameMap>(selectors: K): NodeListOf<HTMLElementTagNameMap[K]>;
     querySelectorAll<K extends keyof SVGElementTagNameMap>(selectors: K): NodeListOf<SVGElementTagNameMap[K]>;
     querySelectorAll<K extends keyof MathMLElementTagNameMap>(selectors: K): NodeListOf<MathMLElementTagNameMap[K]>;
     querySelectorAll<K extends keyof HTMLElementDeprecatedTagNameMap>(selectors: K): NodeListOf<HTMLElementDeprecatedTagNameMap[K]>;
     querySelectorAll<E extends Element = Element>(selectors: string): NodeListOf<E>;
-    /** {@link Node.replaceChildren} */
-    replaceChildren(...nodes: (Node | string)[]): this;
+    /** {@link ParentNode.replaceChildren} */
+    replaceChildren(...nodes: ($EventTarget | Node | string)[]): this;
+
     /** {@link Node.nodeValue} */
     nodeValue(nodeValue: $Parameter<string | null>): this;
     nodeValue(): string | null;

@@ -47,7 +47,9 @@ declare module 'amateras/core' {
             computeFn: ComputeFunction<any>;
         }
         export interface $NodeParameterMap<T> {
-            signalFn: SignalFunction<T>
+            // Distribute T type
+            signalFn: T extends any ? SignalFunction<T> : never;
+            computeFn: T extends any ? ComputeFunction<T> : never;
         }
     }
 }

@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, isNull, isString, isUndefined } from "#lib/native";
+import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isNull, isString, isUndefined } from "#lib/native";
 import { _document } from "#lib/env";
 import { $Node } from "./$Node";
 
@@ -12,13 +12,19 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
 
     attr(): {[key: string]: string};
     attr(key: string): string | null;
-    attr(obj: {[key: string]: string | number | boolean | null | undefined}): this;
-    attr(resolver?: {[key: string]: string | number | boolean | null | undefined} | string) {
+    attr(obj: {[key: string]: $Parameter<string | number | boolean | null>}): this;
+    attr(resolver?: {[key: string]: $Parameter<string | number | boolean | null>} | string) {
         if (!arguments.length) return _Object_fromEntries(_Array_from(this.attributes).map(attr => [attr.name, attr.value]));
         if (isString(resolver)) return this.getAttribute(resolver);
         if (resolver) for (let [key, value] of _Object_entries(resolver)) {
-            if (!isUndefined(value) && isNull(value)) this.removeAttribute(key);
-            else this.setAttribute(key, `${value}`);
+            const set = (value: string | number | boolean | null | undefined) => {
+                if (!isUndefined(value) && isNull(value)) this.removeAttribute(key);
+                else this.setAttribute(key, `${value}`);
+            }
+            for (const setter of $Node.setters) {
+                const result = setter(value, set);
+                if (!isUndefined(result)) { set(result); continue; }
+            }
         }
         return this;
     }

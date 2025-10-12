@@ -16,16 +16,18 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
     attr(resolver?: {[key: string]: $Parameter<string | number | boolean | null>} | string) {
         if (!arguments.length) return _Object_fromEntries(_Array_from(this.attributes).map(attr => [attr.name, attr.value]));
         if (isString(resolver)) return this.getAttribute(resolver);
-        if (resolver) for (let [key, value] of _Object_entries(resolver)) {
-            const set = (value: string | number | boolean | null | undefined) => {
-                if (!isUndefined(value) && isNull(value)) this.removeAttribute(key);
-                else this.setAttribute(key, `${value}`);
+        if (resolver) 
+            keyIterate: for (let [key, value] of _Object_entries(resolver)) {
+                const set = (value: string | number | boolean | null | undefined) => {
+                    if (!isUndefined(value) && isNull(value)) this.removeAttribute(key);
+                    else this.setAttribute(key, `${value}`);
+                }
+                for (const setter of $Node.setters) {
+                    const result = setter(value, set);
+                    if (!isUndefined(result)) { set(result); continue keyIterate; }
+                }
+                set(value as any);
             }
-            for (const setter of $Node.setters) {
-                const result = setter(value, set);
-                if (!isUndefined(result)) { set(result); continue; }
-            }
-        }
         return this;
     }
 

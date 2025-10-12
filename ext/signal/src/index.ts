@@ -124,9 +124,11 @@ _Object_assign($, {
 
     // effect
     effect(process: (except: EffectExceptFunction) => void) {
+        let subscribed = false;
         const signalListener = (signal: Signal<any>) => 
             signal.subscribe(_ => process(except));
         const except = <T>(fn: () => T) => {
+            if (subscribed) return fn();
             signalEffectListeners.delete(signalListener);
             const result = fn();
             signalEffectListeners.add(signalListener);
@@ -135,5 +137,6 @@ _Object_assign($, {
         signalEffectListeners.add(signalListener);
         process(except);
         signalEffectListeners.delete(signalListener);
+        subscribed = true;
     }
 })

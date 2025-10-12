@@ -41,7 +41,7 @@ declare module 'amateras/core' {
     export namespace $ {
         export function signal<T>(value: T): SignalFunction<T>;
         export function compute<T>(process: () => T): ComputeFunction<T>; 
-        export function effect(process: () => void): void;
+        export function effect(process: (except: EffectExceptFunction) => void): void;
         export interface $NodeContentMap {
             signalFn: SignalFunction<any>;
             computeFn: ComputeFunction<any>;
@@ -56,14 +56,17 @@ declare module 'amateras/core' {
 
 type SignalObject<T> = T extends Array<any> ? {} : T extends object ? { [key in keyof T as `${string & key}$`]: SignalFunction<T[key]> } : {};
 export type SignalFunction<T> = {
+    (): T
     signal: Signal<T>, 
     set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>,
     value: () => T;
-} & (() => T) & SignalObject<T>;
+} & SignalObject<T>;
 export type ComputeFunction<T> = ({(): T}) & { signal: Signal<T> };
+export type SignalListener = (signal: Signal<any>) => void;
+export type EffectExceptFunction = <T>(fn: () => T) => T
 
-const signalComputeListeners = new Set<(signal: Signal<any>) => void>();
-const signalEffectListeners = new Set<(signal: Signal<any>) => void>();
+const signalComputeListeners = new Set<SignalListener>();
+const signalEffectListeners = new Set<SignalListener>();
 const signalFnMap = new Map<any, SignalFunction<any> | ComputeFunction<any>>();
 
 // experiment feature
@@ -107,11 +110,11 @@ _Object_assign($, {
             else return signalFn.set(process()).value();
         }
         const subscribe = () => {
-            const signalHandler = (signal: Signal<any>) => 
+            const signalListener = (signal: Signal<any>) => 
                 signal.subscribe(() => signalFn.set(process())) 
-            signalComputeListeners.add(signalHandler);
+            signalComputeListeners.add(signalListener);
             const result = process();
-            signalComputeListeners.delete(signalHandler);
+            signalComputeListeners.delete(signalListener);
             subscribed = true;
             return result;
         }
@@ -120,11 +123,17 @@ _Object_assign($, {
     },
 
     // effect
-    effect(process: () => void) {
-        const signalHandler = (signal: Signal<any>) => 
-            signal.subscribe(process);
-        signalEffectListeners.add(signalHandler);
-        process();
-        signalEffectListeners.delete(signalHandler);
+    effect(process: (except: EffectExceptFunction) => void) {
+        const signalListener = (signal: Signal<any>) => 
+            signal.subscribe(_ => process(except));
+        const except = <T>(fn: () => T) => {
+            signalEffectListeners.delete(signalListener);
+            const result = fn();
+            signalEffectListeners.add(signalListener);
+            return result;
+        }
+        signalEffectListeners.add(signalListener);
+        process(except);
+        signalEffectListeners.delete(signalListener);
     }
 })

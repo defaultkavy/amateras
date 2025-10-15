@@ -168,7 +168,7 @@ export interface $Node<EvMap = {}> extends $EventTarget<EvMap> {
     /** {@link Node.replaceChild} */
     replaceChild<T extends Node>(node: Node, child: T): T;
     /** {@link Node.contains} */
-    contains(other: $EventTarget | Node | null | undefined): boolean;
+    contains(other: $EventTarget | EventTarget | null | undefined): boolean;
 
     /** {@link ChildNode.after} */
     after(...nodes: ($EventTarget | Node | string)[]): this;

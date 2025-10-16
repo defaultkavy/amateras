@@ -26,6 +26,7 @@ declare global {
     type Prettify<T> = {
         [K in keyof T]: T[K];
     } & {};
+    type Narrow<T> = T extends boolean ? boolean : T;
     interface Node {
         readonly $: $Node
     }

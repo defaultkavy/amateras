@@ -48,8 +48,8 @@ declare module 'amateras/core' {
         }
         export interface $NodeParameterMap<T> {
             // Distribute T type
-            signalFn: T extends any ? SignalFunction<T> : never;
-            computeFn: T extends any ? ComputeFunction<T> : never;
+            signalFn: T extends any ? SignalFunction<Narrow<T>> : never;
+            computeFn: T extends any ? ComputeFunction<Narrow<T>> : never;
         }
     }
 }
@@ -61,7 +61,10 @@ export type SignalFunction<T> = {
     set: (newValue: T | ((oldValue: T) => T)) => SignalFunction<T>,
     value: () => T;
 } & SignalObject<T>;
-export type ComputeFunction<T> = ({(): T}) & { signal: Signal<T> };
+export type ComputeFunction<T> = { 
+    (): T
+    signal: Signal<T> 
+};
 export type SignalListener = (signal: Signal<any>) => void;
 export type EffectExceptFunction = <T>(fn: () => T) => T
 

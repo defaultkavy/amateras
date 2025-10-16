@@ -1,4 +1,4 @@
-import { colorAssign } from "../colorAssign";
+import { colorAssign } from "../../lib/colorAssign";
 
 const _purple = {
     50: '#faf5ff',

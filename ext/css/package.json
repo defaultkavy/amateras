@@ -4,6 +4,7 @@
         "amateras": "../../"
     },
     "imports": {
-      "#structure/*": "./src/structure/*.ts"
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts"
     }
 }

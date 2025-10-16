@@ -1,4 +1,4 @@
-import { colorAssign } from "../colorAssign";
+import { colorAssign } from "../../lib/colorAssign";
 
 const _fuchsia = {
     50: '#fdf4ff',

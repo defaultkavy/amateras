@@ -1,4 +1,4 @@
-import { colorAssign } from "../colorAssign";
+import { colorAssign } from "../../lib/colorAssign";
 
 const _gray = {
     50: '#f9fafb',

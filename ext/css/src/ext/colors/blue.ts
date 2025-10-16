@@ -1,4 +1,4 @@
-import { colorAssign } from "../colorAssign";
+import { colorAssign } from "../../lib/colorAssign";
 
 const _blue = {
     50: '#eff6ff',

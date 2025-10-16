@@ -1,4 +1,4 @@
-import { colorAssign } from "../colorAssign";
+import { colorAssign } from "../../lib/colorAssign";
 
 const _slate = {
     50: '#f8fafc',

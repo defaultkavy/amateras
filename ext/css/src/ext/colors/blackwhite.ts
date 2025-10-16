@@ -1,4 +1,4 @@
-import { colorAssign } from "../colorAssign";
+import { colorAssign } from "../../lib/colorAssign";
 
 colorAssign('black', '#000000');
 colorAssign('white', '#ffffff');

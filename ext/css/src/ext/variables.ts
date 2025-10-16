@@ -1,0 +1,51 @@
+import { _Object_assign, _Object_entries, _Object_fromEntries, isObject } from "amateras/lib/native";
+import { $CSS, type $CSSValueType } from "..";
+import { generateId } from "../lib/utils";
+import { $CSSVariable } from "#structure/$CSSVariable";
+
+declare module 'amateras/core' {
+    export namespace $ {
+        export namespace css {
+            export function variables<V extends string>(value: V): $CSSVariable<V>;
+            export function variables<T extends $CSSVariableType>(options: T, conditions?: $CSSVariableConditionType<T>): { [key in keyof T]: $CSSVariable<T[key]> }
+        }
+        
+        export interface $CSSValueTypeExtendsMap {
+            variable: $CSSVariable
+        }
+    }
+}
+
+export type $CSSVariableType<T = any> = { [key in keyof T]: $CSSValueType }
+export type $CSSVariableConditionType<T extends $CSSVariableType | string> = T extends string ? { [key: string]: $CSSValueType } : { [key: string]: Partial<$CSSVariableType<T>> }
+
+$CSS.valueInstances.add($CSSVariable)
+
+_Object_assign($.css, {
+    variables<T extends $CSSVariableType | string>(options: T, conditions?: $CSSVariableConditionType<T>) {
+        if (isObject(options)) {
+            const variables = _Object_fromEntries(_Object_entries(options).map(([key, value]) => [
+                key, 
+                new $CSSVariable(`${key.replaceAll(/([A-Z])/g, ((_, $1: string) => `-${$1.toLowerCase()}`))}_${generateId('lower')}`, `${value}`)
+            ]))
+
+            const conditionObj = conditions ? _Object_entries(conditions).map(([condition, _options]) => [
+                condition,
+                _Object_fromEntries(_Object_entries(_options).map(([key, value]) => [`--${variables[key]?.key}`, `${value}`] as const))
+            ] as const) : [];
+
+            $.CSS({':root': {
+                ..._Object_fromEntries(_Object_entries(variables).map(([_, varobj]) => [`--${varobj.key}`, varobj.value])),
+                ..._Object_fromEntries(conditionObj)
+            }})
+
+            return variables;
+        } else {
+            const variable = new $CSSVariable(generateId('lower'), options);
+            $.CSS({':root': {[`--${variable.key}`]: variable.value}});
+            return variable;
+        }
+    }
+})
+
+export * from '#structure/$CSSVariable'

@@ -1,228 +1,152 @@
 import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined, startsWith } from "amateras/lib/native";
-import { randomId } from "amateras/lib/randomId";
 import { $Element } from "amateras/node/$Element";
 import { $CSSDeclaration } from "#structure/$CSSDeclaration";
-import { $CSSMediaRule } from "#structure/$CSSMediaRule";
 import { $CSSRule } from "#structure/$CSSRule";
 import { $CSSStyleRule } from "#structure/$CSSStyleRule";
-import { $CSSKeyframesRule } from "#structure/$CSSKeyframesRule";
-import { $CSSVariable } from "#structure/$CSSVariable";
-import { $CSSContainerRule } from "#structure/$CSSContainerRule";
+import { generateId } from "./lib/utils";
 
 declare module 'amateras/core' {
     export namespace $ {
-        export function css(options: $CSSOptions | $CSSStyleRule): $CSSStyleRule
-        export function CSS(options: $CSSSelectorType | $CSSKeyframesSelectorType): void
+        export function css(options: $CSSMap | $CSSStyleRule): $CSSStyleRule
+        export function CSS(options: $CSSSelectors | $CSSGlobalDeclarationExtends): void
 
-        export namespace css {
-            export function variables<V extends string>(value: V): $CSSVariable<V>;
-            export function variables<T extends $CSSVariableType>(options: T, conditions?: $CSSVariableConditionType<T>): { [key in keyof T]: $CSSVariable<T[key]> }
-            export function keyframes<T extends { [key: string]: $CSSKeyframesType }>(options: T): { [key in keyof T]: $CSSKeyframesRule };
-        }
+        export interface $CSSValueTypeExtendsMap {}
+        export type $CSSValueTypeExtends = $CSSValueTypeExtendsMap[keyof $CSSValueTypeExtendsMap]
+
+        export interface $CSSGlobalDeclarationExtendsMap {}
+        export type $CSSGlobalDeclarationExtends = $CSSGlobalDeclarationExtendsMap[keyof $CSSGlobalDeclarationExtendsMap];
     }
 }
 
 declare module 'amateras/node/$Element' {
     export interface $Element {
-        css(...options: ($CSSOptions | $CSSStyleRule)[]): this;
+        css(...options: ($CSSMap | $CSSStyleRule)[]): this;
     }
 }
 
-const generatedIds = new Set<string>();
-const generateId = (lettercase: 'any' | 'lower' | 'upper' = 'any'): string => { 
-    const id = randomId({lettercase: lettercase});
-    if (generatedIds.has(id)) return generateId(lettercase);
-    generatedIds.add(id);
-    return id;
-}
 
-const stylesheet = $.stylesheet;
-const cssTextMap = new Map<string, $CSSStyleRule>();
-const [MEDIA, KEYFRAMES, CONTAINER] = ['@media', '@keyframes', '@container'] as const;
+export namespace $CSS {
 
-const processCSSOptions = <T extends $CSSStyleRule>(
-    rule: T, 
-    options: $CSSOptions, 
-): T => {
-    for (const [key, value] of _Object_entries(options)) {
-        if (isUndefined(value)) continue;
-        else if (_instanceof(value, $CSSDeclaration)) rule.declarations.set(value.key, value);
-        else if (isObject(value) && !_instanceof(value, $CSSKeyframesRule, $CSSVariable)) 
-            rule.rules.add( createRule(key, value, rule.selector) );
-        else {
-            const declaration = new $CSSDeclaration(key, `${value}`);
-            rule.declarations.set(declaration.key, declaration);
+    const stylesheet = $.stylesheet;
+    const cssTextMap = new Map<string, $CSSStyleRule>();
+
+    export const valueInstances = new Set<any>();
+    export const cssTextProcessors = new Set<$TextProcessor>();
+    export type $TextProcessor = (rule: $CSSRule, context: string, data?: {mediaContext?: string[], containerContext?: string[]}) => string[] | undefined;
+    export const createRuleProcessors = new Set<$CreateRuleProcessor>();
+    export type $CreateRuleProcessor = (selector: string, options: $CSSMap, context?: string) => $CSSRule | undefined;
+
+    export const CSSOptions = <T extends $CSSStyleRule>(
+        rule: T, 
+        options: $CSSMap, 
+    ): T => {
+        for (const [key, value] of _Object_entries(options)) {
+            if (isUndefined(value)) continue;
+            else if (_instanceof(value, $CSSDeclaration)) rule.declarations.set(value.key, value);
+            else if (isObject(value) && !_instanceof(value, ...valueInstances)) 
+                rule.rules.add( createRule(key, value, rule.selector) );
+            else {
+                const declaration = new $CSSDeclaration(key, `${value}`);
+                rule.declarations.set(declaration.key, declaration);
+            }
         }
+        return rule;
     }
-    return rule;
-}
 
-/** Create rule with several type depend on selector content.
- * @param context - for media rule creation, it should be style rule selector same as nested parent of media rule.
- */
-const createRule = (selector: string, options: $CSSOptions, context?: string) => {
-    if (startsWith(selector, CONTAINER, MEDIA)) return createMediaOrContainerRule(selector, options, context);
-    if (startsWith(selector, KEYFRAMES)) return createKeyframesRule(selector.replace('@keyframes ', ''), options as $CSSKeyframesType)
-    return createStyleRule(selector, options);
-}
-
-const createStyleRule = <T extends $CSSOptions>(selector: string, options: T) => processCSSOptions(new $CSSStyleRule(selector), options);
-
-const createMediaOrContainerRule = (selector: string, options: $CSSOptions, context?: string) => {
-    const rule = startsWith(selector, MEDIA) ? new $CSSMediaRule(selector) : new $CSSContainerRule(selector);
-    // create media rule from $.CSS
-    if (!context) forEach(_Object_entries(options), ([key, value]) => rule.rules.add( createRule(key, value) ))
-    // create from $.css
-    else rule.rules.add( createStyleRule(context, options) );
-    return rule;
-}
-
-const createKeyframesRule = (name: string, options: $CSSKeyframesType) => {
-    const rule = new $CSSKeyframesRule(name);
-    forEach(_Object_entries(options), ([key, value]) => {
-        rule.rules.add( processCSSOptions(new $CSSStyleRule(key), value) );
-    })
-    return rule;
-}
-
-const insertRule = (rule: $CSSRule) => {
-    cssText(rule).forEach(text => {
-        const selector = text.match(/^(.+?) {/)?.[1];
-        if (!selector) return;
-        if (!startsWith(selector, '@') && selector.split(',').find(str => !CSS.supports(`selector(${str})`))) return;
-        $.style(text, stylesheet.cssRules.length);
-    })
-    return rule
-}
-
-const cssText = (rule: $CSSRule, context: string = '', options?: {mediaContext?: string[], containerContext?: string[]}): string[] => {
-    if (_instanceof(rule, $CSSStyleRule)) {
-        const split = (str: string) => str.split(',');
-        const relation = (str: string, ctx: string): string => {
-            if (str.includes('&')) return str.replaceAll('&', ctx);
-            else return `${ctx ? ctx + ' ': ''}${str}`
+    /** Create rule with several type depend on selector content.
+     * @param context - for media rule creation, it should be style rule selector same as nested parent of media rule.
+     */
+    export const createRule = (selector: string, options: $CSSMap, context?: string) => {
+        for (const processor of createRuleProcessors) {
+            const result = processor(selector, options, context);
+            if (!isUndefined(result)) return result;
         }
-        const selectors = split(rule.selector);
-        const selector = split(context).map(ctx => selectors.map(selector => relation(selector, ctx))).join(', ');
-        const text = `${selector} { ${_Array_from(rule.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
-        return [text, ..._Array_from(rule.rules).map(childRule => cssText(childRule, selector, options)).flat()]
+        return createStyleRule(selector, options);
     }
-    if (_instanceof(rule, $CSSMediaRule)) {
-        const mediaContext = [...options?.mediaContext ?? [], rule.condition];
-        const media: string[] = [], style: string[] = []
-        forEach(
-            _Array_from(rule.rules)
-                .map(childRule => cssText(childRule, '', {...options, mediaContext}))
-                .flat(),
-            (childText => startsWith(childText, MEDIA) ? media.push(childText) : style.push(childText))
-        );
-        return [`${MEDIA} ${mediaContext.join(' and ')} { ${style.join('\n')} }`, ...media]
-    }
-    if (_instanceof(rule, $CSSContainerRule)) {
-        const containerContext = [...options?.containerContext ?? [], rule.condition];
-        const container: string[] = [], style: string[] = [];
-        forEach(
-            _Array_from(rule.rules)
-                .map(childRule => cssText(childRule, '', {...options, containerContext}))
-                .flat(),
-            (childText => startsWith(childText, CONTAINER) ? container.push(childText) : style.push(childText))
-        );
-        return [`${CONTAINER} ${rule.name} ${containerContext.join(' and ')} { ${style.join('\n')} }`, ...container]
-    }
-    if (_instanceof(rule, $CSSKeyframesRule)) {
-        return [`${KEYFRAMES} ${rule.name} { ${_Array_from(rule.rules).map(childRule => cssText(childRule, context, options)).join('\n')} }`]
-    }
-    throw '$CSS RULE TYPE ERROR'
-}
 
-_Object_assign($, {
-    css(options: $CSSOptions | $CSSStyleRule) {
-        if (_instanceof(options, $CSSRule)) return options;
-        const cssText = _JSON_stringify(options);
-        const cacheRule = cssTextMap.get(cssText);
-        if (cacheRule) return cacheRule;
-        const className = `.${generateId()}`;
-        const rule = createStyleRule(className, options);
-        cssTextMap.set(_JSON_stringify(options), rule);
-        return insertRule( rule );
-    },
-    CSS(options: $CSSSelectorType | $CSSMediaRule) {
-        return _Object_entries(options).map(([selector, declarations]) => {
-            return insertRule( createRule(selector, declarations) );
+    const createStyleRule = <T extends $CSSMap>(selector: string, options: T) => CSSOptions(new $CSSStyleRule(selector), options);
+
+    export const insertRule = (rule: $CSSRule) => {
+        cssText(rule).forEach(text => {
+            const selector = text.match(/^(.+?) {/)?.[1];
+            if (!selector) return;
+            if (!startsWith(selector, '@') && selector.split(',').find(str => !CSS.supports(`selector(${str})`))) return;
+            $.style(text, stylesheet.cssRules.length);
         })
+        return rule
     }
-})
 
-_Object_assign($.css, {
-    variables<T extends $CSSVariableType | string>(options: T, conditions?: $CSSVariableConditionType<T>) {
-        if (isObject(options)) {
-            const variables = _Object_fromEntries(_Object_entries(options).map(([key, value]) => [
-                key, 
-                new $CSSVariable(`${key.replaceAll(/([A-Z])/g, ((_, $1: string) => `-${$1.toLowerCase()}`))}_${generateId('lower')}`, `${value}`)
-            ]))
-
-            const conditionObj = conditions ? _Object_entries(conditions).map(([condition, _options]) => [
-                condition,
-                _Object_fromEntries(_Object_entries(_options).map(([key, value]) => [`--${variables[key]?.key}`, `${value}`] as const))
-            ] as const) : [];
-
-            $.CSS({':root': {
-                ..._Object_fromEntries(_Object_entries(variables).map(([_, varobj]) => [`--${varobj.key}`, varobj.value])),
-                ..._Object_fromEntries(conditionObj)
-            }})
-
-            return variables;
-        } else {
-            const variable = new $CSSVariable(generateId('lower'), options);
-            $.CSS({':root': {[`--${variable.key}`]: variable.value}});
-            return variable;
+    export const cssText = (rule: $CSSRule, context: string = '', data?: {mediaContext?: string[], containerContext?: string[]}): string[] => {
+        if (_instanceof(rule, $CSSStyleRule)) {
+            const split = (str: string) => str.split(',');
+            const relation = (str: string, ctx: string): string => {
+                if (str.includes('&')) return str.replaceAll('&', ctx);
+                else return `${ctx ? ctx + ' ': ''}${str}`
+            }
+            const selectors = split(rule.selector);
+            const selector = split(context).map(ctx => selectors.map(selector => relation(selector, ctx))).join(', ');
+            const text = `${selector} { ${_Array_from(rule.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
+            return [text, ..._Array_from(rule.rules).map(childRule => cssText(childRule, selector, data)).flat()]
         }
-    },
-    keyframes(options: $CSSKeyframesType) {
-        return _Object_fromEntries( _Object_entries(options).map(([name, value]) => {
-            return [name, insertRule( createKeyframesRule(`${name}_${generateId()}`, value) )];
-        }) )
+        for (const processor of cssTextProcessors) {
+            const result = processor(rule, context, data);
+            if (!isUndefined(result)) return result;
+        }
+        throw '$CSS RULE TYPE ERROR'
     }
-})
 
-_Object_assign($Element.prototype, {
-    css(this: $Element, ...options: ($CSSOptions | $CSSStyleRule)[]) {
-        forEach(options, options => {
-            const rule = $.css(options);
-            this.addClass(rule.selector.replace(/^./, ''));
-        })
-        return this;
-    }
-})
+    // Add $.css and $.CSS methods
+    _Object_assign($, {
+        css(options: $CSSMap | $CSSStyleRule) {
+            if (_instanceof(options, $CSSRule)) return options;
+            const cssText = _JSON_stringify(options);
+            const cacheRule = cssTextMap.get(cssText);
+            if (cacheRule) return cacheRule;
+            const className = `.${generateId()}`;
+            const rule = createStyleRule(className, options);
+            cssTextMap.set(_JSON_stringify(options), rule);
+            return insertRule( rule );
+        },
+        CSS(options: $CSSSelectors) {
+            return _Object_entries(options).map(([selector, declarations]) => {
+                return insertRule( createRule(selector, declarations) );
+            })
+        }
+    })
+
+    // Add $Element.css method
+    _Object_assign($Element.prototype, {
+        css(this: $Element, ...options: ($CSSMap | $CSSStyleRule)[]) {
+            forEach(options, options => {
+                const rule = $.css(options);
+                this.addClass(rule.selector.replace(/^./, ''));
+            })
+            return this;
+        }
+    })
+}
 
 export * from "#structure/$CSSDeclaration";
-export * from "#structure/$CSSKeyframesRule";
-export * from "#structure/$CSSMediaRule";
 export * from "#structure/$CSSRule";
 export * from "#structure/$CSSStyleRule";
-export * from "#structure/$CSSVariable";
 
-export type $CSSOptions = $CSSDeclarationType | $CSSSelectorType;
-export type $CSSValueType = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $CSSVariable
-export type $CSSDeclarationType = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] | $CSSValueType } | { [key: string]: $CSSValueType }
-export type $CSSSelectorType = { [key: string & {}]: $CSSOptions }
-export type $CSSVariableType<T = any> = { [key in keyof T]: $CSSValueType }
-export type $CSSVariableConditionType<T extends $CSSVariableType | string> = T extends string ? { [key: string]: $CSSValueType } : { [key: string]: Partial<$CSSVariableType<T>> }
-export type $CSSKeyframesSelectorType = { [key: `@keyframes ${string}`]: $CSSKeyframesType }
-export type $CSSKeyframesType = { [key: `${number}%`]: $CSSDeclarationType } | { from?: $CSSDeclarationType, to?: $CSSDeclarationType }
+export type $CSSMap = $CSSDeclarations | $CSSSelectors;
+export type $CSSValueType = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $.$CSSValueTypeExtends
+export type $CSSDeclarations = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] | $CSSValueType } | { [key: string]: $CSSValueType }
+export type $CSSSelectors = { [key: string & {}]: $CSSMap }
 
-type $CSSDeclarationMap = {
+interface $CSSDeclarationMap {
     alignContent: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'normal';
     alignItems: 'normal' | 'stretch' | 'center' | 'flex-start' | 'flex-end' | 'baseline';
     alignSelf: 'auto' | 'normal' | 'stretch' | 'center' | 'flex-start' | 'flex-end' | 'baseline';
     all: 'initial' | 'inherit' | 'unset';
-    animation: string | $CSSKeyframesRule;
+    animation: string;
     animationDelay: string;
     animationDirection: 'normal' | 'reverse' | 'alternate' | 'alternate-reverse';
     animationDuration: string;
     animationFillMode: 'none' | 'forwards' | 'backwards' | 'both';
     animationIterationCount: 'infinite' | number;
-    animationName: string | $CSSKeyframesRule;
+    animationName: string;
     animationPlayState: 'running' | 'paused';
     animationTimingFunction: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear' | 'step-start' | 'step-end';
     animationComposition: 'replace' | 'add' | 'accumulate';

@@ -38,7 +38,9 @@ const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2, target?
     scrollRecord();
     if (mode === PUSH) index += 1;
     Router.direction = FORWARD;
+    Router.prevUrl = toURL(_location.href);
     _history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '' , url);
+    Router.url = url;
     forEach(Router.routers, router => router.resolve(path))
 }
 // disable browser scroll restoration
@@ -47,6 +49,8 @@ _history.scrollRestoration = 'manual';
 export class Router extends $HTMLElement {
     static direction: 'back' | 'forward' = FORWARD;
     static routers = new Set<Router>();
+    static url: URL = toURL(_location.href);
+    static prevUrl: URL | null = null;
     routes = new Map<RoutePath, Route>();
     pages = new Map<string, Page>();
     constructor(page?: Page) {
@@ -85,6 +89,8 @@ export class Router extends $HTMLElement {
             if (index > stateIndex) Router.direction = BACK;
             if (index < stateIndex) Router.direction = FORWARD;
             index = stateIndex;
+            Router.prevUrl = Router.url;
+            Router.url = toURL(_location.href);
             this.resolve(_location.href);
         }
         _addEventListener('popstate', resolve);

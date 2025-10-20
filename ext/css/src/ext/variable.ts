@@ -6,8 +6,8 @@ import { $CSSVariable } from "#structure/$CSSVariable";
 declare module 'amateras/core' {
     export namespace $ {
         export namespace css {
-            export function variables<V extends string>(value: V): $CSSVariable<V>;
-            export function variables<T extends $CSSVariableType>(options: T, conditions?: $CSSVariableConditionType<T>): { [key in keyof T]: $CSSVariable<T[key]> }
+            export function variable<V extends string>(value: V): $CSSVariable<V>;
+            export function variable<T extends $CSSVariableType>(options: T, conditions?: $CSSVariableConditionType<T>): { [key in keyof T]: $CSSVariable<T[key]> }
         }
         
         export interface $CSSValueTypeExtendsMap {
@@ -22,7 +22,7 @@ export type $CSSVariableConditionType<T extends $CSSVariableType | string> = T e
 $CSS.valueInstances.add($CSSVariable)
 
 _Object_assign($.css, {
-    variables<T extends $CSSVariableType | string>(options: T, conditions?: $CSSVariableConditionType<T>) {
+    variable<T extends $CSSVariableType | string>(options: T, conditions?: $CSSVariableConditionType<T>) {
         if (isObject(options)) {
             const variables = _Object_fromEntries(_Object_entries(options).map(([key, value]) => [
                 key, 

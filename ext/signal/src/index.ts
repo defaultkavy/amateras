@@ -110,17 +110,18 @@ _Object_assign($, {
         const signalFn: SignalFunction<any> = $.signal(_null);
         const computeFn = () => {
             if (!subscribed) return signalFn.set(subscribe()).value();
-            else return signalFn.set(process((fn: Function) => fn())).value();
+            else return signalFn.set(process(untrack)).value();
         }
+        const untrack = <T>(fn: () => T) => {
+            if (subscribed) return fn();
+            signalComputeListeners.delete(signalListener);
+            const result = fn();
+            signalComputeListeners.add(signalListener);
+            return result;
+        }
+        const signalListener = (signal: Signal<any>) => 
+            signal.subscribe(() => signalFn.set(process(untrack))) 
         const subscribe = () => {
-            const untrack = <T>(fn: () => T) => {
-                signalComputeListeners.delete(signalListener);
-                const result = fn();
-                signalComputeListeners.add(signalListener);
-                return result;
-            }
-            const signalListener = (signal: Signal<any>) => 
-                signal.subscribe(() => signalFn.set(process(untrack))) 
             signalComputeListeners.add(signalListener);
             const result = process(untrack);
             signalComputeListeners.delete(signalListener);

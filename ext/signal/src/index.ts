@@ -40,8 +40,8 @@ $Node.setters.add((value, set) => {
 declare module 'amateras/core' {
     export namespace $ {
         export function signal<T>(value: T): SignalFunction<T>;
-        export function compute<T>(process: () => T): ComputeFunction<T>; 
-        export function effect(process: (except: EffectExceptFunction) => void): void;
+        export function compute<T>(process: (untrack: UntrackHandler) => T): ComputeFunction<T>; 
+        export function effect(process: (untrack: UntrackHandler) => void): void;
         export interface $NodeContentMap {
             signalFn: SignalFunction<any>;
             computeFn: ComputeFunction<any>;
@@ -66,7 +66,7 @@ export type ComputeFunction<T> = {
     signal: Signal<T> 
 };
 export type SignalListener = (signal: Signal<any>) => void;
-export type EffectExceptFunction = <T>(fn: () => T) => T
+export type UntrackHandler = <T>(fn: () => T) => T
 
 const signalComputeListeners = new Set<SignalListener>();
 const signalEffectListeners = new Set<SignalListener>();
@@ -105,18 +105,24 @@ _Object_assign($, {
     },
 
     // compute function
-    compute<T>(process: () => T): ComputeFunction<T> {
+    compute<T>(process: (untrack: UntrackHandler) => T): ComputeFunction<T> {
         let subscribed = false;
         const signalFn: SignalFunction<any> = $.signal(_null);
         const computeFn = () => {
             if (!subscribed) return signalFn.set(subscribe()).value();
-            else return signalFn.set(process()).value();
+            else return signalFn.set(process((fn: Function) => fn())).value();
         }
         const subscribe = () => {
+            const untrack = <T>(fn: () => T) => {
+                signalComputeListeners.delete(signalListener);
+                const result = fn();
+                signalComputeListeners.add(signalListener);
+                return result;
+            }
             const signalListener = (signal: Signal<any>) => 
-                signal.subscribe(() => signalFn.set(process())) 
+                signal.subscribe(() => signalFn.set(process(untrack))) 
             signalComputeListeners.add(signalListener);
-            const result = process();
+            const result = process(untrack);
             signalComputeListeners.delete(signalListener);
             subscribed = true;
             return result;
@@ -126,11 +132,11 @@ _Object_assign($, {
     },
 
     // effect
-    effect(process: (except: EffectExceptFunction) => void) {
+    effect(process: (untrack: UntrackHandler) => void) {
         let subscribed = false;
         const signalListener = (signal: Signal<any>) => 
-            signal.subscribe(_ => process(except));
-        const except = <T>(fn: () => T) => {
+            signal.subscribe(_ => process(untrack));
+        const untrack = <T>(fn: () => T) => {
             if (subscribed) return fn();
             signalEffectListeners.delete(signalListener);
             const result = fn();
@@ -138,7 +144,7 @@ _Object_assign($, {
             return result;
         }
         signalEffectListeners.add(signalListener);
-        process(except);
+        process(untrack);
         signalEffectListeners.delete(signalListener);
         subscribed = true;
     }

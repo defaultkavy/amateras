@@ -20,6 +20,10 @@ export class $CSSVariable<V = string> {
         return this;
     }
 
+    default(value: string) {
+        return `var(${this.name}, ${value})`
+    }
+
     toString() {
         return `var(${this.name})`
     }

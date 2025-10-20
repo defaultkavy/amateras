@@ -1,4 +1,5 @@
 import { _document } from "../../../../src/lib/env";
+import { _instanceof, isString } from "../../../../src/lib/native";
 
 const documentElementStyle = _document.documentElement.style;
 
@@ -20,7 +21,7 @@ export class $CSSVariable<V = string> {
         return this;
     }
 
-    default(value: string) {
+    default(value: string | $CSSVariable) {
         return `var(${this.name}, ${value})`
     }
 

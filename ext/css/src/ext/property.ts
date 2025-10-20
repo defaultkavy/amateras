@@ -1,4 +1,4 @@
-import { generateId } from "#lib/utils";
+import { camelCaseToDash, generateId } from "#lib/utils";
 import { $CSSProperty } from "#structure/$CSSProperty";
 import { $CSS } from "..";
 import { _instanceof, _Object_assign, _Object_entries, forEach, isString, isUndefined } from "amateras/lib/native";
@@ -36,7 +36,7 @@ _Object_assign($.css, {
         } else {
             const obj = {};
             forEach(_Object_entries(resolver), ([key, [syntax, initialValue, inherits]]) => {
-                const property = new $CSSProperty({ name: `--${key}-${generateId('lower')}`, syntax, initialValue: `${initialValue}`, inherits });
+                const property = new $CSSProperty({ name: `--${camelCaseToDash(key)}-${generateId('lower')}`, syntax, initialValue: `${initialValue}`, inherits });
                 _Object_assign(obj, { [key]: property });
                 CSS.registerProperty(property)
             })

@@ -7,3 +7,5 @@ export const generateId = (lettercase: 'any' | 'lower' | 'upper' = 'any'): strin
     generatedIds.add(id);
     return id;
 }
+
+export const camelCaseToDash = (str: string) => str.replaceAll(/([A-Z])/g, ((_, $1: string) => `-${$1.toLowerCase()}`))

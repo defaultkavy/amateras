@@ -1,6 +1,6 @@
 import { _Object_assign, _Object_entries, _Object_fromEntries, isObject } from "amateras/lib/native";
 import { $CSS, type $CSSValueType } from "..";
-import { generateId } from "../lib/utils";
+import { camelCaseToDash, generateId } from "../lib/utils";
 import { $CSSVariable } from "#structure/$CSSVariable";
 
 declare module 'amateras/core' {
@@ -26,23 +26,23 @@ _Object_assign($.css, {
         if (isObject(options)) {
             const variables = _Object_fromEntries(_Object_entries(options).map(([key, value]) => [
                 key, 
-                new $CSSVariable(`${key.replaceAll(/([A-Z])/g, ((_, $1: string) => `-${$1.toLowerCase()}`))}_${generateId('lower')}`, `${value}`)
+                new $CSSVariable(`--${camelCaseToDash(key)}_${generateId('lower')}`, `${value}`)
             ]))
 
             const conditionObj = conditions ? _Object_entries(conditions).map(([condition, _options]) => [
                 condition,
-                _Object_fromEntries(_Object_entries(_options).map(([key, value]) => [`--${variables[key]?.key}`, `${value}`] as const))
+                _Object_fromEntries(_Object_entries(_options).map(([key, value]) => [`--${variables[key]?.name}`, `${value}`] as const))
             ] as const) : [];
 
             $.CSS({':root': {
-                ..._Object_fromEntries(_Object_entries(variables).map(([_, varobj]) => [`--${varobj.key}`, varobj.value])),
+                ..._Object_fromEntries(_Object_entries(variables).map(([_, varobj]) => [`--${varobj.name}`, varobj.value])),
                 ..._Object_fromEntries(conditionObj)
             }})
 
             return variables;
         } else {
-            const variable = new $CSSVariable(generateId('lower'), options);
-            $.CSS({':root': {[`--${variable.key}`]: variable.value}});
+            const variable = new $CSSVariable(`--${generateId('lower')}`, options);
+            $.CSS({':root': {[variable.name]: variable.value}});
             return variable;
         }
     }

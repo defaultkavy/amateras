@@ -35,7 +35,7 @@ _Object_assign($.css, {
             ] as const) : [];
 
             $.CSS({':root': {
-                ..._Object_fromEntries(_Object_entries(variables).map(([_, varobj]) => [`--${varobj.name}`, varobj.value])),
+                ..._Object_fromEntries(_Object_entries(variables).map(([_, {name, value}]) => [name, value])),
                 ..._Object_fromEntries(conditionObj)
             }})
 

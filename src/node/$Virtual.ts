@@ -43,11 +43,12 @@ export class $Virtual<Ele extends HTMLElement = HTMLElement, EvMap = HTMLElement
     render() {
         // remove hidden node
         forEach(this.childNodes, node => this.hiddenNodes.has($(node)) && node.remove());
+        // get array of visible node
+        const visibleNodes = _Array_from(this.nodes).filter($node => !this.hiddenNodes.has($node))
         // add visible node with position
-        forEach(this.nodes, ($node, i) => {
+        forEach(visibleNodes, ($node, i) => {
             if (
-                !this.hiddenNodes.has($node) // node is not hidden
-                && !$node.inDOM() // node is not in dom tree
+                !$node.inDOM() // node is not in dom tree
                 && $(this.childNodes).at(i) !== $node // node not matched at position
             ) $Node.append(this, $node, i);
         })

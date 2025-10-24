@@ -10,32 +10,45 @@ import { $EventTarget, type $Event } from '#node/$EventTarget';
 const nodeNameMap: {[key: string]: Constructor<$EventTarget>} = {}
 const _stylesheet = new CSSStyleSheet();
 
-export function $<K extends keyof $.$NodeMap, T extends $.$NodeMap[K]>(tagname: K, ...args: ConstructorParameters<T>): InstanceType<T>;
-export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
-export function $(tagname: string): $HTMLElement<HTMLElement>
-export function $<F extends (...args: any[]) => $NodeContentResolver<$Node>>(fn: F, ...args: Parameters<F>): ReturnType<F>;
-export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>, N extends number>(number: N, construct: T, ...args: P): Repeat<InstanceType<T>, N>;
-export function $<T extends Constructor<$Node>, P extends ConstructorParameters<T>>(construct: T, ...args: P): InstanceType<T>;
-export function $(nodes: NodeListOf<HTMLElement>): $HTMLElement[];
-export function $(nodes: NodeListOf<Element>): $Element[];
-export function $(nodes: NodeListOf<Node | ChildNode>): $Node[];
-export function $<N extends $Node>($node: N, ...args: any[]): N;
-export function $<N extends $Node>($node: N | null | undefined, ...args: any[]): N | null | undefined;
-export function $<H extends HTMLElement>(element: H, ...args: any[]): $HTMLElement<H>;
-export function $<H extends HTMLElement>(element: H | null | undefined, ...args: any[]): $HTMLElement<H> | null | undefined;
-export function $<E extends Element>(element: E, ...args: any[]): $Element<E>;
-export function $<E extends Element>(element: E | null | undefined, ...args: any[]): $Element<E> | null | undefined;
-export function $<D extends Document>(node: D): $Node<DocumentEventMap>;
-export function $<N extends Node>(node: N, ...args: any[]): $Node;
-export function $<N extends Node>(node: N | null | undefined, ...args: any[]): $Node | null | undefined;
+type $NodeBuilder = (...args: any[]) => $NodeContentResolver<$Node>
+type BuilderResultResolver<F> = F extends Constructor<$Node> ? InstanceType<F> : F extends $NodeBuilder ? ReturnType<F> : never;
+type BuilderParameterResolver<F> = F extends Constructor<$Node> ? ConstructorParameters<F> : F extends $NodeBuilder ? Parameters<F> : never;
+
+type $Type<T extends EventTarget> = T extends HTMLElement ? $HTMLElement : T extends Element ? $Element : T extends (Node | ChildNode) ? $Node : T extends EventTarget ? $EventTarget : never;
+
+/** Builder function */
+export function $<F extends $NodeBuilder | Constructor<$Node> | number, T extends $NodeBuilder | Constructor<$Node>>(
+    resolver: F, 
+    ...args: F extends number ? [T, ...BuilderParameterResolver<T>] : BuilderParameterResolver<F>
+): F extends number 
+    ?   number extends F 
+        ?   BuilderResultResolver<T> 
+        :   Repeat<BuilderResultResolver<T>, F>
+    :   BuilderResultResolver<F>;
+/** Get {@link $Node} from {@link NodeList} */
+export function $<T extends HTMLElement | Element | Node | ChildNode>(nodes: NodeListOf<T>): $Type<T>[];
+/** Get self */
+export function $<E extends $EventTarget | null | undefined>($node: E, ...args: any[]): E extends $EventTarget ? E : null;
+/** Convert {@link Window} to {@link $EventTarget} */
 export function $<W extends Window>(node: W): $EventTarget<WindowEventMap>;
-export function $<E extends EventTarget>(node: E, ...args: any[]): $EventTarget;
-export function $<E extends EventTarget>(node: E | null | undefined, ...args: any[]): $EventTarget | null | undefined;
+/** Convert {@link Document} to {@link $Node} */
+export function $<D extends Document>(node: D): $Node<DocumentEventMap>;
+/** Convert {@link EventTarget} base to {@link $EventTarget} base*/
+export function $<H extends EventTarget | null | undefined>(element: H, ...args: any[]): H extends EventTarget ? $Type<H> : null;
+/** Convert string and variables to {@link $NodeContentTypes} array */
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
+/** Get {@link Event.currentTarget} in {@link $EventTarget} type from {@link Event} */
 export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['currentTarget']['$'];
-export function $<N extends number>(number: N, tagname: string): Repeat<$HTMLElement<HTMLElement>, N>;
-export function $<N extends number, K extends keyof HTMLElementTagNameMap>(number: N, tagname: K): Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
-export function $<N extends number, F extends (...args: any[]) => $NodeContentResolver<$Node>>(number: N, fn: F, ...args: Parameters<F>): Repeat<ReturnType<F>, N>;
+/** Create {@link $Node} base object from extensions */
+export function $<K extends keyof $.$NodeMap, T extends $.$NodeMap[K]>(tagname: K, ...args: ConstructorParameters<T>): InstanceType<T>;
+/** Create {@link $HTMLElement} by tagname */
+export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
+/** Create {@link $HTMLElement} by custom tagname */
+export function $(tagname: string): $HTMLElement<HTMLElement>
+/** Create multiple {@link $HTMLElement} objects by tagname */
+export function $<N extends number, K extends keyof HTMLElementTagNameMap>(number: N, tagname: K): number extends N ? $HTMLElement<HTMLElementTagNameMap[K]>[] : Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
+/** Create multiple {@link $HTMLElement} objects by custom tagname */
+export function $<N extends number>(number: N, tagname: string): number extends N ? $HTMLElement<HTMLElement>[] : Repeat<$HTMLElement<HTMLElement>, N>;
 export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event | NodeListOf<Node | ChildNode>, ...args: any[]) {
     if (isNull(resolver) || isUndefined(resolver)) return null;
     if (_instanceof(resolver, $Node)) return resolver;

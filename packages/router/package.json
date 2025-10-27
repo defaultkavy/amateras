@@ -6,5 +6,9 @@
     "imports": {
       "#node/*": "./src/node/*.ts",
       "#structure/*": "./src/structure/*.ts"
+    },
+    "exports": {
+      "./node/*": "./src/node/*.ts",
+      "./structure/*": "./src/structure/*.ts"
     }
 }

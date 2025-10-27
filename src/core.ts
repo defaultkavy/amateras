@@ -8,11 +8,11 @@ import { _document } from '#lib/env';
 import { $EventTarget, type $Event } from '#node/$EventTarget';
 
 const nodeNameMap: {[key: string]: Constructor<$EventTarget>} = {}
-const _stylesheet = new CSSStyleSheet();
 
 type $NodeBuilder = (...args: any[]) => $NodeContentResolver<$Node>
 type BuilderResultResolver<F> = F extends Constructor<$Node> ? InstanceType<F> : F extends $NodeBuilder ? ReturnType<F> : never;
 type BuilderParameterResolver<F> = F extends Constructor<$Node> ? ConstructorParameters<F> : F extends $NodeBuilder ? Parameters<F> : never;
+
 
 type $Type<T extends EventTarget> = T extends HTMLElement ? $HTMLElement : T extends Element ? $Element : T extends (Node | ChildNode) ? $Node : T extends EventTarget ? $EventTarget : never;
 
@@ -22,7 +22,7 @@ export function $<F extends $NodeBuilder | Constructor<$Node> | number, T extend
     ...args: F extends number ? [T, ...BuilderParameterResolver<T>] : BuilderParameterResolver<F>
 ): F extends number 
     ?   number extends F 
-        ?   BuilderResultResolver<T> 
+        ?   BuilderResultResolver<T>[]
         :   Repeat<BuilderResultResolver<T>, F>
     :   BuilderResultResolver<F>;
 /** Get {@link $Node} from {@link NodeList} */
@@ -73,6 +73,7 @@ export function $(resolver: string | number | null | undefined | Element | HTMLE
 
 export namespace $ {
     // css
+    const _stylesheet = new CSSStyleSheet();
     export const stylesheet = _stylesheet;
     _document.adoptedStyleSheets.push(_stylesheet);
     export const style = _bind(_stylesheet.insertRule, _stylesheet);
@@ -89,8 +90,6 @@ export namespace $ {
         forEach(resolver, ([nodeName, $node]) => nodeNameMap[nodeName] = $node);
         return $;
     }
-
-    export const span = (content: string) => $('span').content(content);
 }
 
 export type $ = typeof $;

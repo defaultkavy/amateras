@@ -9,9 +9,11 @@ export class Page<Params extends RouteParams = []> extends $HTMLElement {
     router: null | Router = _null
     #pageTitle: string | null = _null;
     built = false;
-    constructor(params: PageParamsResolver<Params>) {
+    pathId: string;
+    constructor(pathId: string, params: PageParamsResolver<Params>) {
         super('page');
         this.params = params;
+        this.pathId = pathId;
     }
 
     pageTitle(): string | null;
@@ -19,6 +21,7 @@ export class Page<Params extends RouteParams = []> extends $HTMLElement {
     pageTitle(title?: string | null) {
         return chain(this, arguments, () => this.#pageTitle, title, title => this.#pageTitle = title)
     }
+
 }
 
 export type PageParams = { [key: string]: string }

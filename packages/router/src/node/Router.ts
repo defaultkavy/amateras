@@ -100,7 +100,7 @@ export class Router extends $HTMLElement {
         return this;
     }
 
-    async resolve(path: string | URL): Promise<this> {
+    async resolve(path: string | URL, force = false): Promise<this> {
         const {pathname, href} = toURL(path);
         const split = (p: string) => p.replaceAll(/\/+/g, '/').replace(/^\//, '').split('/').map(path => `/${path}`);
         type RouteData = { route: Route, params: PageParams, pathId: string }
@@ -155,16 +155,16 @@ export class Router extends $HTMLElement {
             const builderResolver = route.builder;
             if (!builderResolver) return;
             // get page from cache or create new page
-            const page = route.pages.get(pathId) ?? new Page(params);
+            const page = route.pages.get(pathId) ?? new Page(pathId, params);
             // resolve builder
             if (!page.built) await builderResolver.build(page);
             page.built = true;
             // set title
             _document && (_document.title = page.pageTitle() ?? _document.title);
             // check location is still same, page parent is not router before insert page
-            if (href === _location.href && page.parentNode !== prevRouter?.node) prevRouter?.content(page);
+            if (force || (href === _location.href && page.parentNode !== prevRouter?.node)) prevRouter?.content(page);
             // set cache
-            route.pages.set(pathId, page);
+            if (!force) route.pages.set(pathId, page);
             prevRouter = page.router;
         })
         // handle scroll restoration

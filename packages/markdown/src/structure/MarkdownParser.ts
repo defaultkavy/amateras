@@ -1,4 +1,4 @@
-import { forEach, isString } from "../../../../src/lib/native";
+import { forEach, isString } from "@amateras/utils";
 import { type Token } from "./MarkdownLexer";
 
 export class MarkdownParser {

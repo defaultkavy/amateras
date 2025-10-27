@@ -1,9 +1,9 @@
 import { camelCaseToDash, generateId } from "#lib/utils";
 import { $CSSProperty } from "#structure/$CSSProperty";
 import { $CSS } from "..";
-import { _instanceof, _Object_assign, _Object_entries, forEach, isString, isUndefined } from "amateras/lib/native";
+import { _instanceof, _Object_assign, _Object_entries, forEach, isString, isUndefined } from "@amateras/utils";
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export namespace css {
             export function property<T extends $CSSPropertyMap>(resolver: T): { [key in keyof T]: $CSSProperty }

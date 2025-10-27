@@ -1,12 +1,12 @@
 import { BLOCK, EMPTY_LINE, INLINE_CONTENT, INLINE_TEXT, TEXT_LINE } from "#lib/type";
-import { forEach, isString } from "amateras/lib/native";
+import { forEach, isString } from "@amateras/utils";
 
 export class MarkdownLexer {
     blockTokenizers = new Map<string, BlockTokenizer>();
     inlineTokenizers = new Map<string, InlineTokenizer>();
     
     blockTokenize(str: string) {
-        const lines = str.split(/\r?\n/);
+        const lines = str?.split(/\r?\n/) ?? [];
         const tokens: BlockToken[] = [];
         let lineIndex = 0;
         lineLoop: while (lineIndex < lines.length) {

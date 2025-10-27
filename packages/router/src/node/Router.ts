@@ -1,10 +1,10 @@
-import { $HTMLElement } from "amateras/node/$HTMLElement";
 import { Route, type RouteBuilder, type RoutePath, type RouteParamsResolver, type RouteParams, type RouteParamsStrings, type AsyncPageBuilder } from "../structure/Route";
-import { _document } from "amateras/lib/env";
-import { _instanceof, startsWith, _JSON_parse, forEach, _Object_entries, _JSON_stringify, _Object_assign, isFunction, _null } from "../../../../src/lib/native";
-import type { AnchorTarget } from "../../../html/node/$Anchor";
+import type { AnchorTarget } from "../../../html/src/node/$Anchor";
 import { Page, type PageParams } from "./Page";
 import type { PageBuilder, PageBuilderFunction } from "#structure/PageBuilder";
+import { _document } from "@amateras/core/lib/env";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
+import { _instanceof, startsWith, _JSON_parse, forEach, _Object_entries, _JSON_stringify, isFunction } from "@amateras/utils";
 // history index
 let index = 0;
 const _addEventListener = addEventListener;

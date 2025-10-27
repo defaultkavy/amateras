@@ -1,10 +1,19 @@
 {
     "name": "@amateras/i18n",
     "peerDependencies": {
-        "amateras": "../../"
+      "@amateras/core": "workspace:*",
+      "@amateras/signal": "workspace:*",
+      "@amateras/utils": "workspace:*"
     },
     "imports": {
       "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts",
       "#node/*": "./src/node/*.ts"
+    },
+    "exports": {
+      ".": "./src/index.ts",
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts",
+      "./node/*": "./src/node/*.ts"
     }
 }

@@ -1,9 +1,18 @@
 {
     "name": "@amateras/signal",
     "peerDependencies": {
-        "amateras": "../../"
+      "@amateras/core": "workspace:*",
+      "@amateras/utils": "workspace:*"
     },
     "imports": {
-      "#structure/*": "./src/structure/*.ts"
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts",
+      "#node/*": "./src/node/*.ts"
+    },
+    "exports": {
+      ".": "./src/index.ts",
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts",
+      "./node/*": "./src/node/*.ts"
     }
 }

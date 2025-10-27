@@ -1,4 +1,4 @@
-import { _Object_assign } from "../../../../src/lib/native";
+import { _Object_assign } from "@amateras/utils";
 
 export const colorAssign = (key: string, colors: {[key: number]: string}) => {
     if (!$.color) _Object_assign($, {color: {}});

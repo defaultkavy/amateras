@@ -14,21 +14,14 @@
   },
   "homepage": "https://github.com/defaultkavy/amateras",
   "license": "MIT",
-  "imports": {
-    "#core": "./src/core.ts",
-    "#node/*": "./src/node/*.ts",
-    "#lib/*": "./src/lib/*.ts",
-    "#structure/*": "./src/structure/*.ts",
-    "#html": "./packages/html/html.ts",
-    "#html/*": "./packages/html/node/*.ts"
-  },
   "exports": {
-    ".": "./src/index.ts",
-    "./core": "./src/core.ts",
-    "./node/*": "./src/node/*.ts",
-    "./lib/*": "./src/lib/*.ts",
+    ".": "./index.ts",
+    "./node/*": "./packages/core/src/node/*.ts",
+    "./lib/*": "./packages/core/src/lib/*.ts",
     "./structure/*": "./src/structure/*.ts",
-    "./html": "./packages/html/html.ts",
+    "./core": "./packages/core/src/index.ts",
+    "./utils": "./packages/utils/src/index.ts",
+    "./html": "./packages/html/src/index.ts",
     "./html/*": "./packages/html/node/*.ts",
     "./css": "./packages/css/src/index.ts",
     "./css/*": "./packages/css/src/ext/*.ts",
@@ -42,7 +35,10 @@
     "./signal": "./packages/signal/src/index.ts",
     "./ui/*": "./packages/ui/*.ts"
   },
-  "workspaces": [
-    "./packages/*"
-  ]
+  "dependencies": {
+    "@amateras/core": "workspace:*"
+  },
+  "workspaces": {
+      "packages": ["packages/*"]
+  }
 }

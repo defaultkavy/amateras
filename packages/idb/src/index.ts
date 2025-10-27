@@ -1,7 +1,7 @@
-import { _Object_assign } from "amateras/lib/native"
+import { _Object_assign } from "@amateras/utils"
 import { $IDBBuilder } from "#structure/builder/$IDBBuilder"
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         /**
          * Create {@link $IDBBuilder} with IDB name and version number.

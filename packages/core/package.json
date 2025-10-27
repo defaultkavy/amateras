@@ -1,0 +1,17 @@
+{
+    "name": "@amateras/core",
+    "dependencies": {
+      "@amateras/utils": "workspace:*"
+    },
+    "imports": {
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts",
+      "#node/*": "./src/node/*.ts"
+    },
+    "exports": {
+      ".": "./src/index.ts",
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts",
+      "./node/*": "./src/node/*.ts"
+    }
+}

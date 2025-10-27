@@ -1,9 +1,8 @@
 import { $IDB, type $IDBConfig } from "#structure/$IDB";
-import { _Array_from, _instanceof, _JSON_stringify, _null, _Object_assign, _Object_fromEntries, _Promise, forEach, isFunction } from "amateras/lib/native";
+import { _Array_from, _instanceof, _JSON_stringify, _null, _Object_assign, _Object_fromEntries, _Promise, forEach, isFunction, trycatch } from "@amateras/utils";
 import { $IDBStoreBuilder } from "./$IDBStoreBuilder";
 import type { $IDBIndexConfig } from "#structure/$IDBIndex";
 import type { $IDBStoreConfig } from "#structure/$IDBStore";
-import { trycatch } from "amateras/lib/trycatch";
 // optimizer variables
 const objectStoreNames = 'objectStoreNames';
 const deleteObjectStore = 'deleteObjectStore';

@@ -1,4 +1,4 @@
-import { _Array_from, _null, isUndefined } from "amateras/lib/native";
+import { _Array_from, _null, isUndefined } from "@amateras/utils";
 import type { I18n } from "#structure/I18n";
 
 export class I18nTranslation {

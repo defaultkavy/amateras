@@ -1,12 +1,12 @@
 import './env';
 import 'amateras';
-import { _Array_from, _instanceof, _Object_assign, _Object_defineProperty, forEach } from "amateras/lib/native";
-import { $Element } from 'amateras/node/$Element';
+import { _Array_from, _instanceof, _Object_assign, _Object_defineProperty, forEach } from "@amateras/utils";
 import { BROWSER, NODE } from 'esm-env';
-import { $Node, $Text } from 'amateras/node/$Node';
-import { _document } from '../../src/lib/env';
+import { _document } from '@amateras/core/lib/env';
+import { $Element } from '@amateras/core/node/$Element';
+import type { $Node } from '@amateras/core/node/$Node';
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export function mount(id: string, $node: $Element): void;
         export function serverSide(cb: () => any): void;

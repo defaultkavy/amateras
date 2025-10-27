@@ -2,7 +2,7 @@ import { LINK, QUICK_LINK } from "#lib/type";
 import { setInlineTokenizer, setProcessor } from "#lib/util";
 import type { MarkdownLexer, Token } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
-import { isUndefined } from "amateras/lib/native";
+import { isUndefined } from "@amateras/utils";
 
 export const linkProcessor = (parser: MarkdownParser) => {
     const linkProcessor = (token: Token) => {

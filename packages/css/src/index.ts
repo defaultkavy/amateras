@@ -1,11 +1,11 @@
-import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined, startsWith } from "amateras/lib/native";
-import { $Element } from "amateras/node/$Element";
+import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined, startsWith } from "@amateras/utils";
+import { $Element } from "@amateras/core/node/$Element";
 import { $CSSDeclaration } from "#structure/$CSSDeclaration";
 import { $CSSRule } from "#structure/$CSSRule";
 import { $CSSStyleRule } from "#structure/$CSSStyleRule";
 import { generateId } from "./lib/utils";
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export function css(options: $CSSMap | $CSSStyleRule): $CSSStyleRule
         export function CSS(options: $CSSSelectors | $CSSGlobalDeclarationExtends): void
@@ -18,7 +18,7 @@ declare module 'amateras/core' {
     }
 }
 
-declare module 'amateras/node/$Element' {
+declare module '@amateras/core/node/$Element' {
     export interface $Element {
         css(...options: ($CSSMap | $CSSStyleRule)[]): this;
     }

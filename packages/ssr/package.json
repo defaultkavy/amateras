@@ -1,10 +1,18 @@
 {
     "name": "@amateras/ssr",
     "peerDependencies": {
-        "amateras": "../../",
-        "esm-env": "^1.2.2"
+      "@amateras/core": "workspace:*",
+      "@amateras/utils": "workspace:*",
+      "esm-env": "^1.2.2"
     },
     "imports": {
-        "#structure/*": "./src/structure/*.ts"
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts",
+      "#node/*": "./src/node/*.ts"
+    },
+    "exports": {
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts",
+      "./node/*": "./src/node/*.ts"
     }
 }

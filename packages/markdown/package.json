@@ -1,15 +1,19 @@
 {
     "name": "@amateras/markdown",
     "peerDependencies": {
-        "amateras": "../../"
+      "@amateras/core": "workspace:*",
+      "@amateras/utils": "workspace:*"
     },
     "imports": {
-        "#structure/*": "./src/structure/*.ts",
-        "#lib/*": "./src/lib/*.ts"
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts",
+      "#node/*": "./src/node/*.ts"
     },
     "exports": {
-        "./structure/*": "./src/structure/*.ts",
-        "./lib/*": "./src/lib/*.ts",
-        "./syntax/*": "./src/syntax/*.ts"
+      ".": "./src/index.ts",
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts",
+      "./node/*": "./src/node/*.ts",
+      "./syntax/*": "./src/syntax/*.ts"
     }
 }

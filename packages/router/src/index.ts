@@ -2,13 +2,12 @@ import type { Page } from "#node/Page";
 import { Router } from "#node/Router";
 import { PageBuilder } from "#structure/PageBuilder";
 import { Route, type RouteBuilder, type RouteParams } from "#structure/Route";
-import { _bind, _Object_assign, forEach } from "../../../src/lib/native";
-import type { AnchorTarget } from "../../html/node/$Anchor";
+import { _Object_assign, _bind, forEach } from "@amateras/utils";
+import type { AnchorTarget } from "../../html/src/node/$Anchor";
 
-declare module 'amateras/core' {
-    // export function $(nodeName: 'ra'): RouterAnchor;
+declare module '@amateras/core' {
     export namespace $ {
-        export function route<Params extends RouteParams = []>(builder: (page: Page<Params>) => Page<Params>): PageBuilder<Params>;
+        export function route<Params extends RouteParams = []>(builder: (page: Page<Params>) => OrPromise<Page<Params>>): PageBuilder<Params>;
         export function open(url: string | URL | Nullish, target?: AnchorTarget): typeof Router;
         export function replace(url: string | URL | Nullish): typeof Router;
         export function back(): typeof Router;

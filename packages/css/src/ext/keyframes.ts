@@ -1,9 +1,9 @@
-import { _Object_assign, _Object_fromEntries, _Object_entries, forEach, _Array_from, _instanceof, startsWith } from "amateras/lib/native";
+import { _Object_assign, _Object_fromEntries, _Object_entries, forEach, _Array_from, _instanceof, startsWith } from "@amateras/utils";
 import { $CSS, $CSSStyleRule, type $CSSDeclarations } from ".."
 import { generateId } from "../lib/utils";
 import { $CSSKeyframesRule } from "#structure/$CSSKeyframesRule";
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export namespace css {
             export function keyframes<T extends { [key: string]: $CSSKeyframesType }>(options: T): { [key in keyof T]: $CSSKeyframesRule };

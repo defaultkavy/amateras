@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof } from "amateras/lib/native";
+import { _Array_from, _instanceof } from "@amateras/utils";
 import { $CSSRule } from "#structure/$CSSRule";
 
 export class $CSSMediaRule extends $CSSRule {

@@ -16,7 +16,7 @@ const _stone = {
 
 colorAssign('stone', _stone);
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export namespace color {
             export const stone: typeof _stone;

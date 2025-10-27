@@ -1,4 +1,4 @@
-import { randomId } from "amateras/lib/randomId";
+import { randomId } from "@amateras/utils";
 
 const generatedIds = new Set<string>();
 export const generateId = (lettercase: 'any' | 'lower' | 'upper' = 'any'): string => { 

@@ -1,5 +1,5 @@
-import { forEach, isNull } from "amateras/lib/native";
-import { $HTMLElement } from "amateras/node/$HTMLElement";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
+import { forEach, isNull } from "@amateras/utils";
 const MODAL = 'modal';
 const MODAL_CONTENT = 'modal-content'
 

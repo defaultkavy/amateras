@@ -1,7 +1,6 @@
 import { Signal } from "#structure/Signal";
-import { _document } from "amateras/lib/env";
-import { _instanceof, isObject, _JSON_stringify, _Object_assign, forEach, _null, _Object_defineProperty, _Object_entries, isNull, isFunction } from "amateras/lib/native";
-import { $Node, $Text } from "amateras/node/$Node";
+import { $Node, $Text } from "@amateras/core/node/$Node";
+import { _instanceof, isObject, _JSON_stringify, _Object_assign, forEach, _null, _Object_defineProperty, _Object_entries, isNull, isFunction } from "@amateras/utils";
 
 // handle $Node content process
 $Node.processors.add((_, content) => {
@@ -37,7 +36,7 @@ $Node.setters.add((value, set) => {
     }
 })
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export function signal<T>(value: T): SignalFunction<T>;
         export function compute<T>(process: (untrack: UntrackHandler) => T): ComputeFunction<T>; 

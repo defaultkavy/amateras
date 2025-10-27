@@ -1,4 +1,4 @@
-import { $Anchor } from "../../../html/node/$Anchor";
+import { $Anchor } from "@amateras/html/node/$Anchor";
 
 export class RouterAnchor extends $Anchor {
     constructor() {
@@ -13,7 +13,7 @@ export class RouterAnchor extends $Anchor {
     }
 }
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export interface $NodeMap {
             'ra': typeof RouterAnchor;

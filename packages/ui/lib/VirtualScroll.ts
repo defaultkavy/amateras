@@ -1,8 +1,8 @@
-import { _Array_from, _instanceof, forEach } from "amateras/lib/native";
-import type { $Virtual } from "amateras/node/$Virtual";
-import { $HTMLElement } from "amateras/node/$HTMLElement";
-import { _document } from "amateras/lib/env";
-import type { $Node } from "amateras/node/$Node";
+import { _document } from "@amateras/core/lib/env";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
+import type { $Node } from "@amateras/core/node/$Node";
+import type { $Virtual } from "@amateras/core/node/$Virtual";
+import { _Array_from, _instanceof, forEach } from "@amateras/utils";
 
 export const VirtualScroll = ($parent: $Virtual, scroller: $Node = $(_document)) => {
     scroller.on('scroll', () => render($parent), true);

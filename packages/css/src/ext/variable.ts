@@ -1,9 +1,9 @@
-import { _Object_assign, _Object_entries, _Object_fromEntries, isObject } from "amateras/lib/native";
+import { _Object_assign, _Object_entries, _Object_fromEntries, isObject } from "@amateras/utils";
 import { $CSS, type $CSSValueType } from "..";
 import { camelCaseToDash, generateId } from "../lib/utils";
 import { $CSSVariable } from "#structure/$CSSVariable";
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export namespace css {
             export function variable<V extends string>(value: V): $CSSVariable<V>;

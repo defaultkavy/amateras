@@ -1,6 +1,6 @@
+import type { $Node } from "@amateras/core/node/$Node";
+import { _Array_from, _Object_assign, _Object_entries } from "@amateras/utils";
 import { NODE } from "esm-env";
-import { _Array_from, _Object_assign, _Object_entries, isNull } from "../../src/lib/native";
-import type { $Node } from "../../src/node/$Node";
 
 if (NODE) {
     //@ts-expect-error

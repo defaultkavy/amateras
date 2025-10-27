@@ -1,5 +1,4 @@
-import { _document } from "../../../../src/lib/env";
-import { _instanceof, isString } from "../../../../src/lib/native";
+import { _document } from "@amateras/core/lib/env";
 
 const documentElementStyle = _document.documentElement.style;
 

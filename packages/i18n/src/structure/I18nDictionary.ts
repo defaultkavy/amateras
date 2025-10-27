@@ -1,4 +1,4 @@
-import { _instanceof, isFunction, isObject } from "amateras/lib/native";
+import { _instanceof, isFunction, isObject } from "@amateras/utils";
 
 export class I18nDictionary {
     #context: I18nDictionaryContext | Promise<I18nDictionaryContext> | null = null;

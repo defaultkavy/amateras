@@ -1,4 +1,4 @@
-import { $HTMLElement } from "../../../src/node/$HTMLElement";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
 
 export class Table extends $HTMLElement {
     constructor() {

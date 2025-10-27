@@ -1,5 +1,5 @@
 import type { $IDB } from "#structure/$IDB";
-import { _null } from "amateras/lib/native";
+import { _null } from "@amateras/utils";
 import type { $IDBStoreConfig } from "#structure/$IDBStore";
 import type { $IDBIndexConfig } from "#structure/$IDBIndex";
 

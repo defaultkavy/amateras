@@ -2,7 +2,7 @@ import { ALERT, ALERT_LINE, BLOCK } from "#lib/type";
 import { setBlockTokenizer, setProcessor } from "#lib/util";
 import type { BlockToken, MarkdownLexer } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
-import { uppercase } from "amateras/lib/uppercase";
+import { uppercase } from "@amateras/utils";
 
 export const alertProcessor = (parser: MarkdownParser) => setProcessor(parser, ALERT, (token, tokens) => {
     let html = '';

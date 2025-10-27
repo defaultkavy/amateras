@@ -1,6 +1,6 @@
-import { _Array_from, _instanceof, forEach, isUndefined } from "amateras/lib/native";
-import { $HTMLElement } from "amateras/node/$HTMLElement";
-import type { $Node } from "amateras/node/$Node";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
+import type { $Node } from "@amateras/core/node/$Node";
+import { _Array_from, _instanceof, forEach, isUndefined } from "@amateras/utils";
 
 $.style('tabs,tabs-container,tabs-list,tabs-content{display: block}')
 

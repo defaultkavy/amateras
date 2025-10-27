@@ -16,7 +16,7 @@ const _neutral = {
 
 colorAssign('neutral', _neutral);
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export namespace color {
             export const neutral: typeof _neutral;

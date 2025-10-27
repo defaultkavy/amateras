@@ -1,5 +1,5 @@
 import type { Page } from "#node/Page";
-import { _instanceof, _null, isUndefined } from "../../../../src/lib/native";
+import { _null, _instanceof, isUndefined } from "@amateras/utils";
 import { PageBuilder, type PageBuilderFunction } from "./PageBuilder";
 
 export class Route<Path extends RoutePath = RoutePath, Params extends RouteParams = []> {

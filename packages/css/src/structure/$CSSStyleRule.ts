@@ -1,6 +1,6 @@
 import type { $CSSDeclaration } from "#structure/$CSSDeclaration";
 import { $CSSRule } from "#structure/$CSSRule";
-import { _Array_from, _instanceof, _Object_fromEntries } from "amateras/lib/native";
+import { _Array_from, _instanceof, _Object_fromEntries } from "@amateras/utils";
 
 export class $CSSStyleRule extends $CSSRule {
     declarations = new Map<string, $CSSDeclaration>();

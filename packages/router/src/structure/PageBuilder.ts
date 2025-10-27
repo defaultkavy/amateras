@@ -1,6 +1,6 @@
-import { Page, type PageParams } from "#node/Page";
-import { _instanceof, _Promise, isFunction } from "../../../../src/lib/native";
-import type { $NodeContentResolver } from "../../../../src/node/$Node";
+import { Page } from "#node/Page";
+import type { $NodeContentResolver } from "@amateras/core/node/$Node";
+import { _instanceof, _Promise } from "@amateras/utils";
 import type { AsyncPageBuilder, RouteParams } from "./Route";
 
 export class PageBuilder<Params extends RouteParams = any> {

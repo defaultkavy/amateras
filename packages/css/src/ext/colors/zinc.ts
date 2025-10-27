@@ -16,7 +16,7 @@ const _zinc = {
 
 colorAssign('zinc', _zinc);
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export namespace color {
             export const zinc: typeof _zinc;

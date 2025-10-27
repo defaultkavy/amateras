@@ -1,10 +1,17 @@
 {
     "name": "@amateras/css",
     "peerDependencies": {
-        "amateras": "../../"
+      "@amateras/core": "workspace:*",
+      "@amateras/utils": "workspace:*"
     },
     "imports": {
       "#structure/*": "./src/structure/*.ts",
-      "#lib/*": "./src/lib/*.ts"
+      "#lib/*": "./src/lib/*.ts",
+      "#node/*": "./src/node/*.ts"
+    },
+    "exports": {
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts",
+      "./node/*": "./src/node/*.ts"
     }
 }

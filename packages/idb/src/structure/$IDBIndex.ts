@@ -1,4 +1,4 @@
-import { _Object_assign } from "amateras/lib/native";
+import { _Object_assign } from "@amateras/utils";
 import type { $IDBStore, $IDBStoreConfig, QueryMultipleKeyPath } from "./$IDBStore";
 import { $IDBStoreBase } from "./$IDBStoreBase";
 import type { $IDBCursor } from "./$IDBCursor";

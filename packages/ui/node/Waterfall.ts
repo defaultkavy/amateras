@@ -1,8 +1,8 @@
-import { _Array_from, _instanceof, equal, forEach, isNumber } from "amateras/lib/native";
-import { $HTMLElement } from "amateras/node/$HTMLElement";
-import { $Element } from "amateras/node/$Element";
-import { $Virtual } from "amateras/node/$Virtual";
-import { chain } from "../../../src/lib/chain";
+import { chain } from "@amateras/core/lib/chain";
+import type { $Element } from "@amateras/core/node/$Element";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
+import { $Virtual } from "@amateras/core/node/$Virtual";
+import { _Array_from, _instanceof, forEach } from "@amateras/utils";
 
 const getRect = (el: $Element) => el.getBoundingClientRect();
 const px = (value: number) => `${value}px`;

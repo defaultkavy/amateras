@@ -1,4 +1,4 @@
-import { _Object_assign } from "amateras/lib/native";
+import { _Object_assign } from "@amateras/utils";
 
 export interface $CSSPropertyOptions {
     name: string;

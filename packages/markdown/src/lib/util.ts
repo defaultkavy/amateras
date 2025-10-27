@@ -1,6 +1,6 @@
 import type { BlockTokenizer, InlineTokenizer, MarkdownLexer } from "#structure/MarkdownLexer";
 import type { MarkdownParseProcessor, MarkdownParser } from "#structure/MarkdownParser";
-import { forEach } from "amateras/lib/native";
+import { forEach } from "@amateras/utils";
 
 export const setBlockTokenizer = (lexer: MarkdownLexer, type: string, tokenizer: BlockTokenizer) => lexer.blockTokenizers.set(type, tokenizer);
 export const setInlineTokenizer = (lexer: MarkdownLexer, type: string, tokenizer: InlineTokenizer) => lexer.inlineTokenizers.set(type, tokenizer);

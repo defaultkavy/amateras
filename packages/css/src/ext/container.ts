@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, _Object_entries, forEach, startsWith } from "amateras/lib/native";
+import { _Array_from, _instanceof, _Object_entries, forEach, startsWith } from "@amateras/utils";
 import { $CSS, $CSSStyleRule } from "..";
 import { $CSSContainerRule } from "#structure/$CSSContainerRule";
 

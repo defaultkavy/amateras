@@ -1,11 +1,21 @@
 {
     "name": "@amateras/ui",
     "peerDependencies": {
-        "amateras": "../../"
+      "@amateras/core": "workspace:*",
+      "@amateras/html": "workspace:*",
+      "@amateras/utils": "workspace:*"
+    },
+    "imports": {
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts",
+      "#node/*": "./src/node/*.ts"
     },
     "exports": {
-        "./waterfall": "./node/Waterfall.ts",
-        "./tabs": "./node/Tabs.ts",
-        "./virtual-scroll": "./lib/VirtualScroll.ts"
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts",
+      "./node/*": "./src/node/*.ts",
+      "./waterfall": "./node/Waterfall.ts",
+      "./tabs": "./node/Tabs.ts",
+      "./virtual-scroll": "./lib/VirtualScroll.ts"
     }
 }

@@ -1,5 +1,4 @@
 import { $CSSRule } from "#structure/$CSSRule";
-import { _Array_from } from "../../../../src/lib/native";
 
 export class $CSSKeyframesRule extends $CSSRule {
     name: string;

@@ -1,9 +1,10 @@
-import { $Form } from 'amateras/html/$Form';
-import { $HTMLElement } from 'amateras/node/$HTMLElement';
-import { $Label } from 'amateras/html/$Label';
-import { $Input } from 'amateras/html/$Input';
-import type { $Node } from '../../../src/node/$Node';
-import { _instanceof, _undefined } from '../../../src/lib/native';
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
+import type { $Node } from "@amateras/core/node/$Node";
+import { $Form } from "@amateras/html/node/$Form";
+import { $Input } from "@amateras/html/node/$Input";
+import { $Label } from "@amateras/html/node/$Label";
+import { _instanceof, _undefined } from "@amateras/utils";
+
 
 export class Form extends $Form {
     constructor() {

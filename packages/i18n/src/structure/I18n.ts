@@ -1,6 +1,6 @@
-import { _instanceof, _null } from "amateras/lib/native";
+import '@amateras/signal';
+import { _instanceof, _null } from "@amateras/utils";
 import { I18nDictionary } from "#structure/I18nDictionary";
-import 'amateras/signal';
 import { I18nTranslation, type I18nTranslationOptions } from "./I18nTranslation";
 
 export class I18n {

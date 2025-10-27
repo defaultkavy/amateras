@@ -2,7 +2,7 @@ import { EMPTY_LINE, ORDERED_LIST_ITEM, TEXT_LINE, UNORDERED_LIST_ITEM } from "#
 import { htmltag, setBlockTokenizer, setProcessor } from "#lib/util";
 import type { MarkdownLexer, Token } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
-import { equal, isString } from "amateras/lib/native";
+import { equal, isString } from "@amateras/utils";
 
 export const listProcessor = (parser: MarkdownParser) => {
     const listType = (type: string) => type === ORDERED_LIST_ITEM ? 'ol' : 'ul'

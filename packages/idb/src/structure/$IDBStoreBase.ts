@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, _null, _Promise } from "amateras/lib/native";
+import { _Array_from, _instanceof, _null, _Promise } from "@amateras/utils";
 import { $IDBRequest } from "#lib/$IDBRequest";
 import { $IDBCursor } from "./$IDBCursor";
 

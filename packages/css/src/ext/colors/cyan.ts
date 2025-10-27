@@ -16,7 +16,7 @@ const _cyan = {
 
 colorAssign('cyan', _cyan);
 
-declare module 'amateras/core' {
+declare module '@amateras/core' {
     export namespace $ {
         export namespace color {
             export const cyan: typeof _cyan;

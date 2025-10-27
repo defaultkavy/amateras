@@ -1,8 +1,8 @@
-import { _Array_from, _instanceof, _Object_assign } from "amateras/lib/native"
-import { $ } from "amateras/core"
+import { _Array_from, _instanceof, _Object_assign } from "@amateras/utils"
+import { $ } from "@amateras/core"
 import { I18n } from "#structure/I18n"
 import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
-import { $Node, $Text } from "amateras/node/$Node";
+import { $Node, $Text } from "@amateras/core/node/$Node";
 import { I18nTranslation as _I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
 
 $Node.processors.add((_, content) => {
@@ -123,7 +123,7 @@ type Mixin<A, B> =
             :   A[key] | B[key]  
     }
 
-declare module "amateras/core" {
+declare module "@amateras/core" {
     export namespace $ {
         export interface I18nFunction<D extends I18nDictionaryContext = {}> {
             <K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nTranslation;

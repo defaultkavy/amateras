@@ -1,4 +1,4 @@
-import { _instanceof, forEach, isFunction, isUndefined } from "amateras/lib/native";
+import { _instanceof, forEach, isFunction, isUndefined } from "@amateras/utils";
 
 export class Signal<T> {
     #value: T;

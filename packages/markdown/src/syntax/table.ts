@@ -2,7 +2,7 @@ import { BLOCK, TABLE, TABLE_COLUMN, TABLE_ROW } from "#lib/type";
 import { htmltag, setBlockTokenizer, setProcessor } from "#lib/util";
 import type { BlockToken, MarkdownLexer } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
-import { _Array_from } from "amateras/lib/native";
+import { _Array_from } from "@amateras/utils";
 
 export const tableProcessor = (parser: MarkdownParser) => setProcessor(parser, TABLE, (token) => {
         let thead = '';

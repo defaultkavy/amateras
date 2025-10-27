@@ -1,4 +1,4 @@
-import { _Array_from, _null, _Object_assign, _Object_fromEntries, _Promise, isBoolean } from "amateras/lib/native";
+import { _Array_from, _null, _Object_assign, _Object_fromEntries, _Promise, isBoolean } from "@amateras/utils";
 import { $IDBStore, type $IDBStoreConfig } from "./$IDBStore";
 import { $IDBTransaction } from "./$IDBTransaction";
 

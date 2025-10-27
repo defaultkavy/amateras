@@ -1,14 +1,18 @@
 {
     "name": "@amateras/router",
     "peerDependencies": {
-        "amateras": "../../"
+      "@amateras/core": "workspace:*",
+      "@amateras/html": "workspace:*",
+      "@amateras/utils": "workspace:*"
     },
     "imports": {
-      "#node/*": "./src/node/*.ts",
-      "#structure/*": "./src/structure/*.ts"
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts",
+      "#node/*": "./src/node/*.ts"
     },
     "exports": {
-      "./node/*": "./src/node/*.ts",
-      "./structure/*": "./src/structure/*.ts"
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts",
+      "./node/*": "./src/node/*.ts"
     }
 }

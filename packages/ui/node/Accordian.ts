@@ -1,7 +1,7 @@
-import { _Array_from, _instanceof, forEach, isNull } from "amateras/lib/native";
-import { $HTMLElement } from "amateras/node/$HTMLElement";
-import type { $Node, $NodeContentResolver } from "amateras/node/$Node";
-import { chain } from "../../../src/lib/chain";
+import { chain } from "@amateras/core/lib/chain";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
+import type { $Node, $NodeContentResolver } from "@amateras/core/node/$Node";
+import { _Array_from, _instanceof, forEach, isNull } from "@amateras/utils";
 
 const [ACCORDIAN, ACCORDIAN_ITEM, ACCORDIAN_TRIGGER, ACCORDIAN_CONTENT, ACCORDIAN_CONTAINER] = ['accordian', 'accordian-item', 'accordian-trigger', 'accordian-content', 'accordian-container'] as const;
 forEach([

@@ -1,5 +1,5 @@
-import { _document } from "../../../src/lib/env";
-import { $HTMLElement } from "../../../src/node/$HTMLElement";
+import { _document } from "@amateras/core/lib/env";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
 
 $.style('toast{position:absolute}')
 

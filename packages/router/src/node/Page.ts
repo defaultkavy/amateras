@@ -1,8 +1,9 @@
 import type { RouteParams } from "#structure/Route";
-import { $HTMLElement } from "amateras/node/$HTMLElement";
-import { _null } from "../../../../src/lib/native";
+import { chain } from "@amateras/core/lib/chain";
+import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
+import { _null } from "@amateras/utils";
 import type { Router } from "./Router";
-import { chain } from "../../../../src/lib/chain";
+
 
 export class Page<Params extends RouteParams = []> extends $HTMLElement {
     params: PageParamsResolver<Params>;

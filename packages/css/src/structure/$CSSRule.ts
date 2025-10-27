@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, _Object_fromEntries } from "amateras/lib/native";
+import { _Array_from, _instanceof, _Object_fromEntries } from "@amateras/utils";
 
 export abstract class $CSSRule {
     rules = new Set<$CSSRule>();

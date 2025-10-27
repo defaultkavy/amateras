@@ -1,4 +1,4 @@
-import { _Array_from, _Object_assign, forEach } from "../../../../src/lib/native";
+import { _Array_from, _Object_assign, forEach } from "@amateras/utils";
 import type { $IDB } from "./$IDB";
 import { $IDBStore, type $IDBStoreConfig } from "./$IDBStore";
 

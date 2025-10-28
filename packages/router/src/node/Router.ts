@@ -150,12 +150,14 @@ export class Router extends $HTMLElement {
         }
         const routes = searchRoute(this.routes, pathname);
         let prevRouter: Router | null = this;
+        let pathIdStr = '';
         await forEach(routes, async ({route, params, pathId}) => {
+            pathIdStr += pathId;
             // skip route group
             const builderResolver = route.builder;
             if (!builderResolver) return;
             // get page from cache or create new page
-            const page = route.pages.get(pathId) ?? new Page(pathId, params);
+            const page = route.pages.get(pathId) ?? new Page(pathIdStr, params);
             // resolve builder
             if (!page.built) await builderResolver.build(page);
             page.built = true;

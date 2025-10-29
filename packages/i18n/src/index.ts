@@ -1,21 +1,13 @@
-import { _Array_from, _instanceof, _Object_assign } from "@amateras/utils"
+import { _Array_from, _instanceof, _Object_assign, forEach, toArray } from "@amateras/utils"
 import { $ } from "@amateras/core"
 import { I18n } from "#structure/I18n"
 import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
-import { $Node, $Text } from "@amateras/core/node/$Node";
-import { I18nTranslation as _I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
-
-$Node.processors.add((_, content) => {
-    if (_instanceof(content, _I18nTranslation)) {
-        const text = new $Text();
-        $.effect(() => text.textContent(content.content$()))
-        return [text]
-    }
-})
+import { $Node, type $NodeContentResolver } from "@amateras/core/node/$Node";
+import { I18nTranslation as _I18nTranslation, I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
 
 $Node.setters.add((value, set) => {
     if (_instanceof(value, _I18nTranslation)) {
-        value.content$.signal.subscribe(set);
+        value.i18n.locale$.signal.subscribe(set);
         return value.content$.value();
     }
 })
@@ -86,7 +78,7 @@ type FindParam<T extends string> =
     T extends `${string}$${infer Param}$${infer Rest}`
     ?   Param extends `${string}${' '}${string}`
         ?   Prettify<{} & FindParam<Rest>>
-        :   Prettify<Record<Param, any> & FindParam<Rest>>
+        :   Prettify<Record<Param, $NodeContentResolver<I18nTranslation>> & FindParam<Rest>>
     :   {}
 
 type FindTranslationByKey<K extends string, T extends I18nDictionaryContext> = 

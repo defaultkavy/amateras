@@ -1,4 +1,3 @@
-import { chain } from "#lib/chain";
 import { _document } from "#lib/env";
 import { _Array_from, _instanceof, _JSON_stringify, _null, _Promise, forEach, isFunction, isNull, isUndefined, toArray } from "@amateras/utils";
 import { $EventTarget } from "./$EventTarget";
@@ -12,10 +11,8 @@ export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
     }
 
     content(children: $NodeContentResolver<this>) {
-        return chain(this, _null, _null, children, children => {
-            forEach(_Array_from(this.childNodes), node => node.remove());
-            this.insert(children);
-        })
+        forEach(_Array_from(this.childNodes), node => node.remove());
+        return this.insert(children);
     }
 
     insert(resolver: $NodeContentResolver<this>, position = -1) {

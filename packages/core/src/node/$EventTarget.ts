@@ -1,4 +1,4 @@
-import { isBoolean } from "@amateras/utils";
+import { forEach, isBoolean, toArray } from "@amateras/utils";
 
 export class $EventTarget<EvMap = {}> {
     node: EventTarget;
@@ -7,16 +7,19 @@ export class $EventTarget<EvMap = {}> {
         if (node !== window) (node as Mutable<EventTarget>).$ = this;
     }
     
-    on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {
-        return this.addEventListener(type, listener, options);
+    on(type: string | string[], listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {
+        forEach(toArray(type), type => this.addEventListener(type, listener, options));
+        return this;
     }
 
-    off(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | EventListenerOptions): this {
-        return this.removeEventListener(type, listener, options);
+    off(type: string | string[], listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | EventListenerOptions): this {
+        forEach(toArray(type), type => this.removeEventListener(type, listener, options));
+        return this
     }
     
-    once(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {
-        return this.on(type, listener, { once: true, ...(isBoolean(options) ? {capture: options} : options ?? {}) })
+    once(type: string | string[], listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this {
+        forEach(toArray(type), type => this.on(type, listener, { once: true, ...(isBoolean(options) ? { capture: options } : options ?? {}) }));
+        return this
     }
 }
 
@@ -34,12 +37,12 @@ export interface $EventTarget<EvMap = {}> {
     /** {@link EventTarget.dispatchEvent} */
     dispatchEvent(event: Event): boolean;
     
-    on<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions): this;
+    on<K extends keyof EvMap, Ev extends EvMap[K]>(type: K | K[], listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions): this;
     on(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this;
 
-    off<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | EventListenerOptions): this;
+    off<K extends keyof EvMap, Ev extends EvMap[K]>(type: K | K[], listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | EventListenerOptions): this;
     off(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | EventListenerOptions): this;
 
-    once<K extends keyof EvMap, Ev extends EvMap[K]>(type: K, listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions): this;
+    once<K extends keyof EvMap, Ev extends EvMap[K]>(type: K | K[], listener: $EventListener<this, Ev> | $EventListenerObject<this, Ev>, options?: boolean | AddEventListenerOptions): this;
     once(type: string, listener: $EventListener<this, Event> | $EventListenerObject<this, Event>, options?: boolean | AddEventListenerOptions): this;
 }

@@ -1,4 +1,4 @@
-import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isNull, isString, isUndefined } from "@amateras/utils";
+import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isNull, isNumber, isString, isUndefined } from "@amateras/utils";
 import { _document } from "#lib/env";
 import { $Node } from "./$Node";
 
@@ -47,6 +47,12 @@ export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> ex
 
     toString() {
         return this.outerHTML();
+    }
+
+    animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions & { callback?: (animation: Animation) => void }) {
+        const animation = this.node.animate(keyframes, options);
+        if (!isNumber(options)) options?.callback?.(animation);
+        return this;
     }
 }
 
@@ -193,8 +199,6 @@ export interface $Element<Ele extends Element, EvMap = ElementEventMap> {
     setPointerCapture(pointerId: number): this;
     /** {@link Element.toggleAttribute} */
     toggleAttribute(qualifiedName: string, force?: boolean): boolean;
-    /** {@link Element.animate} */
-    animate(keyframes: Keyframe[] | PropertyIndexedKeyframes | null, options?: number | KeyframeAnimationOptions): Animation;
     /** {@link Element.getAnimations} */
     getAnimations(options?: GetAnimationsOptions): Animation[];
 

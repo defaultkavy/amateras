@@ -1,8 +1,23 @@
+import { chain } from "@amateras/core/lib/chain";
 import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
 import type { $Node } from "@amateras/core/node/$Node";
 import { _Array_from, _instanceof, forEach, isUndefined } from "@amateras/utils";
 
-$.style('tabs,tabs-container,tabs-list,tabs-content{display: block}')
+const TAB = 'tab';
+const TAB_CONTENT = 'tab-content';
+const TAB_TRIGGER = 'tab-trigger';
+const TAB_CONTAINER = 'tab-container';
+const TAB_LIST = 'tab-list';
+
+const DISPLAY_BLOCK = 'display:block'
+
+forEach([
+    `${TAB}{${DISPLAY_BLOCK}}`,
+    `${TAB_CONTENT}{${DISPLAY_BLOCK}}`,
+    `${TAB_LIST}{${DISPLAY_BLOCK}}`,
+    `${TAB_CONTAINER}{${DISPLAY_BLOCK}}`,
+    `${TAB_TRIGGER}{cursor:pointer}`
+], $.style)
 
 export class Tabs extends $HTMLElement {
     #value: null | string = null;
@@ -10,7 +25,7 @@ export class Tabs extends $HTMLElement {
     $container: null | TabsContainer = null;
     $list: null | TabsList = null;
     constructor() {
-        super('tabs');
+        super(TAB);
     }
 
     value(): string | null;
@@ -22,13 +37,17 @@ export class Tabs extends $HTMLElement {
             this.$list?.check();
         })
     }
+
+    mounted($parent: $Node): void {
+        this.$list?.check();
+    }
 }
 
 export class TabsContainer extends $HTMLElement {
     $tabs?: Tabs;
     contentMap = new Map<string, TabsContent>();
     constructor($tabs?: Tabs) {
-        super('tabs-container');
+        super(TAB_CONTAINER);
         this.$tabs = $tabs;
     }
 
@@ -46,7 +65,7 @@ export class TabsContent extends $HTMLElement {
     #value: string;
     $container: null | TabsContainer = null;
     constructor(value: string) {
-        super('tabs-content');
+        super(TAB_CONTENT);
         this.#value = value
     }
 
@@ -73,7 +92,7 @@ export class TabsList extends $HTMLElement {
     $tabs?: null | Tabs = null;
     triggers = new Map<string, TabsTrigger>();
     constructor($tabs?: Tabs) {
-        super('tabs-list');
+        super(TAB_LIST);
         this.$tabs = $tabs;
         this.on('click', _ => this.check())
     }
@@ -97,7 +116,7 @@ export class TabsTrigger extends $HTMLElement {
     #value: string;
     $tabs?: null | Tabs = null;
     constructor(value: string) {
-        super('tabs-trigger');
+        super(TAB_TRIGGER);
         this.#value = value;
         this.on('click', _ => this.$tabs?.value(this.#value ?? undefined))
     }
@@ -107,8 +126,4 @@ export class TabsTrigger extends $HTMLElement {
     value(value?: string) {
         return chain(this, arguments, () => this.#value, value, value => this.#value = value)
     }
-}
-
-function chain<T, R, V>(_this: T, args: IArguments, get: () => R, value: V, set: (value: Exclude<V, undefined>) => any) {
-    return !args.length ? get() : isUndefined(value) ? _this : (set(value as any), _this);
 }

@@ -1,15 +1,30 @@
 {
     "name": "@amateras/core",
     "dependencies": {
-      "@amateras/utils": "workspace:*"
+      "@amateras/utils": "workspace:*",
+      "@amateras/dom": "workspace:*"
     },
     "imports": {
       "#structure/*": "./src/structure/*.ts",
       "#lib/*": "./src/lib/*.ts",
-      "#node/*": "./src/node/*.ts"
+      "#node/*": "./src/node/*.ts",
+      "#env": {
+        "browser": "./src/env.browser.ts",
+        "node": "./src/env.node.ts",
+        "default": "./src/env.browser.ts"
+      }
     },
     "exports": {
-      ".": "./src/index.ts",
+      ".": {
+        "browser": "./src/index.ts",
+        "node": "./src/main.ts",
+        "default": "./src/index.ts"
+      },
+      "./env": {
+        "browser": "./src/env.browser.ts",
+        "node": "./src/env.node.ts",
+        "default": "./src/env.browser.ts"
+      },
       "./structure/*": "./src/structure/*.ts",
       "./lib/*": "./src/lib/*.ts",
       "./node/*": "./src/node/*.ts"

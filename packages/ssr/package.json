@@ -3,7 +3,8 @@
     "peerDependencies": {
       "@amateras/core": "workspace:*",
       "@amateras/utils": "workspace:*",
-      "esm-env": "^1.2.2"
+      "@amateras/router": "workspace:*",
+      "@amateras/signal": "workspace:*"
     },
     "imports": {
       "#structure/*": "./src/structure/*.ts",

@@ -19,7 +19,7 @@ export const codeblockProcessor = (parser: MarkdownParser) => setProcessor(parse
     })
 
 export const codeblockTokenizer = (lexer: MarkdownLexer) => setBlockTokenizer(lexer, CODE_START, {
-    regex: /^```(\w+)/,
+    regex: /^```(\w+)?/,
     handle: (matches, position, lines) => {
         const tokens: BlockToken[] = [];
         position++;

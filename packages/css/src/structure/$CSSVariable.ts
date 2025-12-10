@@ -1,4 +1,4 @@
-import { _document } from "@amateras/core/lib/env";
+import { _document } from "@amateras/core/env";
 
 const documentElementStyle = _document.documentElement.style;
 

@@ -2,7 +2,7 @@ import { Route, type RouteBuilder, type RoutePath, type RouteParamsResolver, typ
 import type { AnchorTarget } from "../../../html/src/node/$Anchor";
 import { Page, type PageParams } from "./Page";
 import type { PageBuilder, PageBuilderFunction } from "#structure/PageBuilder";
-import { _document } from "@amateras/core/lib/env";
+import { _document } from "@amateras/core/env";
 import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
 import { _instanceof, startsWith, _JSON_parse, forEach, _Object_entries, _JSON_stringify, isFunction } from "@amateras/utils";
 // history index
@@ -46,6 +46,7 @@ const historyHandler = async (path: string | URL | Nullish, mode: 1 | 2, target?
 // disable browser scroll restoration
 _history.scrollRestoration = 'manual';
 
+type RouteData = { route: Route, params: PageParams, pathId: string }
 export class Router extends $HTMLElement {
     static direction: 'back' | 'forward' = FORWARD;
     static routers = new Set<Router>();
@@ -102,53 +103,8 @@ export class Router extends $HTMLElement {
 
     async resolve(path: string | URL, force = false): Promise<this> {
         const {pathname, href} = toURL(path);
-        const split = (p: string) => p.replaceAll(/\/+/g, '/').replace(/^\//, '').split('/').map(path => `/${path}`);
-        type RouteData = { route: Route, params: PageParams, pathId: string }
-        const searchRoute = (routes: typeof this.routes, targetPath: string): RouteData[] => {
-            let targetPathSplit = split(targetPath);
-            if (!routes.size) return [];
-            // check each route
-            for (const [_, route] of routes) {
-                // check each path pass
-                routePathLoop: for (const [path, paramsHandle] of route.paths) {
-                    let routePathSplit = split(path);
-                    let targetPathNodePosition = 0;
-                    let params: { [key: string]: string } = isFunction(paramsHandle) ? paramsHandle() : paramsHandle ?? {};
-                    let pathId = '';
-                    // check each path node
-                    pathNodeLoop: for (let i = 0; i < routePathSplit.length; i++) {
-                        // reset target path node position
-                        targetPathNodePosition = i;
-                        const routeNode = routePathSplit[i];
-                        const targetNode = targetPathSplit[i];
-                        // path node undefined, break path loop
-                        if (!routeNode || !targetNode) continue routePathLoop;
-                        // path node is params node
-                        if (routeNode.includes(':')) {
-                            // target not matched
-                            if (targetNode === '/') continue routePathLoop;
-                            const [prefix, paramName] = routeNode.split(':') as [string, string];
-                            if (!startsWith(targetNode, prefix)) continue routePathLoop;
-                            params[paramName] = targetNode.replace(`${prefix}`, '');
-                            pathId += targetNode;
-                            continue pathNodeLoop;
-                        }
-                        // path node not matched, next path
-                        if (routeNode !== targetNode) continue routePathLoop;
-                        pathId += targetNode;
-                    }
-                    // target path node longer than route, next route
-                    if (targetPathSplit[targetPathNodePosition + 1] && !route.routes.size) continue routePathLoop;
-                    // all path node passed, route found
-                    return [{route, params, pathId}, ...searchRoute(route.routes, targetPathSplit.slice(targetPathNodePosition + 1).join('/'))]
-                }
-            }
-            // no route passed
-            const notfound = routes.get('notfound');
-            if (notfound) return [{route: notfound, params: {}, pathId: 'notfound'}]
-            return [];
-        }
-        const routes = searchRoute(this.routes, pathname);
+        const routes = this.getRoutes(this.routes, pathname);
+        const routerPageMap = new Map<Router, Page>();
         let prevRouter: Router | null = this;
         let pathIdStr = '';
         let paramsData = {}
@@ -163,13 +119,18 @@ export class Router extends $HTMLElement {
             // resolve builder
             if (!page.built) await builderResolver.build(page);
             page.built = true;
-            // set title
-            _document && (_document.title = page.pageTitle() ?? _document.title);
-            // check location is still same, page parent is not router before insert page
-            if (force || (href === _location.href && page.parentNode !== prevRouter?.node)) prevRouter?.content(page);
+            // set router to page map
+            if (prevRouter) routerPageMap.set(prevRouter, page)
             // set cache
             if (!force) route.pages.set(pathId, page);
             prevRouter = page.router;
+        })
+
+        forEach(routerPageMap, ([router, page]) => {
+            // set title
+            _document && (_document.title = page.pageTitle() ?? _document.title ?? '');
+            // check location is still same, page parent is not router before insert page
+            if (force || (href === _location.href && page.parentNode !== router.node)) router.content(page);
         })
         // handle scroll restoration
         let { x, y } = Router.scroll ?? {x: 0, y: 0};
@@ -177,6 +138,56 @@ export class Router extends $HTMLElement {
         // event
         this.dispatchEvent(new Event('routeopen', {bubbles: true}));
         return this;
+    }
+
+    protected getRoutes(routes: typeof this.routes, targetPath: string): RouteData[] {
+        const split = (p: string) => p.replaceAll(/\/+/g, '/').replace(/^\//, '').split('/').map(path => `/${path}`);
+        let targetPathSplit = split(targetPath);
+        if (!routes.size) return [];
+        // check each route
+        for (const [_, route] of routes) {
+            // check each path pass
+            routePathLoop: for (const [path, paramsHandle] of route.paths) {
+                let routePathSplit = split(path);
+                let targetPathNodePosition = 0;
+                let params: { [key: string]: string } = isFunction(paramsHandle) ? paramsHandle() : paramsHandle ?? {};
+                let pathId = '';
+                // check each path node
+                pathNodeLoop: for (let i = 0; i < routePathSplit.length; i++) {
+                    // reset target path node position
+                    targetPathNodePosition = i;
+                    const routeNode = routePathSplit[i];
+                    const targetNode = targetPathSplit[i];
+                    // path node undefined, break path loop
+                    if (!routeNode || !targetNode) continue routePathLoop;
+                    // path node is params node
+                    if (routeNode.includes(':')) {
+                        // target not matched
+                        if (targetNode === '/') continue routePathLoop;
+                        const [prefix, paramName] = routeNode.split(':') as [string, string];
+                        if (!startsWith(targetNode, prefix)) continue routePathLoop;
+                        params[paramName] = targetNode.replace(`${prefix}`, '');
+                        pathId += targetNode;
+                        continue pathNodeLoop;
+                    }
+                    // path node not matched, next path
+                    if (routeNode !== targetNode) continue routePathLoop;
+                    pathId += targetNode;
+                }
+                // target path node longer than route, next route
+                if (targetPathSplit[targetPathNodePosition + 1] && !route.routes.size) continue routePathLoop;
+                // all path node passed, route found
+                return [{route, params, pathId}, ...this.getRoutes(route.routes, targetPathSplit.slice(targetPathNodePosition + 1).join('/'))]
+            }
+        }
+        // no route passed
+        const notfound = routes.get('notfound');
+        if (notfound) return [{route: notfound, params: {}, pathId: 'notfound'}]
+        return [];
+    }
+
+    protected getPage() {
+
     }
 }
 

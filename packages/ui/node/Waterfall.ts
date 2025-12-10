@@ -1,3 +1,4 @@
+import { onclient, onserver } from "@amateras/core/env";
 import { chain } from "@amateras/core/lib/chain";
 import type { $Element } from "@amateras/core/node/$Element";
 import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
@@ -16,7 +17,9 @@ export class Waterfall extends $Virtual {
     #width = 0;
     constructor() {
         super('waterfall');
-        new ResizeObserver(_ => this.inDOM() && this.#width !== getRect(this).width && (this.dispatchEvent(new Event('resize', {cancelable: true})) && this.layout())).observe(this.node);
+        onclient(() => {
+            new ResizeObserver(_ => this.inDOM() && this.#width !== getRect(this).width && (this.dispatchEvent(new Event('resize', {cancelable: true})) && this.layout())).observe(this.node);
+        })
     }
 
     mode(): WaterfallMode;
@@ -44,6 +47,7 @@ export class Waterfall extends $Virtual {
     }
 
     layout() {
+        if (onserver()) return;
         const items = _Array_from(this.nodes).map(item => item);
         const { width } = getRect(this);
         this.#width = width;

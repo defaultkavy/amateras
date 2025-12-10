@@ -1,5 +1,5 @@
-import { _Array_from, _instanceof, _Object_assign, forEach, toArray } from "@amateras/utils"
-import { $ } from "@amateras/core"
+import "@amateras/core"
+import { _Array_from, _instanceof, _Object_assign } from "@amateras/utils"
 import { I18n } from "#structure/I18n"
 import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
 import { $Node, type $NodeContentResolver } from "@amateras/core/node/$Node";
@@ -7,7 +7,7 @@ import { I18nTranslation as _I18nTranslation, I18nTranslation, type I18nTranslat
 
 $Node.setters.add((value, set) => {
     if (_instanceof(value, _I18nTranslation)) {
-        value.i18n.locale$.signal.subscribe(set);
+        value.content$.signal.subscribe(set);
         return value.content$.value();
     }
 })

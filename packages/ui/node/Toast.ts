@@ -1,4 +1,4 @@
-import { _document } from "@amateras/core/lib/env";
+import { _document } from "@amateras/core/env";
 import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
 
 $.style('toast{position:absolute}')

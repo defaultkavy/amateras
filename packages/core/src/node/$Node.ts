@@ -1,4 +1,4 @@
-import { _document } from "#lib/env";
+import { _document } from "#env";
 import { _Array_from, _instanceof, _JSON_stringify, _null, _Promise, forEach, isFunction, isNull, isUndefined, toArray } from "@amateras/utils";
 import { $EventTarget } from "./$EventTarget";
 
@@ -60,7 +60,7 @@ export class $Node<EvMap = {}> extends $EventTarget<EvMap> {
     static process<T extends $Node>($node: T, content: $NodeContentResolver<any>): Array<$Node | undefined | null> {
         for (const processor of this.processors) {
             const result = processor($node, content);
-            if (result) return result;
+            if (result) content = result;
         }
         if (isUndefined(content) || isNull(content) || _instanceof(content, $Node)) return [content];
         // is Promise
@@ -96,7 +96,7 @@ export class $Text extends $Node {
 }
 
 export type $NodeSetterHandler = (value: any, set: (value: any) => void) => any;
-export type $NodeContentProcessor = <N extends $Node>($node: N, content: $NodeContentResolver<N>) => Array<$Node | undefined | null> | void | undefined;
+export type $NodeContentProcessor = <N extends $Node>($node: N, content: $NodeContentResolver<N>) => $NodeContentResolver<N>;
 export type $NodeContentHandler<T extends $Node> = ($node: T) => OrPromise<$NodeContentResolver<T>>;
 export type $NodeContentTypes = $Node | string | number | boolean | $.$NodeContentTypeExtends | null | undefined;
 export type $NodeContentResolver<T extends $Node> = OrPromise<$NodeContentTypes | $NodeContentHandler<T> | $NodeContentResolver<T>[]>;

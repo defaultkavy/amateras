@@ -7,6 +7,7 @@ export class MarkdownParser {
     parse(tokens: (Token)[]) {
         let html = '';
         let i = 0;
+        if (!tokens) return html;
         while (i < tokens.length) {
             const token = tokens[i]!;
             const processor = this.processors.get(token.type);

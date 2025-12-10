@@ -16,6 +16,11 @@
   "license": "MIT",
   "exports": {
     ".": "./index.ts",
+    "./env": {
+      "browser": "./packages/core/src/env.browser.ts",
+      "node": "./packages/core/src/env.node.ts",
+      "default": "./packages/core/src/env.browser.ts"
+    },
     "./node/*": "./packages/core/src/node/*.ts",
     "./lib/*": "./packages/core/src/lib/*.ts",
     "./structure/*": "./src/structure/*.ts",
@@ -26,7 +31,7 @@
     "./css": "./packages/css/src/index.ts",
     "./css/*": "./packages/css/src/ext/*.ts",
     "./router": "./packages/router/src/index.ts",
-    "./ssr": "./packages/ssr/index.ts",
+    "./ssr": "./packages/ssr/src/index.ts",
     "./i18n": "./packages/i18n/src/index.ts",
     "./idb": "./packages/idb/src/index.ts",
     "./idb/core": "./packages/idb/src/core.ts",

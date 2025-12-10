@@ -7,7 +7,7 @@ import { isUndefined } from "@amateras/utils";
 export const linkProcessor = (parser: MarkdownParser) => {
     const linkProcessor = (token: Token) => {
         const {href, email, title} = token.data!;
-        return `<a href="${isUndefined(href) ? `mailto:${email}` : href}"${title ? ` title="${title}"` : ''}>${parser.parse(token.content!)}</a>`
+        return `<a href="${isUndefined(href) ? `mailto:${email}` : href}"${title ? ` title="${title}"` : ''}>${token.text ?? parser.parse(token.content!)}</a>`
     }
     setProcessor(parser, QUICK_LINK, linkProcessor)
     setProcessor(parser, LINK, linkProcessor)

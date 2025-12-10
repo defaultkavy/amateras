@@ -13,8 +13,10 @@ declare global {
     type Err<E> = [data: null, err: E]
     type Result<D, E> = Ok<D> | Err<E>
     type Repeat<T, N extends number, Acc extends T[] = []> = 
-        Acc['length'] extends N 
-            ? Acc 
+        Acc['length'] extends 500
+        ?   T[]
+        :   Acc['length'] extends N
+            ? Acc
             : Repeat<T, N, [...Acc, T]>;
     type Prettify<T> = {
         [K in keyof T]: T[K];

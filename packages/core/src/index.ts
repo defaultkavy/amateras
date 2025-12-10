@@ -1,10 +1,10 @@
 import './global';
-import './node';
+import './lib/assignNodeProperties';
 import { $Element } from "#node/$Element";
 import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
 import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind, _null } from '@amateras/utils';
 import { $HTMLElement } from '#node/$HTMLElement';
-import { _document } from '#lib/env';
+import { _document } from '#env';
 import { $EventTarget, type $Event } from '#node/$EventTarget';
 
 const nodeNameMap: {[key: string]: Constructor<$EventTarget>} = {}
@@ -12,7 +12,6 @@ const nodeNameMap: {[key: string]: Constructor<$EventTarget>} = {}
 type $NodeBuilder = (...args: any[]) => $NodeContentResolver<$Node>
 type BuilderResultResolver<F> = F extends Constructor<$Node> ? InstanceType<F> : F extends $NodeBuilder ? ReturnType<F> : never;
 type BuilderParameterResolver<F> = F extends Constructor<$Node> ? ConstructorParameters<F> : F extends $NodeBuilder ? Parameters<F> : never;
-
 
 type $Type<T extends EventTarget> = T extends HTMLElement ? $HTMLElement : T extends Element ? $Element : T extends (Node | ChildNode) ? $Node : T extends EventTarget ? $EventTarget : never;
 
@@ -34,7 +33,8 @@ export function $<W extends Window>(node: W): $EventTarget<WindowEventMap>;
 /** Convert {@link Document} to {@link $Node} */
 export function $<D extends Document>(node: D): $Node<DocumentEventMap>;
 /** Convert {@link EventTarget} base to {@link $EventTarget} base*/
-export function $<H extends EventTarget | null | undefined>(element: H, ...args: any[]): H extends EventTarget ? $Type<H> : null;
+export function $<H extends EventTarget | null | undefined>(target: H, ...args: any[]): H extends EventTarget ? $Type<H> : null;
+export function $<E extends Record<string, Event>>(target: EventTarget, ...args: any[]): $EventTarget<E>;
 /** Convert string and variables to {@link $NodeContentTypes} array */
 export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
 /** Get {@link Event.currentTarget} in {@link $EventTarget} type from {@link Event} */
@@ -49,7 +49,7 @@ export function $(tagname: string): $HTMLElement<HTMLElement>
 export function $<N extends number, K extends keyof HTMLElementTagNameMap>(number: N, tagname: K): number extends N ? $HTMLElement<HTMLElementTagNameMap[K]>[] : Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
 /** Create multiple {@link $HTMLElement} objects by custom tagname */
 export function $<N extends number>(number: N, tagname: string): number extends N ? $HTMLElement<HTMLElement>[] : Repeat<$HTMLElement<HTMLElement>, N>;
-export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event | NodeListOf<Node | ChildNode>, ...args: any[]) {
+export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event | NodeListOf<Node | ChildNode> | EventTarget, ...args: any[]) {
     if (isNull(resolver) || isUndefined(resolver)) return null;
     if (_instanceof(resolver, $Node)) return resolver;
     if (isString(resolver) && nodeNameMap[resolver]) return new nodeNameMap[resolver](...args);

@@ -1,4 +1,4 @@
-import { _document } from "@amateras/core/lib/env";
+import { _document } from "@amateras/core/env";
 import { $HTMLElement } from "@amateras/core/node/$HTMLElement";
 import type { $Node } from "@amateras/core/node/$Node";
 import type { $Virtual } from "@amateras/core/node/$Virtual";

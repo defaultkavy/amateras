@@ -1,5 +1,5 @@
 import { _Array_from, _instanceof, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isNull, isNumber, isString, isUndefined } from "@amateras/utils";
-import { _document } from "#lib/env";
+import { _document } from "#env";
 import { $Node } from "./$Node";
 
 export class $Element<Ele extends Element = Element, EvMap = ElementEventMap> extends $Node<EvMap> {

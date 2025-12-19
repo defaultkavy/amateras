@@ -42,7 +42,17 @@
   "workspaces": [
     "packages/*"
   ],
-  "dependencies": {
-    "@amateras/core": "./packages/core"
+  "peerDependencies": {
+    "@amateras/core": "./packages/core",
+    "@amateras/css": "./packages/css",
+    "@amateras/dom": "./packages/dom",
+    "@amateras/html": "./packages/html",
+    "@amateras/i18n": "./packages/i18n",
+    "@amateras/idb": "./packages/idb",
+    "@amateras/markdown": "./packages/markdown",
+    "@amateras/router": "./packages/router",
+    "@amateras/signal": "./packages/signal",
+    "@amateras/ui": "./packages/ui",
+    "@amateras/utils": "./packages/utils"
   }
 }

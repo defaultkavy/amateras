@@ -22,4 +22,8 @@ declare global {
         [K in keyof T]: T[K];
     } & {};
     type Narrow<T> = T extends boolean ? boolean : T;
+    type ValueOf<T> = T[keyof T];
+    type RequiredKeys<T> = {
+        [K in keyof T]-?: {} extends Pick<T, K> ? never : K
+    }[keyof T];
 }

@@ -1,18 +1,15 @@
-import type { $Element } from '#node/$Element';
-import type { $Node } from '#node/$Node';
-import * as core from './index';
-import type { $EventTarget } from '#node/$EventTarget';
+import type { $Node } from "#node/$Node";
+import type { $TextNode } from "#node/$Text";
+import type { $Layout } from "#structure/$Layout";
+import * as core from "./index";
 
 declare global {
     export import $ = core.$;
-    type $Parameter<T> = T | undefined | $.$NodeParameterExtends<T>
-    interface Node {
-        readonly $: $Node
-    }
-    interface EventTarget {
-        readonly $: $EventTarget
-    }
-    interface Element {
-        readonly $: $Element
-    }
+    
+    /** $Node content builder function. */
+    export type $Builder = () => void | $Node | $TextNode[];
+    /** $Node properties. */
+    export type $Props<T = {}> = { [key: string & {}]: any } & Partial<$.AttrMap> & T;
+    /** A function that return layout of component. */
+    export type $Component = (props: any, builder?: $Builder) => $Layout;
 }

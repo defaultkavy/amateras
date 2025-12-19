@@ -1,5 +1,5 @@
 import { _Object_assign, _Object_fromEntries, _Object_entries, forEach, _Array_from, _instanceof, startsWith } from "@amateras/utils";
-import { $CSS, $CSSStyleRule, type $CSSDeclarations } from ".."
+import { $CSS, $CSSStyleRule, type $CSSDeclarations } from "../index2"
 import { generateId } from "../lib/utils";
 import { $CSSKeyframesRule } from "#structure/$CSSKeyframesRule";
 

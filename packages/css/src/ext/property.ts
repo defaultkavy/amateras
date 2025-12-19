@@ -1,6 +1,6 @@
 import { camelCaseToDash, generateId } from "#lib/utils";
 import { $CSSProperty } from "#structure/$CSSProperty";
-import { $CSS } from "..";
+import { $CSS } from "../index2";
 import { _instanceof, _Object_assign, _Object_entries, forEach, isString, isUndefined } from "@amateras/utils";
 
 declare module '@amateras/core' {

@@ -1,5 +1,5 @@
 import { _Object_assign, _Object_entries, _Object_fromEntries, isObject } from "@amateras/utils";
-import { $CSS, type $CSSValueType } from "..";
+import { $CSS, type $CSSValueType } from "../index2";
 import { camelCaseToDash, generateId } from "../lib/utils";
 import { $CSSVariable } from "#structure/$CSSVariable";
 

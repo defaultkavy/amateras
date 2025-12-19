@@ -1,139 +1,145 @@
-import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, _Object_fromEntries, forEach, isObject, isUndefined, startsWith } from "@amateras/utils";
-import { $Element } from "@amateras/core/node/$Element";
-import { $CSSDeclaration } from "#structure/$CSSDeclaration";
-import { $CSSRule } from "#structure/$CSSRule";
-import { $CSSStyleRule } from "#structure/$CSSStyleRule";
-import { generateId } from "./lib/utils";
+import { generateId } from "#lib/utils";
+import type { $Node } from "@amateras/core/node/$Node";
+import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, forEach, isObject, map } from "@amateras/utils"
 
-declare module '@amateras/core' {
+declare module "@amateras/core" {
     export namespace $ {
-        export function css(options: $CSSMap | $CSSStyleRule): $CSSStyleRule
-        export function CSS(options: $CSSSelectors | $CSSGlobalDeclarationExtends): void
+        export function css(cssObject: $CSSObject): $CSSRule;
+        export function CSS(cssRootObject: $CSSRootObject): void;
 
-        export interface $CSSValueTypeExtendsMap {}
-        export type $CSSValueTypeExtends = $CSSValueTypeExtendsMap[keyof $CSSValueTypeExtendsMap]
+        export type $CSSValueExtends = ValueOf<$CSSValueMap>;
+        export interface $CSSValueMap {}
 
-        export interface $CSSGlobalDeclarationExtendsMap {}
-        export type $CSSGlobalDeclarationExtends = $CSSGlobalDeclarationExtendsMap[keyof $CSSGlobalDeclarationExtendsMap];
+        export interface AttrMap {
+            css: $CSSObject
+        }
+
+        export namespace CSS {
+            export function text($nodeList: $Node[]): string;
+            export function rules($nodeList: $Node[]): $CSSRule[];
+        }
     }
 }
 
-declare module '@amateras/core/node/$Element' {
-    export interface $Element {
-        css(...options: ($CSSMap | $CSSStyleRule)[]): this;
+type $CSSObject = { [key: string]: $CSSObject | $CSSValue } | $CSSDeclaration;
+type $CSSDeclaration = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] | $CSSValue }
+type $CSSRootObject = { [key: string]: $CSSObject };
+type $CSSValue = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $.$CSSValueExtends;
+
+class $CSSRule {
+    declarations = new Map<string, string>();
+    rules = new Map<string, $CSSRule>();
+    selector: string;
+    readonly css: $CSSObject;
+    constructor(selector: string, cssObject: $CSSObject) {
+        this.selector = selector;
+        if (cssObject) processRule(this, cssObject);
+        this.css = cssObject;
+    }
+
+    toString(): string {
+        let declarations = map(this.declarations, ([name, value]) => `${name.replaceAll(/[A-Z]/g, $0 => `-${$0}`)}: ${value};`);
+        let rules = map(this.rules, ([_, rule]) => `${rule}`);
+        return `${this.selector} { ${[...declarations, ...rules].join(' ')} }`
     }
 }
 
-
-export namespace $CSS {
-
-    const stylesheet = $.stylesheet;
-    const cssTextMap = new Map<string, $CSSStyleRule>();
-
-    export const valueInstances = new Set<any>();
-    export const cssTextProcessors = new Set<$TextProcessor>();
-    export type $TextProcessor = (rule: $CSSRule, context: string, data?: {mediaContext?: string[], containerContext?: string[]}) => string[] | undefined;
-    export const createRuleProcessors = new Set<$CreateRuleProcessor>();
-    export type $CreateRuleProcessor = (selector: string, options: $CSSMap, context?: string) => $CSSRule | undefined;
-
-    export const CSSOptions = <T extends $CSSStyleRule>(
-        rule: T, 
-        options: $CSSMap, 
-    ): T => {
-        for (const [key, value] of _Object_entries(options)) {
-            if (isUndefined(value)) continue;
-            else if (_instanceof(value, $CSSDeclaration)) rule.declarations.set(value.key, value);
-            else if (isObject(value) && !_instanceof(value, ...valueInstances)) 
-                rule.rules.add( createRule(key, value, rule.selector) );
-            else {
-                const declaration = new $CSSDeclaration(key, `${value}`);
-                rule.declarations.set(declaration.key, declaration);
-            }
+export const processRule = (rule: $CSSRule, cssObject: $CSSObject) => {
+    for (let [key, value] of _Object_entries(cssObject)) {
+        if (isObject(value)) {
+            let childRule = new $CSSRule(key, value as $CSSObject);
+            rule.rules.set(key, childRule);
         }
-        return rule;
+        else rule.declarations.set(key, `${value}`)
     }
+}
 
-    /** Create rule with several type depend on selector content.
-     * @param context - for media rule creation, it should be style rule selector same as nested parent of media rule.
-     */
-    export const createRule = (selector: string, options: $CSSMap, context?: string) => {
-        for (const processor of createRuleProcessors) {
-            const result = processor(selector, options, context);
-            if (!isUndefined(result)) return result;
-        }
-        return createStyleRule(selector, options);
-    }
+const cssRuleBy$NodeMap = new WeakMap<$Node, $CSSRule>();
+const cssGlobalRuleSet = new Set<$CSSRule>();
 
-    const createStyleRule = <T extends $CSSMap>(selector: string, options: T) => CSSOptions(new $CSSStyleRule(selector), options);
+/** A Map to store ${@link $CSSRule} by JSON string.
+ * 
+ * Since a css rule might be created many times, in order to avoid unnecessary memory waste,
+ * we need a rule store to ensure that the same rules can be detected and retrieved.
+ * 
+ * ### Why use JSON string as key of the Map?
+ * 
+ * Theoretically, the structure of a CSS object can be losslessly converted to JSON format,
+ * which ensures that the same CSS object structure can be retrieves in the Map.
+ * 
+ * A JavaScript Map can save keys converted into hash values, which makes its retrieves speed very fast.
+ * This is very suitable for storing CSS objects in JSON format, as the length of the JSON string will not
+ * affect the retrieve efficiency of the Map.
+ */
+const cssRuleByJSONMap = new Map<string, $CSSRule>();
 
-    export const insertRule = (rule: $CSSRule) => {
-        cssText(rule).forEach(text => {
-            const selector = text.match(/^(.+?) {/)?.[1];
-            if (!selector) return;
-            if (!startsWith(selector, '@') && selector.split(',').find(str => !CSS.supports(`selector(${str})`))) return;
-            $.style(text, stylesheet.cssRules.length);
+/** Create and return {@link $CSSRule}, if the rule already exists then return the cached rule.
+ * 
+ * This method will:
+ * 1. Check if the css rule is cached, if true return the cached rule.
+ * 2. Create a {@link $CSSRule}.
+ * 3. Insert the rule into stylesheet.
+ * 4. Cache the rule into {@link cssRuleByJSONMap}
+ * 5. Return the rule.
+ */
+const createRule = (selector: () => string, cssObject: $CSSObject) => {
+    // Convert $CSSObject to JSON,
+    // use JSON string as Map key of $CSSRule.
+    let cssObjectJSON = _JSON_stringify(cssObject);
+    let cachedRule = cssRuleByJSONMap.get(cssObjectJSON);
+    // If $CSSRule is cached, return it.
+    // This avoid the rule duplicated and waste memory.
+    if (cachedRule) return cachedRule;
+    // If the rule is not cached, create new one.
+    let rule = new $CSSRule(selector(), cssObject);
+    // Insert rule into stylesheet.
+    $.style(`${rule}`);
+    // Save the JSON and $CSSRule in cache.
+    cssRuleByJSONMap.set(cssObjectJSON, rule);
+    return rule;
+}
+
+// Assign methods to $ object
+_Object_assign($, {
+
+    css(cssObject: $CSSObject | $CSSRule) {
+        // If argument is $CSSRule, return it.
+        if (_instanceof(cssObject, $CSSRule)) return cssObject;
+        return createRule(() => `.${generateId()}`, cssObject);
+    },
+    
+    CSS(cssRootObject: $CSSRootObject) {
+        // The CSS root object properties value should be $CSSObject,
+        // just create rule from for each propperty.
+        for (let [key, value] of _Object_entries(cssRootObject)) cssGlobalRuleSet.add(createRule(() => key, value));
+    },
+})
+
+_Object_assign($.CSS, {
+    rules($nodeList: $Node[] | Set<$Node>) {
+        let ruleSet = new Set<$CSSRule>();
+        forEach($nodeList, $node => {
+            let rule = cssRuleBy$NodeMap.get($node);
+            if (rule) ruleSet.add(rule);
+            forEach(this.rules($node.nodes), rule => ruleSet.add(rule));
         })
-        return rule
+        return _Array_from(ruleSet);
+    },
+
+    text($nodeList: $Node[] | Set<$Node>) {
+        return [...cssGlobalRuleSet, ...this.rules($nodeList)].join('\n');
     }
+})
 
-    export const cssText = (rule: $CSSRule, context: string = '', data?: {mediaContext?: string[], containerContext?: string[]}): string[] => {
-        if (_instanceof(rule, $CSSStyleRule)) {
-            const split = (str: string) => str.split(',');
-            const relation = (str: string, ctx: string): string => {
-                if (str.includes('&')) return str.replaceAll('&', ctx);
-                else return `${ctx ? ctx + ' ': ''}${str}`
-            }
-            const selectors = split(rule.selector);
-            const selector = split(context).map(ctx => selectors.map(selector => relation(selector, ctx))).join(', ');
-            const text = `${selector} { ${_Array_from(rule.declarations).map(([_, dec]) => `${dec}`).join(' ')} }`
-            return [text, ..._Array_from(rule.rules).map(childRule => cssText(childRule, selector, data)).flat()]
-        }
-        for (const processor of cssTextProcessors) {
-            const result = processor(rule, context, data);
-            if (!isUndefined(result)) return result;
-        }
-        throw '$CSS RULE TYPE ERROR'
+// Add processor of css attribute
+$.processor.attr.add((key, value, $node) => {
+    if (key === 'css') {
+        let rule = $.css(value);
+        $node.addTokens('class', rule.selector.slice(1))
+        cssRuleBy$NodeMap.set($node, rule);
+        return true;
     }
-
-    // Add $.css and $.CSS methods
-    _Object_assign($, {
-        css(options: $CSSMap | $CSSStyleRule) {
-            if (_instanceof(options, $CSSRule)) return options;
-            const cssText = _JSON_stringify(options);
-            const cacheRule = cssTextMap.get(cssText);
-            if (cacheRule) return cacheRule;
-            const className = `.${generateId()}`;
-            const rule = createStyleRule(className, options);
-            cssTextMap.set(_JSON_stringify(options), rule);
-            return insertRule( rule );
-        },
-        CSS(options: $CSSSelectors) {
-            return _Object_entries(options).map(([selector, declarations]) => {
-                return insertRule( createRule(selector, declarations) );
-            })
-        }
-    })
-
-    // Add $Element.css method
-    _Object_assign($Element.prototype, {
-        css(this: $Element, ...options: ($CSSMap | $CSSStyleRule)[]) {
-            forEach(options, options => {
-                const rule = $.css(options);
-                this.addClass(rule.selector.replace(/^./, ''));
-            })
-            return this;
-        }
-    })
-}
-
-export * from "#structure/$CSSDeclaration";
-export * from "#structure/$CSSRule";
-export * from "#structure/$CSSStyleRule";
-
-export type $CSSMap = $CSSDeclarations | $CSSSelectors;
-export type $CSSValueType = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $.$CSSValueTypeExtends
-export type $CSSDeclarations = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] | $CSSValueType } | { [key: string]: $CSSValueType }
-export type $CSSSelectors = { [key: string & {}]: $CSSMap }
+})
 
 interface $CSSDeclarationMap {
     alignContent: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | 'normal';

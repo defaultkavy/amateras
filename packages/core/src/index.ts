@@ -1,96 +1,121 @@
-import './global';
-import './lib/assignNodeProperties';
-import { $Element } from "#node/$Element";
-import { $Node, type $NodeContentResolver, type $NodeContentTypes } from '#node/$Node';
-import { _instanceof, isString, isFunction, _Object_assign, isObject, isNull, _Object_entries, _Object_defineProperty, forEach, isNumber, _Array_from, isUndefined, _bind, _null } from '@amateras/utils';
-import { $HTMLElement } from '#node/$HTMLElement';
-import { _document } from '#env';
-import { $EventTarget, type $Event } from '#node/$EventTarget';
+import '#env';
+import './global'
+import { $Node } from "#node/$Node";
+import { $TextNode } from "#node/$Text";
+import { $Layout } from "#structure/$Layout";
+import { _Array_from, _instanceof, _null, _Object_entries, _undefined, forEach, isArray, isFunction, isNumber, isString, startsWith } from "@amateras/utils"
+import { _document, onclient } from '#env';
 
-const nodeNameMap: {[key: string]: Constructor<$EventTarget>} = {}
+type $ComponentArguments<P> = 
+    RequiredKeys<P> extends never 
+        ? [ $Props, $Builder ] 
+            | [ $Props ] 
+            | []
+        : [ P, $Builder ]
+            | [ P ];
 
-type $NodeBuilder = (...args: any[]) => $NodeContentResolver<$Node>
-type BuilderResultResolver<F> = F extends Constructor<$Node> ? InstanceType<F> : F extends $NodeBuilder ? ReturnType<F> : never;
-type BuilderParameterResolver<F> = F extends Constructor<$Node> ? ConstructorParameters<F> : F extends $NodeBuilder ? Parameters<F> : never;
-
-type $Type<T extends EventTarget> = T extends HTMLElement ? $HTMLElement : T extends Element ? $Element : T extends (Node | ChildNode) ? $Node : T extends EventTarget ? $EventTarget : never;
-
-/** Builder function */
-export function $<F extends $NodeBuilder | Constructor<$Node> | number, T extends $NodeBuilder | Constructor<$Node>>(
-    resolver: F, 
-    ...args: F extends number ? [T, ...BuilderParameterResolver<T>] : BuilderParameterResolver<F>
-): F extends number 
-    ?   number extends F 
-        ?   BuilderResultResolver<T>[]
-        :   Repeat<BuilderResultResolver<T>, F>
-    :   BuilderResultResolver<F>;
-/** Get {@link $Node} from {@link NodeList} */
-export function $<T extends HTMLElement | Element | Node | ChildNode>(nodes: NodeListOf<T>): $Type<T>[];
-/** Get self */
-export function $<E extends $EventTarget | null | undefined>($node: E, ...args: any[]): E extends $EventTarget ? E : null;
-/** Convert {@link Window} to {@link $EventTarget} */
-export function $<W extends Window>(node: W): $EventTarget<WindowEventMap>;
-/** Convert {@link Document} to {@link $Node} */
-export function $<D extends Document>(node: D): $Node<DocumentEventMap>;
-/** Convert {@link EventTarget} base to {@link $EventTarget} base*/
-export function $<H extends EventTarget | null | undefined>(target: H, ...args: any[]): H extends EventTarget ? $Type<H> : null;
-export function $<E extends Record<string, Event>>(target: EventTarget, ...args: any[]): $EventTarget<E>;
-/** Convert string and variables to {@link $NodeContentTypes} array */
-export function $<K extends TemplateStringsArray>(string: K, ...values: any[]): $NodeContentTypes[];
-/** Get {@link Event.currentTarget} in {@link $EventTarget} type from {@link Event} */
-export function $<Ev extends $Event<$Element, Event>>(event: Ev): Ev['currentTarget']['$'];
-/** Create {@link $Node} base object from extensions */
-export function $<K extends keyof $.$NodeMap, T extends $.$NodeMap[K]>(tagname: K, ...args: ConstructorParameters<T>): InstanceType<T>;
-/** Create {@link $HTMLElement} by tagname */
-export function $<K extends keyof HTMLElementTagNameMap>(tagname: K): $HTMLElement<HTMLElementTagNameMap[K]>;
-/** Create {@link $HTMLElement} by custom tagname */
-export function $(tagname: string): $HTMLElement<HTMLElement>
-/** Create multiple {@link $HTMLElement} objects by tagname */
-export function $<N extends number, K extends keyof HTMLElementTagNameMap>(number: N, tagname: K): number extends N ? $HTMLElement<HTMLElementTagNameMap[K]>[] : Repeat<$HTMLElement<HTMLElementTagNameMap[K]>, N>;
-/** Create multiple {@link $HTMLElement} objects by custom tagname */
-export function $<N extends number>(number: N, tagname: string): number extends N ? $HTMLElement<HTMLElement>[] : Repeat<$HTMLElement<HTMLElement>, N>;
-export function $(resolver: string | number | null | undefined | Element | HTMLElement | $Node | Function | TemplateStringsArray | Event | NodeListOf<Node | ChildNode> | EventTarget, ...args: any[]) {
-    if (isNull(resolver) || isUndefined(resolver)) return null;
-    if (_instanceof(resolver, $Node)) return resolver;
-    if (isString(resolver) && nodeNameMap[resolver]) return new nodeNameMap[resolver](...args);
-    if (isFunction(resolver)) 
-        if (resolver.prototype?.constructor) return new resolver.prototype.constructor(...args); 
-        else return resolver(...args);
-    if (resolver instanceof Array) {
-        const iterate = args.values();
-        return resolver.map(str => [str ?? undefined, iterate.next().value]).flat().filter(item => item);
+/**  */
+export function $<P extends object>(component: (props: P, builder?: $Builder) => $Layout, ...[arg1, arg2]: $ComponentArguments<P>): $Node;
+export function $(str: TemplateStringsArray, ...value: $.TextProcessorValue[]): $TextNode[];
+export function $(tagname: string, builder: $Builder): $Node;
+export function $(tagname: string, props?: $Props, builder?: $Builder): $Node;
+export function $(arg1: string | TemplateStringsArray | $Component, ...args: unknown[]) {
+    // Create $Node with tagname
+    if (isString(arg1)) {
+        const parent = $Node.parent;
+        const $node = new $Node(arg1);
+        const [arg2, arg3] = args as [$Builder | $Props | undefined, $Builder | undefined];
+        const processChild = (child: $Builder) => {
+            $Node.parent = $node;
+            if (isFunction(child)) child?.();
+            $Node.parent = parent;
+        }
+        parent?.nodes.add($node);
+        // arg2
+        if (arg2) 
+            if (isFunction(arg2)) processChild(arg2 as $Builder);
+            else {
+                forEach(_Object_entries(arg2), ([key, value]) => {
+                    for (let processor of $.processor.attr) 
+                        if (processor(key, value, $node)) return;
+                    $node.attr.set(key, value);
+                })
+            }
+        // arg3
+        if (arg3) processChild(arg3);
+        if (!parent) $Layout.parent?.nodes.add($node);
+        return $node;
     }
-    if (_instanceof(resolver, Node) && _instanceof(resolver.$, $Node)) return resolver.$;
-    if (_instanceof(resolver, Event)) return $(resolver.currentTarget as Element);
-    if (isNumber(resolver)) return _Array_from({length: resolver}).map(_ => $(args[0], ...args.slice(1)));
-    if (_instanceof(resolver, HTMLElement)) return new $HTMLElement(resolver);
-    if (_instanceof(resolver, Element)) return new $Element(resolver);
-    if (_instanceof(resolver, Node)) return new $Node(resolver as any);
-    if (_instanceof(resolver, EventTarget)) return new $EventTarget(resolver as any);
-    if (_instanceof(resolver, NodeList)) return _Array_from(resolver).map($);
-    return new $HTMLElement(resolver);
+
+    // Create $Node with Layout Function
+    if (isFunction(arg1)) {
+        let [arg2, arg3] = args as [$Builder | $Props | undefined, $Builder | undefined];
+        arg1(isFunction(arg2) ? {} : arg2 ?? {}, arg3).build()
+    }
+
+    // Create $TextNode with Template String
+    if (isArray(arg1)) {
+        let str: string = arg1[0];
+        const textArr: $TextNode[] = [];
+        loop1: for (let i = 0; i < args.length; i++) {
+            let target = args[i];
+            if (isString(target) || isNumber(target)) str += target;
+            else {
+                for (let processor of $.processor.text) {
+                    let result = processor(target);
+                    if (result) {
+                        textArr.push(new $TextNode(str));
+                        str = '';
+                        textArr.push(result);
+                        break loop1;
+                    };
+                }
+                str += target;
+            }
+        }
+        if (str.length) textArr.push(new $TextNode(str));
+        forEach(textArr, text => $Node.parent?.nodes.add(text) || $Layout.parent?.nodes.add(text));
+        return textArr;
+    }
+
 }
+
+type $TextProcessor = (value: any) => $TextNode | void;
+type $AttributeProcessor = (key: string, value: any, $node: $Node) => boolean | void;
 
 export namespace $ {
-    // css
-    const _stylesheet = new CSSStyleSheet();
-    export const stylesheet = _stylesheet;
-    _document.adoptedStyleSheets.push(_stylesheet);
-    export const style = _bind(_stylesheet.insertRule, _stylesheet);
-    // node map
-    export interface $NodeMap {}
-    // node content amp
-    export interface $NodeContentMap {}
-    export type $NodeContentTypeExtends = $NodeContentMap[keyof $NodeContentMap]
-    // attr value map
-    export interface $NodeParameterMap<T> {}
-    export type $NodeParameterExtends<T> = $NodeParameterMap<T>[keyof $NodeParameterMap<T>]
 
-    export const assign = (...resolver: [nodeName: string, $node: Constructor<$EventTarget>][]) => {
-        forEach(resolver, ([nodeName, $node]) => nodeNameMap[nodeName] = $node);
-        return $;
+    export const stylesheet = onclient() ? new CSSStyleSheet() : null;
+    onclient(() => _document.adoptedStyleSheets.push(stylesheet!));
+    export const style = (css: string) => stylesheet?.insertRule(css);
+
+    export const layout = (builder: () => void) => new $Layout(builder);
+
+    export const processor = {
+        text: new Set<$TextProcessor>(),
+        attr: new Set<$AttributeProcessor>()
+    } as const
+
+    export type TextProcessorValue = ValueOf<TextProcessorValueMap>
+    export interface TextProcessorValueMap {
+        string: string;
+        number: number;
+        boolean: boolean;
+        undefined: undefined;
+    }
+
+    export interface AttrMap {
+        class: string;
+        id: string;
     }
 }
+
+$.processor.attr.add((key, value, node) => {
+    if (startsWith(key, 'on')) {
+        node.ondom(element => element?.addEventListener(key.slice(2), value));
+        return true;
+    }
+})
 
 export type $ = typeof $;
 globalThis.$ = $;

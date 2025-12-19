@@ -1,6 +1,6 @@
 {
   "name": "amateras",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Amateras is a DOM Utility library.",
   "module": "index.ts",
   "type": "module",
@@ -40,7 +40,7 @@
     "./ui/*": "./packages/ui/*.ts"
   },
   "workspaces": [
-      "packages/*"
+    "packages/*"
   ],
   "dependencies": {
     "@amateras/core": "./packages/core"

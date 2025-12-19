@@ -39,10 +39,10 @@
     "./signal": "./packages/signal/src/index.ts",
     "./ui/*": "./packages/ui/*.ts"
   },
-  "dependencies": {
-    "@amateras/core": "workspace:*"
-  },
   "workspaces": [
       "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@amateras/core": "./packages/core"
+  }
 }

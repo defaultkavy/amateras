@@ -8,24 +8,24 @@ import { _document, onclient } from '#env';
 
 type $ComponentArguments<P> = 
     RequiredKeys<P> extends never 
-        ? [ $Props, $Builder ] 
-            | [ $Props ] 
+        ? [ $.Props, $.Builder ] 
+            | [ $.Props ] 
             | []
-        : [ P, $Builder ]
+        : [ P, $.Builder ]
             | [ P ];
 
 /**  */
-export function $<P extends object>(component: (props: P, builder?: $Builder) => $Layout, ...[arg1, arg2]: $ComponentArguments<P>): $Node;
+export function $<P extends object>(component: (props: P, builder?: $.Builder) => $Layout, ...[arg1, arg2]: $ComponentArguments<P>): $Node[];
 export function $(str: TemplateStringsArray, ...value: $.TextProcessorValue[]): $TextNode[];
-export function $(tagname: string, builder: $Builder): $Node;
-export function $(tagname: string, props?: $Props, builder?: $Builder): $Node;
-export function $(arg1: string | TemplateStringsArray | $Component, ...args: unknown[]) {
+export function $(tagname: string, builder: $.Builder): $Node;
+export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, props?: $.Props<{}, HTMLElementTagNameMap[T]>, builder?: $.Builder): $Node<HTMLElementTagNameMap[T]>;
+export function $(arg1: string | TemplateStringsArray | $.Component, ...args: unknown[]) {
     // Create $Node with tagname
     if (isString(arg1)) {
         const parent = $Node.parent;
         const $node = new $Node(arg1);
-        const [arg2, arg3] = args as [$Builder | $Props | undefined, $Builder | undefined];
-        const processChild = (child: $Builder) => {
+        const [arg2, arg3] = args as [$.Builder | $.Props | undefined, $.Builder | undefined];
+        const processChild = (child: $.Builder) => {
             $Node.parent = $node;
             if (isFunction(child)) child?.();
             $Node.parent = parent;
@@ -33,11 +33,11 @@ export function $(arg1: string | TemplateStringsArray | $Component, ...args: unk
         parent?.nodes.add($node);
         // arg2
         if (arg2) 
-            if (isFunction(arg2)) processChild(arg2 as $Builder);
+            if (isFunction(arg2)) processChild(arg2 as $.Builder);
             else {
                 forEach(_Object_entries(arg2), ([key, value]) => {
                     for (let processor of $.processor.attr) 
-                        if (processor(key, value, $node)) return;
+                        if (processor(key, value, $node as any)) return;
                     $node.attr.set(key, value);
                 })
             }
@@ -49,14 +49,14 @@ export function $(arg1: string | TemplateStringsArray | $Component, ...args: unk
 
     // Create $Node with Layout Function
     if (isFunction(arg1)) {
-        let [arg2, arg3] = args as [$Builder | $Props | undefined, $Builder | undefined];
-        arg1(isFunction(arg2) ? {} : arg2 ?? {}, arg3).build()
+        let [arg2, arg3] = args as [$.Builder | $.Props | undefined, $.Builder | undefined];
+        return arg1(isFunction(arg2) ? {} : arg2 ?? {}, arg3).build()
     }
 
     // Create $TextNode with Template String
     if (isArray(arg1)) {
         let str: string = arg1[0];
-        const textArr: $TextNode[] = [];
+        const $nodeArr: $Node[] = [];
         loop1: for (let i = 0; i < args.length; i++) {
             let target = args[i];
             if (isString(target) || isNumber(target)) str += target;
@@ -64,24 +64,24 @@ export function $(arg1: string | TemplateStringsArray | $Component, ...args: unk
                 for (let processor of $.processor.text) {
                     let result = processor(target);
                     if (result) {
-                        textArr.push(new $TextNode(str));
+                        $nodeArr.push(new $TextNode(str));
                         str = '';
-                        textArr.push(result);
+                        $nodeArr.push(result);
                         break loop1;
                     };
                 }
                 str += target;
             }
         }
-        if (str.length) textArr.push(new $TextNode(str));
-        forEach(textArr, text => $Node.parent?.nodes.add(text) || $Layout.parent?.nodes.add(text));
-        return textArr;
+        if (str.length) $nodeArr.push(new $TextNode(str));
+        forEach($nodeArr, text => $Node.parent?.nodes.add(text) || $Layout.parent?.nodes.add(text));
+        return $nodeArr;
     }
 
 }
 
-type $TextProcessor = (value: any) => $TextNode | void;
-type $AttributeProcessor = (key: string, value: any, $node: $Node) => boolean | void;
+type $TextProcessor = (value: any) => $Node | void;
+type $AttributeProcessor = (key: string, value: any, $node: $Node<HTMLElement>) => boolean | void;
 
 export namespace $ {
 
@@ -104,18 +104,38 @@ export namespace $ {
         undefined: undefined;
     }
 
-    export interface AttrMap {
+    export interface AttrMap<H extends HTMLElement = HTMLElement> extends AttrEventMap<H> {
         class: string;
         id: string;
+        ondom: (element: H) => void;
     }
+
+    /** $Node content builder function. */
+    export type Builder = () => void | $Node | $TextNode[];
+    /** $Node properties. */
+    export type Props<T = {}, H extends HTMLElement = HTMLElement> = { [key: string & {}]: any } & Partial<$.AttrMap<H>> & T;
+    /** A function that return layout of component. */
+    export type Component = (props: any, builder?: $.Builder) => $Layout;
 }
 
-$.processor.attr.add((key, value, node) => {
+$.processor.attr.add((key, value, $node) => {
+    if (key === 'ondom') {
+        $node.ondom(value);
+        return true;
+    }
     if (startsWith(key, 'on')) {
-        node.ondom(element => element?.addEventListener(key.slice(2), value));
+        $node.ondom(element => element?.addEventListener(key.slice(2), value));
         return true;
     }
 })
 
 export type $ = typeof $;
 globalThis.$ = $;
+
+type $EventMap<H extends HTMLElement> = {
+    [K in keyof HTMLElementEventMap as `on${K}`]: HTMLElementEventMap[K] & { currentTarget: H }
+}
+
+type AttrEventMap<H extends HTMLElement> = {
+    [key in keyof $EventMap<H>]: (event: $EventMap<H>[key]) => void;
+}

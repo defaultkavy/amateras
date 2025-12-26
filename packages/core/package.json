@@ -1,8 +1,7 @@
 {
     "name": "@amateras/core",
     "dependencies": {
-      "@amateras/utils": "workspace:*",
-      "@amateras/dom": "workspace:*"
+      "@amateras/utils": "workspace:*"
     },
     "imports": {
       "#structure/*": "./src/structure/*.ts",

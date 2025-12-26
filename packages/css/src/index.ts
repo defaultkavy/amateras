@@ -1,18 +1,28 @@
+import { cssGlobalRuleSet, cssRuleBy$NodeMap } from "#lib/cache";
+import { createRule } from "#lib/createRule";
 import { generateId } from "#lib/utils";
+import { $CSSRule } from "#structure/$CSSRule";
 import type { $Node } from "@amateras/core/node/$Node";
-import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, forEach, isObject, map } from "@amateras/utils"
+import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, forEach, isObject, isString, map } from "@amateras/utils"
 
 declare module "@amateras/core" {
     export namespace $ {
-        export function css(cssObject: $CSSObject): $CSSRule;
-        export function CSS(cssRootObject: $CSSRootObject): void;
+        /** Create CSS rule */
+        export function css(cssObject: $.CSSMap): $CSSRule;
+        /** Create global CSS rules */
+        export function CSS(cssRootObject: $.CSSRootMap): $CSSRule[];
 
-        export type $CSSValueExtends = ValueOf<$CSSValueMap>;
-        export interface $CSSValueMap {}
+        export type CSSValue = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $.CSSValueExtends;
+        export type CSSValueExtends = ValueOf<CSSValueMap>;
+        export interface CSSValueMap {}
 
         export interface AttrMap {
-            css: $CSSObject
+            css: $.CSSMap
         }
+
+        export type CSSMap = { [key: string]: $.CSSMap | $.CSSValue } | $.CSSDeclarationMap;
+        export type CSSDeclarationMap = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] | $.CSSValue }
+        export type CSSRootMap = { [key: string]: $.CSSMap };
 
         export namespace CSS {
             export function text($nodeList: $Node[]): string;
@@ -21,105 +31,32 @@ declare module "@amateras/core" {
     }
 }
 
-type $CSSObject = { [key: string]: $CSSObject | $CSSValue } | $CSSDeclaration;
-type $CSSDeclaration = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] | $CSSValue }
-type $CSSRootObject = { [key: string]: $CSSObject };
-type $CSSValue = '' | 'unset' | 'initial' | 'inherit' | string & {} | number | $.$CSSValueExtends;
-
-class $CSSRule {
-    declarations = new Map<string, string>();
-    rules = new Map<string, $CSSRule>();
-    selector: string;
-    readonly css: $CSSObject;
-    constructor(selector: string, cssObject: $CSSObject) {
-        this.selector = selector;
-        if (cssObject) processRule(this, cssObject);
-        this.css = cssObject;
-    }
-
-    toString(): string {
-        let declarations = map(this.declarations, ([name, value]) => `${name.replaceAll(/[A-Z]/g, $0 => `-${$0}`)}: ${value};`);
-        let rules = map(this.rules, ([_, rule]) => `${rule}`);
-        return `${this.selector} { ${[...declarations, ...rules].join(' ')} }`
-    }
-}
-
-export const processRule = (rule: $CSSRule, cssObject: $CSSObject) => {
-    for (let [key, value] of _Object_entries(cssObject)) {
-        if (isObject(value)) {
-            let childRule = new $CSSRule(key, value as $CSSObject);
-            rule.rules.set(key, childRule);
-        }
-        else rule.declarations.set(key, `${value}`)
-    }
-}
-
-const cssRuleBy$NodeMap = new WeakMap<$Node, $CSSRule>();
-const cssGlobalRuleSet = new Set<$CSSRule>();
-
-/** A Map to store ${@link $CSSRule} by JSON string.
- * 
- * Since a css rule might be created many times, in order to avoid unnecessary memory waste,
- * we need a rule store to ensure that the same rules can be detected and retrieved.
- * 
- * ### Why use JSON string as key of the Map?
- * 
- * Theoretically, the structure of a CSS object can be losslessly converted to JSON format,
- * which ensures that the same CSS object structure can be retrieves in the Map.
- * 
- * A JavaScript Map can save keys converted into hash values, which makes its retrieves speed very fast.
- * This is very suitable for storing CSS objects in JSON format, as the length of the JSON string will not
- * affect the retrieve efficiency of the Map.
- */
-const cssRuleByJSONMap = new Map<string, $CSSRule>();
-
-/** Create and return {@link $CSSRule}, if the rule already exists then return the cached rule.
- * 
- * This method will:
- * 1. Check if the css rule is cached, if true return the cached rule.
- * 2. Create a {@link $CSSRule}.
- * 3. Insert the rule into stylesheet.
- * 4. Cache the rule into {@link cssRuleByJSONMap}
- * 5. Return the rule.
- */
-const createRule = (selector: () => string, cssObject: $CSSObject) => {
-    // Convert $CSSObject to JSON,
-    // use JSON string as Map key of $CSSRule.
-    let cssObjectJSON = _JSON_stringify(cssObject);
-    let cachedRule = cssRuleByJSONMap.get(cssObjectJSON);
-    // If $CSSRule is cached, return it.
-    // This avoid the rule duplicated and waste memory.
-    if (cachedRule) return cachedRule;
-    // If the rule is not cached, create new one.
-    let rule = new $CSSRule(selector(), cssObject);
-    // Insert rule into stylesheet.
-    $.style(`${rule}`);
-    // Save the JSON and $CSSRule in cache.
-    cssRuleByJSONMap.set(cssObjectJSON, rule);
-    return rule;
-}
-
 // Assign methods to $ object
 _Object_assign($, {
 
-    css(cssObject: $CSSObject | $CSSRule) {
+    css(cssMap: $.CSSMap | $CSSRule) {
         // If argument is $CSSRule, return it.
-        if (_instanceof(cssObject, $CSSRule)) return cssObject;
-        return createRule(() => `.${generateId()}`, cssObject);
+        if (_instanceof(cssMap, $CSSRule)) return cssMap;
+        return createRule(() => `.${generateId()}`, cssMap);
     },
     
-    CSS(cssRootObject: $CSSRootObject) {
+    CSS(cssRootMap: $.CSSRootMap) {
         // The CSS root object properties value should be $CSSObject,
         // just create rule from for each propperty.
-        for (let [key, value] of _Object_entries(cssRootObject)) cssGlobalRuleSet.add(createRule(() => key, value));
+        return map(_Object_entries(cssRootMap), ([key, value]) => {
+            let rule = createRule(() => key, value);
+            cssGlobalRuleSet.add(rule);
+            return rule;
+        })
     },
 })
 
+// Assign html render methods to $.CSS
 _Object_assign($.CSS, {
     rules($nodeList: $Node[] | Set<$Node>) {
         let ruleSet = new Set<$CSSRule>();
         forEach($nodeList, $node => {
-            let rule = cssRuleBy$NodeMap.get($node);
+            let rule = cssRuleBy$NodeMap.get($node as any);
             if (rule) ruleSet.add(rule);
             forEach(this.rules($node.nodes), rule => ruleSet.add(rule));
         })

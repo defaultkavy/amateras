@@ -52,3 +52,16 @@ $.processor.text.add(state => {
     }
 })
 
+$.processor.attr.add((key, value, $node) => {
+    if (_instanceof(value, $State)) {
+        $node.ondom(element => {
+            element.setAttribute(key, `${value.get()}`)
+            value.signal.subscribe(val => {
+                element.setAttribute(key, `${val}`)
+            })
+        })
+        $node.attr.set(key, `${value.get()}`);
+        return true;
+    }
+})
+

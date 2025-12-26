@@ -2,15 +2,27 @@ import "@amateras/core"
 import { _Array_from, _instanceof, _Object_assign } from "@amateras/utils"
 import { I18n } from "#structure/I18n"
 import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
-import { $Node, type $NodeContentResolver } from "@amateras/core/node/$Node";
 import { I18nTranslation as _I18nTranslation, I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
 
-$Node.setters.add((value, set) => {
-    if (_instanceof(value, _I18nTranslation)) {
-        value.content$.signal.subscribe(set);
-        return value.content$.value();
+declare module "@amateras/core" {
+    export namespace $ {
+        export interface I18nFunction<D extends I18nDictionaryContext = {}> {
+            <K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nTranslation;
+            i18n: I18n;
+            locale(): string;
+            locale(lang?: string): this;
+            add<F extends I18nDictionaryContext | I18nDictionaryContextImporter>(lang: string, dictionary: F): I18nFunction<Mixin<D, (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>>;
+            delete(lang: string): this;
+            dir<K extends I18nTranslationDirKey<D>>(path: K): I18nFunction<GetDictionaryContextByKey<K, D>>
+        }
+        export function i18n(defaultLocale: string): I18nFunction;
+        export type I18nTranslation = _I18nTranslation;
+
+        export interface TextProcessorValueMap {
+            i18n: I18nTranslation
+        }
     }
-})
+}
 
 _Object_assign($, {
     i18n(defaultLocale: string) {
@@ -36,6 +48,12 @@ _Object_assign($, {
             }
         })
         return i18nFn
+    }
+})
+
+$.processor.text.add(value => {
+    if (_instanceof(value, I18nTranslation)) {
+        return value
     }
 })
 
@@ -78,7 +96,7 @@ type FindParam<T extends string> =
     T extends `${string}$${infer Param}$${infer Rest}`
     ?   Param extends `${string}${' '}${string}`
         ?   Prettify<{} & FindParam<Rest>>
-        :   Prettify<Record<Param, $NodeContentResolver<I18nTranslation>> & FindParam<Rest>>
+        :   Prettify<Record<Param, $.Builder> & FindParam<Rest>>
     :   {}
 
 type FindTranslationByKey<K extends string, T extends I18nDictionaryContext> = 
@@ -114,27 +132,3 @@ type Mixin<A, B> =
                 :   A[key] | B[key]
             :   A[key] | B[key]  
     }
-
-declare module "@amateras/core" {
-    export namespace $ {
-        export interface I18nFunction<D extends I18nDictionaryContext = {}> {
-            <K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nTranslation;
-            i18n: I18n;
-            locale(): string;
-            locale(lang?: $Parameter<string>): this;
-            add<F extends I18nDictionaryContext | I18nDictionaryContextImporter>(lang: string, dictionary: F): I18nFunction<Mixin<D, (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>>;
-            delete(lang: string): this;
-            dir<K extends I18nTranslationDirKey<D>>(path: K): I18nFunction<GetDictionaryContextByKey<K, D>>
-        }
-        export function i18n(defaultLocale: string): I18nFunction;
-        export type I18nTranslation = _I18nTranslation;
-
-        export interface $NodeContentMap {
-            i18n: I18nTranslation
-        }
-
-        export interface $NodeParameterMap<T> {
-            i18n: I18nTranslation
-        }
-    }
-}

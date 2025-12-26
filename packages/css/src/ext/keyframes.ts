@@ -1,54 +1,35 @@
-import { _Object_assign, _Object_fromEntries, _Object_entries, forEach, _Array_from, _instanceof, startsWith } from "@amateras/utils";
-import { $CSS, $CSSStyleRule, type $CSSDeclarations } from "../index2"
+import { _Object_assign, _Object_fromEntries, _Object_entries, forEach, _Array_from, _instanceof, startsWith, map } from "@amateras/utils";
 import { generateId } from "../lib/utils";
-import { $CSSKeyframesRule } from "#structure/$CSSKeyframesRule";
+import { $CSSKeyframes } from "#structure/$CSSKeyframes";
+import { createRule } from "#lib/createRule";
+import { cssGlobalRuleSet } from "#lib/cache";
 
 declare module '@amateras/core' {
     export namespace $ {
         export namespace css {
-            export function keyframes<T extends { [key: string]: $CSSKeyframesType }>(options: T): { [key in keyof T]: $CSSKeyframesRule };
+            export function keyframes<T extends { [key: string]: $.CSSKeyframesMap }>(options: T): { [key in keyof T]: $CSSKeyframes };
         }
 
-        export interface $CSSGlobalDeclarationExtendsMap {
-            keyframes: $CSSKeyframesSelectorType;
+        export interface CSSValueMap {
+            keyframes: $CSSKeyframes
         }
-
-        export interface $CSSValueTypeExtendsMap {
-            keyframes: $CSSKeyframesRule
-        }
+        
+        export type CSSKeyframesMap = { [key: string]: $.CSSDeclarationMap } | { from?: $.CSSDeclarationMap, to?: $.CSSDeclarationMap }
     }
 }
 
-export type $CSSKeyframesSelectorType = { [key: `@keyframes ${string}`]: $CSSKeyframesType }
-export type $CSSKeyframesType = { [key: `${number}%`]: $CSSDeclarations } | { from?: $CSSDeclarations, to?: $CSSDeclarations }
-
-const KEYFRAMES = '@keyframes'
-
-$CSS.valueInstances.add($CSSKeyframesRule)
-
-$CSS.cssTextProcessors.add((rule, context, options) => {
-    if (_instanceof(rule, $CSSKeyframesRule)) 
-        return [`${KEYFRAMES} ${rule.name} { ${_Array_from(rule.rules).map(childRule => $CSS.cssText(childRule, context, options)).join('\n')} }`]
-})
-
-$CSS.createRuleProcessors.add((selector, options) => {
-    if (startsWith(selector, KEYFRAMES)) return createKeyframesRule(selector.replace('@keyframes ', ''), options as $CSSKeyframesType)
-})
+const KEYFRAMES_AT = '@keyframes ';
 
 _Object_assign($.css, {
-    keyframes(options: $CSSKeyframesType) {
-        return _Object_fromEntries( _Object_entries(options).map(([name, value]) => {
-            return [name, $CSS.insertRule( createKeyframesRule(`${name}_${generateId()}`, value) )];
-        }) )
+    keyframes(options: $.CSSKeyframesMap) {
+        return _Object_fromEntries(
+            map(
+                _Object_entries(options), (([name, value]) => {
+                    let rule = createRule(() => `${KEYFRAMES_AT}${name}_${generateId()}`, value);
+                    cssGlobalRuleSet.add(rule);
+                    return [name, new $CSSKeyframes(rule.selector.replace(`${KEYFRAMES_AT} `, ''))];
+                }) 
+            )
+        )
     }
 })
-
-const createKeyframesRule = (name: string, options: $CSSKeyframesType) => {
-    const rule = new $CSSKeyframesRule(name);
-    forEach(_Object_entries(options), ([key, value]) => {
-        rule.rules.add( $CSS.CSSOptions(new $CSSStyleRule(key), value) );
-    })
-    return rule;
-}
-
-export * from '#structure/$CSSKeyframesRule'

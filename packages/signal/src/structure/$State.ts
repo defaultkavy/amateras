@@ -5,7 +5,7 @@ import { ontrack, trackSet } from "#lib/track";
 export interface $State<T> {
     (): T;
 }
-export class $State<T = any> {
+export class $State<T> {
     signal: Signal<T>
     constructor(value: T) {
         this.signal = new Signal(value);

@@ -8,11 +8,11 @@ export class $TextNode extends $Node {
         this.#textContent = str;
     }
 
-    toHTML(): string {
+    override toHTML(): string {
         return this.#textContent;
     }
 
-    toDOM(parent?: Node): Node {
+    override toDOM(parent?: Node): Node {
         const text = new Text(this.#textContent)
         parent?.appendChild(text);
         forEach(this._ondom, fn => fn(text))

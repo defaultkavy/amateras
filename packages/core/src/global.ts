@@ -1,5 +1,5 @@
-import * as core from "./index";
+import * as core from './index';
 
 declare global {
-    export import $ = core.$;
+    export import $ = core.$
 }

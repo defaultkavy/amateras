@@ -2,7 +2,7 @@ import { _Object_assign, _Object_entries, _Object_fromEntries, isObject, map } f
 import { camelCaseToDash, generateId } from "../lib/utils";
 import { $CSSVariable } from "#structure/$CSSVariable";
 
-declare module '@amateras/core' {
+declare global {
     export namespace $ {
         export namespace css {
             export function variable<V extends string>(value: V): $CSSVariable<V>;

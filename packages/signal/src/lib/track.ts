@@ -1,9 +1,9 @@
-import type { $State } from "#structure/$State";
+import type { Signal } from "#structure/Signal";
 
 export type UntrackFunction = (fn: () => unknown) => ReturnType<typeof fn>
 
 export let ontrack = false;
-export let trackSet = new Set<$State>();
+export let trackSet = new Set<Signal>();
 export let untrack: UntrackFunction = fn => {
     ontrack = false;
     let result = fn();

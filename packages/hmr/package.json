@@ -1,0 +1,15 @@
+{
+    "name": "@amateras/hmr",
+    "type":"module",
+    "peerDependencies": {
+    },
+    "imports": {
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts"
+    },
+    "exports": {
+      ".": "./src/index.ts",
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts"
+    }
+}

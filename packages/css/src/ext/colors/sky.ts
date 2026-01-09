@@ -16,7 +16,7 @@ const _sky = {
 
 colorAssign('sky', _sky);
 
-declare module '@amateras/core' {
+declare global {
     export namespace $ {
         export namespace color {
             export const sky: typeof _sky;

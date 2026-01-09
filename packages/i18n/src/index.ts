@@ -4,13 +4,12 @@ import { I18n } from "#structure/I18n"
 import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
 import { I18nTranslation as _I18nTranslation, I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
 
-declare module "@amateras/core" {
+declare global {
     export namespace $ {
         export interface I18nFunction<D extends I18nDictionaryContext = {}> {
             <K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nTranslation;
             i18n: I18n;
-            locale(): string;
-            locale(lang?: string): this;
+            locale(lang?: string): Promise<void>;
             add<F extends I18nDictionaryContext | I18nDictionaryContextImporter>(lang: string, dictionary: F): I18nFunction<Mixin<D, (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>>;
             delete(lang: string): this;
             dir<K extends I18nTranslationDirKey<D>>(path: K): I18nFunction<GetDictionaryContextByKey<K, D>>
@@ -30,10 +29,8 @@ _Object_assign($, {
         const i18nFn = (key: string, options?: I18nTranslationOptions) => i18n.translate(key, options);
         _Object_assign(i18nFn, { 
             i18n,
-            locale(locale: string) {
-                if (!arguments.length) return i18n.locale();
-                i18n.locale(locale);
-                return this;
+            async locale(locale: string) {
+                await i18n.setLocale(locale);
             },
             add(lang: string, context: I18nDictionaryContext | I18nDictionaryContextImporter) {
                 i18n.map.set(lang, new I18nDictionary(context));
@@ -51,7 +48,7 @@ _Object_assign($, {
     }
 })
 
-$.processor.text.add(value => {
+$.process.text.add(value => {
     if (_instanceof(value, I18nTranslation)) {
         return value
     }

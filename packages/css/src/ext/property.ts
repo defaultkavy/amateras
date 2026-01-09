@@ -4,7 +4,7 @@ import { camelCaseToDash, generateId } from "#lib/utils";
 import { $CSSProperty } from "#structure/$CSSProperty";
 import { _instanceof, _Object_assign, _Object_entries, _undefined, forEach, isString, isUndefined } from "@amateras/utils";
 
-declare module '@amateras/core' {
+declare global {
     export namespace $ {
         export namespace css {
             export function property<T extends $.CSSPropertyMap>(resolver: T): { [key in keyof T]: $CSSProperty }

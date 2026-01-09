@@ -1,0 +1,53 @@
+import { map, forEach, _null, _Object_entries, isUndefined } from "@amateras/utils";
+import { NodeProto } from "./NodeProto";
+
+const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
+
+export type ElementProtoBuilder<P extends ElementProto> = (proto: P) => void;
+
+export class ElementProto<H extends HTMLElement = any> extends NodeProto<H> {
+    name: string;
+    attr = new Map<string, string>();
+    declare builder: ElementProtoBuilder<this> | null;
+    constructor(tagname: string, attrObj: Partial<$.AttrMap> | null, builder: ElementProtoBuilder<ElementProto<H>> | null) {
+        super(() => builder?.(this));
+        this.name = tagname;
+        if (attrObj) this.attrProcess(attrObj);
+    }
+
+    on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void) {
+        this.dom(node => {
+            node.addEventListener(type, listener as any)
+            this.disposers.add(() => node.removeEventListener(type, listener as any))
+        });
+    }
+
+    toString(): string {
+        let tagname = this.name;
+        let childrenHTML = map(this.protos, proto => `${proto}`).join('');
+        let attr = map(this.attr, ([key, value]) => value.length ? `${key}="${value}"` : key);
+        let attrText = attr.length ? ` ${attr.join(' ')}` : '';
+        if (SELF_CLOSING_TAGNAMES.includes(tagname)) return `<${tagname}${attrText} />`;
+        return `<${tagname}${attrText}>${childrenHTML}</${tagname}>`;
+    }
+
+    toDOM(): H[] {
+        if (this.node) return [this.node];
+        let element = document.createElement(this.name) as H;
+        this.node = element;
+        forEach(this.attr, ([key, value]) => element.setAttribute(key, value));
+        forEach(this.modifiers, process => process(element));
+        element.append(...map(this.protos, proto => proto.toDOM()).flat());
+        return [element];
+    }
+
+    private attrProcess(attrObj: Partial<$.AttrMap>) {
+        forEach(_Object_entries(attrObj), ([key, value]) => {
+            for (let process of $.process.attr) {
+                let result = process(key, value, this);
+                if (!isUndefined(result)) return;
+            }
+            this.attr.set(key, value as string);
+        })
+    }
+}

@@ -1,7 +1,7 @@
 import type { $CSSRule } from "#structure/$CSSRule";
-import type { $Node } from "@amateras/core/node/$Node";
+import type { ElementProto } from "@amateras/core/structure/ElementProto";
 
-export const cssRuleBy$NodeMap = new WeakMap<$Node<HTMLElement>, $CSSRule>();
+export const cssRuleByProtoMap = new WeakMap<ElementProto, $CSSRule>();
 export const cssGlobalRuleSet = new Set<$CSSRule>();
 
 /** A Map to store ${@link $CSSRule} by JSON string.
@@ -18,4 +18,10 @@ export const cssGlobalRuleSet = new Set<$CSSRule>();
  * This is very suitable for storing CSS objects in JSON format, as the length of the JSON string will not
  * affect the retrieve efficiency of the Map.
  */
-export const cssRuleByJSONMap = new Map<string, $CSSRule>();
+export const cssRuleByJSONMap: Map<string, $CSSRule> = import.meta.hot?.data.cssMap ?? new Map();
+
+if (import.meta.hot) {
+    import.meta.hot.dispose(data => {
+        data.cssMap = cssRuleByJSONMap;
+    })
+}

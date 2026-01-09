@@ -4,7 +4,7 @@ declare global {
     type OrMatrix<T> = T | OrMatrix<T>[];
     type OrPromise<T> = T | Promise<T>;
     type OrNullish<T> = T | Nullish;
-    type Constructor<T> = { new (...args: any[]): T }
+    type Constructor<T = any> = { new (...args: any[]): T }
     type Mutable<T> = {
         -readonly [P in keyof T]: T[P];
     }
@@ -24,6 +24,6 @@ declare global {
     type Narrow<T> = T extends boolean ? boolean : T;
     type ValueOf<T> = T[keyof T];
     type RequiredKeys<T> = {
-        [K in keyof T]-?: {} extends Pick<T, K> ? never : K
+        [K in keyof T]-?: {} extends Pick<T, K> ? never : K;
     }[keyof T];
 }

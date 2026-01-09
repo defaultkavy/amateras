@@ -1,7 +1,7 @@
 {
   "name": "amateras",
   "version": "0.10.0",
-  "description": "Amateras is a DOM Utility library.",
+  "description": "Amateras is a JavaScript library for building user interface.",
   "module": "index.ts",
   "type": "module",
   "author": {
@@ -30,6 +30,12 @@
       "bun": "./packages/utils/src/index.bun.ts",
       "default": "./packages/utils/src/index.browser.ts"
     },
+    "./widget": "./packages/widget/src/index.ts",
+    "./signal": "./packages/signal/src/index.ts",
+    "./for": "./packages/for/src/index.ts",
+    "./if": "./packages/if/src/index.ts",
+    "./match": "./packages/match/src/index.ts",
+    "./hmr": "./packages/hmr/src/index.ts",
     "./css": "./packages/css/src/index.ts",
     "./css/*": "./packages/css/src/ext/*.ts",
     "./router": "./packages/router/src/index.ts",
@@ -38,7 +44,6 @@
     "./idb/core": "./packages/idb/src/core.ts",
     "./markdown": "./packages/markdown/src/index.ts",
     "./markdown/syntax/*": "./packages/markdown/src/syntax/*.ts",
-    "./signal": "./packages/signal/src/index.ts",
     "./ui/*": "./packages/ui/*.ts"
   },
   "dependencies": {
@@ -51,5 +56,10 @@
   },
   "devDependencies": {
     "@types/bun": "^1.3.4"
-  }
+  },
+  "files": [
+    "pakcages",
+    "index.ts",
+    "tsconfig.json"
+  ]
 }

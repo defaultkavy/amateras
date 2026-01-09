@@ -1,14 +1,16 @@
-import { cssGlobalRuleSet, cssRuleBy$NodeMap } from "#lib/cache";
+import { cssGlobalRuleSet, cssRuleByProtoMap } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { generateId } from "#lib/utils";
 import { $CSSRule } from "#structure/$CSSRule";
-import type { $Node } from "@amateras/core/node/$Node";
+import { onserver } from "@amateras/core/env";
+import { ElementProto } from "@amateras/core/structure/ElementProto";
+import type { Proto } from "@amateras/core/structure/Proto";
 import { _Array_from, _instanceof, _JSON_stringify, _Object_assign, _Object_entries, forEach, isObject, isString, map } from "@amateras/utils"
 
-declare module "@amateras/core" {
+declare global {
     export namespace $ {
         /** Create CSS rule */
-        export function css(cssObject: $.CSSMap): $CSSRule;
+        export function css(cssObject: $.CSSMap | $CSSRule): $CSSRule;
         /** Create global CSS rules */
         export function CSS(cssRootObject: $.CSSRootMap): $CSSRule[];
 
@@ -25,9 +27,15 @@ declare module "@amateras/core" {
         export type CSSRootMap = { [key: string]: $.CSSMap };
 
         export namespace CSS {
-            export function text($nodeList: $Node[]): string;
-            export function rules($nodeList: $Node[]): $CSSRule[];
+            export function text(proto: Proto): string;
+            export function rules(proto: Proto): $CSSRule[];
         }
+    }
+}
+
+declare module "@amateras/core/structure/ElementProto" {
+    export interface ElementProto {
+        css(cssObject: $.CSSMap | $CSSRule): this;
     }
 }
 
@@ -51,31 +59,45 @@ _Object_assign($, {
     },
 })
 
-// Assign html render methods to $.CSS
-_Object_assign($.CSS, {
-    rules($nodeList: $Node[] | Set<$Node>) {
-        let ruleSet = new Set<$CSSRule>();
-        forEach($nodeList, $node => {
-            let rule = cssRuleBy$NodeMap.get($node as any);
-            if (rule) ruleSet.add(rule);
-            forEach(this.rules($node.nodes), rule => ruleSet.add(rule));
-        })
-        return _Array_from(ruleSet);
-    },
-
-    text($nodeList: $Node[] | Set<$Node>) {
-        return [...cssGlobalRuleSet, ...this.rules($nodeList)].join('\n');
+_Object_assign(ElementProto.prototype, {
+    css(this: ElementProto, cssMap: $.CSSMap | $CSSRule) {
+        assignCSS(this, cssMap);
+        return this;
     }
 })
 
+export const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
+    let rule = $.css(cssMap);
+    let selector = rule.selector.slice(1);
+    proto.attr.set('class', proto.attr.get('class')?.concat(selector) ?? selector);
+    cssRuleByProtoMap.set(proto, rule);
+}
+
+// Assign html render methods to $.CSS
+if (onserver()) {
+    _Object_assign($.CSS, {
+        rules(proto: Proto) {
+            let ruleSet = new Set<$CSSRule>();
+
+            forEach([proto, ...proto.protos], childProto => {
+                let rule = cssRuleByProtoMap.get(childProto as any);
+                if (rule) ruleSet.add(rule);
+                if (proto !== childProto)
+                    forEach(this.rules(childProto), rule => ruleSet.add(rule));
+            })
+
+            return _Array_from(ruleSet);
+        },
+
+        text(proto: Proto) {
+            return [...cssGlobalRuleSet, ...this.rules(proto)].join('\n');
+        }
+    })
+}
+
 // Add processor of css attribute
-$.processor.attr.add((key, value, $node) => {
-    if (key === 'css') {
-        let rule = $.css(value);
-        $node.addTokens('class', rule.selector.slice(1))
-        cssRuleBy$NodeMap.set($node, rule);
-        return true;
-    }
+$.process.attr.add((key, value, proto) => {
+    if (key === 'css') return assignCSS(proto, value), true;
 })
 
 interface $CSSDeclarationMap {

@@ -1,68 +1,49 @@
-import type { Page } from "#node/Page";
-import { Router } from "#node/Router";
-import { PageBuilder } from "#structure/PageBuilder";
-import { Route, type RouteBuilder, type RouteParams } from "#structure/Route";
-import { _Object_assign, _bind, forEach } from "@amateras/utils";
-import type { AnchorTarget } from "../../html/src/node/$Anchor";
+import { Route } from '#structure/Route';
+import { Router } from '#structure/Router';
+import { _Object_assign } from '@amateras/utils';
+import './global';
+import type { PageBuilder } from './types';
+import { Proto } from '@amateras/core/structure/Proto';
+import { RouteNode } from '#structure/RouteNode';
+import { Link } from '#structure/Link';
+import { RouteGroup } from '#structure/RouteGroup';
 
-declare module '@amateras/core' {
-    export namespace $ {
-        export function route<Params extends RouteParams = []>(builder: (page: Page<Params>) => OrPromise<Page<Params>>): PageBuilder<Params>;
-        export function open(url: string | URL | Nullish, target?: AnchorTarget): typeof Router;
-        export function replace(url: string | URL | Nullish): typeof Router;
-        export function back(): typeof Router;
-        export function forward(): typeof Router;
-        export interface $NodeMap {
-            'router': typeof Router;
-        }
-    }
-}
-
-declare global {
-    interface GlobalEventHandlersEventMap {
-        'routeopen': Event;
-    }
-}
-
-let prototype = {
-    route(this: { routes: Map<string, Route> }, path: string, builder: RouteBuilder, handle?: (route: Route) => Route) {
-        const route = new Route<any>(path, builder);
-        handle?.(route);
+let routePlannerPrototype = {
+    route(this: Route | Router, path: string, builder: PageBuilder<string>, handle?: (route: Route) => void) {
+        let route = new RouteNode(path, builder);
         this.routes.set(path, route);
-        return this;
+        handle?.(route);
     },
 
-    group(this: { routes: Map<string, Route> }, path: string, handle: (route: Route) => Route) {
-        this.routes.set(path, handle(new Route<any>(path)))
-        return this;
+    group(this: Route | Router, path: string, handle?: (route: Route) => void) {
+        let group = new RouteGroup(path);
+        this.routes.set(path, group);
+        handle?.(group);
     },
 
-    notFound(this: { routes: Map<string, Route> }, builder: RouteBuilder) {
-        this.routes.set('notfound', new Route('notfound', builder));
-        return this;
+    notfound() {
+
     }
 }
 
-// assign methods
-_Object_assign(Router.prototype, prototype)
-_Object_assign(Route.prototype, prototype)
-_Object_assign($, {
-    route: (builder: (page: Page) => Page) => new PageBuilder(builder),
-    open: _bind(Router.open, Router),
-    replace: _bind(Router.replace, Router),
-    back: _bind(Router.back, Router),
-    forward: _bind(Router.forward, Router)
-})
-// assign node
-$.assign(['router', Router])
-// use style
-forEach([
-    `router{display:block}`,
-    `page{display:block}`
-], $.style);
+_Object_assign(Route.prototype, routePlannerPrototype);
+_Object_assign(Router.prototype, routePlannerPrototype);
 
-export * from '#node/Page';
-export * from '#node/Router';
-export * from '#node/RouterAnchor';
-export * from '#structure/PageBuilder';
-export * from '#structure/Route';
+_Object_assign($, {
+    open: Router.open,
+    replace: Router.replace,
+    back: Router.back,
+    forward: Router.forward
+})
+
+globalThis.Link = Link;
+globalThis.Router = Router;
+
+$.process.craft.add((value, routeBuilder) => {
+    if (value === Router) {
+        let router = new Router();
+        router.parent = Proto.proto;
+        routeBuilder(router);
+        return router;
+    }
+})

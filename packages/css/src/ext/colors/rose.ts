@@ -16,7 +16,7 @@ const _rose = {
 
 colorAssign('rose', _rose);
 
-declare module '@amateras/core' {
+declare global {
     export namespace $ {
         export namespace color {
             export const rose: typeof _rose;

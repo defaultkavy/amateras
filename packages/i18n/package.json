@@ -2,7 +2,6 @@
     "name": "@amateras/i18n",
     "peerDependencies": {
       "@amateras/core": "workspace:*",
-      "@amateras/signal": "workspace:*",
       "@amateras/utils": "workspace:*"
     },
     "imports": {

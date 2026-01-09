@@ -4,7 +4,7 @@ import { $CSSKeyframes } from "#structure/$CSSKeyframes";
 import { createRule } from "#lib/createRule";
 import { cssGlobalRuleSet } from "#lib/cache";
 
-declare module '@amateras/core' {
+declare global {
     export namespace $ {
         export namespace css {
             export function keyframes<T extends { [key: string]: $.CSSKeyframesMap }>(options: T): { [key in keyof T]: $CSSKeyframes };

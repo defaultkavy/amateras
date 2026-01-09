@@ -1,29 +1,36 @@
 import { _Array_from, _null, forEach, isUndefined, map } from "@amateras/utils";
 import type { I18n } from "#structure/I18n";
-import { $Node } from "@amateras/core/node/$Node";
+import { ProxyProto } from "@amateras/core/structure/ProxyProto";
 
-export class I18nTranslation extends $Node<HTMLElement> {
+export class I18nTranslation extends ProxyProto{
     i18n: I18n;
     key: string;
     options: I18nTranslationOptions | undefined;
     constructor(i18n: I18n, key: string, options?: I18nTranslationOptions) {
-        super('t')
+        super()
         this.i18n = i18n;
         this.key = key;
         this.options = options;
-        
-        this.ondom(node => {
-            this.update(node);
-            i18n.locale$.signal.subscribe(() => this.update(node))
-        })
+        this.i18n.translations.add(this);
     }
     
-    protected async update(node: HTMLElement) {
+    build(): this {
+        this.update();
+        return this;
+    }
+    
+    async update() {
         const {key, i18n, options} = this;
         const contentUpdate = (content: string[], args: any[] = []) => {
-            const layout = $.layout(() => $(content as unknown as TemplateStringsArray, ...args));
-            node.replaceChildren();
-            node.append(...layout.build('dom'));
+            this.builder = () => {
+                // make this array become Template String Array;
+                //@ts-ignore
+                content.raw = content;
+                $(content as any, ...args);
+            }
+            forEach(this.protos, proto => proto.removeNode());
+            super.build();
+            this.node?.replaceWith(...this.toDOM());
         }
         update: {
             const dictionary = i18n.dictionary();

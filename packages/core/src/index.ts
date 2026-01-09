@@ -1,141 +1,133 @@
-import '#env';
-import './global'
-import { $Node } from "#node/$Node";
-import { $TextNode } from "#node/$Text";
-import { $Layout } from "#structure/$Layout";
-import { _Array_from, _instanceof, _null, _Object_entries, _undefined, forEach, isArray, isFunction, isNumber, isString, startsWith } from "@amateras/utils"
-import { _document, onclient } from '#env';
+import './global';
+import { isString, isFunction, forEach, _Object_entries, _instanceof, isArray, _null, isUndefined, _Object_fromEntries, map, _Object_assign } from '@amateras/utils';
+import { ElementProto } from './structure/ElementProto';
+import { TextProto } from './structure/TextProto';
+import { Proto } from './structure/Proto';
+import { onclient, onserver } from '#env';
+import { hmr } from '#lib/hmr';
 
-type $ComponentArguments<P> = 
-    RequiredKeys<P> extends never 
-        ? [ $.Props, $.Builder ] 
-            | [ $.Props ] 
-            | []
-        : [ P, $.Builder ]
-            | [ P ];
+export function $(template: TemplateStringsArray, ...args: any[]): Proto[];
+export function $(proto: Proto): Proto;
+export function $(args: any[]): Proto[];
+export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, builder?: $.Builder<HTMLElementTagNameMap[T]>): ElementProto;
+export function $<T extends string>(tagname: T, builder?: $.Builder<HTMLElement>): ElementProto;
+export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, attr: {}, builder?: $.Builder<HTMLElementTagNameMap[T]>): ElementProto;
+export function $<T extends string>(tagname: T, attr: $.AttrMap, builder?: $.Builder<HTMLElement>): ElementProto;
+export function $(...args: any): any {
+    const prevProtoParent = Proto.proto;
+    let protos: Proto[] = []
+    const addProtoToParent = (proto: Proto) => {
+        proto.parent = prevProtoParent;
+        protos.push(proto);
+    }
+    for (let process of $.process.craft) {
+        let result = process(...args);
+        if (!isUndefined(result)) return result;
+    }
+    const [arg1, arg2, arg3] = args;
 
-/**  */
-export function $<P extends object>(component: (props: P, builder?: $.Builder) => $Layout, ...[arg1, arg2]: $ComponentArguments<P>): $Node[];
-export function $(str: TemplateStringsArray, ...value: $.TextProcessorValue[]): $TextNode[];
-export function $(tagname: string, builder: $.Builder): $Node;
-export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, props?: $.Props<{}, HTMLElementTagNameMap[T]>, builder?: $.Builder): $Node<HTMLElementTagNameMap[T]>;
-export function $(arg1: string | TemplateStringsArray | $.Component, ...args: unknown[]) {
-    // Create $Node with tagname
+    // Proto
+    if (_instanceof(arg1, Proto)) {
+        addProtoToParent(arg1);
+        return arg1;
+    }
+
+    // Element Proto
     if (isString(arg1)) {
-        const parent = $Node.parent;
-        const $node = new $Node(arg1);
-        const [arg2, arg3] = args as [$.Builder | $.Props | undefined, $.Builder | undefined];
-        const processChild = (child: $.Builder) => {
-            $Node.parent = $node;
-            if (isFunction(child)) child?.();
-            $Node.parent = parent;
-        }
-        parent?.nodes.add($node);
-        // arg2
-        if (arg2) 
-            if (isFunction(arg2)) processChild(arg2 as $.Builder);
-            else {
-                forEach(_Object_entries(arg2), ([key, value]) => {
-                    for (let processor of $.processor.attr) 
-                        if (processor(key, value, $node as any)) return;
-                    $node.attr.set(key, value);
-                })
-            }
-        // arg3
-        if (arg3) processChild(arg3);
-        if (!parent) $Layout.parent?.nodes.add($node);
-        return $node;
+        let args: [any, any] = isFunction(arg2) ? [,arg2] : [arg2, arg3];
+        let eleProto = new ElementProto(arg1, ...args);
+        addProtoToParent(eleProto);
+        return eleProto;
     }
-
-    // Create $Node with Layout Function
+    
+    // Function Handler
     if (isFunction(arg1)) {
-        let [arg2, arg3] = args as [$.Builder | $.Props | undefined, $.Builder | undefined];
-        return arg1(isFunction(arg2) ? {} : arg2 ?? {}, arg3).build()
-    }
-
-    // Create $TextNode with Template String
-    if (isArray(arg1)) {
-        let str: string = arg1[0];
-        const $nodeArr: $Node[] = [];
-        loop1: for (let i = 0; i < args.length; i++) {
-            let target = args[i];
-            if (isString(target) || isNumber(target)) str += target;
-            else {
-                for (let processor of $.processor.text) {
-                    let result = processor(target);
-                    if (result) {
-                        $nodeArr.push(new $TextNode(str));
-                        str = '';
-                        $nodeArr.push(result);
-                        break loop1;
-                    };
-                }
-                str += target;
-            }
+        let [, ...argList] = args;
+        let target = new arg1(...argList);
+        // Widget Handler
+        if (_instanceof(target, Proto)) {
+            addProtoToParent(target);
+            return target;
         }
-        if (str.length) $nodeArr.push(new $TextNode(str));
-        forEach($nodeArr, text => $Node.parent?.nodes.add(text) || $Layout.parent?.nodes.add(text));
-        return $nodeArr;
     }
 
+    if (isArray(arg1)) {
+        let valueBuilder = (value: any) => {
+            for (let process of $.process.text) {
+                let proto = process(value);
+                if (!isUndefined(proto)) return addProtoToParent(proto);
+            }
+            let valueTextProto = isUndefined(value) ? _null : new TextProto(`${value}`);
+            if (valueTextProto) addProtoToParent(valueTextProto);
+        }
+
+        let [arg1, ...values] = args
+
+        // Variables Array Handler
+        if (!arg1.raw) {
+            forEach(arg1, arg => valueBuilder(arg))
+        }
+        
+        // Template String Array Handler
+        else {
+            forEach(arg1 as string[], (str, index) => {
+                let strTextProto = str.length ? new TextProto(str) : _null;
+                let value = values[index];
+                if (strTextProto) addProtoToParent(strTextProto);
+                valueBuilder(value)
+            })
+        }
+        return protos;
+    }
 }
 
-type $TextProcessor = (value: any) => $Node | void;
-type $AttributeProcessor = (key: string, value: any, $node: $Node<HTMLElement>) => boolean | void;
 
 export namespace $ {
+    /** Builder 是一个 Proto 作用域函数，所有在此函数中运行 $ 函数所创建的 Proto 都会被加入到运行 Builder 的 Proto 中。 */
+    export type Builder<H extends HTMLElement = any> = (proto: ElementProto<H>) => void;
+    /** Props 是组件函数的参数，集合了该组件的自定义属性，以及组件 Builder 函数和元素属性的传递。 */
+    export type Props<T = {}> = { [key: string]: any } & T;
 
-    export const stylesheet = onclient() ? new CSSStyleSheet() : null;
-    onclient(() => _document.adoptedStyleSheets.push(stylesheet!));
+    export interface AttrMap {}
+
+    export type CraftMiddleware = (...args: any[]) => any;
+    export type TextMiddleware = (value: any) => Proto | undefined;
+    export type AttrMiddleware = (name: string, value: any, proto: ElementProto) => any;
+
+    export const process = {
+        craft: new Set<CraftMiddleware>(),
+        text: new Set<TextMiddleware>(),
+        attr: new Set<AttrMiddleware>()
+    }
+
+    export const dispose = (disposer: () => void) => {
+        Proto.proto?.disposers.add(disposer);
+    }
+
+    export const render = (proto: Proto, element: HTMLElement | (() => HTMLElement)) => {
+        // Disable render on server side
+        if (onserver()) return;
+        element = isFunction(element) ? element() : element;
+        
+        if (!hmr(element, proto)) {
+            let nodes = proto.build().toDOM()
+            element.replaceChildren(...nodes);
+        };
+    }
+
+    export const context = (proto: {proto: Proto | null}, parent: Proto | null, callback: () => void) => {
+        let cacheProtoParent = proto.proto;
+        proto.proto = parent;
+        callback();
+        proto.proto = cacheProtoParent;
+    }
+
+    export const stylesheet = onclient() ? new CSSStyleSheet() : _null;
     export const style = (css: string) => stylesheet?.insertRule(css);
-
-    export const layout = (builder: () => void) => new $Layout(builder);
-
-    export const processor = {
-        text: new Set<$TextProcessor>(),
-        attr: new Set<$AttributeProcessor>()
-    } as const
-
-    export type TextProcessorValue = ValueOf<TextProcessorValueMap>
-    export interface TextProcessorValueMap {
-        string: string;
-        number: number;
-        boolean: boolean;
-        undefined: undefined;
-    }
-
-    export interface AttrMap<H extends HTMLElement = HTMLElement> extends AttrEventMap<H> {
-        class: string;
-        id: string;
-        ondom: (element: H) => void;
-    }
-
-    /** $Node content builder function. */
-    export type Builder = () => void | $Node | $TextNode[];
-    /** $Node properties. */
-    export type Props<T = {}, H extends HTMLElement = HTMLElement> = { [key: string & {}]: any } & Partial<$.AttrMap<H>> & T;
-    /** A function that return layout of component. */
-    export type Component = (props: any, builder?: $.Builder) => $Layout;
+    
+    if (stylesheet) document.adoptedStyleSheets.push(stylesheet)
 }
-
-$.processor.attr.add((key, value, $node) => {
-    if (key === 'ondom') {
-        $node.ondom(value);
-        return true;
-    }
-    if (startsWith(key, 'on')) {
-        $node.ondom(element => element?.addEventListener(key.slice(2), value));
-        return true;
-    }
-})
 
 export type $ = typeof $;
+
 globalThis.$ = $;
-
-type $EventMap<H extends HTMLElement> = {
-    [K in keyof HTMLElementEventMap as `on${K}`]: HTMLElementEventMap[K] & { currentTarget: H }
-}
-
-type AttrEventMap<H extends HTMLElement> = {
-    [key in keyof $EventMap<H>]: (event: $EventMap<H>[key]) => void;
-}

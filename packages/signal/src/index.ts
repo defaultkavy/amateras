@@ -1,24 +1,22 @@
 import { track, trackSet, untrack, type UntrackFunction } from "#lib/track";
-import { $State } from "#structure/$State";
-import { $TextNode } from "@amateras/core/node/$Text";
-import { _instanceof, _JSON_stringify, _Object_assign, forEach, _null, _Object_defineProperty, _Object_entries, _Promise } from "@amateras/utils";
+import { Signal } from "#structure/Signal";
+import { Proto } from "@amateras/core/structure/Proto";
+import { TextProto } from "@amateras/core/structure/TextProto";
+import { _instanceof, _JSON_stringify, _Object_assign, forEach, _null, _Object_defineProperty, _Object_entries, _Promise, equal, isBoolean } from "@amateras/utils";
 
+declare global {
+    export function $<T>(signal: Signal<T>): Signal<T>;
 
-declare module '@amateras/core' {
     export namespace $ {
-        export function state<T>(value: T): $State<T>;
+        export function signal<T>(value: T): Signal<T>;
         export function effect(callback: (untrack: UntrackFunction) => void): void;
-        export function compute<T>(callback: (untrack: UntrackFunction) => T): $State<T>;
-
-        export interface TextProcessorValueMap {
-            state: $State<any>;
-        }
+        export function compute<T>(callback: (untrack: UntrackFunction) => T): Signal<T>;
     }
 }
 
 _Object_assign($, {
-    state(value: any) {
-        return new $State(value);
+    signal(value: any) {
+        return new Signal(value);
     },
 
     effect(
@@ -27,7 +25,7 @@ _Object_assign($, {
         ) => void
     ) {
         track(callback);
-        forEach(trackSet, state => state.signal.subscribe(_ => callback(untrack)));
+        forEach(trackSet, signal => signal.subscribe(_ => callback(untrack)));
         trackSet.clear();
     },
     
@@ -37,31 +35,61 @@ _Object_assign($, {
         ) => T
     ) {
         let result = track(callback);
-        let compute = new $State(result);
-        forEach(trackSet, state => state.signal.subscribe(_ => compute.set(callback(untrack))));
+        let compute = new Signal(result);
+        forEach(trackSet, signal => signal.subscribe(_ => compute.set(callback(untrack))));
         trackSet.clear();
         return compute
     }
 })
 
-$.processor.text.add(state => {
-    if (_instanceof(state, $State)) {
-        return new $TextNode(`${state()}`).ondom(node => {
-            state.signal.subscribe((value) => node.textContent = `${value}`);
+let toTextProto = (signal: Signal) => {
+    if (_instanceof(signal, Signal)) {
+        let proto = new TextProto(`${signal}`);
+        proto.dom(node => {
+            let fn = (value: any) => node.textContent = `${value}`;
+            signal.subscribe(fn);
+            proto.disposers.add(() => signal.unsubscribe(fn));
         })
-    }
-})
 
-$.processor.attr.add((key, value, $node) => {
-    if (_instanceof(value, $State)) {
-        $node.ondom(element => {
-            element.setAttribute(key, `${value.get()}`)
-            value.signal.subscribe(val => {
-                element.setAttribute(key, `${val}`)
+        let fn = (value: any) => proto.content = `${value}`;
+        signal.subscribe(fn);
+        fn(signal.value);
+
+        proto.parent = Proto.proto;
+        return proto;
+    }
+}
+
+let setAttr = (name: string, node: HTMLElement, signal: Signal) => {
+    //@ts-ignore
+    if (name in node) node[name] = signal.value;
+    else node.setAttribute(name, `${signal}`)
+}
+
+$.process.text.add(toTextProto)
+$.process.craft.add(toTextProto)
+$.process.attr.add((name, signal, proto) => {
+    if (_instanceof(signal, Signal)) {
+        if (proto.name === 'input') {
+            if (equal(name, 'value', 'checked')) {
+                proto.on('input', e => signal.set((e.currentTarget as HTMLInputElement)[name]));
+                let value = signal.value;
+                if (isBoolean(value)) value && proto.attr.set(name, '');
+                else proto.attr.set(name, `${value}`)
+            }
+        } 
+        else
+            proto.dom(node => {
+                let setNodeAttr = () => setAttr(name, node, signal);
+                signal.subscribe(setNodeAttr);
+                setNodeAttr();
+                proto.disposers.add(() => signal.unsubscribe(setNodeAttr))
             })
-        })
-        $node.attr.set(key, `${value.get()}`);
+
+            let setProtoAttr = () => {
+                
+            }
+        
         return true;
     }
 })
-

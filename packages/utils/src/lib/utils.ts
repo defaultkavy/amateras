@@ -37,6 +37,8 @@ export const forEach: forEach = async (arr: any, fn: any) => {
 interface map {
     <T, R>(arr: Array<T>, fn: (value: T, index: number, array: Array<T>) => R): R[];
     <T, R>(set: Set<T>, fn: (value: T, index: number, set: Set<T>) => R): R[];
+    <T extends WeakKey>(set: WeakSet<T>, fn: (value: T, index: number, set: WeakSet<T>) => Promise<void>): T[];
+    <T extends WeakKey>(set: WeakSet<T>, fn: (value: T, index: number, set: WeakSet<T>) => void): T[];
     <T, R>(list: Array<T> | Set<T>, fn: (value: T, index: number, set: Array<T> | Set<T>) => R): R[];
     <K, V, R>(map: Map<K, V>, fn: (value: [K, V], index: number, map: Map<K, V>) => R): R[];
     <N extends Node, R>(set: NodeListOf<N>, fn: (value: N, index: number, parent: NodeListOf<N>) => R): R[];
@@ -56,6 +58,7 @@ export const isUndefined = (target: any): target is undefined => target === unde
 export const isNull = (target: any): target is null => target === _null;
 export const isArray = _Array.isArray;
 export const _instanceof = <T extends (abstract new (...args: any[]) => any)[]>(target: any, ...instance: T): target is InstanceType<T[number]> => !!instance.find(i => target instanceof i);
+export const is = <T extends abstract new (...args: any[]) => any>(target: any, instance: T): InstanceType<T> | null => _instanceof(target, instance) ? target : _null;
 // JSON
 export const _JSON_stringify = JSON.stringify;
 export const _JSON_parse = JSON.parse;

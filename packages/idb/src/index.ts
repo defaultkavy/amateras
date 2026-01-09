@@ -1,7 +1,7 @@
 import { _Object_assign } from "@amateras/utils"
 import { $IDBBuilder } from "#structure/builder/$IDBBuilder"
 
-declare module '@amateras/core' {
+declare global {
     export namespace $ {
         /**
          * Create {@link $IDBBuilder} with IDB name and version number.

@@ -25,5 +25,5 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-  "exclude": ["deprecated"]
+  "exclude": ["deprecated", "**/*.js"]
 }

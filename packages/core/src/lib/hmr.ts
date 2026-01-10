@@ -8,7 +8,7 @@ import { symbol_ProtoType } from "./symbols";
 
 const elementProtoMap = import.meta.hot?.data.protoMap ?? new Map<HTMLElement, Proto>()
 // save data before HMR
-import.meta.hot.dispose(data => {
+if (import.meta.hot) import.meta.hot.dispose(data => {
     data.protoMap = elementProtoMap;
 })
 

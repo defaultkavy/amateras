@@ -1,7 +1,7 @@
-import type { Page } from "./Page";
-import type { AliasRequired, AsyncWidget, PathConcat, PathToParamsMap, PathToParamsUnion, PageBuilder, RouteParams, RoutePath, ValidatePath } from "../types";
+import { isFunction, isUndefined } from "@amateras/utils";
 import type { Widget } from "@amateras/widget/structure/Widget";
-import { _null, isFunction, isUndefined } from "@amateras/utils";
+import type { AliasRequired, AsyncWidget, PageBuilder, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
+import type { Page } from "./Page";
 import type { RouteSlot } from "./RouteSlot";
 import type { Router } from "./Router";
 
@@ -19,9 +19,7 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
         this.router = router;
     }
 
-    async resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean> {
-        return true;
-    }
+    abstract resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean>;
 
     routing(path: string) {
         let pathSegList = path.split('/');
@@ -32,7 +30,7 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
             let aliasParams = this.aliases.get(selfPath);
             params = {};
             let selfSegList = selfPath.split('/');
-            let segList: [string | undefined, string | undefined][] = []
+            let segList: [string | undefined, string | undefined][] = [];
 
             for (let i = 0; i < Math.max(pathSegList.length, selfSegList.length); i++) 
                 segList.push([selfSegList[i], pathSegList[i]])

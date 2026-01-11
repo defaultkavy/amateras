@@ -1,17 +1,18 @@
+import { symbol_ProtoType } from "@amateras/core/lib/symbols";
+import { _null, isArray } from "@amateras/utils";
+import type { Widget } from "@amateras/widget/structure/Widget";
 import type { AsyncWidget, PageBuilder } from "../types";
 import { Page } from "./Page";
 import { Route } from "./Route";
-import { _Array_from, _null, isArray, isUndefined } from "@amateras/utils";
 import type { RouteSlot } from "./RouteSlot";
-import type { Widget } from "@amateras/widget/structure/Widget";
-import { symbol_ProtoType } from "@amateras/core/lib/symbols";
+import type { Router } from "./Router";
 
 export class RouteNode extends Route {
     pages = new Map<string, Page>();
     page: Page | null = _null;
     layout: Widget | PageBuilder | AsyncWidget;
-    constructor(path: string, layout: Widget | PageBuilder | AsyncWidget) {
-        super(path);
+    constructor(router: Router, path: string, layout: Widget | PageBuilder | AsyncWidget) {
+        super(router, path);
         this.layout = layout;
     }
 
@@ -25,11 +26,16 @@ export class RouteNode extends Route {
         let result = this.routing(path);
         if (!result) return false;
         let [passPath, selfParams] = result;
-
         params = { ...params, ...selfParams };
         let page = await this.usePage(passPath, params, slot);
         let restPath = passPath === '/' ? path : path.replace(passPath, '');
-        if (restPath) return !!_Array_from(this.routes).find(route => route[1].resolve(restPath, page.slot, params));
+        if (restPath) {
+            for (let [_name, route] of this.routes) {
+                let result = await route.resolve(restPath, page.slot, params)
+                if (result) return true;
+            }
+            return false;
+        }
         return true;
     }
 

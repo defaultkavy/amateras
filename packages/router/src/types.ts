@@ -1,10 +1,11 @@
+import type { RouteSlot } from "#structure/RouteSlot";
 import type { Widget } from "@amateras/widget/structure/Widget";
 
 export type RoutePath = string;
 
 export type RouteParams = { [key: string]: string }
 
-export type PageBuilder<Path extends RoutePath = any> = (context: {params: PathToParamsMap<Path>}) => void;
+export type PageBuilder<Path extends RoutePath = any> = (context: { params: PathToParamsMap<Path>, slot: RouteSlot }) => void;
 
 export type AsyncWidget<Params = any> = [() => Promise<{ default: Widget<any, Params> }>]
 

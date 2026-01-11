@@ -1,3 +1,5 @@
+import { Link } from '#structure/Link';
+import { Page } from '#structure/Page';
 import { Route } from '#structure/Route';
 import { RouteGroup } from '#structure/RouteGroup';
 import { RouteNode } from '#structure/RouteNode';
@@ -6,10 +8,6 @@ import { Proto } from '@amateras/core/structure/Proto';
 import { _instanceof, _Object_assign } from '@amateras/utils';
 import './global';
 import type { PageBuilder } from './types';
-import { Proto } from '@amateras/core/structure/Proto';
-import { RouteNode } from '#structure/RouteNode';
-import { Link } from '#structure/Link';
-import { RouteGroup } from '#structure/RouteGroup';
 
 let routePlannerPrototype = {
     route(this: Route | Router, path: string, builder: PageBuilder<string>, handle?: (route: Route) => void) {

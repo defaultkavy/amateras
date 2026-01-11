@@ -13,7 +13,7 @@ export type WidgetInit<Store = any, Ancestors = Widget[], ParentStore = any> =
             ParentStore extends Record<string, any>
             ?   Store extends Record<string, any>
                 ?   Prettify<ParentStore & Store>
-                :   Store
+                :   ParentStore
             :   Store extends Record<string, any>
                 ?   Store
                 :   {}

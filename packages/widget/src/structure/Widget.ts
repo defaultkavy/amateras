@@ -17,6 +17,7 @@ export const WidgetConstructor = <$$ extends Proto, Props, Store>
                 let props = args[0] as Props;
                 let children = args[1];
                 let {store, builder, ancestors} = init(props);
+                if (!store) store = {};
                 if (ancestors) forEach(ancestors, ancestor => {
                     let ancestorProto = this.findAbove(proto => proto.constructor === ancestor);
                     if (ancestorProto) {

@@ -1,11 +1,12 @@
 import { symbol_ProtoType } from "@amateras/core/lib/symbols";
 import { Proto } from "@amateras/core/structure/Proto";
 import type { WidgetChildrenBuilder, WidgetInit } from "..";
-import { isFunction, forEach, _Object_assign } from "@amateras/utils";
+import { isFunction, forEach, _Object_assign, isArray } from "@amateras/utils";
 
 export const WidgetConstructor = <$$ extends Proto, Props, Store>
-(ancestors: Widget[], stores: any, init: WidgetInit) => 
-    class extends Proto {
+(init: (props: Props) => WidgetInit) => {
+    let stores = new WeakMap<Proto, Store>();
+    return class extends Proto {
         declare static props: Props;
         declare static store: Store;
         static [symbol_ProtoType] = 'Widget';
@@ -13,12 +14,10 @@ export const WidgetConstructor = <$$ extends Proto, Props, Store>
         
         constructor(...args: Props extends unknown ? [] : [Props, WidgetChildrenBuilder<$$>]) {
             super(() => {
-                let props = args[0];
+                let props = args[0] as Props;
                 let children = args[1];
-                let [arg1, arg2] = init(props);
-                let store = isFunction(arg1) ? {} : arg1;
-                let builder = isFunction(arg1) ? arg1 : arg2;
-                forEach(ancestors, ancestor => {
+                let {store, builder, ancestors} = init(props);
+                if (ancestors) forEach(ancestors, ancestor => {
                     let ancestorProto = this.findAbove(proto => proto.constructor === ancestor);
                     if (ancestorProto) {
                         let ancestorStore = ancestor.stores.get(ancestorProto);
@@ -30,6 +29,7 @@ export const WidgetConstructor = <$$ extends Proto, Props, Store>
             });
         }
     }
+}
 
 export interface Widget<$$ extends Proto = any, Props = any, Store = any> {
     new(...args: Props extends unknown ? [] : [Props]): Proto;

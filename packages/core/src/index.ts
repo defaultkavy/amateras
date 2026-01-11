@@ -11,8 +11,8 @@ export function $(proto: Proto): Proto;
 export function $(args: any[]): Proto[];
 export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, builder?: $.Builder<HTMLElementTagNameMap[T]>): ElementProto;
 export function $<T extends string>(tagname: T, builder?: $.Builder<HTMLElement>): ElementProto;
-export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, attr: {}, builder?: $.Builder<HTMLElementTagNameMap[T]>): ElementProto;
-export function $<T extends string>(tagname: T, attr: $.AttrMap, builder?: $.Builder<HTMLElement>): ElementProto;
+export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, attr: $.Props, builder?: $.Builder<HTMLElementTagNameMap[T]>): ElementProto;
+export function $<T extends string>(tagname: T, attr: $.Props, builder?: $.Builder<HTMLElement>): ElementProto;
 export function $(...args: any): any {
     const prevProtoParent = Proto.proto;
     let protos: Proto[] = []
@@ -42,8 +42,8 @@ export function $(...args: any): any {
     
     // Function Handler
     if (isFunction(arg1)) {
-        let [, ...argList] = args;
-        let target = new arg1(...argList);
+        let args: [any, any] = isFunction(arg2) ? [,arg2] : [arg2, arg3];
+        let target = new arg1(...args);
         // Widget Handler
         if (_instanceof(target, Proto)) {
             addProtoToParent(target);

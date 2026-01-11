@@ -34,20 +34,23 @@ export class RouteNode extends Route {
     }
 
     async usePage(path: string, params: Record<string, string>, slot: RouteSlot) {
-        let layout = this.layout;
-        let builder
-        if (isArray(layout)) {
-            let widget = await layout[0]().then(mod => mod.default);
-            builder = () => $(widget, params);
-        } else {
-            //@ts-ignore
-            builder = this.layout[symbol_ProtoType] === 'Widget' // is widget constructor
-            ?   () => $(this.layout as Widget, params) 
-            :   this.layout as PageBuilder;
+        let page = this.pages.get(path);
+        if (!page) {
+            let layout = this.layout;
+            let builder;
+            if (isArray(layout)) {
+                let widget = await layout[0]().then(mod => mod.default);
+                builder = () => $(widget, params);
+            } else {
+                //@ts-ignore
+                builder = this.layout[symbol_ProtoType] === 'Widget' // is widget constructor
+                ?   () => $(this.layout as Widget, params) 
+                :   this.layout as PageBuilder;
+            }
+            page = new Page(this, builder, params);
+            this.pages.set(path, page);
         }
-        let page = new Page(this, builder, params);
         this.page = page;
-        this.pages.set(path, page);
         slot.render(page);
         return page;
     }

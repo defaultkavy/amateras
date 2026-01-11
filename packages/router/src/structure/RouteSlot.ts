@@ -1,7 +1,7 @@
-import { ProxyProto } from "@amateras/core/structure/ProxyProto";
-import type { Page } from "./Page";
-import { _null } from "@amateras/utils";
 import { onserver } from "@amateras/core/env";
+import { ProxyProto } from "@amateras/core/structure/ProxyProto";
+import { _null } from "@amateras/utils";
+import type { Page } from "./Page";
 
 export class RouteSlot extends ProxyProto {
     page: Page | null = _null;
@@ -10,6 +10,7 @@ export class RouteSlot extends ProxyProto {
     }
 
     render(page: Page) {
+        if (this.page === page) return;
         this.clear();
         this.builder = () => $(page);
         page.parent = this;

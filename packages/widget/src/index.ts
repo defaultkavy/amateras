@@ -1,5 +1,5 @@
 import { Proto } from "@amateras/core/structure/Proto";
-import { isArray, isFunction, forEach, _Object_assign } from "@amateras/utils";
+import { _Object_assign } from "@amateras/utils";
 import { WidgetConstructor, type Widget } from "./structure/Widget";
 
 export type WidgetChildrenBuilder<$$ extends Proto> = (proto: $$) => void;

@@ -1,7 +1,7 @@
 import { symbol_ProtoType } from "@amateras/core/lib/symbols";
 import { Proto } from "@amateras/core/structure/Proto";
+import { _Object_assign, forEach } from "@amateras/utils";
 import type { WidgetChildrenBuilder, WidgetInit } from "..";
-import { isFunction, forEach, _Object_assign, isArray } from "@amateras/utils";
 
 export const WidgetConstructor = <$$ extends Proto, Props, Store>
 (init: (props: Props) => WidgetInit) => {

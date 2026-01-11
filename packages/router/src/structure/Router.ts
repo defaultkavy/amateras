@@ -1,9 +1,9 @@
-import type { Route } from "./Route";
-import type { AsyncWidget, PathToParamsMap, PathToParamsUnion, PageBuilder, RoutePath, ValidatePath } from "../types";
-import { _instanceof, _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, map, startsWith } from "@amateras/utils";
 import { onclient } from "@amateras/core/env";
-import type { Widget } from "@amateras/widget/structure/Widget";
 import { Proto } from "@amateras/core/structure/Proto";
+import { _instanceof, _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, startsWith } from "@amateras/utils";
+import type { Widget } from "@amateras/widget/structure/Widget";
+import type { AsyncWidget, PageBuilder, PathToParamsMap, RoutePath, ValidatePath } from "../types";
+import type { Route } from "./Route";
 import { RouteSlot } from "./RouteSlot";
 
 type Mode = 1 | 2;
@@ -41,6 +41,7 @@ export class Router extends Proto {
     url: URL | null = onclient() ? toURL(location.href) : _null;
     routes = new Map<string, Route>();
     slot = new RouteSlot();
+    title: string | null = _null;
     static routers = new Set<Router>();
     constructor() {
         super(() => $(this.slot));

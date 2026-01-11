@@ -3,6 +3,7 @@ import type { AliasRequired, AsyncWidget, PathConcat, PathToParamsMap, PathToPar
 import type { Widget } from "@amateras/widget/structure/Widget";
 import { _null, isFunction, isUndefined } from "@amateras/utils";
 import type { RouteSlot } from "./RouteSlot";
+import type { Router } from "./Router";
 
 
 export abstract class Route<ParentPath extends RoutePath = any, Path extends RoutePath = any, Params = any> {
@@ -10,10 +11,12 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
     routes = new Map<string, Route>();
     path: PathConcat<ParentPath, Path>;
     aliases = new Map<string, RouteParams | (() => RouteParams) | undefined>();
+    router: Router;
     declare parentPath: ParentPath;
     declare params: Params;
-    constructor(path: Path) {
+    constructor(router: Router, path: Path) {
         this.path = path as any;
+        this.router = router;
     }
 
     async resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean> {

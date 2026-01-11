@@ -1,6 +1,9 @@
 import { Route } from '#structure/Route';
+import { RouteGroup } from '#structure/RouteGroup';
+import { RouteNode } from '#structure/RouteNode';
 import { Router } from '#structure/Router';
-import { _Object_assign } from '@amateras/utils';
+import { Proto } from '@amateras/core/structure/Proto';
+import { _instanceof, _Object_assign } from '@amateras/utils';
 import './global';
 import type { PageBuilder } from './types';
 import { Proto } from '@amateras/core/structure/Proto';
@@ -10,13 +13,15 @@ import { RouteGroup } from '#structure/RouteGroup';
 
 let routePlannerPrototype = {
     route(this: Route | Router, path: string, builder: PageBuilder<string>, handle?: (route: Route) => void) {
-        let route = new RouteNode(path, builder);
+        let router = _instanceof(this, Router) ? this : this.router;
+        let route = new RouteNode(router, path, builder);
         this.routes.set(path, route);
         handle?.(route);
     },
 
     group(this: Route | Router, path: string, handle?: (route: Route) => void) {
-        let group = new RouteGroup(path);
+        let router = _instanceof(this, Router) ? this : this.router;
+        let group = new RouteGroup(router, path);
         this.routes.set(path, group);
         handle?.(group);
     },
@@ -33,7 +38,14 @@ _Object_assign($, {
     open: Router.open,
     replace: Router.replace,
     back: Router.back,
-    forward: Router.forward
+    forward: Router.forward,
+
+    title(title: string) {
+        let parent = Proto.proto;
+        if (_instanceof(parent, Page)) {
+            parent.title = title;
+        }
+    }
 })
 
 globalThis.Link = Link;

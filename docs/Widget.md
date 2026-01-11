@@ -25,12 +25,12 @@ Widget 是组件化需要的重要模块，能够帮助开发者便利地编写�
 import 'amateras';
 import 'amateras/widget';
 
-const App = $.widget((props: {name: string}) => [
-    function ({children}) {
+const App = $.widget((props: {name: string}) => ({
+    builder({children}) {
         $('h1', () => `Hello ${props.name}!`)
         children();
     }
-])
+}))
 const $app = $(App, { name: 'Amateras' }, () => {
     $('p', () => $`Write user interface in JavaScript way.`)
 })
@@ -51,11 +51,10 @@ const 组件构造器 = $.widget(组件初始化函数)
 这是在组件被构建时会调用的初始化函数，用于初始化组件状态以及获取组件模板函数。我们可以在这个函数的参数中定义属性类型，如 `{ name: string, status?: number }`。当我们调用组件的时候，TypeScript 将会对属性输入进行检查，若未满足条件将会得到类型错误。
 
 ```ts
-const 组件初始化函数 = (组件属性参数: { name: string }) => [ 组件模板函数 ];
+const 组件初始化函数 = (组件属性参数: { name: string }) => ({
+    builder: 组件模板函数
+});
 ```
-
-> [!WARNING]
-> 注意组件初始化函数必须返回一个数组：`() => []`，数组内必须包含一个组件模板函数！
 
 ### 组件模板函数（Widget Template Function）
 和一般模板函数不同，组件模板函数给予的参数是该组件的仓库和外部调用时输入的模板函数。

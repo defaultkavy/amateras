@@ -20,19 +20,21 @@
 
 ```ts
 // 定义父组件
-const App = $.widget(() => [
-    { count$: $.signal(0) },
-    function ({store}) {
+const App = $.widget(() => ({
+    store: { 
+        count$: $.signal(0)
+    },
+    builder({store}) {
         $('p', () => $`Count is ${store.count$}`)
         $(AddCountButton, {increase: 2})
     }
-])
+}))
 
 // 定义子组件
 const AddCountButton = $.widget(
-    [App],
-    (props: {increase: number}) => [
-        function ({store, children}) {
+    (props: {increase: number}) => ({
+        ancestors: [App],
+        builder({store, children}) {
             $('button', $$ => { $`Add ${props.increase}`
                 $$.on('click', () => {
                     // 可读写来自父级组件 App 的数据
@@ -41,7 +43,7 @@ const AddCountButton = $.widget(
             })
             children();
         }
-    ]
+    })
 );
 
 $.render($(App), () => document.body)
@@ -50,26 +52,16 @@ $.render($(App), () => document.body)
 ```
 
 ## 函数拆解
-仔细观察 `App` 组件函数和 `AddCountButton` 组件函数的两种不同写法，`$.widget` 组件函数拥有参数适应能力，能正确判断你所输入的不同类型参数并完成创建组件构造器。接下来我们来看看组件函数的定义。
 
 ```ts
-
-const App = $.widget(组件初始化函数);
-
-const AddCountButton = $.widget(父级组件构造器数组: [ App ], 组件初始化函数)
+type 组件初始化函数 = {
+    ancestors?: 父级组件数组,
+    store?: 组件数据仓库,
+    builder: 组件模板函数
+}
 ```
-
 #### 父级组件构造器数组
 如果我们将多个组件构造器传入这个数组中，组件函数会将其视为这个组件的父级组件。不论这些组件和子组件相隔多少层级，子组件都能顺利访问到这些父级组件的数据。
-
-#### 组件初始化函数
-组件初始化函数必须返回一个数组，该数组第一个对象可以是组件数据仓库或组件模板函数。
-
-```ts
-type 组件初始化函数 = 
-    | [组件数据仓库, 组件模板函数]
-    | [组件模板函数]
-```
 
 #### 组件数据仓库
 这是个在组件初始化时会建立的数据仓库，即使同样的组件被创建多次，各个同组件的数据仓库都不互通各自独立。但是我们能够透过组件函数将此组件构造器作为子组件的父级数据仓库，只有该组件的子组件才能够访问到自己的数据仓库。

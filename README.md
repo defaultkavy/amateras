@@ -1,12 +1,14 @@
 # Amateras
 Amateras 是一个构建用户界面的 JavaScript 库，目标是无需编译器也能直接编写和运行，让开发者只需用 JavaScript 或 TypeScript 的语法就能高效地构建用户界面。支持响应式数据、模板和组件系统。
 
+[English](/docs/README_en.md)
+
 ## 优势
-- 没有编译器。
-- 没有 Diff 开销的模板系统。
-- 强类型安全的编写环境（通过 TypeScript 编译）。
-- 能够在客户端和伺服器端运行。
-- 极小的包体积，所有功能模块化，按需导入模块库。
+- **极简开发**：无需 JSX，无需编译器。
+- **原生性能**：没有 Diff 开销，只构建一次的的抽象树。
+- **类型安全**：强类型安全的编写环境（通过 TypeScript 编译）。
+- **两端运行**：能够在客户端和伺服器端运行。
+- **轻量体积**：极小的包体积，所有功能模块化，按需导入模块库。
 
 ## 功能
 - 组件化模块（Widget）
@@ -15,7 +17,7 @@ Amateras 是一个构建用户界面的 JavaScript 库，目标是无需编译�
 - 响应式数据（Signal）
 - 热模块更新（HMR）
 - 多语言切换（I18n）
-- CSS-in-JS
+- 样式表直写（CSS-in-JS）
 
 ## 安装库
 ```
@@ -72,17 +74,17 @@ Amateras 能让你编写接近 HTML 排版的模板代码，虽然初次看上�
 
 | 模块库 | 体积 | Gzip | 简介 |
 | --- | --- | --- | --- |
-| amateras/core | 3.82 kB | 1.71 kB | 核心模块 |
-| amateras/widget | 0.37 kB | 0.18 kB | 组件模块 |
+| amateras/core | 3.78 kB | 1.69 kB | 核心模块 |
+| amateras/widget | 0.36 kB | 0.17 kB | 组件模块 |
 | amateras/signal | 1.42 kB | 0.55 kB | 响应式数据模块 |
-| amateras/css | 1.29 kB | 0.60 kB | 样式模块 |
-| amateras/for | 0.98 kB | 0.32 kB | 控制流 For 模块 |
+| amateras/css | 1.32 kB | 0.61 kB | 样式模块 |
+| amateras/for | 0.97 kB | 0.32 kB | 控制流 For 模块 |
 | amateras/if | 1.60 kB | 0.56 kB | 控制流 If 模块 |
 | amateras/match | 1.00 kB | 0.33 kB | 控制流 Match 模块 |
-| amateras/router | 4.10 kB | 1.64 kB | 页面路由器模块 |
+| amateras/router | 4.33 kB | 1.71 kB | 页面路由器模块 |
 | amateras/i18n | 1.88 kB | 0.73 kB | 多语言界面模块 |
 | amateras/idb | 5.26 kB | 2.01 kB | IndexedDB 模块 |
-| amateras/markdown | 0.00 kB | 0.00 kB | Markdown 转换 HTML 模块 |
+| amateras/markdown | 6.66 kB | 2.62 kB | Markdown 转换 HTML 模块 |
 
 ## 文档
 1. [基础入门](/docs/Basic.md)

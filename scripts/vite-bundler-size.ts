@@ -1,6 +1,4 @@
-import { build, type TerserOptions } from 'vite';
-import path from 'path';
-import { watch } from 'fs';
+import { build } from 'vite';
 import { packages } from './packages';
 
 const root = process.cwd() + `/size_temp`;
@@ -21,17 +19,17 @@ async function analysisPackageSize() {
     let coreSize = 0;
     let coreGzipSize = 0;
 
-    for (const [packageName, description] of packages) {
-        const code = `import 'amateras'; import '${packageName}';`
-        console.log(`Packaging '${packageName}'...`)
+    for (const {name, description, codeInsert} of packages) {
+        const code = `import 'amateras'; import '${name}'; ${codeInsert}`
+        console.log(`Packaging '${name}'...`)
         const packageSize = await getSize(code);
 
-        if (packageName === 'amateras/core') {
+        if (name === 'amateras/core') {
             coreSize = packageSize.moduleSize;
             coreGzipSize = packageSize.gzipSize;
         }
 
-        packageMap.set(packageName, {
+        packageMap.set(name, {
             bytes: packageSize.moduleSize,
             total_size: toKB(packageSize.moduleSize),
             total_gzip: toKB(packageSize.gzipSize),

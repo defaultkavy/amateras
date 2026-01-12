@@ -36,4 +36,4 @@ async function bundle(code: string) {
     return {moduleSize: size, gzipSize}
 }
 
-bundle(packages.map(pkg => `import '${pkg[0]}';`).join(''))
+bundle(packages.map(pkg => `import '${pkg.name}';`).join(''))

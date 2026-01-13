@@ -1,6 +1,6 @@
 import { onclient } from "@amateras/core/env";
 import { Proto } from "@amateras/core/structure/Proto";
-import { _instanceof, _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, startsWith } from "@amateras/utils";
+import { _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, toURL } from "@amateras/utils";
 import type { Widget } from "@amateras/widget/structure/Widget";
 import type { AsyncWidget, PageBuilder, PathToParamsMap, RoutePath, ValidatePath } from "../types";
 import type { Route } from "./Route";
@@ -10,20 +10,12 @@ type Mode = 1 | 2;
 type RouterDicrection = 'forward' | 'back';
 
 let index = 0;
-const _URL = URL;
 const [PUSH, REPLACE] = [1, 2] as const;
 const [FORWARD, BACK] = ['forward', 'back'] as const;
 const SCROLL_KEY = '__scroll__';
 const documentElement = onclient() ? document.documentElement : _null;
 const storage = onclient() ? sessionStorage : _null;
 const _addEventListener = addEventListener;
-
-const toURL = (path: string | URL) => {
-    if (_instanceof(path, _URL)) return path;
-    if (startsWith(path, 'http')) return new _URL(path);
-    if (onclient()) return new _URL(startsWith(path, origin) ? path : origin+path);
-    else return new _URL('https://localhost' + path)
-}
 
 type ScrollData = {[key: number]: {x: number, y: number}};
 
@@ -45,7 +37,7 @@ export class Router extends Proto {
     static routers = new Set<Router>();
     constructor() {
         super(() => $(this.slot));
-        Router.routers.add(this);
+        if (onclient()) Router.routers.add(this);
     }
 
     build() {

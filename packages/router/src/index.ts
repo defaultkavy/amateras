@@ -9,17 +9,21 @@ import { _instanceof, _Object_assign } from '@amateras/utils';
 import './global';
 import type { PageBuilder } from './types';
 
+declare module "@amateras/core/structure/GlobalState" {
+    export interface GlobalState {
+        title: string | null
+    }
+}
+
 let routePlannerPrototype = {
     route(this: Route | Router, path: string, builder: PageBuilder<string>, handle?: (route: Route) => void) {
-        let router = _instanceof(this, Router) ? this : this.router;
-        let route = new RouteNode(router, path, builder);
+        let route = new RouteNode(path, builder);
         this.routes.set(path, route);
         handle?.(route);
     },
 
     group(this: Route | Router, path: string, handle?: (route: Route) => void) {
-        let router = _instanceof(this, Router) ? this : this.router;
-        let group = new RouteGroup(router, path);
+        let group = new RouteGroup(path);
         this.routes.set(path, group);
         handle?.(group);
     },
@@ -57,3 +61,5 @@ $.process.craft.add((value, routeBuilder) => {
         return router;
     }
 })
+
+export * from "#structure/Router";

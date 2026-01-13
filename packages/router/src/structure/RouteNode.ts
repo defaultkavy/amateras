@@ -5,14 +5,13 @@ import type { AsyncWidget, PageBuilder } from "../types";
 import { Page } from "./Page";
 import { Route } from "./Route";
 import type { RouteSlot } from "./RouteSlot";
-import type { Router } from "./Router";
 
 export class RouteNode extends Route {
     pages = new Map<string, Page>();
     page: Page | null = _null;
     layout: Widget | PageBuilder | AsyncWidget;
-    constructor(router: Router, path: string, layout: Widget | PageBuilder | AsyncWidget) {
-        super(router, path);
+    constructor(path: string, layout: Widget | PageBuilder | AsyncWidget) {
+        super(path);
         this.layout = layout;
     }
 

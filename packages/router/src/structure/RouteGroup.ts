@@ -1,11 +1,10 @@
 import { _Array_from } from "@amateras/utils";
 import { Route } from "./Route";
 import type { RouteSlot } from "./RouteSlot";
-import type { Router } from "./Router";
 
 export class RouteGroup extends Route {
-    constructor(router: Router, path: string) {
-        super(router, path);
+    constructor(path: string) {
+        super(path);
     }
     
     async resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean> {

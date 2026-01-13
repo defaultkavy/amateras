@@ -23,11 +23,12 @@ export class RouteSlot extends ProxyProto {
             // set title from page
             if (page.title) {
                 document.title = page.title;
+                page.global.title = page.title;
             }
         }
         if (onserver()) {
             if (!page.builded) page.build();
-            if (page.title) this.page.route.router.title = page.title;
+            page.global.title = page.title;
         }
     }
 }

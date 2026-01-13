@@ -58,7 +58,9 @@ _Object_assign($, {
             if (record) {
                 const result = isAsyncFunction(record) ? await record(response) : record(response);
                 if (onserver() && proto) proto.global.prefetch.caches[url.href] = { data: result, expired: Date.now() + 30_000 };
-                then?.(result);
+                $.context(Proto, proto, () => {
+                    then?.(result);
+                })
                 resolve(result);
             }
         })

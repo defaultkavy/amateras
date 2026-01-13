@@ -1,5 +1,6 @@
 import { symbol_ProtoType } from "#lib/symbols";
 import { _null, forEach, map } from "@amateras/utils";
+import { GlobalState } from "./GlobalState";
 
 export type ProtoBuilder = (...args: any[]) => void;
 
@@ -10,8 +11,7 @@ export abstract class Proto {
     disposers = new Set<() => void>();
     builder: ProtoBuilder | null;
     #parent: Proto | null = _null;
-    constructor(builder?: ProtoBuilder) {
-        this.builder = builder ?? _null;
+    global = new GlobalState(this);
     }
 
     set parent(proto: Proto | null) { 
@@ -22,6 +22,10 @@ export abstract class Proto {
 
     get parent() {
         return this.#parent;
+    }
+
+    get root() {
+        return this.findAbove(proto => !proto.parent)
     }
 
     build(clear = true): this {

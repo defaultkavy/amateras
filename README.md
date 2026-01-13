@@ -74,17 +74,19 @@ Amateras 能让你编写接近 HTML 排版的模板代码，虽然初次看上�
 
 | 模块库 | 体积 | Gzip | 简介 |
 | --- | --- | --- | --- |
-| amateras/core | 3.78 kB | 1.69 kB | 核心模块 |
-| amateras/widget | 0.36 kB | 0.17 kB | 组件模块 |
+| amateras/core | 4.08 kB | 1.78 kB | 核心模块 |
+| amateras/widget | 0.37 kB | 0.18 kB | 组件模块 |
 | amateras/signal | 1.42 kB | 0.55 kB | 响应式数据模块 |
-| amateras/css | 1.32 kB | 0.61 kB | 样式模块 |
-| amateras/for | 0.97 kB | 0.32 kB | 控制流 For 模块 |
-| amateras/if | 1.60 kB | 0.56 kB | 控制流 If 模块 |
+| amateras/css | 1.32 kB | 0.62 kB | 样式模块 |
+| amateras/for | 0.97 kB | 0.33 kB | 控制流 For 模块 |
+| amateras/if | 1.59 kB | 0.56 kB | 控制流 If 模块 |
 | amateras/match | 1.00 kB | 0.33 kB | 控制流 Match 模块 |
-| amateras/router | 4.33 kB | 1.71 kB | 页面路由器模块 |
+| amateras/router | 4.49 kB | 1.75 kB | 页面路由器模块 |
 | amateras/i18n | 1.88 kB | 0.73 kB | 多语言界面模块 |
-| amateras/idb | 5.26 kB | 2.01 kB | IndexedDB 模块 |
+| amateras/idb | 5.26 kB | 2.02 kB | IndexedDB 模块 |
 | amateras/markdown | 6.66 kB | 2.62 kB | Markdown 转换 HTML 模块 |
+| amateras/prefetch | 0.56 kB | 0.26 kB | SSR 数据预取 |
+| amateras/meta | 0.07 kB | 0.04 kB | SSR 页面 `meta` 标签管理 |
 
 ## 文档
 1. [基础入门](/docs/Basic.md)

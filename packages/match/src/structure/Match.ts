@@ -1,19 +1,19 @@
 import { ProxyProto } from "@amateras/core/structure/ProxyProto";
 import type { Signal } from "@amateras/signal/structure/Signal";
-import { Case, type CaseBuilder } from "./Case";
 import { _null, forEach } from "@amateras/utils";
+import { Case, type CaseLayout } from "./Case";
 
-export type MatchBuilder<T> = (match: MatchCraftFunction<T>) => void;
-export type MatchCraftFunction<T> = (c: typeof Case, condition: T | T[], builder: CaseBuilder) => void;
+export type MatchLayout<T> = (match: MatchCraftFunction<T>) => void;
+export type MatchCraftFunction<T> = (c: typeof Case, condition: T | T[], layout: CaseLayout) => void;
 
 export class Match<T = any> extends ProxyProto {
     exp$: Signal<T>
     declare protos: Set<Case>;
     cases = new Set<Case>();
     matched: Case | null = _null;
-    constructor(expression: Signal<T>, builder: MatchBuilder<T>) {
+    constructor(expression: Signal<T>, layout: MatchLayout<T>) {
         super(() => {
-            builder((_: typeof Case, condition: any, builder: CaseBuilder) => this.case(condition, builder));
+            layout((_: typeof Case, condition: any, layout: CaseLayout) => this.case(condition, layout));
         });
         this.exp$ = expression;
     }
@@ -38,8 +38,8 @@ export class Match<T = any> extends ProxyProto {
         return this;
     }
 
-    case(condition: T, builder: CaseBuilder) {
-        let caseProto = new Case(condition, builder);
+    case(condition: T, layout: CaseLayout) {
+        let caseProto = new Case(condition, layout);
         this.cases.add(caseProto);
         return caseProto;
     }

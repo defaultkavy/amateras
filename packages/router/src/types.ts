@@ -5,7 +5,7 @@ export type RoutePath = string;
 
 export type RouteParams = { [key: string]: string }
 
-export type PageBuilder<Path extends RoutePath = any> = (context: { params: PathToParamsMap<Path>, slot: RouteSlot }) => void;
+export type PageLayout<Path extends RoutePath = any> = (context: { params: PathToParamsMap<Path>, slot: RouteSlot }) => void;
 
 export type AsyncWidget<Params = any> = [() => Promise<{ default: Widget<any, Params> }>]
 

@@ -1,11 +1,11 @@
 import { _null } from "@amateras/utils";
-import { Proto, type ProtoBuilder } from "./Proto";
+import { Proto, type ProtoLayout } from "./Proto";
 
 export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Proto {
     node: null | N = _null;
     modifiers = new Set<(node: N) => void>();
-    constructor(builder?: ProtoBuilder) {
-        super(builder);
+    constructor(layout?: ProtoLayout) {
+        super(layout);
     }
 
     dom(callback: (node: N) => void) {

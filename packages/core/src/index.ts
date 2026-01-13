@@ -1,18 +1,18 @@
-import './global';
-import { isString, isFunction, forEach, _Object_entries, _instanceof, isArray, _null, isUndefined, _Object_fromEntries, map, _Object_assign } from '@amateras/utils';
-import { ElementProto } from './structure/ElementProto';
-import { TextProto } from './structure/TextProto';
-import { Proto } from './structure/Proto';
 import { onclient, onserver } from '#env';
 import { hmr } from '#lib/hmr';
+import { _instanceof, _null, forEach, isArray, isFunction, isString, isUndefined } from '@amateras/utils';
+import './global';
+import { ElementProto } from './structure/ElementProto';
+import { Proto } from './structure/Proto';
+import { TextProto } from './structure/TextProto';
 
 export function $(template: TemplateStringsArray, ...args: any[]): Proto[];
 export function $(proto: Proto): Proto;
 export function $(args: any[]): Proto[];
-export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, builder?: $.Builder<HTMLElementTagNameMap[T]>): ElementProto;
-export function $<T extends string>(tagname: T, builder?: $.Builder<HTMLElement>): ElementProto;
-export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, attr: $.Props, builder?: $.Builder<HTMLElementTagNameMap[T]>): ElementProto;
-export function $<T extends string>(tagname: T, attr: $.Props, builder?: $.Builder<HTMLElement>): ElementProto;
+export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, layout?: $.Layout<HTMLElementTagNameMap[T]>): ElementProto;
+export function $<T extends string>(tagname: T, layout?: $.Layout<HTMLElement>): ElementProto;
+export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, attr: $.Props, layout?: $.Layout<HTMLElementTagNameMap[T]>): ElementProto;
+export function $<T extends string>(tagname: T, attr: $.Props, layout?: $.Layout<HTMLElement>): ElementProto;
 export function $(...args: any): any {
     const prevProtoParent = Proto.proto;
     let protos: Proto[] = []
@@ -83,9 +83,9 @@ export function $(...args: any): any {
 
 
 export namespace $ {
-    /** Builder 是一个 Proto 作用域函数，所有在此函数中运行 $ 函数所创建的 Proto 都会被加入到运行 Builder 的 Proto 中。 */
-    export type Builder<H extends HTMLElement = any> = (proto: ElementProto<H>) => void;
-    /** Props 是组件函数的参数，集合了该组件的自定义属性，以及组件 Builder 函数和元素属性的传递。 */
+    /** Layout 是一个 Proto 模板函数，所有在此函数中运行 $ 函数所创建的 Proto 都会被加入到运行 Layout 的 Proto 中。 */
+    export type Layout<H extends HTMLElement = any> = (proto: ElementProto<H>) => void;
+    /** Props 是组件函数的参数，集合了该组件的自定义属性，以及组件 Layout 函数和元素属性的传递。 */
     export type Props<T = {}> = { [key: string]: any } & T;
 
     export interface AttrMap {}

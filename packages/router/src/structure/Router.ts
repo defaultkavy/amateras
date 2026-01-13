@@ -2,7 +2,7 @@ import { onclient } from "@amateras/core/env";
 import { Proto } from "@amateras/core/structure/Proto";
 import { _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, toURL } from "@amateras/utils";
 import type { Widget } from "@amateras/widget/structure/Widget";
-import type { AsyncWidget, PageBuilder, PathToParamsMap, RoutePath, ValidatePath } from "../types";
+import type { AsyncWidget, PageLayout, PathToParamsMap, RoutePath, ValidatePath } from "../types";
 import type { Route } from "./Route";
 import { RouteSlot } from "./RouteSlot";
 
@@ -124,14 +124,14 @@ export interface Router {
 
     route<
         Path extends RoutePath,
-        Builder extends PageBuilder<Path>
-    >(path: Path, builder: Builder, handle?: (route: Route<'', Path, PathToParamsMap<Path>>) => void): void
+        Layout extends PageLayout<Path>
+    >(path: Path, layout: Layout, handle?: (route: Route<'', Path, PathToParamsMap<Path>>) => void): void
 
 
     group<
         Path extends RoutePath
     >(path: Path, handle: (route: Route<'', Path, PathToParamsMap<Path>>) => void): void;
 
-    notFound(builder: Widget): void;
-    notFound(builder: PageBuilder): void;
+    notFound(layout: Widget): void;
+    notFound(layout: PageLayout): void;
 }

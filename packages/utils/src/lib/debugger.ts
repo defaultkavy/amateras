@@ -1,4 +1,3 @@
-import { _Object_assign } from "./utils";
 
 declare global {
     export import debug = Debug

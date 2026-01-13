@@ -1,25 +1,26 @@
+import { onclient } from "@amateras/core/env";
 import { Proto } from "@amateras/core/structure/Proto";
 import { ProxyProto } from "@amateras/core/structure/ProxyProto";
 import type { Signal } from "@amateras/signal/structure/Signal";
-import { _Array_from, _instanceof, forEach } from "@amateras/utils";
+import { forEach } from "@amateras/utils";
 
-export type ForBuilder<T> = (item: T, index: number) => void;
+export type ForLayout<T> = (item: T, index: number) => void;
 export type ForList<T extends object = object> = Signal<T[]> | Signal<Set<T>>
 
 export class For<T extends object = object> extends ProxyProto {
-    declare builder: ForBuilder<T>;
+    declare layout: ForLayout<T>;
     list$: ForList<T>;
     #itemProtoMap = new WeakMap<T, ForItem>();
     declare protos: Set<ForItem>;
-    constructor(list: ForList<T>, builder: ForBuilder<T>) {
-        super(builder);
+    constructor(list: ForList<T>, layout: ForLayout<T>) {
+        super(layout);
         this.list$ = list;
 
         let update = () => {
             let {n: newItemList, d: deleteItemList} = this.run();
             forEach(newItemList, proto => proto.build());
             forEach(deleteItemList, proto => proto.removeNode());
-            let nodes = this.toDOM();
+            let nodes = onclient() ? this.toDOM() : [];
             let prevNode: Node | undefined
             forEach(nodes, node => {
                 if (node.parentNode) prevNode = node;
@@ -48,7 +49,7 @@ export class For<T extends object = object> extends ProxyProto {
                 itemProto = new ForItem();
                 newItemList.push(itemProto);
                 this.#itemProtoMap.set(item, itemProto);
-                itemProto.builder = () => this.builder(item, i);
+                itemProto.layout = () => this.layout(item, i);
             }
             else if (oldItemList.has(itemProto)) oldItemList.delete(itemProto);
             itemProto.parent = this;

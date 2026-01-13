@@ -1,6 +1,6 @@
-import { _Array_from, _null, forEach, isUndefined, map } from "@amateras/utils";
 import type { I18n } from "#structure/I18n";
 import { ProxyProto } from "@amateras/core/structure/ProxyProto";
+import { forEach, isUndefined, map } from "@amateras/utils";
 
 export class I18nTranslation extends ProxyProto{
     i18n: I18n;
@@ -22,7 +22,7 @@ export class I18nTranslation extends ProxyProto{
     async update() {
         const {key, i18n, options} = this;
         const contentUpdate = (content: string[], args: any[] = []) => {
-            this.builder = () => {
+            this.layout = () => {
                 // make this array become Template String Array;
                 //@ts-ignore
                 content.raw = content;

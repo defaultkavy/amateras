@@ -1,7 +1,7 @@
 import { symbol_ProtoType } from "@amateras/core/lib/symbols";
 import { _null, isArray } from "@amateras/utils";
 import type { Widget } from "@amateras/widget/structure/Widget";
-import type { AsyncWidget, PageBuilder } from "../types";
+import type { AsyncWidget, PageLayout } from "../types";
 import { Page } from "./Page";
 import { Route } from "./Route";
 import type { RouteSlot } from "./RouteSlot";
@@ -9,10 +9,10 @@ import type { RouteSlot } from "./RouteSlot";
 export class RouteNode extends Route {
     pages = new Map<string, Page>();
     page: Page | null = _null;
-    layout: Widget | PageBuilder | AsyncWidget;
-    constructor(path: string, layout: Widget | PageBuilder | AsyncWidget) {
+    #layout: Widget | PageLayout | AsyncWidget;
+    constructor(path: string, layout: Widget | PageLayout | AsyncWidget) {
         super(path);
-        this.layout = layout;
+        this.#layout = layout;
     }
 
     async resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean> {
@@ -41,18 +41,18 @@ export class RouteNode extends Route {
     async usePage(path: string, params: Record<string, string>, slot: RouteSlot) {
         let page = this.pages.get(path);
         if (!page) {
-            let layout = this.layout;
-            let builder;
+            let layout = this.#layout;
+            let _layout;
             if (isArray(layout)) {
                 let widget = await layout[0]().then(mod => mod.default);
-                builder = () => $(widget, params);
+                _layout = () => $(widget, params);
             } else {
                 //@ts-ignore
-                builder = this.layout[symbol_ProtoType] === 'Widget' // is widget constructor
-                ?   () => $(this.layout as Widget, params) 
-                :   this.layout as PageBuilder;
+                _layout = this.#layout[symbol_ProtoType] === 'Widget' // is widget constructor
+                ?   () => $(this.#layout as Widget, params) 
+                :   this.#layout as PageLayout;
             }
-            page = new Page(this, builder, params);
+            page = new Page(this, _layout, params);
             this.pages.set(path, page);
         }
         this.page = page;

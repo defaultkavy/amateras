@@ -26,7 +26,7 @@ import 'amateras';
 import 'amateras/widget';
 
 const App = $.widget((props: {name: string}) => ({
-    builder({children}) {
+    layout({children}) {
         $('h1', () => `Hello ${props.name}!`)
         children();
     }
@@ -52,7 +52,7 @@ const 组件构造器 = $.widget(组件初始化函数)
 
 ```ts
 const 组件初始化函数 = (组件属性参数: { name: string }) => ({
-    builder: 组件模板函数
+    layout: 组件模板函数
 });
 ```
 

@@ -24,7 +24,7 @@ const App = $.widget(() => ({
     store: { 
         count$: $.signal(0)
     },
-    builder({store}) {
+    layout({store}) {
         $('p', () => $`Count is ${store.count$}`)
         $(AddCountButton, {increase: 2})
     }
@@ -34,7 +34,7 @@ const App = $.widget(() => ({
 const AddCountButton = $.widget(
     (props: {increase: number}) => ({
         ancestors: [App],
-        builder({store, children}) {
+        layout({store, children}) {
             $('button', $$ => { $`Add ${props.increase}`
                 $$.on('click', () => {
                     // 可读写来自父级组件 App 的数据
@@ -57,7 +57,7 @@ $.render($(App), () => document.body)
 type 组件初始化函数 = {
     ancestors?: 父级组件数组,
     store?: 组件数据仓库,
-    builder: 组件模板函数
+    layout: 组件模板函数
 }
 ```
 #### 父级组件构造器数组

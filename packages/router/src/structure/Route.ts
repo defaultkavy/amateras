@@ -1,6 +1,6 @@
 import { isFunction, isUndefined } from "@amateras/utils";
 import type { Widget } from "@amateras/widget/structure/Widget";
-import type { AliasRequired, AsyncWidget, PageBuilder, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
+import type { AliasRequired, AsyncWidget, PageLayout, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
 import type { Page } from "./Page";
 import type { RouteSlot } from "./RouteSlot";
 
@@ -103,8 +103,8 @@ export interface Route<ParentPath extends RoutePath = any, Path extends RoutePat
 
     route<
         _Path extends RoutePath,
-        Builder extends PageBuilder<PathConcat<ParentPath, Path, _Path>>
-    >(path: _Path, builder: Builder, handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): void
+        Layout extends PageLayout<PathConcat<ParentPath, Path, _Path>>
+    >(path: _Path, layout: Layout, handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): void
 
     group<
         _Path extends RoutePath

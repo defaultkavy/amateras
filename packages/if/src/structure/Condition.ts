@@ -1,11 +1,11 @@
 import { ProxyProto } from "@amateras/core/structure/ProxyProto";
-import { _instanceof, forEach } from "@amateras/utils";
+import { forEach } from "@amateras/utils";
 import type { StatementProto } from "./Statement";
 
 export class Condition extends ProxyProto {
     statements = new Set<StatementProto>();
     declare protos: Set<StatementProto>;
-    declare builder: null;
+    declare layout: null;
 
     build() {
         // run base build method with empty protos

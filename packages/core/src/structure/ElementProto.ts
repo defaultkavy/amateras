@@ -1,16 +1,16 @@
-import { map, forEach, _null, _Object_entries, isUndefined } from "@amateras/utils";
+import { _Object_entries, forEach, isUndefined, map } from "@amateras/utils";
 import { NodeProto } from "./NodeProto";
 
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
 
-export type ElementProtoBuilder<P extends ElementProto> = (proto: P) => void;
+export type ElementProtoLayout<P extends ElementProto> = (proto: P) => void;
 
 export class ElementProto<H extends HTMLElement = any> extends NodeProto<H> {
     name: string;
     attr = new Map<string, string>();
-    declare builder: ElementProtoBuilder<this> | null;
-    constructor(tagname: string, attrObj: Partial<$.AttrMap> | null, builder: ElementProtoBuilder<ElementProto<H>> | null) {
-        super(() => builder?.(this));
+    declare layout: ElementProtoLayout<this> | null;
+    constructor(tagname: string, attrObj: Partial<$.AttrMap> | null, layout: ElementProtoLayout<ElementProto<H>> | null) {
+        super(() => layout?.(this));
         this.name = tagname;
         if (attrObj) this.attrProcess(attrObj);
     }

@@ -2,21 +2,24 @@ import { symbol_ProtoType } from "#lib/symbols";
 import { _null, forEach, map } from "@amateras/utils";
 import { GlobalState } from "./GlobalState";
 
-export type ProtoBuilder = (...args: any[]) => void;
+export type ProtoLayout = (...args: any[]) => void;
 
 export abstract class Proto {
     static proto: Proto | null = _null; 
     static [symbol_ProtoType] = 'Proto';
     protos = new Set<Proto>();
     disposers = new Set<() => void>();
-    builder: ProtoBuilder | null;
+    layout: ProtoLayout | null;
     #parent: Proto | null = _null;
     global = new GlobalState(this);
+    constructor(layout?: ProtoLayout) {
+        this.layout = layout ?? _null;
     }
 
     set parent(proto: Proto | null) { 
         this.#parent?.protos.delete(this);
         this.#parent = proto;
+        if (proto) this.global = proto.global;
         proto?.protos.add(this);
     }
 
@@ -30,7 +33,7 @@ export abstract class Proto {
 
     build(clear = true): this {
         if (clear) this.clear(true);
-        $.context(Proto, this, () => this.builder?.());
+        $.context(Proto, this, () => this.layout?.());
         forEach(this.protos, proto => {
             proto.build()
         });

@@ -1,7 +1,7 @@
 import { symbol_ProtoType } from "@amateras/core/lib/symbols";
 import { Proto } from "@amateras/core/structure/Proto";
 import { _Object_assign, forEach } from "@amateras/utils";
-import type { WidgetChildrenBuilder, WidgetInit } from "..";
+import type { WidgetChildrenLayout, WidgetInit } from "..";
 
 export const WidgetConstructor = <$$ extends Proto, Props, Store>
 (init: (props: Props) => WidgetInit) => {
@@ -12,11 +12,11 @@ export const WidgetConstructor = <$$ extends Proto, Props, Store>
         static [symbol_ProtoType] = 'Widget';
         static stores = stores;
         
-        constructor(...args: Props extends unknown ? [] : [Props, WidgetChildrenBuilder<$$>]) {
+        constructor(...args: Props extends unknown ? [] : [Props, WidgetChildrenLayout<$$>]) {
             super(() => {
-                let props = args[0] as Props;
+                let props = args[0] ?? {};
                 let children = args[1];
-                let {store, builder, ancestors} = init(props);
+                let {store, layout, ancestors} = init(props as Props);
                 if (!store) store = {};
                 if (ancestors) forEach(ancestors, ancestor => {
                     let ancestorProto = this.findAbove(proto => proto.constructor === ancestor);
@@ -26,7 +26,7 @@ export const WidgetConstructor = <$$ extends Proto, Props, Store>
                     }
                 });
                 stores.set(this, store);
-                builder({store, children: () => children?.(Proto.proto as $$)});
+                layout({store, children: () => children?.(Proto.proto as $$)});
             });
         }
     }

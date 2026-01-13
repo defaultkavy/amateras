@@ -1,8 +1,8 @@
-import "@amateras/core"
-import { _Array_from, _instanceof, _Object_assign } from "@amateras/utils"
-import { I18n } from "#structure/I18n"
+import { I18n } from "#structure/I18n";
 import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
 import { I18nTranslation as _I18nTranslation, I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
+import "@amateras/core";
+import { _instanceof, _Object_assign } from "@amateras/utils";
 
 declare global {
     export namespace $ {
@@ -93,7 +93,7 @@ type FindParam<T extends string> =
     T extends `${string}$${infer Param}$${infer Rest}`
     ?   Param extends `${string}${' '}${string}`
         ?   Prettify<{} & FindParam<Rest>>
-        :   Prettify<Record<Param, $.Builder> & FindParam<Rest>>
+        :   Prettify<Record<Param, $.Layout> & FindParam<Rest>>
     :   {}
 
 type FindTranslationByKey<K extends string, T extends I18nDictionaryContext> = 

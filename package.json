@@ -43,6 +43,7 @@
     "./css/*": "./packages/css/src/ext/*.ts",
     "./router": "./packages/router/src/index.ts",
     "./prefetch": "./packages/prefetch/src/index.ts",
+    "./meta": "./packages/meta/src/index.ts",
     "./i18n": "./packages/i18n/src/index.ts",
     "./idb": "./packages/idb/src/index.ts",
     "./idb/core": "./packages/idb/src/core.ts",

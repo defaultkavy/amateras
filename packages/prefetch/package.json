@@ -1,5 +1,5 @@
 {
-    "name": "@amateras/fetch",
+    "name": "@amateras/prefetch",
     "peerDependencies": {
       "@amateras/core": "workspace:*",
       "@amateras/utils": "workspace:*"

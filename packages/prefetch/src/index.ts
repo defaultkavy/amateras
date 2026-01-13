@@ -7,12 +7,12 @@ declare global {
     export namespace $ {
         export function fetch<T = any>(url: string | URL, options?: RequestInit & FetchOptions<T>): Promise<T>
     }
-    export var hydrate: {[key: string]: { expired: number, data: any }}
+    export var prefetch: {[key: string]: { expired: number, data: any }}
 }
 
 declare module "@amateras/core/structure/GlobalState" {
     export interface GlobalState {
-        hydrate: {
+        prefetch: {
             fetches: Promise<any>[],
             caches: {[key: string]: { expired: number, data: any }}
         }
@@ -25,23 +25,23 @@ export type FetchOptions<T> = {
 }
 
 _Object_assign(GlobalState.prototype, {
-    hydrate: {
+    prefetch: {
         fetches: [],
         caches: {}
     }
 })
 
-if (!globalThis.hydrate) globalThis.hydrate = {}
+if (!globalThis.prefetch) globalThis.prefetch = {}
 
 _Object_assign($, {
-    // 将资料注册到原型全局变量中：global.hydrate
-    // 保证每次全局渲染都在抓取完毕之后：将 Promise 添加到 global.hydrate.fetches 让根原型能确保所有 fetch 运行结束
-    // 将已抓取的资料发送到客户端：从 record 函数回传的资料将会被记录在 global.hydrate.caches 当中，并且以抓取 URL 作为索引。
+    // 将资料注册到原型全局变量中：global.prefetch
+    // 保证每次全局渲染都在抓取完毕之后：将 Promise 添加到 global.prefetch.fetches 让根原型能确保所有 fetch 运行结束
+    // 将已抓取的资料发送到客户端：从 record 函数回传的资料将会被记录在 global.prefetch.caches 当中，并且以抓取 URL 作为索引。
     // 客户端不会用到过时的资料：每个发送到客户端的资料缓存都附上了过期时间
     async fetch<T>(url: string | URL, options?: RequestInit & FetchOptions<T>) {
         url = toURL(url);
         let proto = Proto.proto;
-        let cache = onclient() ? hydrate[url.href] : _null;
+        let cache = onclient() ? prefetch[url.href] : _null;
         let then = options?.then;
         let request = new Promise(async (resolve) => {
             if (cache && Date.now() < cache.expired) {
@@ -53,12 +53,12 @@ _Object_assign($, {
             let record = options?.record;
             if (record) {
                 const result = isAsyncFunction(record) ? await record(response) : record(response);
-                if (onserver() && proto) proto.global.hydrate.caches[url.href] = { data: result, expired: Date.now() + 30_000 };
+                if (onserver() && proto) proto.global.prefetch.caches[url.href] = { data: result, expired: Date.now() + 30_000 };
                 then?.(result);
                 resolve(result);
             }
         })
-        if (onserver()) proto?.global.hydrate.fetches.push(request)
+        if (onserver()) proto?.global.prefetch.fetches.push(request)
         return request
     }
 })

@@ -1,3 +1,4 @@
+import { onclient } from '@amateras/core/env';
 import '../global';
 
 // Value
@@ -105,3 +106,10 @@ export const trycatch = <D>(callback: () => D): Result<D, Error> => {
 }
 
 export const uppercase = (str: string, start?: number, end?: number) => `${slice(str, 0, start)}${slice(str, start, end).toUpperCase()}${end ? slice(str, end) : ''}`
+const _URL = URL;
+export const toURL = (path: string | URL) => {
+    if (_instanceof(path, _URL)) return path;
+    if (startsWith(path, 'http')) return new _URL(path);
+    if (onclient()) return new _URL(startsWith(path, origin) ? path : origin+path);
+    else return new _URL('https://localhost' + path)
+}

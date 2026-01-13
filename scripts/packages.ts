@@ -39,5 +39,11 @@ export const packages: Package[] = [
         name: "amateras/markdown",
         description: "Markdown 转换 HTML 模块",
         codeInsert: 'import { Markdown } from "amateras/markdown"; new Markdown();'
+    }, {
+        name: "amateras/prefetch",
+        description: "SSR 数据预取"
+    }, {
+        name: "amateras/meta",
+        description: "SSR 页面 `meta` 标签管理"
     }
 ]

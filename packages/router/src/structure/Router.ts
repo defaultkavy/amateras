@@ -27,17 +27,16 @@ const scrollRecord = (e?: Event) => {
     storage?.setItem(SCROLL_KEY, _JSON_stringify(data));
 }
 
-export class Router extends Proto {
+export class RouterProto extends Proto {
     direction: RouterDicrection = FORWARD;
     prev: URL | null = _null;
     url: URL | null = onclient() ? toURL(location.href) : _null;
     routes = new Map<string, Route>();
     slot = new RouteSlot();
-    title: string | null = _null;
-    static routers = new Set<Router>();
+    static routers = new Set<RouterProto>();
     constructor() {
         super(() => $(this.slot));
-        if (onclient()) Router.routers.add(this);
+        if (onclient()) RouterProto.routers.add(this);
     }
 
     build() {
@@ -66,13 +65,13 @@ export class Router extends Proto {
             if (await route.resolve(url.pathname, this.slot, {})) break;
         }
         if (onclient()) {
-            let { x, y } = Router.scroll ?? {x: 0, y: 0};
+            let { x, y } = RouterProto.scroll ?? {x: 0, y: 0};
             scrollTo(x, y);
         }
     }
 
     static open(path: string, target?: string) {
-        Router.state(path, PUSH, target);
+        RouterProto.state(path, PUSH, target);
     }
 
     static forward() {
@@ -84,7 +83,7 @@ export class Router extends Proto {
     }
 
     static replace(path: string) {
-        Router.state(path, REPLACE)
+        RouterProto.state(path, REPLACE)
     }
 
     static get scroll(): ScrollData[number] {
@@ -111,7 +110,7 @@ export class Router extends Proto {
 }
 
 
-export interface Router {
+export interface RouterProto {
     route<_Path extends RoutePath, Props>(
         path: ValidatePath<_Path, Props, _Path>,
         widget: Widget<any, Props>,

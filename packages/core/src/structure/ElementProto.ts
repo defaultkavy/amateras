@@ -3,13 +3,11 @@ import { NodeProto } from "./NodeProto";
 
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
 
-export type ElementProtoLayout<P extends ElementProto> = (proto: P) => void;
-
-export class ElementProto<H extends HTMLElement = any> extends NodeProto<H> {
+export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto<H> {
     name: string;
     attr = new Map<string, string>();
-    declare layout: ElementProtoLayout<this> | null;
-    constructor(tagname: string, attrObj: Partial<$.AttrMap> | null, layout: ElementProtoLayout<ElementProto<H>> | null) {
+    declare layout: $.Layout | null;
+    constructor(tagname: string, attrObj: $.Props | null, layout?: $.Layout | null) {
         super(() => layout?.(this));
         this.name = tagname;
         if (attrObj) this.attrProcess(attrObj);
@@ -44,7 +42,7 @@ export class ElementProto<H extends HTMLElement = any> extends NodeProto<H> {
     private attrProcess(attrObj: Partial<$.AttrMap>) {
         forEach(_Object_entries(attrObj), ([key, value]) => {
             for (let process of $.process.attr) {
-                let result = process(key, value, this);
+                let result = process(key, value, this as any);
                 if (!isUndefined(result)) return;
             }
             this.attr.set(key, value as string);

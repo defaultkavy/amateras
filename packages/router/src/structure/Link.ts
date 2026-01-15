@@ -1,7 +1,7 @@
-import { ElementProto, type ElementProtoLayout } from "@amateras/core/structure/ElementProto";
+import { ElementProto } from "@amateras/core/structure/ElementProto";
 
 export class Link extends ElementProto<HTMLAnchorElement> {
-    constructor(attr: Partial<$.AttrMap> | null, layout: ElementProtoLayout<ElementProto<HTMLAnchorElement>> | null) {
+    constructor(attr: $.Props | null, layout: $.Layout<ElementProto<HTMLAnchorElement>> | null) {
         super('a', attr, layout);
         this.on('click', e => {
             if (e.shiftKey || e.ctrlKey) return;

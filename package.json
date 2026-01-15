@@ -32,7 +32,6 @@
     "./core": "./packages/core/src/index.ts",
     "./css/*": "./packages/css/src/ext/*.ts",
     "./markdown/syntax/*": "./packages/markdown/src/syntax/*.ts",
-    "./ui/*": "./packages/ui/*.ts",
     "./*": "./packages/*/src/index.ts"
   },
   "dependencies": {

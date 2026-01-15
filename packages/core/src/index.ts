@@ -131,3 +131,10 @@ export namespace $ {
 export type $ = typeof $;
 
 globalThis.$ = $;
+
+export * from "#structure/ElementProto";
+export * from "#structure/GlobalState";
+export * from "#structure/NodeProto";
+export * from "#structure/Proto";
+export * from "#structure/ProxyProto";
+export * from "#structure/TextProto";

@@ -11,3 +11,5 @@ $.process.craft.add((value, list, layout) => {
         return forProto;
     }
 })
+
+export * from "#structure/For";

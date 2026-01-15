@@ -24,32 +24,16 @@
       "node": "./packages/core/src/env.node.ts",
       "default": "./packages/core/src/env.browser.ts"
     },
-    "./node/*": "./packages/core/src/node/*.ts",
-    "./lib/*": "./packages/core/src/lib/*.ts",
-    "./structure/*": "./packages/core/src/structure/*.ts",
-    "./core": "./packages/core/src/index.ts",
     "./utils": {
       "browser": "./packages/utils/src/index.browser.ts",
       "bun": "./packages/utils/src/index.bun.ts",
       "default": "./packages/utils/src/index.browser.ts"
     },
-    "./widget": "./packages/widget/src/index.ts",
-    "./signal": "./packages/signal/src/index.ts",
-    "./for": "./packages/for/src/index.ts",
-    "./if": "./packages/if/src/index.ts",
-    "./match": "./packages/match/src/index.ts",
-    "./hmr": "./packages/hmr/src/index.ts",
-    "./css": "./packages/css/src/index.ts",
+    "./core": "./packages/core/src/index.ts",
     "./css/*": "./packages/css/src/ext/*.ts",
-    "./router": "./packages/router/src/index.ts",
-    "./prefetch": "./packages/prefetch/src/index.ts",
-    "./meta": "./packages/meta/src/index.ts",
-    "./i18n": "./packages/i18n/src/index.ts",
-    "./idb": "./packages/idb/src/index.ts",
-    "./idb/core": "./packages/idb/src/core.ts",
-    "./markdown": "./packages/markdown/src/index.ts",
     "./markdown/syntax/*": "./packages/markdown/src/syntax/*.ts",
-    "./ui/*": "./packages/ui/*.ts"
+    "./ui/*": "./packages/ui/*.ts",
+    "./*": "./packages/*/src/index.ts"
   },
   "dependencies": {
     "@amateras/core": "workspace:*"

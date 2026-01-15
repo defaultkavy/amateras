@@ -82,4 +82,10 @@ $.process.craft.add((value) => {
     }
 })
 
+export * from "#structure/Link";
+export * from "#structure/Page";
+export * from "#structure/Route";
+export * from "#structure/RouteGroup";
+export * from "#structure/RouteNode";
 export * from "#structure/Router";
+export * from "#structure/RouteSlot";

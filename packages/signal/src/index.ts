@@ -2,7 +2,7 @@ import { track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
 import { Proto } from "@amateras/core/structure/Proto";
 import { TextProto } from "@amateras/core/structure/TextProto";
-import { _instanceof, _JSON_stringify, _Object_assign, forEach, _null, _Object_defineProperty, _Object_entries, _Promise, equal, isBoolean } from "@amateras/utils";
+import { _instanceof, _Object_assign, equal, forEach, isBoolean } from "@amateras/utils";
 
 declare global {
     export function $<T>(signal: Signal<T>): Signal<T>;
@@ -93,3 +93,5 @@ $.process.attr.add((name, signal, proto) => {
         return true;
     }
 })
+
+export * from "#structure/Signal";

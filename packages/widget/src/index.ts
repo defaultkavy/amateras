@@ -1,9 +1,10 @@
+import type { ElementProto } from "@amateras/core/structure/ElementProto";
 import { Proto } from "@amateras/core/structure/Proto";
 import { _Object_assign } from "@amateras/utils";
 import { WidgetConstructor, type Widget } from "./structure/Widget";
 
-export type WidgetChildrenLayout<$$ extends Proto> = (proto: $$) => void;
-export type WidgetConstructLayout<Store> = ($$: {store: Store, children: () => void}) => void;
+export type WidgetChildrenLayout = (proto: ElementProto | undefined) => void;
+export type WidgetConstructLayout<Store> = ($$: {store: Store, children: (proto?: ElementProto) => void}) => void;
 
 export type WidgetInit<Store = any, Ancestors = Widget[], ParentStore = any> = 
     | {
@@ -43,8 +44,8 @@ declare global {
         widget: Widget<$$, Props>,
             ...args: 
                 RequiredKeys<Props> extends never
-                ?   [props?: $.Props<Props>, children?: WidgetChildrenLayout<$$>] 
-                :   [props: $.Props<Props>, children?: WidgetChildrenLayout<$$>]
+                ?   [props?: $.Props<Props>, children?: WidgetChildrenLayout] | [children?: WidgetChildrenLayout] 
+                :   [props: $.Props<Props>, children?: WidgetChildrenLayout]
         ): Proto;
 
     export namespace $ {
@@ -52,8 +53,8 @@ declare global {
             widget: Widget<$$, Props>,
             ...args: 
                 RequiredKeys<Props> extends never
-                ?   [props?: $.Props<Props>, children?: WidgetChildrenLayout<$$>] 
-                :   [props: $.Props<Props>, children?: WidgetChildrenLayout<$$>]
+                ?   [props?: $.Props<Props>, children?: WidgetChildrenLayout] 
+                :   [props: $.Props<Props>, children?: WidgetChildrenLayout]
         ): Proto;
 
         export function widget<$$ extends Proto, Props extends $.Props, Store, Ancestors, ParentStore extends MergeAncestorStore<Ancestors extends any[] ? Ancestors : []>>(

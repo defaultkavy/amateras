@@ -2,7 +2,7 @@ import { cssGlobalRuleSet } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { camelCaseToDash, generateId } from "#lib/utils";
 import { $CSSProperty } from "#structure/$CSSProperty";
-import { _instanceof, _Object_assign, _Object_entries, _undefined, forEach, isString, isUndefined } from "@amateras/utils";
+import { _Object_assign, _Object_entries, forEach, isString, isUndefined } from "@amateras/utils";
 
 declare global {
     export namespace $ {
@@ -62,3 +62,5 @@ _Object_assign($.css, {
         }
     }
 })
+
+export * from "#structure/$CSSProperty";

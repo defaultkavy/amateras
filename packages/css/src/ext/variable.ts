@@ -1,6 +1,6 @@
+import { $CSSVariable } from "#structure/$CSSVariable";
 import { _Object_assign, _Object_entries, _Object_fromEntries, isObject, map } from "@amateras/utils";
 import { camelCaseToDash, generateId } from "../lib/utils";
-import { $CSSVariable } from "#structure/$CSSVariable";
 
 declare global {
     export namespace $ {
@@ -45,3 +45,5 @@ _Object_assign($.css, {
         }
     }
 })
+
+export * from "#structure/$CSSVariable";

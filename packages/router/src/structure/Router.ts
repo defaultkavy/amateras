@@ -39,7 +39,7 @@ export class RouterProto extends Proto {
         if (onclient()) RouterProto.routers.add(this);
     }
 
-    build() {
+    override build() {
         if (onclient()) {
             this.resolve(location.href);
             const resolve = () => {

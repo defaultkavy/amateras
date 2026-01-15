@@ -22,7 +22,7 @@ export class ElementProto<H extends HTMLElement = any> extends NodeProto<H> {
         });
     }
 
-    toString(): string {
+    override toString(): string {
         let tagname = this.name;
         let childrenHTML = map(this.protos, proto => `${proto}`).join('');
         let attr = map(this.attr, ([key, value]) => value.length ? `${key}="${value}"` : key);
@@ -31,7 +31,7 @@ export class ElementProto<H extends HTMLElement = any> extends NodeProto<H> {
         return `<${tagname}${attrText}>${childrenHTML}</${tagname}>`;
     }
 
-    toDOM(): H[] {
+    override toDOM(): H[] {
         if (this.node) return [this.node];
         let element = document.createElement(this.name) as H;
         this.node = element;

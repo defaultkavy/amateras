@@ -32,7 +32,7 @@ export class For<T extends object = object> extends ProxyProto {
         this.disposers.add(() => this.list$.unsubscribe(update));
     }
 
-    build() {
+    override build() {
         this.#itemProtoMap = new WeakMap();
         this.run();
         forEach(this.protos, itemProto => itemProto.build());
@@ -57,7 +57,7 @@ export class For<T extends object = object> extends ProxyProto {
         return { n: newItemList, d: oldItemList }
     }
 
-    removeNode(): void {
+    override removeNode(): void {
         this.node?.remove();
         forEach(this.protos, proto => proto.removeNode())
     }

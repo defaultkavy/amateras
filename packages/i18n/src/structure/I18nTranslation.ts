@@ -14,7 +14,7 @@ export class I18nTranslation extends ProxyProto{
         this.i18n.translations.add(this);
     }
     
-    build(): this {
+    override build(): this {
         this.update();
         return this;
     }

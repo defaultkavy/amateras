@@ -12,7 +12,7 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
         this.modifiers.add(callback);
     }
 
-    removeNode(): void {
+    override removeNode(): void {
         this.node?.remove();
     }
 }

@@ -7,7 +7,7 @@ export class Condition extends ProxyProto {
     declare protos: Set<StatementProto>;
     declare layout: null;
 
-    build() {
+    override build() {
         // run base build method with empty protos
         super.build();
         // set condition matched proto

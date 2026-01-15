@@ -18,7 +18,7 @@ export class Match<T = any> extends ProxyProto {
         this.exp$ = expression;
     }
 
-    build(): this {
+    override build(): this {
         super.build();
         this.validate();
         // update function for Signal subscribe

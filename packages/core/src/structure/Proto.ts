@@ -31,8 +31,8 @@ export abstract class Proto {
         return this.findAbove(proto => !proto.parent)
     }
 
-    build(clear = true): this {
-        if (clear) this.clear(true);
+    build(): this {
+        this.clear(true);
         $.context(Proto, this, () => this.layout?.());
         forEach(this.protos, proto => {
             proto.build()

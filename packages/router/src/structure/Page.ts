@@ -18,7 +18,7 @@ export class Page extends Proto {
         this.route = route;
     }
 
-    build() {
+    override build() {
         if (!this.builded) this.builded = true;
         return super.build();
     }

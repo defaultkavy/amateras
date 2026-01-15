@@ -16,26 +16,18 @@ export class RouteNode extends Route {
     }
 
     async resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean> {
-        let cachedPage = this.pages.get(path);
-        if (cachedPage) {
-            slot.render(cachedPage);
-            return true;
-        };
-
         let result = this.routing(path);
         if (!result) return false;
         let [passPath, selfParams] = result;
         params = { ...params, ...selfParams };
         let page = await this.usePage(passPath, params, slot);
-        let restPath = passPath === '/' ? path : path.replace(passPath, '');
-        if (restPath) {
-            for (let [_name, route] of this.routes) {
-                let result = await route.resolve(restPath, page.slot, params)
-                if (result) return true;
-            }
-            return false;
+        let restPath = path.replace(passPath, '');
+        for (let [_name, route] of this.routes) {
+            let result = await route.resolve(restPath || '/', page.slot, params)
+            if (result) return true;
         }
-        return true;
+        if (!restPath) return true;
+        return false;
     }
 
     async usePage(path: string, params: Record<string, string>, slot: RouteSlot) {
@@ -45,11 +37,11 @@ export class RouteNode extends Route {
             let _layout;
             if (isArray(layout)) {
                 let widget = await layout[0]().then(mod => mod.default);
-                _layout = () => $(widget, params);
+                _layout = () => $(widget, params, () => $(page!.slot));
             } else {
                 //@ts-ignore
                 _layout = this.#layout[symbol_ProtoType] === 'Widget' // is widget constructor
-                ?   () => $(this.#layout as Widget, params) 
+                ?   () => $(this.#layout as Widget, params, () => $(page!.slot)) 
                 :   this.#layout as PageLayout;
             }
             page = new Page(this, _layout, params);

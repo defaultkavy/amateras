@@ -3,7 +3,7 @@ import { Proto } from "@amateras/core/structure/Proto";
 import { _Object_assign, forEach } from "@amateras/utils";
 import type { WidgetChildrenLayout, WidgetInit } from "..";
 
-export const WidgetConstructor = <$$ extends Proto, Props, Store>
+export const WidgetConstructor = <$$ extends Constructor | undefined, Props, Store>
 (init: (props: Props) => WidgetInit) => {
     let stores = new WeakMap<Proto, Store>();
     return class extends Proto {
@@ -26,15 +26,17 @@ export const WidgetConstructor = <$$ extends Proto, Props, Store>
                     }
                 });
                 stores.set(this, store);
-                layout({store, children: () => children?.(Proto.proto as $$)});
+                //@ts-ignore
+                layout({store, children: (proto) => children?.(proto)});
             });
         }
     }
 }
 
-export interface Widget<$$ extends Proto = any, Props = any, Store = any> {
+export interface Widget<$$ extends Constructor | undefined = any, Props = any, Store = any> {
     new(...args: Props extends unknown ? [] : [Props]): Proto;
     props: Props;
     store: Store;
     stores: WeakMap<Proto, Store>
+    layout: ($$: $$) => void
 }

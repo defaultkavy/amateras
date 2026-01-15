@@ -4,7 +4,7 @@ declare global {
     type OrMatrix<T> = T | OrMatrix<T>[];
     type OrPromise<T> = T | Promise<T>;
     type OrNullish<T> = T | Nullish;
-    type Constructor<T = any> = { new (...args: any[]): T }
+    type Constructor<T = any> = abstract new (...args: any[]) => T;
     type Mutable<T> = {
         -readonly [P in keyof T]: T[P];
     }
@@ -26,4 +26,14 @@ declare global {
     type RequiredKeys<T> = {
         [K in keyof T]-?: {} extends Pick<T, K> ? never : K;
     }[keyof T];
+    type RemoveIndexSignature<T> = {
+    [K in keyof T as string extends K 
+        ?   never 
+        :   number extends K 
+            ?   never 
+            :   symbol extends K 
+                ?   never 
+                :   K
+            ]: T[K];
+    };
 }

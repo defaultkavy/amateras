@@ -1,24 +1,25 @@
-import type { ElementProto } from "@amateras/core/structure/ElementProto";
 import { Proto } from "@amateras/core/structure/Proto";
 import { _Object_assign } from "@amateras/utils";
 import { WidgetConstructor, type Widget } from "./structure/Widget";
 
-export type WidgetChildrenLayout = (proto: ElementProto | undefined) => void;
-export type WidgetConstructLayout<Store> = ($$: {store: Store, children: (proto?: ElementProto) => void}) => void;
+export type WidgetChildrenLayout<$$ extends Constructor | undefined> = (proto: $$ extends Constructor ? InstanceType<$$> : undefined) => void;
+export type WidgetConstructLayout<$$ extends Constructor | undefined, Store> = (context: {store: Store, children: (...args: $$ extends Constructor ? [proto: InstanceType<$$>] : []) => void}) => void;
 
-export type WidgetInit<Store = any, Ancestors = Widget[], ParentStore = any> = 
+type WidgetInitLayoutStore<ParentStore, Store> = 
+    ParentStore extends Record<string, any>
+    ?   Store extends Record<string, any>
+        ?   Prettify<ParentStore & Store>
+        :   ParentStore
+    :   Store extends Record<string, any>
+        ?   Store
+        :   {}
+
+export type WidgetInit<$$ extends Constructor | undefined = undefined, Store = any, Ancestors = Widget[], ParentStore = any> = 
     | {
         ancestors?: Ancestors,
         store?: Store,
-        layout: WidgetConstructLayout<
-            ParentStore extends Record<string, any>
-            ?   Store extends Record<string, any>
-                ?   Prettify<ParentStore & Store>
-                :   ParentStore
-            :   Store extends Record<string, any>
-                ?   Store
-                :   {}
-        >
+        $$?: $$,
+        layout: WidgetConstructLayout<$$, WidgetInitLayoutStore<ParentStore, Store>>
     }
 
 type MergeAncestorStore<T extends any[]> = 
@@ -39,32 +40,26 @@ type MergeUnionType<U> =
         ?   I
         :   never;
 
+type WidgetCraftArguments<$$ extends Constructor | undefined, Props> = 
+        RequiredKeys<Props> extends never
+        ?   [children?: WidgetChildrenLayout<$$>] | [props?: $.Props<Props>, children?: WidgetChildrenLayout<$$>]
+        :   [props: $.Props<Props>, children?: WidgetChildrenLayout<$$>]
+
 declare global {
-    export function $<$$ extends Proto, Props = never>(
-        widget: Widget<$$, Props>,
-            ...args: 
-                RequiredKeys<Props> extends never
-                ?   [props?: $.Props<Props>, children?: WidgetChildrenLayout] | [children?: WidgetChildrenLayout] 
-                :   [props: $.Props<Props>, children?: WidgetChildrenLayout]
+    export function $<$$ extends Constructor | undefined, Props = never>(
+            widget: Widget<$$, Props>,
+            ...args: WidgetCraftArguments<$$, Props>
         ): Proto;
 
     export namespace $ {
-        export function test<$$ extends Proto, Props = never>(
-            widget: Widget<$$, Props>,
-            ...args: 
-                RequiredKeys<Props> extends never
-                ?   [props?: $.Props<Props>, children?: WidgetChildrenLayout] 
-                :   [props: $.Props<Props>, children?: WidgetChildrenLayout]
-        ): Proto;
-
-        export function widget<$$ extends Proto, Props extends $.Props, Store, Ancestors, ParentStore extends MergeAncestorStore<Ancestors extends any[] ? Ancestors : []>>(
-            init: (props: Props) => WidgetInit<Store, Ancestors, ParentStore>
+        export function widget<$$ extends Constructor | undefined = undefined, Props extends $.Props = {}, Store = any, Ancestors = any, ParentStore extends MergeAncestorStore<Ancestors extends any[] ? Ancestors : []> = any>(
+            init: (props: Props) => WidgetInit<$$, Store, Ancestors, ParentStore>
         ): Widget<$$, Props, Store>;
     }
 }
 
 _Object_assign($, {
-    widget<$$ extends Proto, Props, Store>(arg1: any) {
+    widget(arg1: any) {
         let Widget = WidgetConstructor(arg1);
         return Widget;
     }

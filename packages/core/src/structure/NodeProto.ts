@@ -8,7 +8,7 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
         super(layout);
     }
 
-    dom(callback: (node: N) => void) {
+    ondom(callback: (node: N) => void) {
         this.modifiers.add(callback);
     }
 

@@ -28,7 +28,7 @@ export class Slideshow extends ElementProto {
         this.interval = interval ?? 5;
         this.autoplay = autoplay ?? false;
         this.disposers.add(() => this.pause());
-        this.dom(() => {
+        this.ondom(() => {
             if (this.autoplay) this.play();
         })
     }

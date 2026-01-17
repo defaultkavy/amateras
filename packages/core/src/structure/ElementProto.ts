@@ -14,7 +14,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void) {
-        this.dom(node => {
+        this.ondom(node => {
             node.addEventListener(type, listener as any)
             this.disposers.add(() => node.removeEventListener(type, listener as any))
         });

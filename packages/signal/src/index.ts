@@ -45,7 +45,7 @@ _Object_assign($, {
 let toTextProto = (signal: Signal) => {
     if (_instanceof(signal, Signal)) {
         let proto = new TextProto(`${signal}`);
-        proto.dom(node => {
+        proto.ondom(node => {
             let fn = (value: any) => node.textContent = `${value}`;
             signal.subscribe(fn);
             proto.disposers.add(() => signal.unsubscribe(fn));
@@ -79,7 +79,7 @@ $.process.attr.add((name, signal, proto) => {
             }
         } 
         else
-            proto.dom(node => {
+            proto.ondom(node => {
                 let setNodeAttr = () => setAttr(name, node, signal);
                 signal.subscribe(setNodeAttr);
                 setNodeAttr();

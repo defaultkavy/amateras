@@ -8,12 +8,12 @@ import 'amateras';
 import 'amateras/widget';
 
 // 定义组件构造器
-const App = $.widget((props: {name: string}) => [
+const App = $.widget((props: {name: string}) => ({
     // 组建的模板函数
-    function () {
+    layout() {
         $('h1', () => `Hello ${props.name}!`)
     }
-])
+}))
 
 // 创建组件
 const $app = $(App, {name: 'Amateras'});

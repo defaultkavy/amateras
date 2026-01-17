@@ -1,11 +1,10 @@
 import { onclient } from "#env";
 import { forEach } from "@amateras/utils";
 import { NodeProto } from "./NodeProto";
-import type { ProtoLayout } from "./Proto";
 
 export class ProxyProto extends NodeProto<Text> {
     declare node: Text | null
-    constructor(layout?: ProtoLayout) {
+    constructor(layout?: $.Layout) {
         super(layout);
         if (onclient()) this.node = new Text();
     }

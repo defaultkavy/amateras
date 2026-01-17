@@ -10,12 +10,14 @@ export type ForList<T extends object = object> = Signal<T[]> | Signal<Set<T>>
 
 export class For<T extends object = object> extends ProxyProto {
     static [symbol_Statement] = true;
+    #layout: ForLayout<T>;
     list$: ForList<T>;
     #itemProtoMap = new WeakMap<T, ForItem>();
     declare protos: Set<ForItem>;
     constructor(list: ForList<T>, layout: ForLayout<T>) {
-        super(layout);
+        super();
         this.list$ = list;
+        this.#layout = layout;
 
         let update = () => {
             let {n: newItemList, d: deleteItemList} = this.run();
@@ -50,7 +52,7 @@ export class For<T extends object = object> extends ProxyProto {
                 itemProto = new ForItem();
                 newItemList.push(itemProto);
                 this.#itemProtoMap.set(item, itemProto);
-                itemProto.layout = () => this.layout(item, i);
+                itemProto.layout = () => this.#layout(item, i);
             }
             else if (oldItemList.has(itemProto)) oldItemList.delete(itemProto);
             itemProto.parent = this;

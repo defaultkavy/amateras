@@ -10,7 +10,7 @@ export abstract class Proto {
     static [symbol_Statement] = false;
     protos = new Set<Proto>();
     disposers = new Set<() => void>();
-    layout: ProtoLayout | null;
+    layout: $.Layout | null;
     #parent: Proto | null = _null;
     global = new GlobalState(this);
     /**
@@ -18,7 +18,7 @@ export abstract class Proto {
      * @deprecated
      */
     declare __child__: Proto;
-    constructor(layout?: ProtoLayout) {
+    constructor(layout?: $.Layout) {
         this.layout = layout ?? _null;
     }
 

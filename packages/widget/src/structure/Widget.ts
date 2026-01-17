@@ -3,7 +3,7 @@ import { Proto } from "@amateras/core/structure/Proto";
 import { _Object_assign, forEach } from "@amateras/utils";
 import type { WidgetChildrenLayout, WidgetInit } from "..";
 
-export const WidgetConstructor = <$$ extends Constructor | undefined, Props, Store>
+export const WidgetConstructor = <$$ extends Constructor | null, Props, Store>
 (init: (props: Props) => WidgetInit) => {
     let stores = new WeakMap<Proto, Store>();
     return class extends Proto {
@@ -33,7 +33,7 @@ export const WidgetConstructor = <$$ extends Constructor | undefined, Props, Sto
     }
 }
 
-export interface Widget<$$ extends Constructor | undefined = any, Props = any, Store = any> {
+export interface Widget<$$ extends Constructor | null = any, Props = any, Store = any> {
     new(...args: Props extends unknown ? [] : [Props]): Proto;
     props: Props;
     store: Store;

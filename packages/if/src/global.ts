@@ -11,5 +11,5 @@ declare global {
 
     export function $(statement: typeof _If.If, signal: Signal<any>, layout: _If.IfLayout): Condition;
     export function $(statement: typeof _ElseIf.ElseIf, signal: Signal<any>, layout: _ElseIf.ElseIfLayout): Condition;
-    export function $(statement: typeof _Else.Else, signal: Signal<any>, layout: _Else.ElseLayout): Condition;
+    export function $(statement: typeof _Else.Else, layout: _Else.ElseLayout): Condition;
 }

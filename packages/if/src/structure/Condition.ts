@@ -11,18 +11,18 @@ export class Condition extends ProxyProto {
 
     override build() {
         // run base build method with empty protos
-        super.build();
+        super.build(false);
         // set condition matched proto
-        this.validate();
+        this.validate()?.build();
         // update function for Signal subscribe
         let update = () => {
             let matchProto = this.validate();
+            if (!matchProto?.builded) matchProto?.build();
             forEach(this.statements, proto => proto !== matchProto && proto.removeNode())
             this.node?.replaceWith(...this.toDOM());
         }
         // build statements proto and subscribe expression signal
         forEach(this.statements, proto => {
-            proto.build();
             proto.exp$?.subscribe(update);
             proto.disposers.add(() => proto.exp$?.unsubscribe(update));
         })

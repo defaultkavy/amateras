@@ -46,10 +46,10 @@ export abstract class Proto {
         }).flat()
     }
 
-    build(): this {
+    build(children = true): this {
         this.clear(true);
-        $.context(Proto, this, () => this.layout?.());
-        forEach(this.protos, proto => {
+        $.context(Proto, this, () => this.layout?.(this));
+        if (children) forEach(this.protos, proto => {
             proto.build()
         });
         return this
@@ -59,8 +59,8 @@ export abstract class Proto {
         return map(this.protos, proto => `${proto}`).join('')
     }
 
-    toDOM(): Node[] {
-        return map(this.protos, proto => proto.toDOM()).flat();
+    toDOM(children = true): Node[] {
+        return children ? map(this.protos, proto => proto.toDOM(children)).flat() : [];
     }
 
     dispose() {

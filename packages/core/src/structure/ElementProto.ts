@@ -29,13 +29,13 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         return `<${tagname}${attrText}>${childrenHTML}</${tagname}>`;
     }
 
-    override toDOM(): H[] {
+    override toDOM(children = true): H[] {
         if (this.node) return [this.node];
         let element = document.createElement(this.name) as H;
         this.node = element;
         forEach(this.attr, ([key, value]) => element.setAttribute(key, value));
         forEach(this.modifiers, process => process(element));
-        element.append(...map(this.protos, proto => proto.toDOM()).flat());
+        if (children) element.append(...map(this.protos, proto => proto.toDOM(children)).flat());
         return [element];
     }
 

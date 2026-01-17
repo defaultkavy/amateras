@@ -39,6 +39,12 @@ export class Slideshow extends ElementProto {
         return this;
     }
 
+    override toDOM(children = true): HTMLElement[] {
+        super.toDOM(false);
+        if (children && this.slide) this.node?.append(...this.slide.toDOM());
+        return [this.node!]
+    }
+
     play() {
         this.timer = setInterval(() => {
             this.#passed++;

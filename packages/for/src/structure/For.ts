@@ -22,6 +22,9 @@ export class For<T extends object = object> extends ProxyProto {
         let update = () => {
             let {n: newItemList, d: deleteItemList} = this.run();
             forEach(newItemList, proto => proto.build());
+            // 如果 For node 没有 parentNode，代表 For 并不在 DOM 树中
+            // 跳过处理 DOM 的步骤
+            if (!this.node?.parentNode) return;
             forEach(deleteItemList, proto => proto.removeNode());
             let nodes = onclient() ? this.toDOM() : [];
             let prevNode: Node | undefined
@@ -54,7 +57,7 @@ export class For<T extends object = object> extends ProxyProto {
                 this.#itemProtoMap.set(item, itemProto);
                 itemProto.layout = () => this.#layout(item, i);
             }
-            else if (oldItemList.has(itemProto)) oldItemList.delete(itemProto);
+            else oldItemList.delete(itemProto);
             itemProto.parent = this;
         })
         return { n: newItemList, d: oldItemList }

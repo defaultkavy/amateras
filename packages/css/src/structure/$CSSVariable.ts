@@ -1,7 +1,5 @@
-import { _document } from "@amateras/core/env";
+import { _document, onclient } from "@amateras/core/env";
 import { $CSS } from "./$CSS";
-
-const documentElementStyle = _document.documentElement.style;
 
 export class $CSSVariable<V = string> extends $CSS {
     name: string;
@@ -13,17 +11,21 @@ export class $CSSVariable<V = string> extends $CSS {
     }
 
     set(value: string) {
-        documentElementStyle.setProperty(`${this.name}`, value);
+        if (onclient()) _document.documentElement.style.setProperty(`${this.name}`, value);
         return this;
     }
 
     reset() {
-        documentElementStyle.removeProperty(`${this.name}`);
+        if (onclient()) _document.documentElement.style.removeProperty(`${this.name}`);
         return this;
     }
 
     default(value: string | $CSSVariable) {
         return `var(${this.name}, ${value})`
+    }
+
+    declare(value?: V | $CSSVariable) {
+        return {[this.name]: `${value ?? this.value}`}
     }
 
     toString(): string {

@@ -1,9 +1,11 @@
+import { symbol_Statement } from "@amateras/core/lib/symbols";
 import { Proto } from "@amateras/core/structure/Proto";
 import { isArray } from "@amateras/utils";
 
 export type CaseLayout = () => void;
 
 export class Case extends Proto {
+    static [symbol_Statement] = true;
     condition: any[]
     constructor(condition: any, layout: CaseLayout) {
         super(layout);

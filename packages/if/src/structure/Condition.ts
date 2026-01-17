@@ -1,10 +1,12 @@
+import { symbol_Statement } from "@amateras/core/lib/symbols";
 import { ProxyProto } from "@amateras/core/structure/ProxyProto";
 import { forEach } from "@amateras/utils";
-import type { StatementProto } from "./Statement";
+import type { ConditionStatement } from "./ConditionStatement";
 
 export class Condition extends ProxyProto {
-    statements = new Set<StatementProto>();
-    declare protos: Set<StatementProto>;
+    static [symbol_Statement] = true;
+    statements = new Set<ConditionStatement>();
+    declare protos: Set<ConditionStatement>;
     declare layout: null;
 
     override build() {

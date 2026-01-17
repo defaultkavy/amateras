@@ -1,4 +1,4 @@
-import { StatementProto } from "./Statement";
+import { ConditionStatement } from "./ConditionStatement";
 
 export type IfLayout = () => void;
-export class If extends StatementProto {}
+export class If extends ConditionStatement {}

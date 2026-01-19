@@ -13,6 +13,7 @@ declare global {
         export function forward(): void;
         export function back(): void;
         export function replace(path: string): void;
+        export function scrollRestoration(): void;
 
         export function title(title: string): void;
     }

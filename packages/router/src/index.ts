@@ -61,6 +61,7 @@ _Object_assign($, {
     replace: RouterProto.replace,
     back: RouterProto.back,
     forward: RouterProto.forward,
+    scrollRestoration: RouterProto.scrollRestoration,
 
     title(title: string) {
         let parent = Proto.proto;
@@ -89,3 +90,4 @@ export * from "#structure/RouteGroup";
 export * from "#structure/RouteNode";
 export * from "#structure/Router";
 export * from "#structure/RouteSlot";
+

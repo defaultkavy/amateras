@@ -53,7 +53,7 @@ _Object_assign($, {
         // The CSS root object properties value should be $CSSObject,
         // just create rule from for each propperty.
         return map(_Object_entries(cssRootMap), ([key, value]) => {
-            let rule = createRule(() => key, value);
+            let rule = createRule(() => key, {...value, __selector__: key});
             cssGlobalRuleSet.add(rule);
             return rule;
         })
@@ -105,3 +105,4 @@ $.process.attr.add((key, value, proto) => {
 
 export * from "#structure/$CSS";
 export * from "#structure/$CSSRule";
+

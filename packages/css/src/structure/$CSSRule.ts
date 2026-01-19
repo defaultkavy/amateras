@@ -1,14 +1,17 @@
-import { map, _Object_entries, isString, _instanceof, isNumber } from "@amateras/utils";
+import { _instanceof, _null, _Object_entries, isNumber, isString, map } from "@amateras/utils";
 import { $CSS } from "./$CSS";
 
 export class $CSSRule extends $CSS {
     declarations = new Map<string, string>();
     rules = new Map<string, $CSSRule>();
     selector: string;
+    parent: $CSSRule | null = _null;
+    
     readonly css: $.CSSMap;
-    constructor(selector: string, cssMap: $.CSSMap) {
+    constructor(selector: string, cssMap: $.CSSMap, parent: $CSSRule | null) {
         super();
         this.selector = selector;
+        this.parent = parent;
         if (cssMap) processCSSMap(this, cssMap);
         this.css = cssMap;
     }
@@ -23,6 +26,14 @@ export class $CSSRule extends $CSS {
 const processCSSMap = (rule: $CSSRule, cssMap: $.CSSMap) => {
     for (let [key, value] of _Object_entries(cssMap)) {
         if (isString(value) || isNumber(value) || _instanceof(value, $CSS)) rule.declarations.set(key, `${value}`);
-        else rule.rules.set(key, new $CSSRule(key, value as $.CSSMap));
+        else {
+            // 兼容较旧浏览器不支持无 & 前缀的子规则
+            let selector = 
+                rule.selector.startsWith('@') // 针对 at-rule, 一般 rule 无需判断直接添加 & 前缀给子规则
+                && !rule.parent // 如果是 root rule 就不会有 parent 
+                ?   key 
+                :   `${/^[@]|&/.test(key) ? key : `& ${key}`}`;
+            rule.rules.set(selector, new $CSSRule(selector, value as $.CSSMap, rule));
+        }
     }
 }

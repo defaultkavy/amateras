@@ -1,6 +1,6 @@
 import { symbol_Statement } from "@amateras/core/lib/symbols";
 import { ProxyProto } from "@amateras/core/structure/ProxyProto";
-import { forEach } from "@amateras/utils";
+import { _null, forEach } from "@amateras/utils";
 import type { ConditionStatement } from "./ConditionStatement";
 
 export class Condition extends ProxyProto {
@@ -8,6 +8,7 @@ export class Condition extends ProxyProto {
     statements = new Set<ConditionStatement>();
     declare protos: Set<ConditionStatement>;
     declare layout: null;
+    statement: ConditionStatement | null = _null;
 
     override build() {
         // run base build method with empty protos
@@ -18,6 +19,8 @@ export class Condition extends ProxyProto {
         let update = () => {
             let matchProto = this.validate();
             if (!matchProto?.builded) matchProto?.build();
+            if (this.statement === matchProto) return;
+            this.statement = matchProto ?? _null;
             forEach(this.statements, proto => proto !== matchProto && proto.removeNode())
             this.node?.replaceWith(...this.toDOM());
         }

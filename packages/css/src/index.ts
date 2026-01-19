@@ -36,7 +36,7 @@ declare global {
 
 declare module "@amateras/core/structure/ElementProto" {
     export interface ElementProto {
-        css(cssObject: $.CSSMap | $CSSRule): this;
+        css(...cssObject: ($.CSSMap | $CSSRule)[]): this;
     }
 }
 
@@ -61,8 +61,8 @@ _Object_assign($, {
 })
 
 _Object_assign(ElementProto.prototype, {
-    css(this: ElementProto, cssMap: $.CSSMap | $CSSRule) {
-        assignCSS(this, cssMap);
+    css(this: ElementProto, ...cssMap: ($.CSSMap | $CSSRule)[]) {
+        forEach(cssMap, cmap => assignCSS(this, cmap));
         return this;
     }
 })

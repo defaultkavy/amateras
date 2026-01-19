@@ -1,4 +1,4 @@
-import { _Object_entries, forEach, isNull, isUndefined, map } from "@amateras/utils";
+import { _Array_from, _Object_entries, forEach, isNull, isUndefined, map } from "@amateras/utils";
 import { NodeProto } from "./NodeProto";
 
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
@@ -54,6 +54,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     innerHTML(html: string) {
         this.#innerHTML = html;
     }
+
     attr(): Map<string, string>;
     attr(attrName: string): string | undefined;
     attr(attrName: string, attrValue: string | null): this;
@@ -63,5 +64,22 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         if (isNull(attrValue)) this.#attr.delete(attrName!);
         else this.#attr.set(attrName!, attrValue);
         return this;
+    }
+
+    addClass(...tokens: string[]) {
+        this.token('add', 'class', ...tokens)
+        this.node?.classList.add(...tokens);
+    }
+
+    removeClass(...tokens: string[]) {
+        this.token('delete', 'class', ...tokens)
+        this.node?.classList.remove(...tokens);
+    }
+
+    private token(method: 'add' | 'delete', name: string, ...tokens: string[]) {
+        let value = this.#attr.get(name);
+        let tokenArr = new Set(value?.split(' ') ?? []);
+        forEach(tokens, t => tokenArr[method](t));
+        this.#attr.set(name, _Array_from(tokenArr).join(' '));
     }
 }

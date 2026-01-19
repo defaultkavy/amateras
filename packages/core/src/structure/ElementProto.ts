@@ -7,6 +7,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     name: string;
     attr = new Map<string, string>();
     declare layout: $.Layout | null;
+    #innerHTML = '';
     constructor(tagname: string, attrObj: $.Props | null, layout?: $.Layout | null) {
         super(() => layout?.(this));
         this.name = tagname;
@@ -22,7 +23,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
 
     override toString(): string {
         let tagname = this.name;
-        let childrenHTML = map(this.protos, proto => `${proto}`).join('');
+        let childrenHTML = this.#innerHTML || map(this.protos, proto => `${proto}`).join('');
         let attr = map(this.attr, ([key, value]) => value.length ? `${key}="${value}"` : key);
         let attrText = attr.length ? ` ${attr.join(' ')}` : '';
         if (SELF_CLOSING_TAGNAMES.includes(tagname)) return `<${tagname}${attrText} />`;
@@ -33,9 +34,10 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         if (this.node) return [this.node];
         let element = document.createElement(this.name) as H;
         this.node = element;
+        if (this.#innerHTML) this.node.innerHTML = this.#innerHTML;
+        else if (children) element.append(...map(this.protos, proto => proto.toDOM(children)).flat());
         forEach(this.attr, ([key, value]) => element.setAttribute(key, value));
         forEach(this.modifiers, process => process(element));
-        if (children) element.append(...map(this.protos, proto => proto.toDOM(children)).flat());
         return [element];
     }
 
@@ -47,5 +49,9 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
             }
             this.attr.set(key, value as string);
         })
+    }
+
+    innerHTML(html: string) {
+        this.#innerHTML = html;
     }
 }

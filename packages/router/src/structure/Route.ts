@@ -1,4 +1,4 @@
-import { isFunction, isUndefined } from "@amateras/utils";
+import { _undefined, isFunction, isUndefined } from "@amateras/utils";
 import type { Widget } from "@amateras/widget/structure/Widget";
 import type { AliasRequired, AsyncWidget, PageLayout, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
 import type { Page } from "./Page";
@@ -8,12 +8,13 @@ import type { RouteSlot } from "./RouteSlot";
 export abstract class Route<ParentPath extends RoutePath = any, Path extends RoutePath = any, Params = any> {
     declare protos: Set<Page | Route>;
     routes = new Map<string, Route>();
-    path: PathConcat<ParentPath, Path>;
-    aliases = new Map<string, RouteParams | (() => RouteParams) | undefined>();
+    path: string;
+    paths = new Map<string, RouteParams | (() => RouteParams) | undefined>();
     declare parentPath: ParentPath;
     declare params: Params;
     constructor(path: Path) {
-        this.path = path as any;
+        this.path = path;
+        this.paths.set(path, _undefined);
     }
 
     abstract resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean>;
@@ -23,8 +24,7 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
         let params: Record<string, string> = {};
         let passPath = '';
 
-        skipPath: for (let selfPath of [this.path, ...this.aliases.keys()]) {
-            let aliasParams = this.aliases.get(selfPath);
+        skipPath: for (let [selfPath, getParams] of this.paths) {
             params = {};
             let selfSegList = selfPath.split('/');
             let segList: [string | undefined, string | undefined][] = [];
@@ -69,13 +69,13 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
                 pass();
             }
             if (!passPath) continue skipPath;
-            params = {...params, ...isFunction(aliasParams) ? aliasParams() : aliasParams}
+            params = {...params, ...isFunction(getParams) ? getParams() : getParams}
             break skipPath;
         }
-
+        
         if (!passPath) return false;
-
-        return [passPath, params] as const
+        let paramId = this.path.replaceAll(/:([^/]+)/g, (_, $1) => `${params[$1]}`);
+        return [paramId, params] as const
     }
 
     alias<
@@ -84,7 +84,7 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
         Required extends keyof _Params extends [never] ? [] : [_Params | (() => _Params)]
     >(path: _Path, ...required: Required): void;
     alias(path: string, required?: RouteParams | (() => RouteParams)) {
-        this.aliases.set(path, required)
+        this.paths.set(path, required)
     }
 }
 

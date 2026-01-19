@@ -6,8 +6,8 @@ export class Link extends ElementProto<HTMLAnchorElement> {
         this.on('click', e => {
             if (e.shiftKey || e.ctrlKey) return;
             e.preventDefault();
-            let target = this.attr.get('target')
-            let href = this.attr.get('href');
+            let target = this.attr('target');
+            let href = this.attr('href');
             if (href) {
                 if (target === '_replace') $.replace(href) 
                 else $.open(href, target)

@@ -70,9 +70,9 @@ _Object_assign(ElementProto.prototype, {
 export const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
     let rule = $.css(cssMap);
     let selector = rule.selector.slice(1);
-    const classList = proto.attr.get('class')?.split(' ')
+    const classList = proto.attr('class')?.split(' ')
     classList?.push(selector);
-    proto.attr.set('class', classList?.join(' ') ?? selector);
+    proto.attr('class', classList?.join(' ') ?? selector);
     cssRuleByProtoMap.set(proto, rule);
 }
 

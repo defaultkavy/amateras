@@ -1,11 +1,11 @@
-import { _Object_entries, forEach, isUndefined, map } from "@amateras/utils";
+import { _Object_entries, forEach, isNull, isUndefined, map } from "@amateras/utils";
 import { NodeProto } from "./NodeProto";
 
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
 
 export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto<H> {
     name: string;
-    attr = new Map<string, string>();
+    #attr = new Map<string, string>();
     declare layout: $.Layout | null;
     #innerHTML = '';
     constructor(tagname: string, attrObj: $.Props | null, layout?: $.Layout | null) {
@@ -24,7 +24,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     override toString(): string {
         let tagname = this.name;
         let childrenHTML = this.#innerHTML || map(this.protos, proto => `${proto}`).join('');
-        let attr = map(this.attr, ([key, value]) => value.length ? `${key}="${value}"` : key);
+        let attr = map(this.#attr, ([key, value]) => value.length ? `${key}="${value}"` : key);
         let attrText = attr.length ? ` ${attr.join(' ')}` : '';
         if (SELF_CLOSING_TAGNAMES.includes(tagname)) return `<${tagname}${attrText} />`;
         return `<${tagname}${attrText}>${childrenHTML}</${tagname}>`;
@@ -36,7 +36,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         this.node = element;
         if (this.#innerHTML) this.node.innerHTML = this.#innerHTML;
         else if (children) element.append(...map(this.protos, proto => proto.toDOM(children)).flat());
-        forEach(this.attr, ([key, value]) => element.setAttribute(key, value));
+        forEach(this.#attr, ([key, value]) => element.setAttribute(key, value));
         forEach(this.modifiers, process => process(element));
         return [element];
     }
@@ -47,11 +47,21 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
                 let result = process(key, value, this as any);
                 if (!isUndefined(result)) return;
             }
-            this.attr.set(key, value as string);
+            this.#attr.set(key, value as string);
         })
     }
 
     innerHTML(html: string) {
         this.#innerHTML = html;
+    }
+    attr(): Map<string, string>;
+    attr(attrName: string): string | undefined;
+    attr(attrName: string, attrValue: string | null): this;
+    attr(attrName?: string, attrValue?: string | null) {
+        if (!arguments.length) return this.#attr;
+        if (isUndefined(attrValue)) return this.#attr.get(attrName!);
+        if (isNull(attrValue)) this.#attr.delete(attrName!);
+        else this.#attr.set(attrName!, attrValue);
+        return this;
     }
 }

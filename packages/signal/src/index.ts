@@ -74,8 +74,8 @@ $.process.attr.add((name, signal, proto) => {
             if (equal(name, 'value', 'checked')) {
                 proto.on('input', e => signal.set((e.currentTarget as HTMLInputElement)[name]));
                 let value = signal.value;
-                if (isBoolean(value)) value && proto.attr.set(name, '');
-                else proto.attr.set(name, `${value}`)
+                if (isBoolean(value)) value && proto.attr(name, '');
+                else proto.attr(name, `${value}`)
             }
         } 
         else

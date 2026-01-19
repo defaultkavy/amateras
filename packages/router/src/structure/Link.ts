@@ -1,7 +1,7 @@
 import { ElementProto } from "@amateras/core/structure/ElementProto";
 
 export class Link extends ElementProto<HTMLAnchorElement> {
-    constructor(attr: $.Props | null, layout: $.Layout<ElementProto<HTMLAnchorElement>> | null) {
+    constructor(attr: $.Props | null, layout?: $.Layout<ElementProto<HTMLAnchorElement>>) {
         super('a', attr, layout);
         this.on('click', e => {
             if (e.shiftKey || e.ctrlKey) return;

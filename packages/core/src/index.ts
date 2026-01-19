@@ -8,8 +8,8 @@ import { TextProto } from './structure/TextProto';
 
 type ElementProtoArguments<C extends Constructor> = 
     RequiredKeys<RemoveIndexSignature<ConstructorParameters<C>[0]>> extends never 
-    ?   [layout: ConstructorParameters<C>[1]] | [props: ConstructorParameters<C>[0], layout: ConstructorParameters<C>[1]] 
-    :   [props: ConstructorParameters<C>[0], layout: ConstructorParameters<C>[1]] 
+    ?   [layout?: ConstructorParameters<C>[1]] | [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
+    :   [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
 
 export function $<T extends ElementProto<any>, C extends Constructor<T>, R extends InstanceType<C>>(constructor: C, ...args: ElementProtoArguments<C>): R;
 export function $(template: TemplateStringsArray, ...args: any[]): Proto[];

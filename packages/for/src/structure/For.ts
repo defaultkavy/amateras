@@ -9,7 +9,7 @@ export type ForLayout<T> = (item: T, index: number) => void;
 export type ForList<T extends object = object> = Signal<T[]> | Signal<Set<T>>
 
 export class For<T extends object = object> extends ProxyProto {
-    static [symbol_Statement] = true;
+    static override [symbol_Statement] = true;
     #layout: ForLayout<T>;
     list$: ForList<T>;
     #itemProtoMap = new WeakMap<T, ForItem>();
@@ -70,5 +70,5 @@ export class For<T extends object = object> extends ProxyProto {
 }
 
 export class ForItem extends Proto {
-    static [symbol_Statement] = true
+    static override [symbol_Statement] = true
 }

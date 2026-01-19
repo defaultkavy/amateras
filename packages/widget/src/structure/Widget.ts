@@ -9,7 +9,7 @@ export const WidgetConstructor = <$$ extends Constructor | null, Props, Store>
     return class extends Proto {
         declare static props: Props;
         declare static store: Store;
-        static [symbol_ProtoType] = 'Widget';
+        static override [symbol_ProtoType] = 'Widget';
         static stores = stores;
         
         constructor(...args: Props extends unknown ? [] : [Props, WidgetChildrenLayout<$$>]) {

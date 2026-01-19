@@ -8,7 +8,7 @@ export type MatchLayout<T> = (match: MatchCraftFunction<T>) => void;
 export type MatchCraftFunction<T> = (c: typeof Case, condition: T | T[], layout: CaseLayout) => void;
 
 export class Match<T = any> extends ProxyProto {
-    static [symbol_Statement] = true;
+    static override [symbol_Statement] = true;
     exp$: Signal<T>
     declare protos: Set<Case>;
     cases = new Set<Case>();

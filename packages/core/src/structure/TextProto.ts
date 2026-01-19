@@ -8,7 +8,7 @@ export class TextProto extends NodeProto<Text> {
         this.content = content;
     }
 
-    toString(): string {
+    override toString(): string {
         return this.content;
     }
 

@@ -9,7 +9,7 @@ export interface Router {
 
 export const RouterConstructor = (handle: RouterHandle) => {
     return class extends RouterProto {
-        static [symbol_ProtoType] = 'Router';
+        static override [symbol_ProtoType] = 'Router';
         constructor() {
             super();
             handle(this);

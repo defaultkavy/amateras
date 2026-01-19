@@ -9,11 +9,11 @@ export class ProxyProto extends NodeProto<Text> {
         if (onclient()) this.node = new Text();
     }
 
-    toDOM(): Node[] {
+    override toDOM(): Node[] {
         return [this.node!, ...super.toDOM()]
     }
 
-    removeNode(): void {
+    override removeNode(): void {
         super.removeNode();
         forEach(this.protos, proto => proto.removeNode())
     }

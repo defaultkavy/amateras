@@ -5,7 +5,7 @@ import { isArray } from "@amateras/utils";
 export type CaseLayout = () => void;
 
 export class Case extends Proto {
-    static [symbol_Statement] = true;
+    static override [symbol_Statement] = true;
     condition: any[]
     constructor(condition: any, layout: CaseLayout) {
         super(layout);

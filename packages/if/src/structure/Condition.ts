@@ -4,7 +4,7 @@ import { _null, forEach } from "@amateras/utils";
 import type { ConditionStatement } from "./ConditionStatement";
 
 export class Condition extends ProxyProto {
-    static [symbol_Statement] = true;
+    static override [symbol_Statement] = true;
     statements = new Set<ConditionStatement>();
     declare protos: Set<ConditionStatement>;
     declare layout: null;

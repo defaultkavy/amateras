@@ -45,5 +45,8 @@ export const packages: Package[] = [
     }, {
         name: "amateras/meta",
         description: "SSR 页面 `meta` 标签管理"
+    }, {
+        name: "amateras/ui",
+        description: "UI 组件模块"
     }
 ]

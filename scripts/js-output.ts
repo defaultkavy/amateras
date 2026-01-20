@@ -1,6 +1,6 @@
 import { build } from "vite";
 import { packages } from "./packages";
-const root = process.cwd() + `/size_temp`;
+const root = process.cwd() + `/js_temp`;
 const outputDir = process.cwd() + '/output'
 const indexfile = root + `/index.ts`;
 const outputFilename = 'amateras.js';
@@ -30,7 +30,7 @@ async function bundle(code: string) {
     });
 
     await Bun.$`rm -rf ${root}`;
-    await Bun.$`mv ${outputDir}/js/${outputFilename} ${process.cwd()}/../unpkg/${outputFilename}`;
+    await Bun.$`mv ${outputDir}/js/${outputFilename} ${process.cwd()}/unpkg/${outputFilename}`;
     await Bun.$`rm -rf ${outputDir}`
 
     return {moduleSize: size, gzipSize}

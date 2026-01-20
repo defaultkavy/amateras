@@ -15,19 +15,19 @@ export class RouteNode extends Route {
         this.#layout = layout;
     }
 
-    async resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean> {
+    async resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<Route[] | void> {
         let result = this.routing(path);
-        if (!result) return false;
-        let [passPath, selfParams] = result;
+        if (!result) return;
+        let [pathId, passPath, selfParams] = result;
         params = { ...params, ...selfParams };
-        let page = await this.usePage(passPath, params, slot);
+        let page = await this.usePage(pathId, params, slot);
         let restPath = path.replace(passPath, '');
         for (let [_name, route] of this.routes) {
             let result = await route.resolve(restPath || '/', page.slot, params)
-            if (result) return true;
+            if (result) return [this, ...result];
         }
-        if (!restPath) return true;
-        return false;
+        if (!restPath) return [this];
+        return;
     }
 
     async usePage(path: string, params: Record<string, string>, slot: RouteSlot) {

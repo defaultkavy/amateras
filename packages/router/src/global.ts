@@ -1,9 +1,11 @@
 import * as _Link from "#structure/Link";
+import * as _NavLink from "#structure/NavLink";
 import * as _Router from "#structure/Router";
 import type { Router, RouterHandle } from "#structure/RouterConstructor";
 
 declare global {
     export var Link: typeof _Link.Link;
+    export var NavLink: typeof _NavLink.NavLink;
     export function $(Router: Router): _Router.RouterProto;
 
     export namespace $ {

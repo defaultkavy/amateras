@@ -1,4 +1,4 @@
-import { _undefined, isFunction, isUndefined } from "@amateras/utils";
+import { _undefined, isFunction, isUndefined, map } from "@amateras/utils";
 import type { Widget } from "@amateras/widget/structure/Widget";
 import type { AliasRequired, AsyncWidget, PageLayout, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
 import type { Page } from "./Page";
@@ -7,17 +7,18 @@ import type { RouteSlot } from "./RouteSlot";
 
 export abstract class Route<ParentPath extends RoutePath = any, Path extends RoutePath = any, Params = any> {
     declare protos: Set<Page | Route>;
+    declare parentPath: ParentPath;
+    declare params: Params;
     routes = new Map<string, Route>();
     path: string;
     paths = new Map<string, RouteParams | (() => RouteParams) | undefined>();
-    declare parentPath: ParentPath;
-    declare params: Params;
+    validPaths: string[] = []
     constructor(path: Path) {
         this.path = path;
         this.paths.set(path, _undefined);
     }
 
-    abstract resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<boolean>;
+    abstract resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<Route[] | void>;
 
     routing(path: string) {
         let pathSegList = path.split('/');
@@ -73,9 +74,14 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
             break skipPath;
         }
         
-        if (!passPath) return false;
-        let paramId = this.path.replaceAll(/:([^/]+)/g, (_, $1) => `${params[$1]}`);
-        return [paramId, params] as const
+        if (!passPath) return;
+        let pathId = Route.resolvePath(this.path, params);
+        this.validPaths = map(this.paths, path => Route.resolvePath(path[0], params));
+        return [pathId, passPath, params] as const
+    }
+
+    private static resolvePath(path: string, params: any) {
+        return path.replaceAll(/:([^/]+)/g, (_, $1) => `${params[$1]}`);
     }
 
     alias<

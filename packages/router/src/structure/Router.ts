@@ -1,6 +1,6 @@
 import { onclient } from "@amateras/core/env";
 import { Proto } from "@amateras/core/structure/Proto";
-import { _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, toURL } from "@amateras/utils";
+import { _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, map, toURL } from "@amateras/utils";
 import type { Widget } from "@amateras/widget/structure/Widget";
 import type { AsyncWidget, PageLayout, PathToParamsMap, RoutePath, ValidatePath } from "../types";
 import type { Route } from "./Route";
@@ -14,7 +14,8 @@ const [PUSH, REPLACE] = [1, 2] as const;
 const [FORWARD, BACK] = ['forward', 'back'] as const;
 const SCROLL_KEY = '__scroll_history__';
 const storage = onclient() ? sessionStorage : _null;
-const _addEventListener = addEventListener;
+const _addEventListener = onclient() ? window.addEventListener : _null;
+const _removeEventListener = onclient() ? window.removeEventListener : _null;
 if (onclient()) history.scrollRestoration = 'manual';
 
 type ScrollData = {[key: number]: { [id: string]: { x: number, y: number }}};
@@ -34,13 +35,16 @@ const scrollRecord = (e?: Event) => {
 export class RouterProto extends Proto {
     direction: RouterDicrection = FORWARD;
     prev: URL | null = _null;
-    url: URL | null = onclient() ? toURL(location.href) : _null;
     routes = new Map<string, Route>();
     slot = new RouteSlot();
     static routers = new Set<RouterProto>();
     constructor() {
         super(() => $(this.slot));
         if (onclient()) RouterProto.routers.add(this);
+    }
+
+    set href(url: URL) {
+        this.global.router.href = url;
     }
 
     override build() {
@@ -50,17 +54,22 @@ export class RouterProto extends Proto {
                 if (index > stateIndex) this.direction = BACK;
                 if (index < stateIndex) this.direction = FORWARD;
                 index = stateIndex;
-                this.prev = this.url;
-                this.url = toURL(location.href);
+                this.prev = this.href;
+                this.href = toURL(location.href);
                 this.resolve(location.href);
             }
             resolve();
-            _addEventListener('popstate', resolve);
-            // _addEventListener('beforeunload', scrollRecord);
-            _addEventListener('scroll', scrollRecord, {
+            _addEventListener?.('popstate', resolve);
+            _addEventListener?.('scroll', scrollRecord, {
                 capture: true,
                 passive: false
             });
+            this.disposers.add(() => {
+                _removeEventListener?.('popstate', resolve);
+                _removeEventListener?.('scroll', scrollRecord, {
+                    capture: true
+                })
+            })
         }
         return super.build();
     }
@@ -69,8 +78,29 @@ export class RouterProto extends Proto {
         if (!path) return;
         let url = toURL(path);
         for (let [,route] of this.routes) {
-            if (await route.resolve(url.pathname, this.slot, {})) break;
+            let routes = await route.resolve(url.pathname, this.slot, {});
+            // 一旦有一个 route 解析成功就跳过剩下的 routes
+            if (routes) {
+                // 实现 NavLink 自动检测 href 匹配当前 location
+                this.global.router.routes = routes;
+                let parentPaths: string[] = [''];
+                let paths: string[] = [];
+                forEach(routes, route => {
+                    parentPaths = map(route.validPaths, validPath => 
+                        map(parentPaths, path => path + validPath)
+                    ).flat()
+                    paths.push(...parentPaths);
+                    return parentPaths
+                })
+                this.global.router.matchPaths = paths;
+                break;
+            };
         }
+        // NavLink 检测匹配
+        forEach(this.global.router.navlinks, navlink => navlink.checkActive())
+        // location 变更事件触发
+        RouterProto.dispatchEvent();
+        // restore scroll position
         RouterProto.scrollRestoration();
     }
 
@@ -87,7 +117,7 @@ export class RouterProto extends Proto {
     }
 
     static replace(path: string) {
-        RouterProto.writeState(path, REPLACE)
+        RouterProto.writeState(path, REPLACE);
     }
 
     static get scrollData(): ScrollData[number] {
@@ -118,9 +148,20 @@ export class RouterProto extends Proto {
                 router.prev = toURL(location.href);
                 history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
             }
-            router.url = url;
+            router.href = url;
             router.resolve(path)
         })
+        RouterProto.dispatchEvent();
+    }
+
+    private static dispatchEvent() {
+        if (onclient()) window.dispatchEvent(new Event('pathchange'));
+    }
+}
+
+declare global {
+    export interface GlobalEventHandlersEventMap {
+        pathchange: Event
     }
 }
 

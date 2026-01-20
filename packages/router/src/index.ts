@@ -1,4 +1,5 @@
 import { Link } from '#structure/Link';
+import { NavLink } from '#structure/NavLink';
 import { Page } from '#structure/Page';
 import { Route } from '#structure/Route';
 import { RouteGroup } from '#structure/RouteGroup';
@@ -17,7 +18,11 @@ declare module "@amateras/core/structure/GlobalState" {
         title: string | null
         router: {
             routers: Set<RouterProto>;
-            resolve: (path: string) => Promise<void>[]
+            resolve: (path: string) => Promise<void>[];
+            href: URL;
+            routes: Route[];
+            matchPaths: string[];
+            navlinks: Set<NavLink>;
         }
     }
 }
@@ -47,12 +52,19 @@ _Object_assign(GlobalState.prototype, {
         routers: new Set<RouterProto>(),
         resolve(this, path: string) {
             return map(this.routers, router => router.resolve(path));
-        }
+        },
+        href: new URL('http://localhost'),
+        routes: [],
+        matchPaths: [],
+        navlinks: new Set()
     }
 })
 
-GlobalState.disposers.add(global => {
-    global.router.routers.clear();
+GlobalState.disposers.add(({router}) => {
+    router.routers.clear();
+    router.routes = [];
+    router.matchPaths = [];
+    router.navlinks.clear();
 })
 
 _Object_assign($, {
@@ -72,6 +84,7 @@ _Object_assign($, {
 })
 
 globalThis.Link = Link;
+globalThis.NavLink = NavLink;
 
 $.process.craft.add((value) => {
     if (isFunction(value) && value[symbol_ProtoType] === 'Router') {

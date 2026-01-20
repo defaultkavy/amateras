@@ -16,7 +16,7 @@ const _slate = {
 
 colorAssign('slate', _slate);
 
-declare module '@amateras/core' {
+declare global {
     export namespace $ {
         export namespace color {
             export const slate: typeof _slate;

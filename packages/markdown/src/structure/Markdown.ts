@@ -9,6 +9,7 @@ import { imageProcessor, imageTokenizer } from "../syntax/image";
 import { italicProcessor, italicTokenizer } from "../syntax/italic";
 import { linkProcessor, linkTokenizer } from "../syntax/link";
 import { listProcessor, listTokenizer } from "../syntax/list";
+import { tableProcessor, tableTokenizer } from "../syntax/table";
 import { textLineProcessor, textProcessor } from "../syntax/text";
 import { MarkdownLexer } from "./MarkdownLexer";
 import { MarkdownParser } from "./MarkdownParser";
@@ -21,6 +22,7 @@ export class Markdown {
             headingTokenizer,
             codeblockTokenizer,
             listTokenizer,
+            tableTokenizer,
             alertTokenizer,
             blockquoteTokenizer,
             horizontalRuleTokenizer,
@@ -42,6 +44,7 @@ export class Markdown {
             headingProcessor,
             codeblockProcessor,
             listProcessor,
+            tableProcessor,
             alertProcessor,
             blockquoteProcessor,
             horizontalRuleProcessor

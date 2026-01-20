@@ -1,7 +1,7 @@
 {
   "name": "amateras",
-  "version": "0.7.4",
-  "description": "Amateras is a DOM Utility library.",
+  "version": "0.10.0",
+  "description": "Amateras is a JavaScript library for building user interface.",
   "module": "index.ts",
   "type": "module",
   "author": {
@@ -15,44 +15,40 @@
   "homepage": "https://github.com/defaultkavy/amateras",
   "license": "MIT",
   "exports": {
-    ".": "./index.ts",
+    ".": {
+      "default": "./index.ts",
+      "unpkg": "./unpkg/amateras.js"
+    },
     "./env": {
       "browser": "./packages/core/src/env.browser.ts",
       "node": "./packages/core/src/env.node.ts",
       "default": "./packages/core/src/env.browser.ts"
     },
-    "./node/*": "./packages/core/src/node/*.ts",
-    "./lib/*": "./packages/core/src/lib/*.ts",
-    "./structure/*": "./src/structure/*.ts",
+    "./utils": {
+      "browser": "./packages/utils/src/index.browser.ts",
+      "bun": "./packages/utils/src/index.bun.ts",
+      "default": "./packages/utils/src/index.browser.ts"
+    },
     "./core": "./packages/core/src/index.ts",
-    "./utils": "./packages/utils/src/index.ts",
-    "./html": "./packages/html/src/index.ts",
-    "./html/*": "./packages/html/node/*.ts",
-    "./css": "./packages/css/src/index.ts",
     "./css/*": "./packages/css/src/ext/*.ts",
-    "./router": "./packages/router/src/index.ts",
-    "./i18n": "./packages/i18n/src/index.ts",
-    "./idb": "./packages/idb/src/index.ts",
-    "./idb/core": "./packages/idb/src/core.ts",
-    "./markdown": "./packages/markdown/src/index.ts",
     "./markdown/syntax/*": "./packages/markdown/src/syntax/*.ts",
-    "./signal": "./packages/signal/src/index.ts",
-    "./ui/*": "./packages/ui/*.ts"
+    "./*": "./packages/*/src/index.ts"
   },
-  "workspaces": [
-    "packages/*"
-  ],
-  "peerDependencies": {
-    "@amateras/core": "./packages/core",
-    "@amateras/css": "./packages/css",
-    "@amateras/dom": "./packages/dom",
-    "@amateras/html": "./packages/html",
-    "@amateras/i18n": "./packages/i18n",
-    "@amateras/idb": "./packages/idb",
-    "@amateras/markdown": "./packages/markdown",
-    "@amateras/router": "./packages/router",
-    "@amateras/signal": "./packages/signal",
-    "@amateras/ui": "./packages/ui",
-    "@amateras/utils": "./packages/utils"
-  }
+  "dependencies": {
+    "@amateras/core": "workspace:*"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.4",
+    "vite": "^7.3.1"
+  },
+  "files": [
+    "pakcages",
+    "index.ts",
+    "tsconfig.json"
+  ]
 }

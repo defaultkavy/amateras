@@ -1,0 +1,17 @@
+{
+    "name": "@amateras/match",
+    "peerDependencies": {
+      "@amateras/core": "workspace:*",
+      "@amateras/signal": "workspace:*",
+      "@amateras/utils": "workspace:*"
+    },
+    "imports": {
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts"
+    },
+    "exports": {
+      ".": "./src/index.ts",
+      "./structure/*": "./src/structure/*.ts",
+      "./lib/*": "./src/lib/*.ts"
+    }
+}

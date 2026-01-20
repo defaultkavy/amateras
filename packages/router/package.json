@@ -2,7 +2,7 @@
     "name": "@amateras/router",
     "peerDependencies": {
       "@amateras/core": "workspace:*",
-      "@amateras/html": "workspace:*",
+      "@amateras/widget": "workspace:*",
       "@amateras/utils": "workspace:*"
     },
     "imports": {

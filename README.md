@@ -1,108 +1,96 @@
 # Amateras
-Amateras is a DOM Utility library.
+Amateras 是一个构建用户界面的 JavaScript 库，目标是无需编译器也能直接编写和运行，让开发者只需用 JavaScript 或 TypeScript 的语法就能高效地构建用户界面。支持响应式数据、模板函数和组件化。
 
-## Build DOM Tree in JS
-```ts
-import 'amateras';
+[English](/docs/README_en.md)
 
-$(document.body).content([
-    $('h1').class('title').content('Hello, World')
-])
+## 优势
+- **极简开发**：无需 JSX，无需编译器。
+- **原生性能**：没有 Diff 开销，没有 VDOM，细粒度响应式框架。
+- **类型安全**：强类型安全的编写环境（通过 TypeScript 编译）。
+- **两端运行**：能够在客户端和服务端运行。
+- **轻量体积**：极小的包体积，所有功能模块化，按需导入模块库。
+
+## 功能
+- 组件化模块（Widget）
+- 支持控制流（If、Match、For）
+- 页面路由器（Router）
+- 响应式数据（Signal）
+- 热模块更新（HMR）
+- 多语言切换（I18n）
+- 样式表直写（CSS-in-JS）
+- 服务端渲染（SSR）
+
+## 安装库
+```
+bun add amateras
 ```
 
-## Style in JS
+## 使用方式
 ```ts
 import 'amateras';
-import 'amateras/css';
 
-const paragraphStyle = $.css({
-    border: '2px solid black',
-    padding: '0.4rem',
-    textAlign: 'center'
+const App = $('app', () => {
+    $('h1', {class: 'title'}, () => $`Hello World!`)
 })
 
-$('p').css(paragraphStyle).content([
-    'Amateras is a ', 
-    $('span')
-        .css({ color: 'blue', fontWeight: 700 })
-        .content('DOM Utility Library.')
-])
+$.render(App, () => document.body);
 ```
 
-## State Management
+## 计数组件范例
 ```ts
 import 'amateras';
 import 'amateras/signal';
+import 'amateras/widget';
 
-// define a signal with value 0
-const count$ = $.signal(0);
+const Counter = $.widget(() => ({
+    layout() {
+        const count$ = $.signal(0);
+        const double$ = $.compute(() => count$() * 2);
 
-// this variable will be auto recalculate when count$ changes
-const doubleCount$ = $.compute(() => count$() * 2);
+        console.log('This template only run once.');
 
-// the console message will fired when count$ changes
-$.effect(() => console.log( count$() ))
+        $('button', $$ => { $(double$)
+            $$.on('click', () => count$.set(val => val + 1));
+        })
+    }
+}))
 
-$(document.body).content([
-    // Display Counts
-    $('p').content( $`Counts: ${count$}` ),
-
-    // Display Double Counts
-    $('p').content( $`Double Counts: ${doubleCount$}` ),
-
-    // Create a button that make counts plus 1 on click
-    $('button').content('Add Count').on('click', () => count$.set(value => value + 1))
-])
+$.render($(Counter), () => document.body);
 ```
 
-## HTMLElement Native Methods Import
-```ts
-import 'amateras';
-import 'amateras/html';
+## 为什么是 Amateras？
+我喜欢纯粹的开发环境，而对我来说目前主流的前端框架都过于复杂。它们依赖复杂的工具链，使用类似 JSX 这种非原生的文件格式，编写的是脱离 JavaScript 语法的代码。这并没有什么不好，但我更喜欢纯粹的 JavaScript，所有的逻辑都能从代码表面推导出来。为此，我一次又一次地研发这样的库，而经历多次重构的结果就是 Amateras。
 
-// without html package
-$('a').attr({ href: '/user' });
-$('img').attr({ src: '/profile.jpg' });
-// with html package
-$('a').href('/user');
-$('img').src('/profile.jpg');
-```
+### 不是 JSX
+Amateras 能让你编写接近 HTML 排版的模板代码，实现了在原生 JavaScript 语法下也能写出高可读性的 UI 代码。配合 TypeScript 的类型检查，能大幅减少新手编写时的疑惑。
 
-## Custom Components
-```ts
-import 'amateras';
-import 'amateras/html';
+### 高性能
+我们都不知道用户究竟用的是什么样的设备使用我们的应用，因此一个足够高性能的构建工具必不可少。Amateras 只会将模板构建一次，任何的更新都只会改动必要的元素。
 
-function NameCard(name: string, avatarURL: string) {
-    return $('div')
-    .css({ 
-        borderRadius: '1rem', 
-        background: '#1e1e1e', 
-        display: 'flex', 
-        overflow: 'hidden'
-    })
-    .content([
-        $('img').src(avatarURL),
-        $('div').css({ padding: '1rem' }).content([
-            $('h2').css({ color: '#e1e1e1' }).content(name)
-        ])
-    ])
-}
+### 模块化与拓展性
+这是一个贯彻模块化风格的 JavaScript 库，除了核心功能（amateras/core）之外的所有功能几乎都能分割成不同的模块库。例如 `If` 和 `Signal` 都能够按项目需求来导入，就连组件功能 `Widget` 也被模块化。模块化风格让 Amateras 拥有极强的拓展性，只要理解 Amateras 的运作原理就能写出一个配合 Amateras 类型系统的自定义模块。
 
-$(document.body).content([
-    $(NameCard, 'The dancing man', 'https://media.tenor.com/x8v1oNUOmg4AAAAM/rickroll-roll.gif')
-])
-```
+### 小体积
+得益于模块化风格，开发者能按照自己的需求导入模块，这使得项目依赖工具可以进一步缩小代码体积。
 
-## Packages
-The packages size result using Vite 7.0 with default bundle settings, polyfills code included.
-| Package name | Size | Size(gzip) | Description |
+| 模块库 | 体积 | Gzip | 简介 |
 | --- | --- | --- | --- |
-| amateras | 4.79 kB | 2.20 kB | Core |
-| amateras/html | 0.98 kB | 0.26 kB | Import HTMLElement types and methods |
-| [amateras/signal](./ext/signal/README.md) | 1.26 kB | 0.49 kB | Reactive data |
-| [amateras/css](./ext/css/README.md) | 3.70 kB | 1.44 kB | Style in JS |
-| [amateras/router](./ext/router/README.md) | 3.70 kB | 1.64 kB | Amateras Router |
-| [amateras/i18n](./ext/i18n/README.md) | 3.02 kB | 1.13 kB | I18n translations |
-| [amateras/idb](./ext/idb/README.md) | 5.39 kB | 2.06 kB | IndexedDB Builder and API Wrapper |
-| [amateras/markdown](./ext/markdown/README.md) | 6.81 kB | 2.68 kB | Markdown Converter |
+| amateras/core | 4.08 kB | 1.78 kB | 核心模块 |
+| amateras/widget | 0.37 kB | 0.18 kB | 组件模块 |
+| amateras/signal | 1.42 kB | 0.55 kB | 响应式数据模块 |
+| amateras/css | 1.32 kB | 0.62 kB | 样式模块 |
+| amateras/for | 0.97 kB | 0.33 kB | 控制流 For 模块 |
+| amateras/if | 1.59 kB | 0.56 kB | 控制流 If 模块 |
+| amateras/match | 1.00 kB | 0.33 kB | 控制流 Match 模块 |
+| amateras/router | 4.49 kB | 1.75 kB | 页面路由器模块 |
+| amateras/i18n | 1.88 kB | 0.73 kB | 多语言界面模块 |
+| amateras/idb | 5.26 kB | 2.02 kB | IndexedDB 模块 |
+| amateras/markdown | 6.66 kB | 2.62 kB | Markdown 转换 HTML 模块 |
+| amateras/prefetch | 0.56 kB | 0.26 kB | SSR 数据预取 |
+| amateras/meta | 0.07 kB | 0.04 kB | SSR 页面 `meta` 标签管理 |
+
+## 文档
+1. [基础入门](/docs/Basic.md)
+2. [理解原型树](/docs/ProtoTree.md)
+3. [组件](/docs/Widget.md)
+4. [组件数据仓库](/docs/WidgetStore.md)

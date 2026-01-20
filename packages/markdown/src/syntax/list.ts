@@ -2,7 +2,7 @@ import { EMPTY_LINE, ORDERED_LIST_ITEM, TEXT_LINE, UNORDERED_LIST_ITEM } from "#
 import { htmltag, setBlockTokenizer, setProcessor } from "#lib/util";
 import type { MarkdownLexer, Token } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
-import { equal, isString } from "@amateras/utils";
+import { isEqual, isString } from "@amateras/utils";
 
 export const listProcessor = (parser: MarkdownParser) => {
     const listType = (type: string) => type === ORDERED_LIST_ITEM ? 'ol' : 'ul'
@@ -20,7 +20,7 @@ export const listProcessor = (parser: MarkdownParser) => {
                 const token = tokens[i]!;
                 const tokenType = token.type;
                 // if token type not equal list item / empty line / text line, then finish loop
-                if (!equal(tokenType, ORDERED_LIST_ITEM, UNORDERED_LIST_ITEM, EMPTY_LINE, TEXT_LINE)) { i--; break};
+                if (!isEqual(tokenType, [ORDERED_LIST_ITEM, UNORDERED_LIST_ITEM, EMPTY_LINE, TEXT_LINE])) { i--; break};
                 // if token type equal text line
                 if (tokenType === TEXT_LINE) {
                     const text = token.content![0]?.text;

@@ -1,6 +1,6 @@
 // window and document
-export const _window = window;
-export const _document = document;
+export const _window = undefined;
+export const _document = undefined;
 
 interface onclient {
     (): boolean;

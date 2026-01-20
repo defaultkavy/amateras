@@ -1,0 +1,54 @@
+name: Auto Release & Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'CHANGELOG.md'
+
+jobs:
+  release-manager:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取所有历史记录和标签以进行对比
+
+      - name: Process Changed Versions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. 获取 CHANGELOG 中所有的版本号列表
+          ALL_VERSIONS=$(grep -oP '^## \[\K[^\]]+' CHANGELOG.md)
+
+          for VER in $ALL_VERSIONS; do
+            TAG_NAME="v$VER"
+            
+            # 提取当前版本的内容块（去掉标题行）
+            sed -n "/^## \[$VER\]/,/^## /p" CHANGELOG.md | sed '1d;$d' > current_note.md
+            
+            # 2. 检查该版本内容是否发生变化
+            # 对比当前 HEAD 和上一次提交
+            OLD_CONTENT=$(git show HEAD~1:CHANGELOG.md 2>/dev/null | sed -n "/^## \[$VER\]/,/^## /p" | sed '1d;$d' || echo "")
+            NEW_CONTENT=$(cat current_note.md)
+
+            if [ "$NEW_CONTENT" != "$OLD_CONTENT" ]; then
+              echo ">>> 检测到版本 $VER 内容变动"
+
+              # 3. 判断是“更新”还是“新建”
+              if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+                echo "Tag $TAG_NAME 已存在，正在更新 Release Note..."
+                gh release edit "$TAG_NAME" --notes-file current_note.md
+              else
+                echo "Tag $TAG_NAME 不存在，正在创建新 Release..."
+                gh release create "$TAG_NAME" --title "$TAG_NAME" --notes-file current_note.md
+              fi
+            else
+              echo "版本 $VER 无变动，跳过。"
+            fi
+          done

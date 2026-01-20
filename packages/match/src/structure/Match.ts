@@ -13,6 +13,7 @@ export interface MatchCraftFunction<T> {
 
 export class Match<T = any> extends ProxyProto {
     static override [symbol_Statement] = true;
+    declare statementType: 'Match';
     exp$: Signal<T>
     declare protos: Set<Case>;
     cases = new Set<Case>();

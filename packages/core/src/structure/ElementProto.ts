@@ -45,7 +45,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         return [element];
     }
 
-    private attrProcess(attrObj: Partial<$.AttrMap>) {
+    private attrProcess(attrObj: $.Props) {
         forEach(_Object_entries(attrObj), ([key, value]) => {
             for (let process of $.process.attr) {
                 let result = process(key, value, this as any);

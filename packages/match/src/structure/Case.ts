@@ -6,6 +6,7 @@ export type CaseLayout = () => void;
 
 export class Case extends Proto {
     static override [symbol_Statement] = true;
+    declare statementType: 'Case';
     condition: any[]
     constructor(condition: any, layout: CaseLayout) {
         super(layout);

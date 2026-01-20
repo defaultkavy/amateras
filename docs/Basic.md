@@ -55,3 +55,5 @@ $('h1', {}, 模板函数)
 ## 相关文档
 1. [理解原型树](/docs/ProtoTree.md)
 2. [组件](/docs/Widget.md)
+3. [控制流](/docs/ControlFlow.md)
+4. [路由器](/docs/Router.md)

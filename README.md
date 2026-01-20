@@ -75,22 +75,25 @@ Amateras 能让你编写接近 HTML 排版的模板代码，实现了在原生 J
 
 | 模块库 | 体积 | Gzip | 简介 |
 | --- | --- | --- | --- |
-| amateras/core | 4.08 kB | 1.78 kB | 核心模块 |
-| amateras/widget | 0.37 kB | 0.18 kB | 组件模块 |
-| amateras/signal | 1.42 kB | 0.55 kB | 响应式数据模块 |
-| amateras/css | 1.32 kB | 0.62 kB | 样式模块 |
-| amateras/for | 0.97 kB | 0.33 kB | 控制流 For 模块 |
-| amateras/if | 1.59 kB | 0.56 kB | 控制流 If 模块 |
-| amateras/match | 1.00 kB | 0.33 kB | 控制流 Match 模块 |
-| amateras/router | 4.49 kB | 1.75 kB | 页面路由器模块 |
-| amateras/i18n | 1.88 kB | 0.73 kB | 多语言界面模块 |
-| amateras/idb | 5.26 kB | 2.02 kB | IndexedDB 模块 |
-| amateras/markdown | 6.66 kB | 2.62 kB | Markdown 转换 HTML 模块 |
+| amateras/core | 5.06 kB | 2.16 kB | 核心模块 |
+| amateras/widget | 0.36 kB | 0.17 kB | 组件模块 |
+| amateras/signal | 1.41 kB | 0.56 kB | 响应式数据模块 |
+| amateras/css | 1.40 kB | 0.67 kB | 样式模块 |
+| amateras/for | 1.03 kB | 0.34 kB | 控制流 For 模块 |
+| amateras/if | 1.75 kB | 0.62 kB | 控制流 If 模块 |
+| amateras/match | 1.29 kB | 0.40 kB | 控制流 Match 模块 |
+| amateras/router | 5.76 kB | 2.16 kB | 页面路由器模块 |
+| amateras/i18n | 1.88 kB | 0.71 kB | 多语言界面模块 |
+| amateras/idb | 5.27 kB | 2.01 kB | IndexedDB 模块 |
+| amateras/markdown | 7.47 kB | 2.93 kB | Markdown 转换 HTML 模块 |
 | amateras/prefetch | 0.56 kB | 0.26 kB | SSR 数据预取 |
 | amateras/meta | 0.07 kB | 0.04 kB | SSR 页面 `meta` 标签管理 |
+| amateras/ui | 1.88 kB | 0.76 kB | UI 组件模块 |
 
 ## 文档
 1. [基础入门](/docs/Basic.md)
 2. [理解原型树](/docs/ProtoTree.md)
 3. [组件](/docs/Widget.md)
 4. [组件数据仓库](/docs/WidgetStore.md)
+5. [控制流](/docs/ControlFlow.md)
+6. [路由器](/docs/Router.md)

@@ -25,6 +25,18 @@ const Router = $.router($$ => {
     })
 })
 
+const $App = $('app', () => {
+    $('ul', () => {
+        $('li', () => {
+            $(NavLink, {href: '/'}, () => $`Home`)
+        })
+        $('li', () => {
+            $(NavLink, {href: '/about'}, () => $`About`)
+        })
+    })
+    $(Router)
+})
+
 $.render($(Router), () => document.body);
 ```
 
@@ -123,4 +135,22 @@ $.router($$ => {
         $$.route('/account', AccountSettingsPage)
     })
 })
+```
+
+## `Link` 和 `NavLink`
+Amateras Router 提供了 `Link` 和 `NavLink` 原型，使用它们就能够避免链接以跳转的形式打开。
+
+```ts
+$(Link, {href: '/link/to/page'}, () => $`Open Page (Push History State)`)
+$(Link, {href: '/link/to/page', target: '_blank'}, () => $`Open Page in New Tab`)
+$(Link, {href: '/link/to/page', target: '_replace'}, () => $`Open Page (Replace History State)`)
+```
+
+### `NavLink` 的作用
+`NavLink` 原型是在 `Link` 原型的基础上，增加了检测当前页面路径与自身的 `href` 属性是否匹配。如果匹配，该元素会自动添加 `active` 属性，这能帮助开发者便利的使用 CSS 选择器来自定义匹配页面的链接样式。
+
+```css
+a[active] {
+    color: red
+}
 ```

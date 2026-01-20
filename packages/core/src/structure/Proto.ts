@@ -12,7 +12,7 @@ export abstract class Proto {
     disposers = new Set<() => void>();
     layout: $.Layout | null;
     #parent: Proto | null = _null;
-    global = new GlobalState(this);
+    global: GlobalState = Proto.proto?.global ?? new GlobalState(this);
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
      * @deprecated

@@ -2,7 +2,7 @@ import { track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
 import { Proto } from "@amateras/core/structure/Proto";
 import { TextProto } from "@amateras/core/structure/TextProto";
-import { _instanceof, _Object_assign, equal, forEach, isBoolean } from "@amateras/utils";
+import { _instanceof, _Object_assign, isEqual, forEach, isBoolean } from "@amateras/utils";
 
 declare global {
     export function $<T>(signal: Signal<T>): Signal<T>;
@@ -71,7 +71,7 @@ $.process.craft.add(toTextProto)
 $.process.attr.add((name, signal, proto) => {
     if (_instanceof(signal, Signal)) {
         if (proto.name === 'input') {
-            if (equal(name, 'value', 'checked')) {
+            if (isEqual(name, ['value', 'checked'] as const)) {
                 proto.on('input', e => signal.set((e.currentTarget as HTMLInputElement)[name]));
                 let value = signal.value;
                 if (isBoolean(value)) value && proto.attr(name, '');

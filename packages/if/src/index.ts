@@ -1,7 +1,7 @@
 import './global';
-import { If } from "#structure/If"
-import { Proto } from "@amateras/core/structure/Proto"
-import { _instanceof, _null, equal } from "@amateras/utils"
+import { If } from "#structure/If";
+import { Proto } from "@amateras/core/structure/Proto";
+import { _instanceof, _null, isEqual } from "@amateras/utils";
 import { Signal } from '@amateras/signal/structure/Signal';
 import { ElseIf } from '#structure/ElseIf';
 import { Else } from '#structure/Else';
@@ -32,13 +32,13 @@ $.process.craft.add((value, arg1, arg2) => {
     // if condition is null, mean this is not a condition statement code
     // or Else/ElseIf not in right place
     if (!_instanceof(condition, Condition)) {
-        if (equal(value, Else, ElseIf)) throw 'ElseIf/Else must be after If or ElseIf';
+        if (isEqual(value, [Else, ElseIf])) throw 'ElseIf/Else must be after If or ElseIf';
         return;
     }
 
     // handle If/Else/ElseIf constructor
     // add them into condition child statements
-    if (equal(value, If, Else, ElseIf)) {
+    if (isEqual(value, [If, Else, ElseIf])) {
         let args: [Signal | null, () => void] = _instanceof(arg1, Signal) ? [arg1, arg2] : [_null, arg1];
         let statement = new value(...args);
         condition.statements.add(statement);

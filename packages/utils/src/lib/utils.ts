@@ -48,7 +48,7 @@ export const map: map = (arr: any, fn: any) => _Array_from(arr).map(fn);
 
 // type check
 export const _typeof = (target: any, type: 'string' | 'number' | 'object' | 'boolean' | 'function' | 'bigint' | 'symbol' | 'undefined') => typeof target === type;
-export const equal = <T, V extends T>(target: T, ...args: V[]): target is V => !!args.find(a => a === target);
+export const isEqual = <T, V>(target: T, args: V[]): target is V & T => args.includes(target as any);
 export const isString = (target: any): target is string => _typeof(target, 'string');
 export const isBoolean = (target: any): target is boolean => _typeof(target, 'boolean');
 export const isNumber = (target: any): target is number => _typeof(target, 'number');

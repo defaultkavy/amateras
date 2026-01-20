@@ -24,7 +24,7 @@ export const createRule = (selector: () => string, cssMap: $.CSSMap, cache = tru
     // If the rule is not cached, create new one.
     let rule = new $CSSRule(selector(), cssMap, _null);
     // Insert rule into stylesheet.
-    $.style(`${rule}`);
+    $.style(_null, `${rule}`);
     // Save the JSON and $CSSRule in cache.
     if (cache) cssRuleByJSONMap.set(cssObjectJSON, rule);
     return rule;

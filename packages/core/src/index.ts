@@ -159,9 +159,15 @@ export namespace $ {
         return cases.get(condition)?.() ?? cases.get(symbol_default)?.();
     }
     export const stylesheet = onclient() ? new CSSStyleSheet() : _null;
-    export const style = (css: string) => stylesheet?.insertRule(css);
+    export const styleMap = new Map<Constructor<ElementProto>, string>();
+    export const style = (proto: Constructor<ElementProto> | null, css: string) => {
+        if (proto) styleMap.set(proto, css);
+        stylesheet?.insertRule(css);
+    }
     
-    if (stylesheet) document.adoptedStyleSheets.push(stylesheet)
+    if (stylesheet) document.adoptedStyleSheets.push(stylesheet);
+
+    if (onclient()) document.querySelector('style#__ssr__')?.remove();
 }
 
 export type $ = typeof $;

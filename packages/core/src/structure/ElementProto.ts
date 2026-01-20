@@ -65,8 +65,14 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     attr(attrName?: string, attrValue?: string | null) {
         if (!arguments.length) return this.#attr;
         if (isUndefined(attrValue)) return this.#attr.get(attrName!);
-        if (isNull(attrValue)) this.#attr.delete(attrName!);
-        else this.#attr.set(attrName!, attrValue);
+        if (isNull(attrValue)) {
+            this.#attr.delete(attrName!);
+            this.node?.removeAttribute(attrName!);
+        }
+        else {
+            this.#attr.set(attrName!, attrValue);
+            this.node?.setAttribute(attrName!, attrValue);
+        }
         return this;
     }
 

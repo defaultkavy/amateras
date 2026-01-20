@@ -1,4 +1,6 @@
 import { ConditionStatement } from "./ConditionStatement";
 
 export type IfLayout = () => void;
-export class If extends ConditionStatement {}
+export class If extends ConditionStatement {
+    declare statementType: 'If'
+}

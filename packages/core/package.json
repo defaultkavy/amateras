@@ -14,11 +14,7 @@
       }
     },
     "exports": {
-      ".": {
-        "browser": "./src/index.ts",
-        "node": "./src/main.ts",
-        "default": "./src/index.ts"
-      },
+      ".": "./src/index.ts",
       "./env": {
         "browser": "./src/env.browser.ts",
         "node": "./src/env.node.ts",

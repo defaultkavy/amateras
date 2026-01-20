@@ -1,8 +1,7 @@
 import { ElementProto } from "@amateras/core";
-import { Slideshow } from "./Slideshow";
 
 export class Slide extends ElementProto {
-    constructor(props: $.Props, layout?: $.Layout<Slideshow>) {
+    constructor(props: $.Props, layout?: $.Layout<Slide>) {
         super('slide', props, layout);
     }
     

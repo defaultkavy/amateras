@@ -35,7 +35,7 @@
     "./*": "./packages/*/src/index.ts"
   },
   "dependencies": {
-    "@amateras/core": "workspace:*"
+    "@amateras/core": "./packages/core"
   },
   "workspaces": {
     "packages": [
@@ -43,7 +43,7 @@
     ]
   },
   "devDependencies": {
-    "@types/bun": "^1.3.4",
+    "@types/bun": "^1.3.6",
     "vite": "^7.3.1"
   },
   "files": [

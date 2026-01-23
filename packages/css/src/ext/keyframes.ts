@@ -2,7 +2,7 @@ import { cssGlobalRuleSet } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { $CSSKeyframes } from "#structure/$CSSKeyframes";
 import { _Object_assign, _Object_entries, _Object_fromEntries, map } from "@amateras/utils";
-import { generateId } from "../lib/utils";
+import { UID } from "@amateras/utils/structure/UID";
 
 declare global {
     export namespace $ {
@@ -25,7 +25,7 @@ _Object_assign($.css, {
         return _Object_fromEntries(
             map(
                 _Object_entries(options), (([name, value]) => {
-                    let rule = createRule(() => `${KEYFRAMES_AT}${name}_${generateId()}`, value);
+                    let rule = createRule(() => `${KEYFRAMES_AT}${name}_${UID.generate('css-keyframes')}`, value);
                     cssGlobalRuleSet.add(rule);
                     return [name, new $CSSKeyframes(rule.selector.replace(`${KEYFRAMES_AT} `, ''))];
                 }) 

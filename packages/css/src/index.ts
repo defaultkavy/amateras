@@ -1,12 +1,12 @@
 import { cssGlobalRuleSet, cssRuleByProtoMap } from "#lib/cache";
 import { createRule } from "#lib/createRule";
-import { generateId } from "#lib/utils";
 import { $CSSRule } from "#structure/$CSSRule";
 import { onserver } from "@amateras/core/env";
 import { ElementProto } from "@amateras/core/structure/ElementProto";
 import type { Proto } from "@amateras/core/structure/Proto";
 import { _Array_from, _instanceof, _Object_assign, _Object_entries, forEach, map } from "@amateras/utils";
 import type { $CSSDeclarationMap } from "./types";
+import { UID } from "@amateras/utils/structure/UID";
 
 declare global {
     export namespace $ {
@@ -46,7 +46,7 @@ _Object_assign($, {
     css(cssMap: $.CSSMap | $CSSRule) {
         // If argument is $CSSRule, return it.
         if (_instanceof(cssMap, $CSSRule)) return cssMap;
-        return createRule(() => `.${generateId()}`, cssMap);
+        return createRule(() => `.${UID.generate('css')}`, cssMap);
     },
     
     CSS(cssRootMap: $.CSSRootMap) {

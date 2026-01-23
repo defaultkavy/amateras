@@ -1,6 +1,7 @@
 import { $CSSVariable } from "#structure/$CSSVariable";
 import { _Object_assign, _Object_entries, _Object_fromEntries, isObject, map } from "@amateras/utils";
-import { camelCaseToDash, generateId } from "../lib/utils";
+import { camelCaseToDash } from "../lib/utils";
+import { UID } from "@amateras/utils/structure/UID";
 
 declare global {
     export namespace $ {
@@ -20,10 +21,11 @@ declare global {
 
 _Object_assign($.css, {
     variable<T extends $.CSSVariableType | string>(options: T) {
+        let id = UID.generate('css-variable', {lettercase: 'lower'})
         if (isObject(options)) {
             const variables = _Object_fromEntries(
                 map(_Object_entries(options), (([key, value]) => [
-                    key, new $CSSVariable(`--${camelCaseToDash(key)}_${generateId('lower')}`, `${value}`)
+                    key, new $CSSVariable(`--${camelCaseToDash(key)}_${id}`, `${value}`)
                 ])
             ))
 
@@ -39,7 +41,7 @@ _Object_assign($.css, {
 
             return variables;
         } else {
-            const variable = new $CSSVariable(`--${generateId('lower')}`, options);
+            const variable = new $CSSVariable(`--${id}`, options);
             $.CSS({':root': {[variable.name]: variable.value}});
             return variable;
         }

@@ -19,7 +19,7 @@ export const WidgetConstructor = <$$ extends Constructor | null, Props, Store>
                 let {store, layout, ancestors} = init(props as Props);
                 if (!store) store = {};
                 if (ancestors) forEach(ancestors, ancestor => {
-                    let ancestorProto = this.findAbove(proto => proto.constructor === ancestor);
+                    let ancestorProto = this.findAbove(proto => proto.constructor === ancestor && proto);
                     if (ancestorProto) {
                         let ancestorStore = ancestor.stores.get(ancestorProto);
                         _Object_assign(store, ancestorStore);

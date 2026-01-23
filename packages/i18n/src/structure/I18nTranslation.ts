@@ -2,7 +2,7 @@ import type { I18n } from "#structure/I18n";
 import { ProxyProto } from "@amateras/core/structure/ProxyProto";
 import { forEach, isUndefined, map } from "@amateras/utils";
 
-export class I18nTranslation extends ProxyProto{
+export class I18nTranslation extends ProxyProto {
     i18n: I18n;
     key: string;
     options: I18nTranslationOptions | undefined;
@@ -35,7 +35,9 @@ export class I18nTranslation extends ProxyProto{
         update: {
             const dictionary = i18n.dictionary();
             if (!dictionary) { contentUpdate([key]); break update }
-            const translate = await dictionary.find(key);
+            const request = dictionary.find(key);
+            this.global.i18n.promises.push(request);
+            const translate = await request;
             if (isUndefined(translate)) break update;
             const snippets = translate.split(/\$[a-zA-Z0-9_]+\$/);
             if (snippets.length === 1 || !options) { contentUpdate([translate]); break update }

@@ -3,6 +3,7 @@ import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextI
 import { I18nTranslation as _I18nTranslation, I18nTranslation, type I18nTranslationOptions } from "#structure/I18nTranslation";
 import { _instanceof, _Object_assign } from "@amateras/utils";
 import type { GetDictionaryContextByKey, I18nTranslationDirKey, I18nTranslationKey, I18nTranslationParams, Mixin, ResolvedAsyncDictionary } from "./types";
+import { GlobalState } from "@amateras/core";
 
 declare global {
     export namespace $ {
@@ -22,6 +23,24 @@ declare global {
         }
     }
 }
+
+declare module '@amateras/core/structure/GlobalState' {
+    export interface GlobalState {
+        i18n: {
+            promises: Promise<any>[]
+        }
+    }
+}
+
+_Object_assign(GlobalState.prototype, {
+    i18n: {
+        promises: []
+    }
+})
+
+GlobalState.disposers.add(global => {
+    global.i18n.promises = [];
+})
 
 _Object_assign($, {
     i18n(defaultLocale: string) {

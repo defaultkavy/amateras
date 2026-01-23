@@ -12,7 +12,7 @@ export abstract class Proto {
     disposers = new Set<() => void>();
     layout: $.Layout | null;
     #parent: Proto | null = _null;
-    global: GlobalState = Proto.proto?.global ?? new GlobalState(this);
+    global: GlobalState = Proto.proto?.global ?? new GlobalState();
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
      * @deprecated
@@ -31,10 +31,6 @@ export abstract class Proto {
 
     get parent() {
         return this.#parent;
-    }
-
-    get root() {
-        return this.findAbove(proto => !proto.parent)
     }
 
     get children(): this['__child__'][] {
@@ -77,9 +73,9 @@ export abstract class Proto {
         if (dispose) forEach(this.protos, proto => proto.dispose())
     }
 
-    findAbove(filter: (proto: Proto) => boolean | void): Proto | null {
+    findAbove<T>(filter: (proto: Proto) => boolean | T | void | null): T | null {
         let parent = this.parent;
-        if (parent) return filter(parent) ? parent : parent.findAbove(filter);
+        if (parent) return filter(parent) ? parent as T : parent.findAbove(filter);
         return _null;
     }
 

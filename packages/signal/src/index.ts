@@ -70,7 +70,7 @@ $.process.text.add(toTextProto)
 $.process.craft.add(toTextProto)
 $.process.attr.add((name, signal, proto) => {
     if (_instanceof(signal, Signal)) {
-        if (proto.name === 'input') {
+        if (proto.tagname === 'input') {
             if (isEqual(name, ['value', 'checked'] as const)) {
                 proto.on('input', e => signal.set((e.currentTarget as HTMLInputElement)[name]));
                 let value = signal.value;

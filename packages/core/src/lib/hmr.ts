@@ -93,7 +93,7 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
     }
     if (_instanceof(oldProto, ElementProto) && _instanceof(newProto, ElementProto)) {
         if (!oldProto.node) return processNoneNodeProto();
-        if (oldProto.name !== newProto.name) {
+        if (oldProto.tagname !== newProto.tagname) {
             oldProto.node?.replaceWith(...newProto.toDOM());
             return;
         };

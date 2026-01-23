@@ -4,13 +4,13 @@ import { NodeProto } from "./NodeProto";
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
 
 export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto<H> {
-    name: string;
+    tagname: string;
     #attr = new Map<string, string>();
     declare layout: $.Layout | null;
     #innerHTML = '';
     constructor(tagname: string, attrObj: $.Props | null, layout?: $.Layout | null) {
         super(() => layout?.(this));
-        this.name = tagname;
+        this.tagname = tagname;
         if (attrObj) this.attrProcess(attrObj);
     }
 
@@ -26,7 +26,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     parseHTML(options?: { children?: string, attr?: string }) {
-        let tagname = this.name;
+        let tagname = this.tagname;
         let childrenHTML = options?.children ?? (this.#innerHTML || map(this.protos, proto => `${proto}`).join(''));
         let attr = options?.attr ?? map(this.#attr, ([key, value]) => value.length ? `${key}="${value}"` : key).join(' ');
         let attrText = attr.length ? ' ' + attr : '';
@@ -36,7 +36,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
 
     override toDOM(children = true): H[] {
         if (this.node) return [this.node];
-        let element = document.createElement(this.name) as H;
+        let element = document.createElement(this.tagname) as H;
         this.node = element;
         if (this.#innerHTML) this.node.innerHTML = this.#innerHTML;
         else if (children) element.append(...map(this.protos, proto => proto.toDOM(children)).flat());

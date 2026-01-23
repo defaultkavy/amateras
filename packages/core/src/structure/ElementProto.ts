@@ -8,10 +8,10 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     #attr = new Map<string, string>();
     declare layout: $.Layout | null;
     #innerHTML = '';
-    constructor(tagname: string, attrObj: $.Props | null, layout?: $.Layout | null) {
+    constructor(tagname: string, props: $.Props | null, layout?: $.Layout | null) {
         super(() => layout?.(this));
         this.tagname = tagname;
-        if (attrObj) this.attrProcess(attrObj);
+        if (props) this.attrProcess(props);
     }
 
     on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void) {

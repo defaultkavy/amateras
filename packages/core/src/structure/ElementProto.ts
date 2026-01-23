@@ -51,7 +51,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
                 let result = process(key, value, this as any);
                 if (!isUndefined(result)) return;
             }
-            this.#attr.set(key, value as string);
+            this.attr(key, value);
         })
     }
 

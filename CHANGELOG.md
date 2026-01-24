@@ -1,4 +1,18 @@
-# Release Notes
+# Changelog
+
+## [0.10.1] - 2026-01-24
+
+### Features
+- I18n Translation Promises: Get translation promises array from `Proto.global.i18n`.
+- UID: New class `UID` used for generate random unique ID.
+
+### Changes
+- Rename `ElementProto.name` to `ElementProto.tagname`.
+- Remove getter `Proto.root`.
+
+### Fixes
+- Element Attributes: Fixed HTML output when attribute set null.
+- Widget Store: Fixed cannot found ancestors store.
 
 ## [0.10.0] - 2026-01-20
 
@@ -27,5 +41,6 @@ EN：
 - **Server-side Rendering**: A single codebase to solve both UI design and SEO issues simultaneously.
 - **CSS-in-JS**: A high-performance CSS solution that keeps template code and styling code closer together.
 
-[unreleased]: https://github.com/defaultkavy/amateras/compare/v0.10.0...HEAD
+[unreleased]: https://github.com/defaultkavy/amateras/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/defaultkavy/amateras/releases/tag/v0.10.1
 [0.10.0]: https://github.com/defaultkavy/amateras/releases/tag/v0.10.0

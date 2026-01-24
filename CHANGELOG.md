@@ -12,7 +12,7 @@
 
 ### Fixes
 - Element Attributes: Fixed HTML output when attribute set null.
-- Widget Store: Fixed cannot found ancestors store.
+- Widget Store: Fixed cannot found ancestors store in children widget.
 
 ## [0.10.0] - 2026-01-20
 

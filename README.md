@@ -1,14 +1,12 @@
 # Amateras
-Amateras 是一个构建用户界面的 JavaScript 库，目标是无需编译器也能直接编写和运行，让开发者只需用 JavaScript 或 TypeScript 的语法就能高效地构建用户界面。支持响应式数据、模板函数和组件化。
-
-[English](/docs/README_en.md)
+Amateras 是一个构建用户界面的 JavaScript 库，目标是无需编译器也能直接编写和运行，让开发者只需用 JavaScript 或 TypeScript 的语法就能高效地构建用户界面。
 
 ## 优势
 - **极简开发**：无需 JSX，无需编译器。
 - **原生性能**：没有 Diff 开销，没有 VDOM，细粒度响应式框架。
-- **类型安全**：强类型安全的编写环境（通过 TypeScript 编译）。
+- **类型安全**：提供 TypeScript 类型安全的编写体验。
 - **两端运行**：能够在客户端和服务端运行。
-- **轻量体积**：极小的包体积，所有功能模块化，按需导入模块库。
+- **轻量体积**：极小的包体积，所有功能模块化，按需导入项目。
 
 ## 功能
 - 组件化模块（Widget）
@@ -29,11 +27,11 @@ bun add amateras
 ```ts
 import 'amateras';
 
-const App = $('app', () => {
+const $app = $('app', () => {
     $('h1', {class: 'title'}, () => $`Hello World!`)
 })
 
-$.render(App, () => document.body);
+$.render($app, () => document.body);
 ```
 
 ## 计数组件范例

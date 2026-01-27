@@ -47,8 +47,9 @@
     "vite": "^7.3.1"
   },
   "files": [
-    "pakcages",
+    "packages",
     "index.ts",
-    "tsconfig.json"
+    "tsconfig.json",
+    "unpkg"
   ]
 }

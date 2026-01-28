@@ -1,12 +1,9 @@
 import { cssGlobalRuleSet, cssRuleByProtoMap } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { $CSSRule } from "#structure/$CSSRule";
-import { onserver } from "@amateras/core/env";
-import { ElementProto } from "@amateras/core/structure/ElementProto";
-import type { Proto } from "@amateras/core/structure/Proto";
-import { _Array_from, _instanceof, _Object_assign, _Object_entries, forEach, map } from "@amateras/utils";
+import { ElementProto, type Proto, onserver } from "@amateras/core";
+import { _Array_from, _instanceof, _Object_assign, _Object_entries, forEach, map, UID } from "@amateras/utils";
 import type { $CSSDeclarationMap } from "./types";
-import { UID } from "@amateras/utils/structure/UID";
 
 declare global {
     export namespace $ {
@@ -34,7 +31,7 @@ declare global {
     }
 }
 
-declare module "@amateras/core/structure/ElementProto" {
+declare module "@amateras/core" {
     export interface ElementProto {
         css(...cssObject: ($.CSSMap | $CSSRule)[]): this;
     }

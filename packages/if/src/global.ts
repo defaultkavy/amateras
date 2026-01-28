@@ -2,7 +2,7 @@ import type { Condition } from "#structure/Condition";
 import * as _Else from "#structure/Else";
 import * as _ElseIf from "#structure/ElseIf";
 import * as _If from "#structure/If";
-import type { Signal } from "@amateras/signal/structure/Signal";
+import type { Signal } from "@amateras/signal";
 
 declare global {
     export var If: typeof _If.If

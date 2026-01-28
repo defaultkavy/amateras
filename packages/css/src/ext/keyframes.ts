@@ -2,7 +2,7 @@ import { cssGlobalRuleSet } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { $CSSKeyframes } from "#structure/$CSSKeyframes";
 import { _Object_assign, _Object_entries, _Object_fromEntries, map } from "@amateras/utils";
-import { UID } from "@amateras/utils/structure/UID";
+import { UID } from "@amateras/utils";
 
 declare global {
     export namespace $ {

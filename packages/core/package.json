@@ -14,14 +14,6 @@
       }
     },
     "exports": {
-      ".": "./src/index.ts",
-      "./env": {
-        "browser": "./src/env.browser.ts",
-        "node": "./src/env.node.ts",
-        "default": "./src/env.browser.ts"
-      },
-      "./structure/*": "./src/structure/*.ts",
-      "./lib/*": "./src/lib/*.ts",
-      "./node/*": "./src/node/*.ts"
+      ".": "./src/index.ts"
     }
 }

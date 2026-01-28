@@ -180,4 +180,5 @@ export * from "#structure/NodeProto";
 export * from "#structure/Proto";
 export * from "#structure/ProxyProto";
 export * from "#structure/TextProto";
-
+export * from "#env";
+export * from "#lib/symbols";

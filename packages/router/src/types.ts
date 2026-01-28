@@ -1,5 +1,5 @@
 import type { RouteSlot } from "#structure/RouteSlot";
-import type { Widget } from "@amateras/widget/structure/Widget";
+import type { Widget } from "@amateras/widget";
 
 export type RoutePath = string;
 

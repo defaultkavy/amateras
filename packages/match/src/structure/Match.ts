@@ -1,6 +1,6 @@
-import { symbol_Statement } from "@amateras/core/lib/symbols";
-import { ProxyProto } from "@amateras/core/structure/ProxyProto";
-import type { Signal } from "@amateras/signal/structure/Signal";
+import { symbol_Statement } from "@amateras/core";
+import { ProxyProto } from "@amateras/core";
+import type { Signal } from "@amateras/signal";
 import { _null, forEach } from "@amateras/utils";
 import { Case, type CaseLayout } from "./Case";
 import { Default, type DefaultLayout } from "./Default";

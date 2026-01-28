@@ -20,7 +20,7 @@ async function analysisPackageSize() {
     let coreGzipSize = 0;
 
     for (const {name, description, codeInsert} of packages) {
-        const code = `import 'amateras'; import '${name}'; ${codeInsert ?? ''}`
+        const code = `import 'amateras'; import 'amateras/${name}'; ${codeInsert ?? ''}`
         console.log(`Packaging '${name}'...`)
         const packageSize = await getSize(code);
 
@@ -92,7 +92,7 @@ function toMarkdownTable(data: Record<string, ModuleInfo>) {
     const header = ['模块库', '体积', 'Gzip', '简介'];
     const contents: string[][] = [];
     for (const [name, info] of Object.entries(data)) {
-        if (name === 'amateras/core') contents.push([name, info.total_size, info.total_gzip, info.description])
+        if (name === 'core') contents.push([name, info.total_size, info.total_gzip, info.description])
         else contents.push([name, info.diff_size, info.diff_gzip, info.description]);
     }
 

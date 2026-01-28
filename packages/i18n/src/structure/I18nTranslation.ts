@@ -1,5 +1,5 @@
 import type { I18n } from "#structure/I18n";
-import { ProxyProto } from "@amateras/core/structure/ProxyProto";
+import { ProxyProto } from "@amateras/core";
 import { forEach, isUndefined, map } from "@amateras/utils";
 
 export class I18nTranslation extends ProxyProto {

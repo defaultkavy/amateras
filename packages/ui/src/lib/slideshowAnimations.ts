@@ -1,5 +1,5 @@
 import type { SlideshowAnimationHandle } from "#structure/Slideshow";
-import { onclient } from "@amateras/core/env";
+import { onclient } from "@amateras/core";
 
 export const slideInOut = (
     options?: {

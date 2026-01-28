@@ -1,6 +1,6 @@
-import { symbol_ProtoType } from "@amateras/core/lib/symbols";
+import { symbol_ProtoType } from "@amateras/core";
 import { _null, isArray } from "@amateras/utils";
-import type { Widget } from "@amateras/widget/structure/Widget";
+import type { Widget } from "@amateras/widget";
 import type { AsyncWidget, PageLayout } from "../types";
 import { Page } from "./Page";
 import { Route } from "./Route";

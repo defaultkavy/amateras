@@ -1,6 +1,6 @@
 import { resolveMeta } from "#lib/resolveMeta";
-import { onclient, onserver } from "@amateras/core/env";
-import { Proto } from "@amateras/core/structure/Proto";
+import { onclient, onserver } from "@amateras/core";
+import { Proto } from "@amateras/core";
 import { _Object_assign } from "@amateras/utils";
 import type { MetaConfig } from "./types";
 
@@ -15,7 +15,7 @@ declare global {
     }
 }
 
-declare module '@amateras/core/structure/GlobalState' {
+declare module '@amateras/core' {
     export interface GlobalState {
         meta: MetaConfig;
     }

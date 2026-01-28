@@ -1,4 +1,4 @@
-import { Proto } from "@amateras/core/structure/Proto";
+import { Proto } from "@amateras/core";
 import { _null } from "@amateras/utils";
 import type { AsyncWidget, PageLayout } from "../types";
 import type { RouteNode } from "./RouteNode";

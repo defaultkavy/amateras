@@ -10,8 +10,6 @@
       "#node/*": "./src/node/*.ts"
     },
     "exports": {
-      "./structure/*": "./src/structure/*.ts",
-      "./lib/*": "./src/lib/*.ts",
-      "./node/*": "./src/node/*.ts"
+      ".": "./src/index.ts"
     }
 }

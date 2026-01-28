@@ -10,12 +10,9 @@
     },
     "exports": {
       ".": {
-        "browser": "./src/index.browser.ts",
+        "browser": "./src/index.ts",
         "bun": "./src/index.bun.ts",
-        "default": "./src/index.browser.ts"
-      },
-      "./structure/*": "./src/structure/*.ts",
-      "./lib/*": "./src/lib/*.ts",
-      "./node/*": "./src/node/*.ts"
+        "default": "./src/index.ts"
+      }
     }
 }

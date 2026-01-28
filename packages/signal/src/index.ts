@@ -1,7 +1,7 @@
 import { track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
-import { Proto } from "@amateras/core/structure/Proto";
-import { TextProto } from "@amateras/core/structure/TextProto";
+import { Proto } from "@amateras/core";
+import { TextProto } from "@amateras/core";
 import { _instanceof, _Object_assign, isEqual, forEach, isBoolean } from "@amateras/utils";
 
 declare global {

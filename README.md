@@ -93,6 +93,7 @@ Amateras 能让你编写接近 HTML 排版的模板代码，实现了在原生 J
 | prefetch | 5.53 kB | 2.40 kB | SSR 数据预取 |
 | meta | 5.05 kB | 2.17 kB | SSR 页面 `meta` 标签管理 |
 | ui | 7.80 kB | 3.26 kB | UI 组件模块 |
+| utils | 4.97 kB | 2.13 kB | 通用工具库 |
 
 ## 文档
 1. [基础入门](/docs/Basic.md)

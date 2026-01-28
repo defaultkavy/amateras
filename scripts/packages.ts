@@ -2,6 +2,7 @@ type Package = {
     name: string;
     description: string;
     codeInsert?: string;
+    
 }
 
 export const packages: Package[] = [
@@ -48,5 +49,9 @@ export const packages: Package[] = [
     }, {
         name: "ui",
         description: "UI 组件模块"
+    }, {
+        name: "utils",
+        description: "通用工具库",
+        codeInsert: 'import * as utils from "amateras/utils";'
     }
 ]

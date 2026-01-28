@@ -1,6 +1,6 @@
 {
   "name": "amateras",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "description": "Amateras is a JavaScript library for building user interface.",
   "module": "index.ts",
   "type": "module",
@@ -25,9 +25,9 @@
       "default": "./packages/core/src/env.browser.ts"
     },
     "./utils": {
-      "browser": "./packages/utils/src/index.browser.ts",
+      "browser": "./packages/utils/src/index.ts",
       "bun": "./packages/utils/src/index.bun.ts",
-      "default": "./packages/utils/src/index.browser.ts"
+      "default": "./packages/utils/src/index.ts"
     },
     "./core": "./packages/core/src/index.ts",
     "./css/*": "./packages/css/src/ext/*.ts",

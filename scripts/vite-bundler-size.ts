@@ -20,7 +20,7 @@ async function analysisPackageSize() {
     let coreGzipSize = 0;
 
     for (const {name, description, codeInsert} of packages) {
-        const code = `import 'amateras'; import 'amateras/${name}'; ${codeInsert ?? ''}`
+        const code = `import 'amateras'; ${codeInsert ?? `import "amateras/${name}";`}`
         console.log(`Packaging '${name}'...`)
         const packageSize = await getSize(code);
 

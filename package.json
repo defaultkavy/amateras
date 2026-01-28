@@ -1,6 +1,6 @@
 {
   "name": "amateras",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Amateras is a JavaScript library for building user interface.",
   "module": "index.ts",
   "type": "module",
@@ -14,10 +14,10 @@
   },
   "homepage": "https://github.com/defaultkavy/amateras",
   "license": "MIT",
+  "unpkg": "./build/import-map.js",
   "exports": {
     ".": {
-      "default": "./index.ts",
-      "unpkg": "./build/import-map.js"
+      "default": "./index.ts"
     },
     "./env": {
       "browser": "./packages/core/src/env.browser.ts",

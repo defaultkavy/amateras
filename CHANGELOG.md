@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.10.2] - 2026-01-28
+
+### Features
+- ES Modules Import Map: Now you can import Amateras in client side JavaScript directly.
+
 ## [0.10.1] - 2026-01-24
 
 ### Features

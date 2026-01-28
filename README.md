@@ -18,20 +18,26 @@ Amateras 是一个构建用户界面的 JavaScript 库，目标是无需编译�
 - 样式表直写（CSS-in-JS）
 - 服务端渲染（SSR）
 
-## 安装库
+## 如何使用
+Amateras 提供了两种导入库的方式
+### 使用导入映射（Import Map）
+这个代码将会为你的网页自动创建一个导入映射脚本，将这段代码安插在你的项目代码之前即可。
+```html
+<script src="https://unpkg.com/amateras"></script>
+```
+
+### 安装代码库
 ```
 bun add amateras
 ```
 
-## 使用方式
+## 基础范例
 ```ts
 import 'amateras';
 
-const $app = $('app', () => {
-    $('h1', {class: 'title'}, () => $`Hello World!`)
-})
+const $h1 = $('h1', {class: 'title'}, () => $`Hello World!`)
 
-$.render($app, () => document.body);
+$.render($h1, () => document.body);
 ```
 
 ## 计数组件范例
@@ -73,20 +79,20 @@ Amateras 能让你编写接近 HTML 排版的模板代码，实现了在原生 J
 
 | 模块库 | 体积 | Gzip | 简介 |
 | --- | --- | --- | --- |
-| amateras/core | 4.97 kB | 2.13 kB | 核心模块 |
-| amateras/widget | 0.36 kB | 0.17 kB | 组件模块 |
-| amateras/signal | 1.41 kB | 0.56 kB | 响应式数据模块 |
-| amateras/css | 1.55 kB | 0.71 kB | 样式模块 |
-| amateras/for | 1.03 kB | 0.34 kB | 控制流 For 模块 |
-| amateras/if | 1.75 kB | 0.62 kB | 控制流 If 模块 |
-| amateras/match | 1.29 kB | 0.40 kB | 控制流 Match 模块 |
-| amateras/router | 5.76 kB | 2.16 kB | 页面路由器模块 |
-| amateras/i18n | 1.99 kB | 0.75 kB | 多语言界面模块 |
-| amateras/idb | 5.27 kB | 2.01 kB | IndexedDB 模块 |
-| amateras/markdown | 7.47 kB | 2.93 kB | Markdown 转换 HTML 模块 |
-| amateras/prefetch | 0.56 kB | 0.26 kB | SSR 数据预取 |
-| amateras/meta | 0.07 kB | 0.04 kB | SSR 页面 `meta` 标签管理 |
-| amateras/ui | 2.83 kB | 1.13 kB | UI 组件模块 |
+| core | 4.97 kB | 2.13 kB | 核心模块 |
+| widget | 5.33 kB | 2.31 kB | 组件模块 |
+| signal | 6.38 kB | 2.69 kB | 响应式数据模块 |
+| css | 6.52 kB | 2.85 kB | 样式模块 |
+| for | 6.00 kB | 2.47 kB | 控制流 For 模块 |
+| if | 7.64 kB | 3.11 kB | 控制流 If 模块 |
+| match | 6.26 kB | 2.53 kB | 控制流 Match 模块 |
+| router | 10.73 kB | 4.29 kB | 页面路由器模块 |
+| i18n | 6.97 kB | 2.88 kB | 多语言界面模块 |
+| idb | 10.24 kB | 4.14 kB | IndexedDB 模块 |
+| markdown | 12.44 kB | 5.06 kB | Markdown 转换 HTML 模块 |
+| prefetch | 5.53 kB | 2.40 kB | SSR 数据预取 |
+| meta | 5.05 kB | 2.17 kB | SSR 页面 `meta` 标签管理 |
+| ui | 7.80 kB | 3.26 kB | UI 组件模块 |
 
 ## 文档
 1. [基础入门](/docs/Basic.md)

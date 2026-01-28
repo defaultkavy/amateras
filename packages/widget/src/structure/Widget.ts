@@ -1,5 +1,5 @@
-import { symbol_ProtoType } from "@amateras/core/lib/symbols";
-import { Proto } from "@amateras/core/structure/Proto";
+import { symbol_ProtoType } from "@amateras/core";
+import { Proto } from "@amateras/core";
 import { _Object_assign, forEach } from "@amateras/utils";
 import type { WidgetChildrenLayout, WidgetInit } from "..";
 

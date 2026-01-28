@@ -1,4 +1,4 @@
-import { onclient } from '@amateras/core/env';
+import { onclient } from '@amateras/core';
 import '../global';
 
 // Value

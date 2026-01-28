@@ -1,5 +1,5 @@
-import { symbol_Statement } from "@amateras/core/lib/symbols";
-import { Proto } from "@amateras/core/structure/Proto";
+import { symbol_Statement } from "@amateras/core";
+import { Proto } from "@amateras/core";
 import { isArray } from "@amateras/utils";
 
 export type CaseLayout = () => void;

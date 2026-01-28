@@ -6,14 +6,14 @@ import { RouteGroup } from '#structure/RouteGroup';
 import { RouteNode } from '#structure/RouteNode';
 import { RouterProto } from '#structure/Router';
 import { RouterConstructor } from '#structure/RouterConstructor';
-import { symbol_ProtoType } from '@amateras/core/lib/symbols';
-import { GlobalState } from '@amateras/core/structure/GlobalState';
-import { Proto } from '@amateras/core/structure/Proto';
+import { symbol_ProtoType } from '@amateras/core';
+import { GlobalState } from '@amateras/core';
+import { Proto } from '@amateras/core';
 import { _instanceof, _Object_assign, isFunction, map } from '@amateras/utils';
 import './global';
 import type { PageLayout } from './types';
 
-declare module "@amateras/core/structure/GlobalState" {
+declare module "@amateras/core" {
     export interface GlobalState {
         title: string | null
         router: {

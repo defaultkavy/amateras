@@ -1,7 +1,7 @@
 import { $CSSVariable } from "#structure/$CSSVariable";
 import { _Object_assign, _Object_entries, _Object_fromEntries, isObject, map } from "@amateras/utils";
 import { camelCaseToDash } from "../lib/utils";
-import { UID } from "@amateras/utils/structure/UID";
+import { UID } from "@amateras/utils";
 
 declare global {
     export namespace $ {

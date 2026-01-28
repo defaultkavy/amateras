@@ -1,7 +1,7 @@
-import { onclient } from "@amateras/core/env";
-import { Proto } from "@amateras/core/structure/Proto";
+import { onclient } from "@amateras/core";
+import { Proto } from "@amateras/core";
 import { _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, map, toURL } from "@amateras/utils";
-import type { Widget } from "@amateras/widget/structure/Widget";
+import type { Widget } from "@amateras/widget";
 import type { AsyncWidget, PageLayout, PathToParamsMap, RoutePath, ValidatePath } from "../types";
 import type { Route } from "./Route";
 import { RouteSlot } from "./RouteSlot";

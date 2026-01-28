@@ -24,7 +24,7 @@ declare global {
     }
 }
 
-declare module '@amateras/core/structure/GlobalState' {
+declare module '@amateras/core' {
     export interface GlobalState {
         i18n: {
             promises: Promise<any>[]

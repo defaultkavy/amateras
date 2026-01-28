@@ -3,7 +3,7 @@ import { createRule } from "#lib/createRule";
 import { camelCaseToDash } from "#lib/utils";
 import { $CSSProperty } from "#structure/$CSSProperty";
 import { _Object_assign, _Object_entries, forEach, isString, isUndefined } from "@amateras/utils";
-import { UID } from "@amateras/utils/structure/UID";
+import { UID } from "@amateras/utils";
 
 declare global {
     export namespace $ {

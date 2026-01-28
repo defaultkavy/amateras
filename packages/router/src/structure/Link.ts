@@ -1,4 +1,4 @@
-import { ElementProto } from "@amateras/core/structure/ElementProto";
+import { ElementProto } from "@amateras/core";
 
 export class Link extends ElementProto<HTMLAnchorElement> {
     constructor(attr: $.Props | null, layout?: $.Layout<ElementProto<HTMLAnchorElement>>) {

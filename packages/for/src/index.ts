@@ -1,5 +1,5 @@
 import { For } from "#structure/For";
-import { Proto } from '@amateras/core/structure/Proto';
+import { Proto } from '@amateras/core';
 import './global';
 
 globalThis.For = For;

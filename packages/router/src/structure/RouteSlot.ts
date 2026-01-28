@@ -1,5 +1,5 @@
-import { onserver } from "@amateras/core/env";
-import { ProxyProto } from "@amateras/core/structure/ProxyProto";
+import { onserver } from "@amateras/core";
+import { ProxyProto } from "@amateras/core";
 import { _null } from "@amateras/utils";
 import type { Page } from "./Page";
 

@@ -1,6 +1,6 @@
-import { symbol_Statement } from "@amateras/core/lib/symbols";
-import { Proto } from "@amateras/core/structure/Proto";
-import type { Signal } from "@amateras/signal/structure/Signal";
+import { symbol_Statement } from "@amateras/core";
+import { Proto } from "@amateras/core";
+import type { Signal } from "@amateras/signal";
 
 export abstract class ConditionStatement extends Proto {
     static override [symbol_Statement] = true;

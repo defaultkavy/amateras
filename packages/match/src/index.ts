@@ -1,7 +1,7 @@
 import { Case } from "#structure/Case";
 import { Default } from "#structure/Default";
 import { Match } from "#structure/Match";
-import { Proto } from '@amateras/core/structure/Proto';
+import { Proto } from '@amateras/core';
 import { _instanceof, is, isEqual } from '@amateras/utils';
 import './global';
 

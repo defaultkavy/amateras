@@ -1,8 +1,8 @@
 import './global';
 import { If } from "#structure/If";
-import { Proto } from "@amateras/core/structure/Proto";
+import { Proto } from "@amateras/core";
 import { _instanceof, _null, isEqual } from "@amateras/utils";
-import { Signal } from '@amateras/signal/structure/Signal';
+import { Signal } from '@amateras/signal';
 import { ElseIf } from '#structure/ElseIf';
 import { Else } from '#structure/Else';
 import { Condition } from '#structure/Condition';

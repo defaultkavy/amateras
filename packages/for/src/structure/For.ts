@@ -1,8 +1,8 @@
-import { onclient } from "@amateras/core/env";
-import { symbol_Statement } from "@amateras/core/lib/symbols";
-import { Proto } from "@amateras/core/structure/Proto";
-import { ProxyProto } from "@amateras/core/structure/ProxyProto";
-import type { Signal } from "@amateras/signal/structure/Signal";
+import { onclient } from "@amateras/core";
+import { symbol_Statement } from "@amateras/core";
+import { Proto } from "@amateras/core";
+import { ProxyProto } from "@amateras/core";
+import type { Signal } from "@amateras/signal";
 import { forEach } from "@amateras/utils";
 
 export type ForLayout<T> = (item: T, index: number) => void;

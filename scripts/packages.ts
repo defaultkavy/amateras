@@ -6,47 +6,47 @@ type Package = {
 
 export const packages: Package[] = [
     {
-        name: "amateras/core",
+        name: "core",
         description: "核心模块",
     }, {
-        name: "amateras/widget",
+        name: "widget",
         description: "组件模块",
     }, {
-        name: "amateras/signal",
+        name: "signal",
         description: "响应式数据模块",
     }, {
-        name: "amateras/css",
+        name: "css",
         description: "样式模块",
     }, {
-        name: "amateras/for",
+        name: "for",
         description: "控制流 For 模块",
     }, {
-        name: "amateras/if",
+        name: "if",
         description: "控制流 If 模块",
     }, {
-        name: "amateras/match",
+        name: "match",
         description: "控制流 Match 模块",
     }, {
-        name: "amateras/router",
+        name: "router",
         description: "页面路由器模块",
     }, {
-        name: "amateras/i18n",
+        name: "i18n",
         description: "多语言界面模块",
     }, {
-        name: "amateras/idb",
+        name: "idb",
         description: "IndexedDB 模块",
     }, {
-        name: "amateras/markdown",
+        name: "markdown",
         description: "Markdown 转换 HTML 模块",
         codeInsert: 'import { Markdown } from "amateras/markdown"; new Markdown();'
     }, {
-        name: "amateras/prefetch",
+        name: "prefetch",
         description: "SSR 数据预取"
     }, {
-        name: "amateras/meta",
+        name: "meta",
         description: "SSR 页面 `meta` 标签管理"
     }, {
-        name: "amateras/ui",
+        name: "ui",
         description: "UI 组件模块"
     }
 ]

@@ -1,5 +1,5 @@
 import { _undefined, isFunction, isUndefined, map } from "@amateras/utils";
-import type { Widget } from "@amateras/widget/structure/Widget";
+import type { Widget } from "@amateras/widget";
 import type { AliasRequired, AsyncWidget, PageLayout, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
 import type { Page } from "./Page";
 import type { RouteSlot } from "./RouteSlot";

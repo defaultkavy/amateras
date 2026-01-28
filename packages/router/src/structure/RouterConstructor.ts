@@ -1,4 +1,4 @@
-import { symbol_ProtoType } from "@amateras/core/lib/symbols";
+import { symbol_ProtoType } from "@amateras/core";
 import { RouterProto } from "./Router";
 
 export type RouterHandle = ($$: RouterProto) => void;

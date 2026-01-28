@@ -1,4 +1,4 @@
-import { _document, onclient } from "@amateras/core/env";
+import { _document, onclient } from "@amateras/core";
 import { $CSS } from "./$CSS";
 
 export class $CSSVariable<V = string> extends $CSS {

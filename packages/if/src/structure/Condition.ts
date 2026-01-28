@@ -1,5 +1,5 @@
-import { symbol_Statement } from "@amateras/core/lib/symbols";
-import { ProxyProto } from "@amateras/core/structure/ProxyProto";
+import { symbol_Statement } from "@amateras/core";
+import { ProxyProto } from "@amateras/core";
 import { _null, forEach } from "@amateras/utils";
 import type { ConditionStatement } from "./ConditionStatement";
 

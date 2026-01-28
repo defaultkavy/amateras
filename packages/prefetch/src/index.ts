@@ -1,6 +1,6 @@
-import { onclient, onserver } from "@amateras/core/env";
-import { GlobalState } from "@amateras/core/structure/GlobalState";
-import { Proto } from "@amateras/core/structure/Proto";
+import { onclient, onserver } from "@amateras/core";
+import { GlobalState } from "@amateras/core";
+import { Proto } from "@amateras/core";
 import { _null, _Object_assign, isAsyncFunction, toURL } from "@amateras/utils";
 
 declare global {
@@ -10,7 +10,7 @@ declare global {
     export var prefetch: {[key: string]: { expired: number, data: any }}
 }
 
-declare module "@amateras/core/structure/GlobalState" {
+declare module "@amateras/core" {
     export interface GlobalState {
         prefetch: {
             fetches: Set<Promise<any>>,

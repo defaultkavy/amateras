@@ -1,5 +1,5 @@
 import type { $CSSRule } from "#structure/$CSSRule";
-import type { ElementProto } from "@amateras/core/structure/ElementProto";
+import type { ElementProto } from "@amateras/core";
 
 export const cssRuleByProtoMap = new WeakMap<ElementProto, $CSSRule>();
 export const cssGlobalRuleSet = new Set<$CSSRule>();

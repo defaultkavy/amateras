@@ -1,4 +1,4 @@
-import { Proto } from "@amateras/core/structure/Proto";
+import { Proto } from "@amateras/core";
 import { _Object_assign } from "@amateras/utils";
 import { WidgetConstructor, type Widget } from "./structure/Widget";
 

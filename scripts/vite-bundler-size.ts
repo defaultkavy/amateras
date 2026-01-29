@@ -24,7 +24,7 @@ async function analysisPackageSize() {
         console.log(`Packaging '${name}'...`)
         const packageSize = await getSize(code);
 
-        if (name === 'amateras/core') {
+        if (name === 'core') {
             coreSize = packageSize.moduleSize;
             coreGzipSize = packageSize.gzipSize;
         }

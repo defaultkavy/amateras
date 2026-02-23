@@ -1,4 +1,4 @@
-import { _Array_from, _Object_entries, forEach, isNull, isUndefined, map } from "@amateras/utils";
+import { _Array_from, _null, _Object_entries, forEach, isNull, isUndefined, map } from "@amateras/utils";
 import { NodeProto } from "./NodeProto";
 
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
@@ -57,14 +57,15 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
 
     innerHTML(html: string) {
         this.#innerHTML = html;
+        if (this.node) this.node.innerHTML = html;
     }
 
     attr(): Map<string, string>;
-    attr(attrName: string): string | undefined;
+    attr(attrName: string): string | null;
     attr(attrName: string, attrValue: string | null): this;
     attr(attrName?: string, attrValue?: string | null) {
         if (!arguments.length) return this.#attr;
-        if (isUndefined(attrValue)) return this.#attr.get(attrName!);
+        if (isUndefined(attrValue)) return this.#attr.get(attrName!) ?? _null;
         if (isNull(attrValue)) {
             this.#attr.delete(attrName!);
             this.node?.removeAttribute(attrName!);

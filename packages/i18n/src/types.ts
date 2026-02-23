@@ -1,5 +1,7 @@
 import type { I18nDictionaryContext, I18nDictionaryContextImporter } from "#structure/I18nDictionary";
 
+export type I18nTranslationResult = { text: string[], args: any[] }
+
 export type ResolvedAsyncDictionary<F extends I18nDictionaryContextImporter> = Awaited<ReturnType<F>>['default'];
 
 export type I18nTranslationKey<T> = 

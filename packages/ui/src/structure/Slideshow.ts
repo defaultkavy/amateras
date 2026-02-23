@@ -9,6 +9,8 @@ export interface SlideshowOptions {
     interval?: number;
     /**是否自动播放 */
     autoplay?: boolean;
+    /**当组件不在当前页面时是否自动暂停 */
+    autopause?: boolean;
     /**动画函数 */
     animation?: SlideshowAnimationHandle;
 }
@@ -20,18 +22,23 @@ export class Slideshow extends ElementProto {
     timer: NodeJS.Timeout | null = _null;
     interval: number;
     autoplay: boolean;
+    autopause: boolean;
     animation: SlideshowAnimationHandle | null;
     #passed = 0;
-    constructor({index, interval, autoplay, animation, ...props}: $.Props<SlideshowOptions>, layout?: $.Layout<Slideshow>) {
+    #observer: ResizeObserver | null = _null;
+    playing = false;
+    constructor({index, interval, autoplay, autopause, animation, ...props}: $.Props<SlideshowOptions>, layout?: $.Layout<Slideshow>) {
         super('slideshow', props, layout);
         this.index = index ?? 0;
         this.interval = interval ?? 5;
         this.autoplay = autoplay ?? false;
+        this.autopause = autopause ?? true;
         this.animation = animation ?? _null;
         this.disposers.add(() => this.pause());
         this.ondom(() => {
             if (this.autoplay) this.play();
         })
+
     }
 
     static {
@@ -50,11 +57,24 @@ export class Slideshow extends ElementProto {
 
     override toDOM(children = true): HTMLElement[] {
         super.toDOM(false);
+
+        // handle autopause
+        if (this.node && !this.#observer) {
+            this.#observer = new ResizeObserver(() => {
+                if (!this.autopause) return;
+                if (document.body.contains(this.node)) this.play();
+                else this.pause();
+            })
+            this.#observer.observe(this.node)
+        }
+
         if (children && this.slide) this.node?.append(...this.slide.toDOM());
         return [this.node!]
     }
 
     play() {
+        if (this.playing) return;
+        this.playing = true;
         this.timer = setInterval(() => {
             this.#passed++;
             if (this.#passed >= this.interval * 100) {
@@ -65,6 +85,7 @@ export class Slideshow extends ElementProto {
     }
 
     pause() {
+        this.playing = false;
         if (this.timer) clearTimeout(this.timer);
     }
 
@@ -93,6 +114,7 @@ export class Slideshow extends ElementProto {
             this.slide = slide;
             this.node?.replaceChildren(...slide.toDOM());
         }
+        slide.node?.dispatchEvent(new Event('showslide'))
     }
 }
 

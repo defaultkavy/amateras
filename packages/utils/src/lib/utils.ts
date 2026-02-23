@@ -1,4 +1,3 @@
-import { onclient } from '@amateras/core';
 import '../global';
 
 // Value
@@ -113,7 +112,5 @@ export const uppercase = (str: string, start?: number, end?: number) => `${slice
 const _URL = URL;
 export const toURL = (path: string | URL) => {
     if (_instanceof(path, _URL)) return path;
-    if (startsWith(path, 'http')) return new _URL(path);
-    if (onclient()) return new _URL(startsWith(path, origin) ? path : origin+path);
-    else return new _URL('https://localhost' + path)
+    return new URL(path, globalThis.origin ?? 'http://localhost')
 }

@@ -42,10 +42,10 @@ export abstract class Proto {
         }).flat()
     }
 
-    build(children = true): this {
+    build(cascading = true): this {
         this.clear(true);
         $.context(Proto, this, () => this.layout?.(this));
-        if (children) forEach(this.protos, proto => {
+        if (cascading) forEach(this.protos, proto => {
             proto.build()
         });
         return this

@@ -13,7 +13,6 @@ declare global {
 declare module "@amateras/core" {
     export interface GlobalState {
         prefetch: {
-            fetches: Set<Promise<any>>,
             caches: {[key: string]: { expired: number, data: any }}
         }
     }
@@ -24,15 +23,10 @@ export type FetchOptions<T> = {
     then?: (result: T) => void;
 }
 
-_Object_assign(GlobalState.prototype, {
+GlobalState.assign({
     prefetch: {
-        fetches: new Set(),
         caches: {}
     }
-})
-
-GlobalState.disposers.add(global => {
-    global.prefetch.fetches.clear();
 })
 
 if (!globalThis.prefetch) globalThis.prefetch = {}
@@ -64,7 +58,7 @@ _Object_assign($, {
                 resolve(result);
             }
         })
-        if (onserver()) proto?.global.prefetch.fetches.add(request)
+        if (onserver()) proto?.global.promises.add(request)
         return request
     }
 })

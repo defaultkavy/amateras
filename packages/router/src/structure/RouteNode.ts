@@ -48,7 +48,7 @@ export class RouteNode extends Route {
             this.pages.set(path, page);
         }
         this.page = page;
-        slot.render(page);
+        slot.switch(page);
         return page;
     }
 }

@@ -1,7 +1,7 @@
-import { onserver } from "@amateras/core";
+import { onclient } from "@amateras/core";
 import { ProxyProto } from "@amateras/core";
 import { _null } from "@amateras/utils";
-import type { Page } from "./Page";
+import { Page } from "./Page";
 
 export class RouteSlot extends ProxyProto {
     page: Page | null = _null;
@@ -9,26 +9,19 @@ export class RouteSlot extends ProxyProto {
         super();
     }
 
-    render(page: Page) {
+    switch(page: Page) {
         if (this.page === page) return;
         this.clear();
         this.layout = () => $(page);
         page.parent = this;
         if (this.page !== page) this.page?.removeNode();
         this.page = page;
-        if (this.node) {
-            if (!page.builded) page.build();
+        if (!page.builded) page.build();
+        page.updateTitle();
+        
+        if (onclient()) {
             let nodes = this.toDOM();
-            this.node.replaceWith(...nodes);
-            // set title from page
-            if (page.title) {
-                document.title = page.title;
-                page.global.title = page.title;
-            }
-        }
-        if (onserver()) {
-            if (!page.builded) page.build();
-            page.global.title = page.title;
+            this.node?.replaceWith(...nodes);
         }
     }
 }

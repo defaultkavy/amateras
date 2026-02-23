@@ -9,7 +9,7 @@ import { RouterConstructor } from '#structure/RouterConstructor';
 import { symbol_ProtoType } from '@amateras/core';
 import { GlobalState } from '@amateras/core';
 import { Proto } from '@amateras/core';
-import { _instanceof, _Object_assign, isFunction, map } from '@amateras/utils';
+import { _Object_assign, is, isFunction, map } from '@amateras/utils';
 import './global';
 import type { PageLayout } from './types';
 
@@ -75,10 +75,11 @@ _Object_assign($, {
     forward: RouterProto.forward,
     scrollRestoration: RouterProto.scrollRestoration,
 
-    title(title: string) {
-        let parent = Proto.proto;
-        if (_instanceof(parent, Page)) {
-            parent.title = title;
+    title(title: OrPromise<string>) {
+        let page = Proto.proto?.findAbove<Page>(proto => is(proto, Page));
+        if (page) {
+            page.title = title;
+            page.updateTitle();
         }
     }
 })

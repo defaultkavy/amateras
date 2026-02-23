@@ -28,7 +28,7 @@ export interface RadioItemProps {
     value: any;
 }
 
-export class RadioItem<T> extends ElementProto {
+export class RadioItem<T = any> extends ElementProto {
     inputId: string;
     name: string | null;
     value: T;
@@ -50,7 +50,7 @@ export class Radio extends ElementProto {
     }
 
     override build(children?: boolean): this {
-        let selector = this.findAbove(proto => is(proto, RadioItem));
+        let selector = this.findAbove<RadioItem>(proto => is(proto, RadioItem));
         if (selector) {
             this.attr('id', selector.inputId);
             this.attr('name', selector.name);
@@ -65,7 +65,7 @@ export class Label extends ElementProto {
     }
 
     override build(children?: boolean): this {
-        let selector = this.findAbove(proto => is(proto, RadioItem));
+        let selector = this.findAbove<RadioItem>(proto => is(proto, RadioItem));
         if (selector) this.attr('for', selector.inputId)
         return super.build(children);
     }

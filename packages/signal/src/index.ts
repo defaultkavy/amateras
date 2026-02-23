@@ -60,12 +60,6 @@ let toTextProto = (signal: Signal) => {
     }
 }
 
-let setAttr = (name: string, node: HTMLElement, signal: Signal) => {
-    //@ts-ignore
-    if (name in node) node[name] = signal.value;
-    else node.setAttribute(name, `${signal}`)
-}
-
 $.process.text.add(toTextProto)
 $.process.craft.add(toTextProto)
 $.process.attr.add((name, signal, proto) => {
@@ -78,17 +72,12 @@ $.process.attr.add((name, signal, proto) => {
                 else proto.attr(name, `${value}`)
             }
         } 
-        else
-            proto.ondom(node => {
-                let setNodeAttr = () => setAttr(name, node, signal);
-                signal.subscribe(setNodeAttr);
-                setNodeAttr();
-                proto.disposers.add(() => signal.unsubscribe(setNodeAttr))
-            })
-
-            let setProtoAttr = () => {
-                
-            }
+        else {
+            let setNodeAttr = () => proto.attr(name, signal.value as any);
+            signal.subscribe(setNodeAttr);
+            setNodeAttr();
+            proto.disposers.add(() => signal.unsubscribe(setNodeAttr))
+        }
         
         return true;
     }

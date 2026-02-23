@@ -1,7 +1,7 @@
 import { resolveMeta } from "#lib/resolveMeta";
 import { onclient, onserver } from "@amateras/core";
 import { Proto } from "@amateras/core";
-import { _Object_assign } from "@amateras/utils";
+import { _Object_assign, _Object_entries, isNull, isObject } from "@amateras/utils";
 import type { MetaConfig } from "./types";
 
 declare global {
@@ -25,9 +25,21 @@ _Object_assign($, {
     meta(config: MetaConfig) {
         if (onclient()) return;
         let proto = Proto.proto;
-        if (proto) proto.global.meta = config;
+        if (!proto) return;
+        proto.global.meta = deepMerge(proto.global.meta ?? {}, config);
     },
 })
+
+function deepMerge(target: Record<any, any>, source: Record<any, any>) {
+    for (const [key, value] of _Object_entries(source)) {
+        if (!isNull(value) && isObject(value)) {
+            if (!target[key]) target[key] = value;
+            else deepMerge(target[key], value);
+        }
+        else target[key] = value;
+    }
+    return target;
+}
 
 if (onserver()) {
     _Object_assign($.meta, {

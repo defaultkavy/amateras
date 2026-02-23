@@ -70,8 +70,3 @@ export class Label extends ElementProto {
         return super.build(children);
     }
 }
-
-const randomIdMap = new Map<string, Set<string>>();
-function randomIdUnique() {
-
-}

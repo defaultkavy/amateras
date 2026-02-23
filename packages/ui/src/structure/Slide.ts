@@ -9,3 +9,9 @@ export class Slide extends ElementProto {
         $.style(Slide, 'slide{display:block;height:100%;width:100%;position:absolute}')
     }
 }
+
+declare global {
+    interface GlobalEventHandlersEventMap {
+        showslide: Event
+    }
+}

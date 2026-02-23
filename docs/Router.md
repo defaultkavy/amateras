@@ -154,3 +154,14 @@ a[active] {
     color: red
 }
 ```
+
+## 设定页面标题
+在页面组件的模板函数中使用函数 `$.title` 就能轻松地设定标题。
+```ts
+$.widget(() => ({
+    layout() {
+        $.title('Page Title')
+        $('h1', () => $`Page Title`)
+    }
+}))
+```

@@ -1,6 +1,6 @@
 import { onclient, onserver } from '#env';
 import { hmr } from '#lib/hmr';
-import { _instanceof, _null, forEach, isArray, isFunction, isString, isUndefined } from '@amateras/utils';
+import { _instanceof, _null, forEach, isArray, isFunction, isString, isUndefined, toArray } from '@amateras/utils';
 import './global';
 import { ElementProto } from './structure/ElementProto';
 import { Proto } from './structure/Proto';
@@ -158,11 +158,17 @@ export namespace $ {
         callback(match as any);
         return cases.get(condition)?.() ?? cases.get(symbol_default)?.();
     }
+
     export const stylesheet = onclient() ? new CSSStyleSheet() : _null;
-    export const styleMap = new Map<Constructor<ElementProto>, string>();
-    export const style = (proto: Constructor<ElementProto> | null, css: string) => {
-        if (proto) styleMap.set(proto, css);
-        stylesheet?.insertRule(css);
+    export const styleMap = new Map<Constructor<ElementProto>, Set<string>>();
+    export const style = (proto: Constructor<ElementProto> | null, css: string | string[]) => {
+        let rules = toArray(css)
+        if (proto) {
+            let set = styleMap.get(proto) ?? new Set();
+            forEach(rules, rule => set.add(rule));
+            styleMap.set(proto, set);
+        }
+        if (stylesheet) forEach(rules, rule => stylesheet!.insertRule(rule));
     }
     
     if (stylesheet) document.adoptedStyleSheets.push(stylesheet);

@@ -104,7 +104,7 @@ export class RouterProto extends Proto {
         RouterProto.scrollRestoration();
     }
 
-    static open(path: string, target?: string) {
+    static open(path: string, target?: string | null) {
         RouterProto.writeState(path, PUSH, target);
     }
 
@@ -135,7 +135,7 @@ export class RouterProto extends Proto {
         }
     }
 
-    private static writeState(path: string | URL | Nullish, mode: Mode, target?: string) {
+    private static writeState(path: string | URL | Nullish, mode: Mode, target?: string | null) {
         if (!path) return;
         let url = toURL(path);
         if (onclient() && url.href === location.href) return;

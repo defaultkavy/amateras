@@ -73,7 +73,7 @@ export abstract class Proto {
         if (dispose) forEach(this.protos, proto => proto.dispose())
     }
 
-    findAbove<T>(filter: (proto: Proto) => boolean | T | void | null): T | null {
+    findAbove<T extends Proto>(filter: (proto: Proto) => any): T | null {
         let parent = this.parent;
         if (parent) return filter(parent) ? parent as T : parent.findAbove(filter);
         return _null;

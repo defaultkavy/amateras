@@ -24,8 +24,10 @@ const scrollRecord = (e?: Event) => {
     const data = RouterProto.scrollHistory;
     if (e) {
         let element = e.target as HTMLElement;
-        if (element.id === '') return;
-        data[index] = { [element.id]: { x: element.scrollLeft, y: element.scrollTop } };
+        if (element.nodeName === '#document')  {
+            data[index] = { [element.nodeName]: { x: window.scrollX, y: window.scrollY } };
+        }
+        else if (element.id !== '') data[index] = { [element.id]: { x: element.scrollLeft, y: element.scrollTop } };
     } else {
         forEach(_Object_entries(data), ([i]) => +i >= index && delete data[+i]);
     }
@@ -131,7 +133,10 @@ export class RouterProto extends Proto {
     static scrollRestoration() {
         if (onclient()) {
             let scrollData = RouterProto.scrollData ?? {x: 0, y: 0};
-            forEach(_Object_entries(scrollData), ([id, {x, y}]) => document.querySelector(`#${id}`)?.scrollTo(x, y));
+            forEach(_Object_entries(scrollData), ([id, {x, y}]) => {
+                if (id === '#document') window.scrollTo(x, y);
+                else document.querySelector(`#${id}`)?.scrollTo(x, y)
+            });
         }
     }
 

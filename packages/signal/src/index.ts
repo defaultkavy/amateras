@@ -8,11 +8,15 @@ declare global {
     export function $<T>(signal: Signal<T>): Signal<T>;
 
     export namespace $ {
-        export function signal<T>(value: T): Signal<T>;
+        export function signal<T>(value: T): IsUnion<T> extends true ? SignalType<T> : SignalResolve<T>;
         export function effect(callback: (untrack: UntrackFunction) => void): void;
-        export function compute<T>(callback: (untrack: UntrackFunction) => T): Signal<T>;
+        export function compute<T>(callback: (untrack: UntrackFunction) => T): SignalType<T>;
     }
 }
+
+export type SignalType<T> = Signal<T> | ObjectSignal<T>;
+export type SignalResolve<T> = T extends Record<string, any> ? ObjectSignal<T> : Signal<T>
+export type ObjectSignal<T> = Signal<T> & { [K in keyof T as Exclude<T[K], undefined> extends Function ? never : `${string & K}$`]: SignalType<T[K]> } 
 
 _Object_assign($, {
     signal(value: any) {
@@ -41,6 +45,7 @@ _Object_assign($, {
         return compute
     }
 })
+
 
 let toTextProto = (signal: Signal) => {
     if (_instanceof(signal, Signal)) {

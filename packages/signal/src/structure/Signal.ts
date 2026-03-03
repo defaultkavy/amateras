@@ -1,8 +1,24 @@
-import { forEach, isFunction, isUndefined } from "@amateras/utils";
+import { _Object_defineProperty, _Object_entries, forEach, isArray, isFunction, isObject } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
 
 let signalValueMap = new WeakMap<Signal, {value: any, subs: Set<(value: any) => void>}>();
 let get = (signal: Signal) => signalValueMap.get(signal)!;
+let objectSignal = (signal: Signal) => {
+    if (signal.value && isObject(signal.value) && !isArray(signal.value))
+        for (let [key, value] of _Object_entries(signal.value)) {
+            if (`${key}$` in signal) {
+                //@ts-ignore
+                objectSignal(signal[`${key}$`]);
+            } else {
+                let memberSignal = new Signal(value);
+                // signal.subscribe(() => memberSignal.set(signal.value[key]));
+                memberSignal.subscribe((value) => signal.value[key] = value)
+                _Object_defineProperty(signal, `${key}$`, { value: memberSignal, configurable: false, writable: false, enumerable: true });
+                objectSignal(memberSignal);
+            }
+        }
+    return signal
+}
 
 export interface Signal<T> {
     (): T;
@@ -17,6 +33,7 @@ export class Signal<T = any> {
         Object.setPrototypeOf($state, this);
         signalValueMap.set($state as this, {value, subs: new Set()})
         this.key = $state as this;
+        objectSignal($state as this);
         return $state as this
     }
     
@@ -32,12 +49,14 @@ export class Signal<T = any> {
         if (isFunction(resolver)) this.set(resolver(this.value));
         else if (this.value !== resolver) {
             get(this).value = resolver;
+            objectSignal(this);
             this.emit();
         }
     }
 
     modify(callback: (value: T) => void) {
         callback(this.value);
+        objectSignal(this);
         this.emit();
     }
     

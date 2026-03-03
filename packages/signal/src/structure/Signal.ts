@@ -1,5 +1,6 @@
 import { _Object_defineProperty, _Object_entries, forEach, isArray, isFunction, isObject } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
+import type { SignalType } from "..";
 
 let signalValueMap = new WeakMap<Signal, {value: any, subs: Set<(value: any) => void>}>();
 let get = (signal: Signal) => signalValueMap.get(signal)!;
@@ -70,6 +71,11 @@ export class Signal<T = any> {
 
     unsubscribe(callback: (value: T) => void) {
         this.subs.delete(callback);
+    }
+
+    entires(): [string, SignalType<any>][] {
+        if (!this.value) return [];
+        return _Object_entries(this).filter(([name]) => name.endsWith('$')).map(([name, value]) => [name.slice(0, -1), value])
     }
 
     toString(): string {

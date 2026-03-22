@@ -1,3 +1,4 @@
+import { objectSignal } from "#lib/objectSignal";
 import { track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
 import { Proto } from "@amateras/core";
@@ -20,7 +21,7 @@ export type ObjectSignal<T> = Signal<T> & { [K in keyof T as Exclude<T[K], undef
 
 _Object_assign($, {
     signal(value: any) {
-        return new Signal(value);
+        return objectSignal(new Signal(value));
     },
 
     effect(
@@ -39,7 +40,7 @@ _Object_assign($, {
         ) => T
     ) {
         let result = track(callback);
-        let compute = new Signal(result);
+        let compute = objectSignal(new Signal(result));
         forEach(trackSet, signal => signal.subscribe(_ => compute.set(callback(untrack))));
         trackSet.clear();
         return compute

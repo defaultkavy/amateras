@@ -15,10 +15,12 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void) {
-        this.ondom(node => {
+        let setListener = (node: Node) => {
             node.addEventListener(type, listener as any)
             this.disposers.add(() => node.removeEventListener(type, listener as any))
-        });
+        }
+        if (this.node) setListener(this.node);
+        else this.ondom(setListener);
     }
 
     override toString(): string {

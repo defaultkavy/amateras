@@ -6,14 +6,11 @@ export type WidgetChildrenLayout<$$ extends Constructor | null> = (proto: $$ ext
 export type WidgetConstructLayout<$$ extends Constructor | null, Store> = (
     context: {
         store: Store, 
-        children: (
-            ...args: 
-                $$ extends Constructor 
-                ?   [proto: InstanceType<$$>] 
-                :   []
-        ) => void
+        children: (proto?: Proto) => void
     }
 ) => void;
+
+export type WidgetStore<W extends Widget> = W['store'];
 
 type WidgetInitLayoutStore<ParentStore, Store> = 
     ParentStore extends Record<string, any>
@@ -59,7 +56,7 @@ declare global {
     export function $<$$ extends Constructor | null, Props = never>(
             widget: Widget<$$, Props>,
             ...args: WidgetCraftArguments<$$, Props>
-        ): Proto;
+        ): Widget<$$, Props>;
 
     export namespace $ {
         export function widget<

@@ -33,7 +33,7 @@ export const WidgetConstructor = <$$ extends Constructor | null, Props, Store>
     }
 }
 
-export interface Widget<$$ extends Constructor | null = any, Props = any, Store = any> {
+export interface Widget<$$ extends Constructor | null = any, Props = any, Store = any> extends Proto {
     new(...args: Props extends unknown ? [] : [Props]): Proto;
     props: Props;
     store: Store;

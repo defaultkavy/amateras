@@ -1,4 +1,4 @@
-import { _Array_from, _null, _Object_entries, forEach, isNull, isUndefined, map } from "@amateras/utils";
+import { _Array_from, _null, _Object_assign, _Object_entries, forEach, isNull, isUndefined, map } from "@amateras/utils";
 import { NodeProto } from "./NodeProto";
 
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
@@ -85,6 +85,10 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     removeClass(...tokens: string[]) {
         this.token('delete', 'class', ...tokens)
         this.node?.classList.remove(...tokens);
+    }
+
+    style(declarations: Partial<CSSStyleDeclaration>) {
+        if (this.node) _Object_assign(this.node.style, declarations);
     }
 
     private token(method: 'add' | 'delete', name: string, ...tokens: string[]) {

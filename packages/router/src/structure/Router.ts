@@ -176,22 +176,22 @@ export interface RouterProto {
     route<_Path extends RoutePath, Props>(
         path: ValidatePath<_Path, Props, _Path>,
         widget: Widget<any, Props>,
-        handle?: (route: Route<'', _Path, PathToParamsMap<_Path>>) => void): void
+        handle?: (route: Route<'', _Path, PathToParamsMap<_Path>>) => void): this
 
     route<_Path extends RoutePath, Props>(
         path: ValidatePath<_Path, Props, _Path>,
         widget: AsyncWidget<Props>,
-        handle?: (route: Route<'', _Path, PathToParamsMap<_Path>>) => void): void
+        handle?: (route: Route<'', _Path, PathToParamsMap<_Path>>) => void): this
 
     route<
         Path extends RoutePath,
         Layout extends PageLayout<Path>
-    >(path: Path, layout: Layout, handle?: (route: Route<'', Path, PathToParamsMap<Path>>) => void): void
+    >(path: Path, layout: Layout, handle?: (route: Route<'', Path, PathToParamsMap<Path>>) => void): this
 
 
     group<
         Path extends RoutePath
-    >(path: Path, handle: (route: Route<'', Path, PathToParamsMap<Path>>) => void): void;
+    >(path: Path, handle: (route: Route<'', Path, PathToParamsMap<Path>>) => void): this;
 
     notFound(layout: Widget): void;
     notFound(layout: PageLayout): void;

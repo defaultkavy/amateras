@@ -32,12 +32,14 @@ let routePlannerPrototype = {
         let route = new RouteNode(path, layout);
         this.routes.set(path, route);
         handle?.(route);
+        return this;
     },
 
     group(this: Route | RouterProto, path: string, handle?: (route: Route) => void) {
         let group = new RouteGroup(path);
         this.routes.set(path, group);
         handle?.(group);
+        return this;
     },
 
     notfound() {

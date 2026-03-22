@@ -100,17 +100,17 @@ export interface Route<ParentPath extends RoutePath = any, Path extends RoutePat
     route<_Path extends string, Props>(
         path: ValidatePath<_Path, Props, PathConcat<ParentPath, Path, _Path>>,
         widget: Widget<any, Props>,
-        handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): void
+        handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this
 
     route<_Path extends string, Props>(
         path: ValidatePath<_Path, Props, PathConcat<ParentPath, Path, _Path>>,
         widget: AsyncWidget<Props>,
-        handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): void
+        handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this
 
     route<
         _Path extends RoutePath,
         Layout extends PageLayout<PathConcat<ParentPath, Path, _Path>>
-    >(path: _Path, layout: Layout, handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): void
+    >(path: _Path, layout: Layout, handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this
 
     group<
         _Path extends RoutePath

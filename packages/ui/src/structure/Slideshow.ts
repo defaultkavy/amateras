@@ -62,7 +62,7 @@ export class Slideshow extends ElementProto {
         if (this.node && !this.#observer) {
             this.#observer = new ResizeObserver(() => {
                 if (!this.autopause) return;
-                if (document.body.contains(this.node)) this.play();
+                if (this.inDOM()) this.play();
                 else this.pause();
             })
             this.#observer.observe(this.node)

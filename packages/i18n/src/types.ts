@@ -41,7 +41,7 @@ export type FindParam<T extends string> =
     T extends `${string}$${infer Param}$${infer Rest}`
     ?   Param extends `${string}${' '}${string}`
         ?   Prettify<{} & FindParam<Rest>>
-        :   Prettify<Record<Param, $.Layout> & FindParam<Rest>>
+        :   Prettify<Record<Param, any> & FindParam<Rest>>
     :   {}
 
 export type FindTranslationByKey<K extends string, T extends I18nDictionaryContext> = 

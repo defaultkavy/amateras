@@ -106,8 +106,9 @@ export class RouterProto extends Proto {
         RouterProto.scrollRestoration();
     }
 
-    static open(path: string, target?: string | null) {
-        RouterProto.writeState(path, PUSH, target);
+    static open(path: string, target: string = '_self') {
+        if (toURL(path).origin !== origin) open(path, target);
+        else RouterProto.writeState(path, PUSH, target);
     }
 
     static forward() {

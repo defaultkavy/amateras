@@ -1,4 +1,5 @@
 import { ElementProto } from "@amateras/core";
+import { _undefined } from "@amateras/utils";
 
 export class Link extends ElementProto<HTMLAnchorElement> {
     constructor(attr: $.Props | null, layout?: $.Layout<ElementProto<HTMLAnchorElement>>) {
@@ -10,7 +11,7 @@ export class Link extends ElementProto<HTMLAnchorElement> {
             let href = this.attr('href');
             if (href) {
                 if (target === '_replace') $.replace(href) 
-                else $.open(href, target)
+                else $.open(href, target ?? _undefined)
             }
         })
     }

@@ -11,7 +11,7 @@ declare global {
     export namespace $ {
         export function router(handle: RouterHandle): Router;
 
-        export function open(path: string, target?: string | null): void;
+        export function open(path: string, target?: string): void;
         export function forward(): void;
         export function back(): void;
         export function replace(path: string): void;

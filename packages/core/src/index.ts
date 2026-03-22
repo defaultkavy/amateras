@@ -159,6 +159,10 @@ export namespace $ {
         return cases.get(condition)?.() ?? cases.get(symbol_default)?.();
     }
 
+    export const async = (fn: () => Promise<void>) => {
+        Proto.proto?.global.promises.add(fn());
+    }
+
     export const stylesheet = onclient() ? new CSSStyleSheet() : _null;
     export const styleMap = new Map<Constructor<ElementProto>, Set<string>>();
     export const style = (proto: Constructor<ElementProto> | null, css: string | string[]) => {

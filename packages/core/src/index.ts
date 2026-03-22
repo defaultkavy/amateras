@@ -1,10 +1,10 @@
 import { onclient, onserver } from '#env';
-import { hmr } from '#lib/hmr';
 import { _instanceof, _null, forEach, isArray, isFunction, isString, isUndefined, toArray } from '@amateras/utils';
 import './global';
 import { ElementProto } from './structure/ElementProto';
 import { Proto } from './structure/Proto';
 import { TextProto } from './structure/TextProto';
+import { hmr } from '#lib/hmr';
 
 type ElementProtoArguments<C extends Constructor> = 
     RequiredKeys<RemoveIndexSignature<ConstructorParameters<C>[0]>> extends never 

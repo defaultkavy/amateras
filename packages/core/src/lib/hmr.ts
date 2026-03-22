@@ -6,7 +6,10 @@ import { TextProto } from "#structure/TextProto";
 import { _Array_from, _instanceof, _undefined, forEach, is } from "@amateras/utils";
 import { symbol_ProtoType } from "./symbols";
 
-const elementProtoMap = import.meta.hot?.data.protoMap ?? new Map<HTMLElement, Proto>()
+const elementProtoMap = (() => {
+    if (import.meta.hot) return import.meta.hot.data.protoMap ?? new Map<HTMLElement, Proto>();
+    return new Map<HTMLElement, Proto>()
+})()
 // save data before HMR
 if (import.meta.hot) import.meta.hot.dispose(data => {
     data.protoMap = elementProtoMap;

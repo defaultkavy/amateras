@@ -18,7 +18,10 @@ export const cssGlobalRuleSet = new Set<$CSSRule>();
  * This is very suitable for storing CSS objects in JSON format, as the length of the JSON string will not
  * affect the retrieve efficiency of the Map.
  */
-export const cssRuleByJSONMap: Map<string, $CSSRule> = import.meta.hot?.data.cssMap ?? new Map();
+export const cssRuleByJSONMap: Map<string, $CSSRule> = $.call(() => {
+    if (import.meta.hot) return import.meta.hot.data.cssMap ?? new Map();
+    return new Map();
+})
 
 if (import.meta.hot) {
     import.meta.hot.dispose(data => {

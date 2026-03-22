@@ -23,6 +23,7 @@ export class Condition extends ProxyProto {
             this.statement = matchProto ?? _null;
             forEach(this.statements, proto => proto !== matchProto && proto.removeNode())
             this.node?.replaceWith(...this.toDOM());
+            this.parent?.mutate();
         }
         // build statements proto and subscribe expression signal
         forEach(this.statements, proto => {

@@ -32,6 +32,7 @@ export class For<T extends object = object> extends ProxyProto {
                 if (node.parentNode) prevNode = node;
                 else prevNode = prevNode?.parentNode?.insertBefore(node, prevNode.nextSibling)
             })
+            this.parent?.mutate()
         }
 
         this.list$.subscribe(update);

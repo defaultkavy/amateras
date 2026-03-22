@@ -87,4 +87,10 @@ export abstract class Proto {
         }
         return _null;
     }
+
+    /**
+     * This method will be called when control flow proto is updated, 
+     * it's useful when you need re-render content of component while content updated.
+     */
+    mutate() {}
 }

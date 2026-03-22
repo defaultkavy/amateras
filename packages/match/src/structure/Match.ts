@@ -39,6 +39,7 @@ export class Match<T = any> extends ProxyProto {
             forEach(this.cases, proto => proto !== matchProto && proto.removeNode())
             if (matchProto !== this.#default) this.#default?.removeNode();
             this.node?.replaceWith(...this.toDOM());
+            this.parent?.mutate();
         }
         // build cases proto and subscribe expression signal
         forEach(this.cases, proto => {

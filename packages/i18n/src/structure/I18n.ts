@@ -29,10 +29,12 @@ export class I18n<D extends I18nDictionaryContext = {}> {
         return this;
     }
 
+    t<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nTranslation;
     t(key: string, options?: I18nTranslationOptions) {
         return new I18nTranslation(this.getSession(), this.getFullPath(key), options);
     }
 
+    text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): Promise<string>;
     async text(key: string, options?: I18nTranslationOptions) {
         let content = await this.getSession().fetch(this.getFullPath(key), options)
         return content.text.reduce((acc, str, i) => acc + str + (content.args[i] || ''), '')
@@ -41,8 +43,8 @@ export class I18n<D extends I18nDictionaryContext = {}> {
     dir(path: string) {
         let i18n = this;
         return {
-            t: (key: string, options: any) => i18n.t(`${path}.${key}`, options),
-            text: (key: string, options: any) => i18n.text(`${path}.${key}`, options),
+            t: (key: string, options: any) => i18n.t(`${path}.${key}` as any, options),
+            text: (key: string, options: any) => i18n.text(`${path}.${key}` as any, options),
             dir: (postPath: string) => i18n.dir(`${path}.${postPath}`)
         } as unknown as I18nDir;
     }

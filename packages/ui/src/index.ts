@@ -4,3 +4,6 @@ export * from "#structure/Slideshow";
 export * from "#structure/Radio";
 export * from "#structure/TextBlock";
 export * from "#structure/Accordion";
+export * from "#structure/Waterfall";
+export * from "#structure/WaterfallItem";
+export * from "#structure/Tabs";

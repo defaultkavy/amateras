@@ -88,6 +88,15 @@ export abstract class Proto {
         return _null;
     }
 
+    findBelowAll<T extends Proto = Proto>(filter: (proto: Proto) => boolean | void): T[] {
+        let matches: T[] = [];
+        for (let proto of this.protos) {
+            if (filter(proto)) matches.push(proto as T);
+            matches.push(...proto.findBelowAll(filter) as T[]);
+        }
+        return matches;
+    }
+
     /**
      * This method will be called when control flow proto is updated, 
      * it's useful when you need re-render content of component while content updated.

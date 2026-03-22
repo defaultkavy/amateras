@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.12.0] - 2026-03-23
+
+### Features
+- New UI Component: Accordion, TextBlock, Waterfall, Tabs
+- I18n Refactor: Support different language in multiple session, this is useful on server-side rendering.
+- Object Signal: Pass object into `$.signal` can directly access the object properties' signals, this make signal more convenient in UI/UX by complex data structure!
+- Slideshow
+  - Autopause: When set slideshow autopause `true`, the slideshow will be pause playback timer on route changes.
+  - Event: New `showslide` event dispatched on slide show up.
+- Page Title Control: You can set page title with `$.title` even after page switched, and input can be `Promise<string>` now.
+- GlobalState Assign: You can use `GlobalState.assign` method to assign properties to `GlobalState.prototype` now.
+- Scroll Restoration For Document Element: Now the scroll restoration is auto enabled for document element.
+- Style Modification: You can modify element style by using `ElementProto.style` method.
+- Event Listener Assign: You can assign event listener by using `ElementProto.on` method, even after `ElementProto.node` is created.
+- Control Flow Mutation: You can override `Proto.mutate` method to make changes after control flow proto's content updated.
+
+### Changes
+- Remove `global.prefetch.fetches`, use `global.promises`.
+
+### Fixes
+- Element Attributes: `ElementProto.attr` should return `null` when attribute is not defined.
+- UID: `UID.persistInProto` should return ID string now.
+- ES Modules Import Map: Fix package name not found error.
+- I18n Translation Options: The translation variables typecheck is stable now.
+
 ## [0.11.0] - 2026-01-28
 
 ### Features

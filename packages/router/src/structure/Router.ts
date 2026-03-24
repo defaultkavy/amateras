@@ -134,10 +134,13 @@ export class RouterProto extends Proto {
     static scrollRestoration() {
         if (onclient()) {
             let scrollData = RouterProto.scrollData ?? {x: 0, y: 0};
-            forEach(_Object_entries(scrollData), ([id, {x, y}]) => {
-                if (id === '#document') window.scrollTo(x, y);
-                else document.querySelector(`#${id}`)?.scrollTo(x, y)
-            });
+            let scrollDataElements = _Object_entries(scrollData);
+            if (scrollDataElements.length)
+                forEach(scrollDataElements, ([id, {x, y}]) => {
+                    if (id === '#document') window.scrollTo(x, y);
+                    else document.querySelector(`#${id}`)?.scrollTo(x, y)
+                });
+            else window.scrollTo(0, 0)
         }
     }
 

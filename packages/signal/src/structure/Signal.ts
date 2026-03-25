@@ -1,52 +1,49 @@
-import { _Object_entries, forEach, isFunction } from "@amateras/utils";
+import { _null, _Object_assign, forEach, isFunction, isNull, isObject } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
-import type { SignalType } from "..";
-import { objectSignal } from "#lib/objectSignal";
-
-let signalValueMap = new WeakMap<Signal, {value: any, subs: Set<(value: any) => void>}>();
-let get = (signal: Signal) => signalValueMap.get(signal)!;
 
 export interface Signal<T> {
     (): T;
 }
-export class Signal<T = any> {
-    key: this;
-    constructor(value: T) {
-        const $state = () => {
-            if (ontrack) trackSet.add(this);
-            return get($state as this).value;
-        }
-        Object.setPrototypeOf($state, this);
-        signalValueMap.set($state as this, {value, subs: new Set()})
-        this.key = $state as this;
-        return $state as this
+export class Signal<T = any> extends Function {
+    private linked: Signal | null = _null;
+    private _value: T
+    private subs = new Set<(value: T) => void>();
+    private props: string[]
+    constructor(value: T, props: string[] = []) {
+        super()
+        this._value = value;
+        this.props = props;
+        this.assignProperties();
+        return new Proxy(this, {
+            apply: () => this.exec()
+        });
+    }
+
+    private exec() {
+        if (ontrack) trackSet.add(this);
+        return this.value;
     }
     
     get value(): T {
-        return get(this.key).value;
+        if (this.linked) return this.linked.value;
+        return this._value;
     }
 
-    get subs(): Set<(value: T) => void> {
-        return get(this.key).subs;
-    }
-
-    set(resolver: T | ((oldValue: T) => T)) {
+    set(resolver: T | ((oldValue: T) => T),) {
         if (isFunction(resolver)) this.set(resolver(this.value));
         else if (this.value !== resolver) {
-            get(this).value = resolver;
-            objectSignal(this);
+            this._value = resolver;
             this.emit();
         }
     }
 
     modify(callback: (value: T) => void) {
         callback(this.value);
-        objectSignal(this);
         this.emit();
     }
     
     emit() {
-        forEach(get(this).subs, subs => subs(this.value));
+        forEach(this.subs, subs => subs(this.value));
     }
 
     subscribe(callback: (value: T) => void) {
@@ -57,12 +54,32 @@ export class Signal<T = any> {
         this.subs.delete(callback);
     }
 
-    entires(): [string, SignalType<any>][] {
-        if (!this.value) return [];
-        return _Object_entries(this).filter(([name]) => name.endsWith('$')).map(([name, value]) => [name.slice(0, -1), value])
+    link(target$: Signal) {
+        this.linked = target$;
+        this.props = target$.props;
+        this.assignProperties();
+        this.emit();
+        target$.subscribe(() => this.emit());
     }
 
-    toString(): string {
+    is<T extends Signal>(validator: (signal: this) => boolean): this is T {
+        return validator(this)
+    }
+
+    private assignProperties() {
+        if (!isObject(this.value) || isNull(this.value)) return;
+        forEach(this.props, propName => {
+            //@ts-ignore
+            let prop$ = $.signal(this.value[propName]);
+            _Object_assign(this, { [`${propName as string}$`]: prop$ })
+            this.subscribe(v => {
+                //@ts-ignore
+                prop$.set(v[propName])
+            })
+        })
+    }
+
+    override toString(): string {
         return `${this.value}`
     }
 }

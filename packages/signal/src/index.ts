@@ -1,27 +1,26 @@
-import { objectSignal } from "#lib/objectSignal";
 import { track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
 import { Proto } from "@amateras/core";
 import { TextProto } from "@amateras/core";
-import { _instanceof, _Object_assign, isEqual, forEach, isBoolean } from "@amateras/utils";
+import { _instanceof, _Object_assign, isEqual, forEach, isBoolean, _null } from "@amateras/utils";
 
 declare global {
     export function $<T>(signal: Signal<T>): Signal<T>;
 
     export namespace $ {
-        export function signal<T>(value: T): IsUnion<T> extends true ? SignalType<T> : SignalResolve<T>;
+        export function signal<T extends Record<string, any>, K extends keyof T>(value: T, properties: K[]): SignalStore<T, K>
+        export function signal<T>(value: T): Signal<T>;
         export function effect(callback: (untrack: UntrackFunction) => void): void;
-        export function compute<T>(callback: (untrack: UntrackFunction) => T): SignalType<T>;
+        export function compute<T>(callback: (untrack: UntrackFunction) => T): Signal<T>;
+        export function optional<T>(signal: Signal<T | undefined | null> | Signal<T | null> | Signal<T | undefined>): Signal<NonNullable<T>> | null
     }
 }
 
-export type SignalType<T> = Signal<T> | ObjectSignal<T>;
-export type SignalResolve<T> = T extends Record<string, any> ? ObjectSignal<T> : Signal<T>
-export type ObjectSignal<T> = Signal<T> & { [K in keyof T as Exclude<T[K], undefined> extends Function ? never : `${string & K}$`]: SignalType<T[K]> } 
+export type SignalStore<T, K extends keyof T = never> = Signal<T> & {[key in K as Exclude<T[K], undefined> extends Function ? never : `${string & key}$`]: Signal<T[key]>}
 
 _Object_assign($, {
-    signal(value: any) {
-        return objectSignal(new Signal(value));
+    signal(value: any, properties?: string[]) {
+        return new Signal(value, properties);
     },
 
     effect(
@@ -40,10 +39,15 @@ _Object_assign($, {
         ) => T
     ) {
         let result = track(callback);
-        let compute = objectSignal(new Signal(result));
+        let compute = new Signal(result);
         forEach(trackSet, signal => signal.subscribe(_ => compute.set(callback(untrack))));
         trackSet.clear();
         return compute
+    },
+
+    optional<T>(signal: Signal<T | undefined | null>): Signal<Exclude<T, null | undefined>> | null {
+        if (signal.value) return signal as any;
+        else return _null
     }
 })
 

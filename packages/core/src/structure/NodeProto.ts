@@ -4,7 +4,7 @@ import { onclient } from "#env";
 
 export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Proto {
     node: null | N = _null;
-    modifiers = new Set<(node: N) => void>();
+    modifiers: null | ((node: N) => void)[] = _null
     constructor(layout?: $.Layout) {
         super(layout);
     }

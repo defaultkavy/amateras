@@ -42,7 +42,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         if (this.#innerHTML) this.node.innerHTML = this.#innerHTML;
         else if (children) element.append(...map(this.protos, proto => proto.toDOM(children)).flat());
         forEach(this.#attr, ([key, value]) => element.setAttribute(key, value));
-        forEach(this.modifiers, process => process(element));
+        if (this.modifiers) forEach(this.modifiers, process => process(element));
         return [element];
     }
 

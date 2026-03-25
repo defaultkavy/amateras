@@ -10,7 +10,8 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
     }
 
     ondom(callback: (node: N) => void) {
-        this.modifiers.add(callback);
+        this.modifiers = this.modifiers ?? [];
+        this.modifiers.push(callback);
     }
 
     inDOM() {

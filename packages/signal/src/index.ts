@@ -57,7 +57,7 @@ let toTextProto = (signal: Signal) => {
         proto.ondom(node => {
             let fn = (value: any) => node.textContent = `${value}`;
             signal.subscribe(fn);
-            proto.disposers.add(() => signal.unsubscribe(fn));
+            proto.ondispose(() => signal.unsubscribe(fn));
         })
 
         let fn = (value: any) => proto.content = `${value}`;
@@ -83,7 +83,7 @@ $.process.attr.add((name, signal, proto) => {
             let setNodeAttr = () => proto.attr(name, signal.value as any);
             signal.subscribe(setNodeAttr);
             setNodeAttr();
-            proto.disposers.add(() => signal.unsubscribe(setNodeAttr))
+            proto.ondispose(() => signal.unsubscribe(setNodeAttr))
         }
         
         return true;

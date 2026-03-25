@@ -8,7 +8,7 @@ export abstract class Proto {
     static proto: Proto | null = _null; 
     static [symbol_ProtoType] = 'Proto';
     static [symbol_Statement] = false;
-    disposers = new Set<() => void>();
+    private disposers: Function[] | null = null;
     layout: $.Layout | null;
     readonly parent: Proto | null = _null;
     global: GlobalState = Proto.proto?.global ?? new GlobalState();
@@ -114,8 +114,13 @@ export abstract class Proto {
     }
 
     dispose() {
-        forEach(this.disposers, disposer => disposer());
+        if (this.disposers) forEach(this.disposers, disposer => disposer());
         forEach(this.protos, proto => proto.dispose());
+    }
+
+    ondispose(disposer: () => void) {
+        this.disposers = this.disposers ?? [];
+        this.disposers.push(disposer);
     }
 
     removeNode() {

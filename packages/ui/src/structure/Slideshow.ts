@@ -34,7 +34,7 @@ export class Slideshow extends ElementProto {
         this.autoplay = autoplay ?? false;
         this.autopause = autopause ?? true;
         this.animation = animation ?? _null;
-        this.disposers.add(() => this.pause());
+        this.ondispose(() => this.pause());
         this.ondom(() => {
             if (this.autoplay) this.play();
         })

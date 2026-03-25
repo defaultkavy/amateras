@@ -33,7 +33,7 @@ export class For<T extends object = object> extends ProxyProto {
         }
 
         this.list$.subscribe(update);
-        this.disposers.add(() => this.list$.unsubscribe(update));
+        this.ondispose(() => this.list$.unsubscribe(update));
     }
 
     override build() {

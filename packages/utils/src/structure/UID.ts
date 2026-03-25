@@ -13,7 +13,7 @@ export class UID {
 
     static persistInProto(proto: Proto, key: string, options?: RandomIdOptions) {
         const id = UID.generate(key, options);
-        proto.disposers.add(() => UID.map.get(key)?.delete(id))
+        proto.ondispose(() => UID.map.get(key)?.delete(id))
         return id;
     }
 }

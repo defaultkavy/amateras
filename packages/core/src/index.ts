@@ -106,7 +106,7 @@ export namespace $ {
     }
 
     export const dispose = (disposer: () => void) => {
-        Proto.proto?.disposers.add(disposer);
+        Proto.proto?.ondispose(disposer);
     }
 
     export const render = (proto: Proto, element: HTMLElement | (() => HTMLElement)) => {

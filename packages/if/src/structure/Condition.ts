@@ -27,7 +27,7 @@ export class Condition extends ProxyProto {
         // build statements proto and subscribe expression signal
         forEach(this.statements, proto => {
             proto.exp$?.subscribe(update);
-            proto.disposers.add(() => proto.exp$?.unsubscribe(update));
+            proto.ondispose(() => proto.exp$?.unsubscribe(update));
         })
         return this;
     }

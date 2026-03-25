@@ -110,7 +110,7 @@ export class Slideshow extends ElementProto {
         if (!slide) return;
         if (this.animation) this.animation(this, slide, this.slide);
         else {
-            slide.parent = this;
+            this.appendProto(slide);
             this.slide = slide;
             this.node?.replaceChildren(...slide.toDOM());
         }

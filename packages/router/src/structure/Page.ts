@@ -40,8 +40,3 @@ export class Page extends Proto {
         }
     }
 }
-
-export interface Page {
-    get parent(): RouteSlot;
-    set parent(proto: Proto);
-}

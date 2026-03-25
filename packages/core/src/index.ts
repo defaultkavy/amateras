@@ -4,7 +4,6 @@ import './global';
 import { ElementProto } from './structure/ElementProto';
 import { Proto } from './structure/Proto';
 import { TextProto } from './structure/TextProto';
-import { hmr } from '#lib/hmr';
 
 type ElementProtoArguments<C extends Constructor> = 
     RequiredKeys<RemoveIndexSignature<ConstructorParameters<C>[0]>> extends never 
@@ -23,7 +22,7 @@ export function $(...args: any): any {
     const prevProtoParent = Proto.proto;
     let protos: Proto[] = []
     const addProtoToParent = (proto: Proto) => {
-        proto.parent = prevProtoParent;
+        prevProtoParent?.appendProto(proto);
         protos.push(proto);
     }
     for (let process of $.process.craft) {
@@ -82,7 +81,7 @@ export function $(...args: any): any {
                 if (strTextProto) addProtoToParent(strTextProto);
                 valueBuilder(value)
             })
-        }
+        }    
         return protos;
     }
 }
@@ -115,10 +114,12 @@ export namespace $ {
         if (onserver()) return;
         element = isFunction(element) ? element() : element;
         
-        if (!hmr(element, proto)) {
-            let nodes = proto.build().toDOM()
-            element.replaceChildren(...nodes);
-        };
+        let nodes = proto.build().toDOM()
+        element.replaceChildren(...nodes);
+        // if (!hmr(element, proto)) {
+        //     let nodes = proto.build().toDOM()
+        //     element.replaceChildren(...nodes);
+        // };
     }
 
     export const context = (proto: {proto: Proto | null}, parent: Proto | null, callback: () => void) => {

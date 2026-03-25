@@ -24,7 +24,7 @@ $.process.craft.add((value, arg1, arg2) => {
     if (value === If) {
         condition = new Condition();
         if (parentProto) {
-            condition.parent = parentProto;
+            parentProto.appendProto(condition);
             conditionMap.set(parentProto, condition);
         }
     }

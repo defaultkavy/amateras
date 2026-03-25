@@ -13,7 +13,6 @@ export class For<T extends object = object> extends ProxyProto {
     #layout: ForLayout<T>;
     list$: ForList<T>;
     #itemProtoMap = new WeakMap<T, ForItem>();
-    declare protos: Set<ForItem>;
     constructor(list: ForList<T>, layout: ForLayout<T>) {
         super();
         this.list$ = list;
@@ -22,9 +21,7 @@ export class For<T extends object = object> extends ProxyProto {
         let update = () => {
             let {n: newItemList, d: deleteItemList} = this.run();
             forEach(newItemList, proto => proto.build());
-            // 如果 For node 没有 parentNode，代表 For 并不在 DOM 树中
-            // 跳过处理 DOM 的步骤
-            if (!this.node?.parentNode) return;
+            if (!this.inDOM()) return;
             forEach(deleteItemList, proto => proto.removeNode());
             let nodes = onclient() ? this.toDOM() : [];
             let prevNode: Node | undefined
@@ -59,8 +56,9 @@ export class For<T extends object = object> extends ProxyProto {
                 itemProto.layout = () => this.#layout(item, i);
             }
             else oldItemList.delete(itemProto);
-            itemProto.parent = this;
+            this.appendProto(itemProto);
         })
+        
         return { n: newItemList, d: oldItemList }
     }
 

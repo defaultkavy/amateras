@@ -1,5 +1,5 @@
 import { symbol_ProtoType, symbol_Statement } from "#lib/symbols";
-import { _null, forEach, map } from "@amateras/utils";
+import { _Array_from, _null, forEach, map } from "@amateras/utils";
 import { GlobalState } from "./GlobalState";
 
 export type ProtoLayout = (...args: any[]) => void;
@@ -8,11 +8,13 @@ export abstract class Proto {
     static proto: Proto | null = _null; 
     static [symbol_ProtoType] = 'Proto';
     static [symbol_Statement] = false;
-    protos = new Set<Proto>();
     disposers = new Set<() => void>();
     layout: $.Layout | null;
-    #parent: Proto | null = _null;
+    readonly parent: Proto | null = _null;
     global: GlobalState = Proto.proto?.global ?? new GlobalState();
+    sibling: Proto | null = _null;
+    firstProto: Proto | null = _null;
+    lastProto: Proto | null = _null;
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
      * @deprecated
@@ -22,17 +24,6 @@ export abstract class Proto {
         this.layout = layout ?? _null;
     }
 
-    set parent(proto: Proto | null) { 
-        this.#parent?.protos.delete(this);
-        this.#parent = proto;
-        if (proto) this.global = proto.global;
-        proto?.protos.add(this);
-    }
-
-    get parent() {
-        return this.#parent;
-    }
-
     get children(): this['__child__'][] {
         return map(this.protos, proto => {
             //@ts-ignore
@@ -40,6 +31,69 @@ export abstract class Proto {
                 return proto.children
             else return proto
         }).flat()
+    }
+
+    get protos(): Set<Proto> {
+        let protos = new Set<Proto>();
+        let firstChild = this.firstProto;
+        if (firstChild) {
+            let currentProto: null | Proto = firstChild;
+            while (!!currentProto) {
+                protos.add(currentProto);
+                currentProto = currentProto.sibling;
+            }
+        }
+        return protos
+    }
+
+    appendProto(...protos: Proto[]) {
+        forEach(protos, proto => {
+            if (proto.parent !== this) proto.parent?.removeProto(proto);
+            if (this.lastProto) {
+                this.lastProto.sibling = proto;
+                this.lastProto = proto;
+            } else {
+                this.firstProto = proto;
+                this.lastProto = proto;
+            }
+            (proto as Mutable<Proto>).parent = this;
+            proto.global = this.global;
+        })
+    }
+
+    insertProto(proto: Proto, position = -1) {
+        if (position === 0) {
+            if (this.firstProto) proto.sibling = this.firstProto;
+            this.firstProto = proto;
+        }
+        else {
+            let protoArr = _Array_from(this.protos);
+            let index = position < 0 ? protoArr.length + position + 1 : position;
+            protoArr.splice(index, 0, proto);
+            this.processProtos(protoArr);
+        }
+        (proto as Mutable<Proto>).parent = this;
+        proto.global = this.global;
+    }
+
+    removeProto(...protos: Proto[]) {
+        let protoSet = this.protos;
+        forEach(protos, proto => {
+            (proto as Mutable<Proto>).parent = null;
+            this.sibling = null;
+            protoSet.delete(proto);
+        })
+        this.processProtos(protoSet);
+    }
+
+    private processProtos(protos: Set<Proto> | Proto[]) {
+        let prevProto: null | Proto = null;
+        forEach(protos, (proto, i) => {
+            if (i === 0) this.firstProto = proto;
+            if (prevProto) prevProto.sibling = proto;
+            prevProto = proto;
+        })
+        this.lastProto = prevProto;
     }
 
     build(cascading = true): this {
@@ -69,8 +123,9 @@ export abstract class Proto {
     }
 
     clear(dispose = false) {
-        this.protos.clear();
-        if (dispose) forEach(this.protos, proto => proto.dispose())
+        let protos = this.protos;
+        this.removeProto(...protos);
+        if (dispose) forEach(protos, proto => proto.dispose())
     }
 
     findAbove<T extends Proto>(filter: (proto: Proto) => any): T | null {

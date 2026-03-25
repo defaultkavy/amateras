@@ -15,7 +15,6 @@ export class Match<T = any> extends ProxyProto {
     static override [symbol_Statement] = true;
     declare statementType: 'Match';
     exp$: Signal<T>
-    declare protos: Set<Case>;
     cases = new Set<Case>();
     matched: Case | Default | null = _null;
     #default: Default | null = _null;
@@ -67,12 +66,12 @@ export class Match<T = any> extends ProxyProto {
         this.clear();
         for (let proto of this.cases) {
             if (proto.condition.includes(this.exp$.value)) {
-                proto.parent = this;
+                this.appendProto(proto);
                 return this.matched = proto;
             }
         }
         if (this.#default) {
-            this.#default.parent = this;
+            this.appendProto(this.#default);
             return this.matched = this.#default;
         }
     }

@@ -1,6 +1,5 @@
 import { track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
-import { Proto } from "@amateras/core";
 import { TextProto } from "@amateras/core";
 import { _instanceof, _Object_assign, isEqual, forEach, isBoolean, _null } from "@amateras/utils";
 
@@ -64,8 +63,6 @@ let toTextProto = (signal: Signal) => {
         let fn = (value: any) => proto.content = `${value}`;
         signal.subscribe(fn);
         fn(signal.value);
-
-        proto.parent = Proto.proto;
         return proto;
     }
 }

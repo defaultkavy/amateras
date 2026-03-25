@@ -6,7 +6,6 @@ import type { ConditionStatement } from "./ConditionStatement";
 export class Condition extends ProxyProto {
     static override [symbol_Statement] = true;
     statements = new Set<ConditionStatement>();
-    declare protos: Set<ConditionStatement>;
     declare layout: null;
     statement: ConditionStatement | null = _null;
 
@@ -37,7 +36,7 @@ export class Condition extends ProxyProto {
         this.clear();
         for (let proto of this.statements) {
             if (proto.validate()) {
-                proto.parent = this;
+                this.appendProto(proto);
                 return proto;
             }
         }

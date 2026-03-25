@@ -58,7 +58,7 @@ _Object_assign($, {
                 resolve(result);
             }
         })
-        if (onserver()) proto?.global.promises.add(request)
+        if (onserver()) proto?.global.asyncTask(request)
         return request
     }
 })

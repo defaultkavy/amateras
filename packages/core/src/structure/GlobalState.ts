@@ -11,4 +11,9 @@ export class GlobalState {
     static assign(obj: object) {
         _Object_assign(GlobalState.prototype, obj);
     }
+
+    asyncTask(promise: Promise<any>) {
+        this.promises.add(promise);
+        promise.finally(() => this.promises.delete(promise));
+    }
 }

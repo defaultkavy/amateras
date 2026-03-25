@@ -160,7 +160,7 @@ export namespace $ {
     }
 
     export const async = (fn: () => Promise<void>) => {
-        Proto.proto?.global.promises.add(fn());
+        Proto.proto?.global.asyncTask(fn());
     }
 
     export const stylesheet = onclient() ? new CSSStyleSheet() : _null;

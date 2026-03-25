@@ -21,7 +21,7 @@ export class I18nTranslation extends ProxyProto {
     
     async update() {
         const request = this.session.fetch(this.key, this.options)
-        this.global.promises.add(request);
+        this.global.asyncTask(request);
         const {text, args} = await request;
         this.layout = () => {
             // make this array become Template String Array;

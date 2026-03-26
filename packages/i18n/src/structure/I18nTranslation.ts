@@ -13,6 +13,11 @@ export class I18nTranslation extends ProxyProto {
         this.options = options;
         session.translations.add(this);
     }
+
+    override dispose(): void {
+        super.dispose();
+        this.session.translations.delete(this)
+    }
     
     override build(): this {
         this.update();

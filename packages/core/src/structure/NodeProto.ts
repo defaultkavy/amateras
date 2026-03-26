@@ -14,6 +14,12 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
         this.modifiers.push(callback);
     }
 
+    override dispose(): void {
+        super.dispose();
+        this.node = _null;
+        this.modifiers = _null
+    }
+
     inDOM() {
         if (onclient()) return document.contains(this.node);
         return false;

@@ -14,6 +14,11 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         if (props) this.attrProcess(props);
     }
 
+    override dispose(): void {
+        super.dispose();
+        this.layout = null;
+    }
+
     on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void) {
         let setListener = (node: Node) => {
             node.addEventListener(type, listener as any)

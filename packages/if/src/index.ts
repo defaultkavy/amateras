@@ -14,19 +14,14 @@ globalThis.ElseIf = ElseIf;
 /**This map store condition with parent Proto,
  * all related Statement should be under same parent Proto.
  */
-let conditionMap = new WeakMap<Proto, Condition>();
-
+let condition: Condition | null = null;
 // add condition statement craft function
 $.process.craft.add((value, arg1, arg2) => {
     let parentProto = Proto.proto;
-    let condition = parentProto ? conditionMap.get(parentProto) : _null;
     // when value equal If, mean this is a new start of condition statement
     if (value === If) {
         condition = new Condition();
-        if (parentProto) {
-            parentProto.appendProto(condition);
-            conditionMap.set(parentProto, condition);
-        }
+        parentProto?.appendProto(condition);
     }
 
     // if condition is null, mean this is not a condition statement code
@@ -41,10 +36,11 @@ $.process.craft.add((value, arg1, arg2) => {
     if (isEqual(value, [If, Else, ElseIf])) {
         let args: [Signal | null, () => void] = _instanceof(arg1, Signal) ? [arg1, arg2] : [_null, arg1];
         let statement = new value(...args);
-        condition.statements.add(statement);
+        condition.statements = condition.statements ?? [];
+        condition.statements?.push(statement);
     }
     else {
-        if (parentProto) conditionMap.delete(parentProto);
+        condition = _null;
         return;
     }
     return condition;

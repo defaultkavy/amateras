@@ -47,8 +47,10 @@ export class RouteNode extends Route {
             page = new Page(this, _layout, params);
             this.pages.set(path, page);
         }
+        // let prevPage = this.page;
         this.page = page;
         slot.switch(page);
+        // if (prevPage !== page) prevPage?.dispose();
         return page;
     }
 }

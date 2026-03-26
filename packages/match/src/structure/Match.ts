@@ -27,6 +27,14 @@ export class Match<T = any> extends ProxyProto {
         this.exp$ = expression;
     }
 
+    override dispose(): void {
+        forEach(this.cases, proto => proto.dispose())
+        this.#default?.dispose();
+        this.matched = _null;
+        this.#default = _null;
+        this.cases.clear();
+    }
+
     override build(): this {
         super.build();
         this.validate();

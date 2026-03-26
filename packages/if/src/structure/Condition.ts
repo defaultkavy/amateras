@@ -5,7 +5,7 @@ import type { ConditionStatement } from "./ConditionStatement";
 
 export class Condition extends ProxyProto {
     static override [symbol_Statement] = true;
-    statements = new Set<ConditionStatement>();
+    statements: ConditionStatement[] | null = _null;
     declare layout: null;
     statement: ConditionStatement | null = _null;
 
@@ -27,14 +27,23 @@ export class Condition extends ProxyProto {
         // build statements proto and subscribe expression signal
         forEach(this.statements, proto => {
             proto.exp$?.subscribe(update);
-            proto.ondispose(() => proto.exp$?.unsubscribe(update));
+            proto.ondispose(() => {
+                proto.exp$?.unsubscribe(update)
+            });
         })
         return this;
     }
 
+    override dispose(): void {
+        super.dispose();
+        forEach(this.statements, statement => statement.dispose());
+        this.statement = _null;
+        this.statements = _null;
+    }
+
     validate() {
         this.clear();
-        for (let proto of this.statements) {
+        if (this.statements) for (let proto of this.statements) {
             if (proto.validate()) {
                 this.appendProto(proto);
                 return proto;

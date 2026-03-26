@@ -8,6 +8,7 @@ export abstract class Proto {
     static proto: Proto | null = _null; 
     static [symbol_ProtoType] = 'Proto';
     static [symbol_Statement] = false;
+    static disposer: ((proto: Proto) => void)[] = []
     private disposers: Function[] | null = _null;
     layout: $.Layout | null;
     readonly parent: Proto | null = _null;
@@ -22,6 +23,18 @@ export abstract class Proto {
     declare __child__: Proto;
     constructor(layout?: $.Layout) {
         this.layout = layout ?? _null;
+    }
+
+    dispose() {
+        forEach(Proto.disposer, disposer => disposer(this));
+        forEach(this.disposers, disposer => disposer());
+        forEach(this.protos, proto => proto.dispose());
+        this.sibling = _null;
+        this.firstProto = _null;
+        this.lastProto = _null;
+        this.disposers = _null;
+        (this as Mutable<this>).parent = _null;
+        this.layout = _null;
     }
 
     get children(): this['__child__'][] {
@@ -111,11 +124,6 @@ export abstract class Proto {
 
     toDOM(children = true): Node[] {
         return children ? map(this.protos, proto => proto.toDOM(children)).flat() : [];
-    }
-
-    dispose() {
-        if (this.disposers) forEach(this.disposers, disposer => disposer());
-        forEach(this.protos, proto => proto.dispose());
     }
 
     ondispose(disposer: () => void) {

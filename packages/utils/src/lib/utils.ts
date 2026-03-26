@@ -15,20 +15,21 @@ export const _Object_getOwnPropertyDescriptors = _Object.getOwnPropertyDescripto
 const _Array = Array;
 export const _Array_from = _Array.from;
 interface forEach {
-    <T>(arr: Array<T>, fn: (value: T, index: number, array: Array<T>) => Promise<void>): Promise<void>;
-    <T>(arr: Array<T>, fn: (value: T, index: number, array: Array<T>) => void): void;
-    <T>(set: Set<T>, fn: (value: T, index: number, set: Set<T>) => Promise<void>): void;
-    <T>(set: Set<T>, fn: (value: T, index: number, set: Set<T>) => void): void;
-    <T extends WeakKey>(set: WeakSet<T>, fn: (value: T, index: number, set: WeakSet<T>) => Promise<void>): void;
-    <T extends WeakKey>(set: WeakSet<T>, fn: (value: T, index: number, set: WeakSet<T>) => void): void;
-    <T>(list: Array<T> |  Set<T>, fn: (value: T, index: number, set: Array<T> | Set<T>) => Promise<void>): void;
-    <T>(list: Array<T> | Set<T>, fn: (value: T, index: number, set: Array<T> | Set<T>) => void): void;
-    <K, V>(map: Map<K, V>, fn: (value: [K, V], index: number, map: Map<K, V>) => Promise<void>): void;
-    <K, V>(map: Map<K, V>, fn: (value: [K, V], index: number, map: Map<K, V>) => void): void;
-    <N extends Node>(set: NodeListOf<N>, fn: (value: N, index: number, parent: NodeListOf<N>) => Promise<void>): void;
-    <N extends Node>(set: NodeListOf<N>, fn: (value: N, index: number, parent: NodeListOf<N>) => void): void;
+    <T>(arr: Array<T> | null | undefined, fn: (value: T, index: number, array: Array<T>) => Promise<void>): Promise<void>;
+    <T>(arr: Array<T> | null | undefined, fn: (value: T, index: number, array: Array<T>) => void): void;
+    <T>(set: Set<T> | null | undefined, fn: (value: T, index: number, set: Set<T>) => Promise<void>): void;
+    <T>(set: Set<T> | null | undefined, fn: (value: T, index: number, set: Set<T>) => void): void;
+    <T extends WeakKey>(set: WeakSet<T> | null | undefined, fn: (value: T, index: number, set: WeakSet<T>) => Promise<void>): void;
+    <T extends WeakKey>(set: WeakSet<T> | null | undefined, fn: (value: T, index: number, set: WeakSet<T>) => void): void;
+    <T>(list: Array<T> |  Set<T> | null | undefined, fn: (value: T, index: number, set: Array<T> | Set<T>) => Promise<void>): void;
+    <T>(list: Array<T> | Set<T> | null | undefined, fn: (value: T, index: number, set: Array<T> | Set<T>) => void): void;
+    <K, V>(map: Map<K, V> | null | undefined, fn: (value: [K, V], index: number, map: Map<K, V>) => Promise<void>): void;
+    <K, V>(map: Map<K, V> | null | undefined, fn: (value: [K, V], index: number, map: Map<K, V>) => void): void;
+    <N extends Node>(set: NodeListOf<N> | null | undefined, fn: (value: N, index: number, parent: NodeListOf<N>) => Promise<void>): void;
+    <N extends Node>(set: NodeListOf<N> | null | undefined, fn: (value: N, index: number, parent: NodeListOf<N>) => void): void;
 }
 export const forEach: forEach = async (arr: any, fn: any) => {
+    if (!arr) return;
     let i = 0;
     let asyncHandle = async () => { for (let item of arr) { await fn(item, i, arr); i++; } };
     let handle = () => { for (let item of arr) { fn(item, i, arr); i++; } };

@@ -16,7 +16,7 @@ export class TextProto extends NodeProto<Text> {
         if (this.node) return [this.node];
         let node = new Text(this.content);
         this.node = node;
-        if (this.modifiers) forEach(this.modifiers, mod => mod(node));
+        forEach(this.modifiers, mod => mod(node));
         return [node];
     }
 }

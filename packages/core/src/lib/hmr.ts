@@ -3,7 +3,7 @@ import { NodeProto } from "#structure/NodeProto";
 import { Proto } from "#structure/Proto";
 import { ProxyProto } from "#structure/ProxyProto";
 import { TextProto } from "#structure/TextProto";
-import { _Array_from, _instanceof, _undefined, forEach, is } from "@amateras/utils";
+import { _Array_from, _instanceof, _Object_entries, _undefined, forEach, is } from "@amateras/utils";
 import { symbol_ProtoType } from "./symbols";
 
 const elementProtoMap = (() => {
@@ -100,7 +100,7 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
             oldProto.node?.replaceWith(...newProto.toDOM());
             return;
         };
-        let newAttrList = _Array_from(newProto.attr())
+        let newAttrList = _Array_from(_Object_entries(newProto.attr()));
         let nodeAttrList = _Array_from(oldProto.node.attributes);
         let length = Math.max(newAttrList.length, nodeAttrList.length);
         for (let i = 0; i < length; i++) {

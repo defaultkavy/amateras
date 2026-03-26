@@ -5,7 +5,7 @@ const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
 
 export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto<H> {
     tagname: string;
-    #attr = new Map<string, string>();
+    #attr: Record<string, string> = {};
     declare layout: $.Layout | null;
     #innerHTML = '';
     constructor(tagname: string, props: $.Props | null, layout?: $.Layout | null) {
@@ -30,7 +30,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     parseHTML(options?: { children?: string, attr?: string }) {
         let tagname = this.tagname;
         let childrenHTML = options?.children ?? (this.#innerHTML || map(this.protos, proto => `${proto}`).join(''));
-        let attr = options?.attr ?? map(this.#attr, ([key, value]) => value.length ? `${key}="${value}"` : key).join(' ');
+        let attr = options?.attr ?? map(_Object_entries(this.#attr), ([key, value]) => value.length ? `${key}="${value}"` : key).join(' ');
         let attrText = attr.length ? ' ' + attr : '';
         if (SELF_CLOSING_TAGNAMES.includes(tagname)) return `<${tagname}${attrText} />`;
         return `<${tagname}${attrText}>${childrenHTML}</${tagname}>`;
@@ -42,8 +42,8 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         this.node = element;
         if (this.#innerHTML) this.node.innerHTML = this.#innerHTML;
         else if (children) element.append(...map(this.protos, proto => proto.toDOM(children)).flat());
-        forEach(this.#attr, ([key, value]) => element.setAttribute(key, value));
-        if (this.modifiers) forEach(this.modifiers, process => process(element));
+        forEach(_Object_entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
+        forEach(this.modifiers, process => process(element));
         return [element];
     }
 
@@ -62,18 +62,18 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         if (this.node) this.node.innerHTML = html;
     }
 
-    attr(): Map<string, string>;
+    attr(): Record<string, string>;
     attr(attrName: string): string | null;
     attr(attrName: string, attrValue: string | null): this;
     attr(attrName?: string, attrValue?: string | null) {
         if (!arguments.length) return this.#attr;
-        if (isUndefined(attrValue)) return this.#attr.get(attrName!) ?? _null;
+        if (isUndefined(attrValue)) return this.#attr[attrName!] ?? _null;
         if (isNull(attrValue)) {
-            this.#attr.delete(attrName!);
+            delete this.#attr[attrName!];
             this.node?.removeAttribute(attrName!);
         }
         else {
-            this.#attr.set(attrName!, attrValue);
+            this.#attr[attrName!] = attrValue;
             this.node?.setAttribute(attrName!, attrValue);
         }
         return this;
@@ -94,9 +94,9 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     private token(method: 'add' | 'delete', name: string, ...tokens: string[]) {
-        let value = this.#attr.get(name);
+        let value = this.#attr[name];
         let tokenArr = new Set(value?.split(' ') ?? []);
         forEach(tokens, t => tokenArr[method](t));
-        this.#attr.set(name, _Array_from(tokenArr).join(' '));
+        this.#attr[name] = _Array_from(tokenArr).join(' ');
     }
 }

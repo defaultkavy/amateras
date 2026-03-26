@@ -1,4 +1,4 @@
-import { track, trackSet, untrack, type UntrackFunction } from "#lib/track";
+import { computeCleanup, track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
 import { TextProto } from "@amateras/core";
 import { _instanceof, _Object_assign, isEqual, forEach, isBoolean, _null } from "@amateras/utils";
@@ -38,8 +38,14 @@ _Object_assign($, {
         ) => T
     ) {
         let result = track(callback);
-        let compute = new Signal(result);
-        forEach(trackSet, signal => signal.subscribe(_ => compute.set(callback(untrack))));
+        let compute = $.signal(result);
+        compute.exec = () => compute.set(callback(untrack));
+        forEach(trackSet, signal => {
+            signal.computes = signal.computes ?? new Set();
+            let ref = new WeakRef(compute);
+            signal.computes.add(ref);
+            computeCleanup.register(compute, {signal, ref})
+        });
         trackSet.clear();
         return compute
     },
@@ -62,6 +68,7 @@ let toTextProto = (signal: Signal) => {
 
         let fn = (value: any) => proto.content = `${value}`;
         signal.subscribe(fn);
+        proto.ondispose(() => signal.unsubscribe(fn));
         fn(signal.value);
         return proto;
     }

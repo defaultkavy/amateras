@@ -16,3 +16,7 @@ export let track = (callback: (untrack: UntrackFunction) => any) => {
     ontrack = false;
     return result;
 }
+
+export let computeCleanup = new FinalizationRegistry(({signal, ref}: {signal: Signal, ref: WeakRef<Signal>}) => {
+    signal.computes?.delete(ref);
+})

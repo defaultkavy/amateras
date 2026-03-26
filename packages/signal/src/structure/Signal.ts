@@ -1,4 +1,4 @@
-import { _null, _Object_assign, forEach, isFunction, isNull, isObject } from "@amateras/utils";
+import { _null, _Object_assign, forEach, isFunction, isNull, isObject, isUndefined } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
 
 export interface Signal<T> {
@@ -7,19 +7,21 @@ export interface Signal<T> {
 export class Signal<T = any> extends Function {
     private linked: Signal | null = _null;
     private _value: T
-    private subs = new Set<(value: T) => void>();
-    private props: string[]
-    constructor(value: T, props: string[] = []) {
+    private subs: null | ((value: T) => void)[] = _null;
+    private props: string[] | null;
+    exec: null | Function = _null;
+    computes: Set<WeakRef<Signal>> | null = _null;
+    constructor(value: T, props: string[] | null = _null) {
         super()
         this._value = value;
         this.props = props;
         this.assignProperties();
         return new Proxy(this, {
-            apply: () => this.exec()
+            apply: () => this._exec()
         });
     }
 
-    private exec() {
+    private _exec() {
         if (ontrack) trackSet.add(this);
         return this.value;
     }
@@ -44,14 +46,21 @@ export class Signal<T = any> extends Function {
     
     emit() {
         forEach(this.subs, subs => subs(this.value));
+        forEach(this.computes, ref => {
+            let compute = ref.deref();
+            if (!compute) this.computes?.delete(ref);
+            compute?.exec?.();
+        });
     }
 
     subscribe(callback: (value: T) => void) {
-        this.subs.add(callback);
+        this.subs = this.subs ?? [];
+        this.subs.push(callback);
     }
 
     unsubscribe(callback: (value: T) => void) {
-        this.subs.delete(callback);
+        let index = this.subs?.indexOf(callback);
+        if (!isUndefined(index) && index !== -1) this.subs?.splice(index, 1);
     }
 
     link(target$: Signal) {

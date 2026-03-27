@@ -5,24 +5,11 @@ import { ElementProto } from './structure/ElementProto';
 import { Proto } from './structure/Proto';
 import { TextProto } from './structure/TextProto';
 
-type ElementProtoArguments<C extends Constructor> = 
-    RequiredKeys<RemoveIndexSignature<ConstructorParameters<C>[0]>> extends never 
-    ?   [layout?: ConstructorParameters<C>[1]] | [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
-    :   [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
-
-export function $<T extends ElementProto<any>, C extends Constructor<T>, R extends InstanceType<C>>(constructor: C, ...args: ElementProtoArguments<C>): R;
-export function $(template: TemplateStringsArray, ...args: any[]): Proto[];
-export function $(proto: Proto): Proto;
-export function $(args: any[]): Proto[];
-export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
-export function $<T extends string>(tagname: T, layout?: $.Layout<ElementProto>): ElementProto;
-export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
-export function $<T extends string>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto>): ElementProto;
-export function $(...args: any): any {
+function createProto(insert: boolean, ...args: any) {
     const prevProtoParent = Proto.proto;
-    let protos: Proto[] = []
+    const protos: Proto[] = []
     const addProtoToParent = (proto: Proto) => {
-        prevProtoParent?.appendProto(proto);
+        if (insert) prevProtoParent?.append(proto);
         protos.push(proto);
     }
     for (let process of $.process.craft) {
@@ -86,14 +73,39 @@ export function $(...args: any): any {
     }
 }
 
+type ElementProtoArguments<C extends Constructor> = 
+    RequiredKeys<RemoveIndexSignature<ConstructorParameters<C>[0]>> extends never 
+    ?   [layout?: ConstructorParameters<C>[1]] | [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
+    :   [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
+
+export function $<T extends ElementProto<any>, C extends Constructor<T>, R extends InstanceType<C>>(constructor: C, ...args: ElementProtoArguments<C>): R;
+export function $(template: TemplateStringsArray, ...args: any[]): Proto[];
+export function $(proto: Proto): Proto;
+export function $(args: any[]): Proto[];
+export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
+export function $<T extends string>(tagname: T, layout?: $.Layout<ElementProto>): ElementProto;
+export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
+export function $<T extends string>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto>): ElementProto;
+export function $(...args: any): any {
+    return createProto(true, ...args);
+}
+
+interface Craft {
+    <T extends ElementProto<any>, C extends Constructor<T>, R extends InstanceType<C>>(constructor: C, ...args: ElementProtoArguments<C>): R;
+    (template: TemplateStringsArray, ...args: any[]): Proto[];
+    (proto: Proto): Proto;
+    (args: any[]): Proto[];
+    <T extends keyof HTMLElementTagNameMap>(tagname: T, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
+    <T extends string>(tagname: T, layout?: $.Layout<ElementProto>): ElementProto;
+    <T extends keyof HTMLElementTagNameMap>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
+    <T extends string>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto>): ElementProto;
+}
 
 export namespace $ {
     /** Layout 是一个 Proto 模板函数，所有在此函数中运行 $ 函数所创建的 Proto 都会被加入到运行 Layout 的 Proto 中。 */
     export type Layout<E extends Proto = any> = (proto: E) => void;
     /** Props 是组件函数的参数，集合了该组件的自定义属性，以及组件 Layout 函数和元素属性的传递。 */
     export type Props<T = {}> = { [key: string]: any } & T;
-
-    export interface AttrMap {}
 
     export type CraftMiddleware = (...args: any[]) => any;
     export type TextMiddleware = (value: any) => Proto | undefined;
@@ -104,6 +116,8 @@ export namespace $ {
         text: new Set<TextMiddleware>(),
         attr: new Set<AttrMiddleware>()
     }
+
+    export const craft: Craft = (...args: any) => createProto(false, ...args);
 
     export const dispose = (disposer: () => void) => {
         Proto.proto?.ondispose(disposer);

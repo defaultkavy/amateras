@@ -16,6 +16,7 @@ export abstract class Proto {
     sibling: Proto | null = _null;
     firstProto: Proto | null = _null;
     lastProto: Proto | null = _null;
+    builded = false;
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
      * @deprecated
@@ -112,6 +113,7 @@ export abstract class Proto {
     build(cascading = true): this {
         this.clear(true);
         $.context(Proto, this, () => this.layout?.(this));
+        this.builded = true;
         if (cascading) forEach(this.protos, proto => {
             proto.build()
         });

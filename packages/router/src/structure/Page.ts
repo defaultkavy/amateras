@@ -6,7 +6,6 @@ import { RouteSlot } from "./RouteSlot";
 
 export class Page extends Proto {
     slot = new RouteSlot();
-    builded = false;
     route: RouteNode;
     title: string | Promise<string> | null = _null;
     declare layout: () => void | AsyncWidget[0];
@@ -16,11 +15,6 @@ export class Page extends Proto {
             slot: this.slot
         }));
         this.route = route;
-    }
-
-    override build() {
-        if (!this.builded) this.builded = true;
-        return super.build();
     }
 
     updateTitle() {

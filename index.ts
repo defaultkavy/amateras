@@ -1,1 +1,1 @@
-import '@amateras/core';
+import './packages/core/src/index';

@@ -34,9 +34,6 @@
     "./markdown/syntax/*": "./packages/markdown/src/syntax/*.ts",
     "./*": "./packages/*/src/index.ts"
   },
-  "dependencies": {
-    "@amateras/core": "./packages/core"
-  },
   "workspaces": {
     "packages": [
       "packages/*"

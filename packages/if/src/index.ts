@@ -21,7 +21,7 @@ $.process.craft.add((value, arg1, arg2) => {
     // when value equal If, mean this is a new start of condition statement
     if (value === If) {
         condition = new Condition();
-        parentProto?.appendProto(condition);
+        parentProto?.append(condition);
     }
 
     // if condition is null, mean this is not a condition statement code

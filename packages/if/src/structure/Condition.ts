@@ -45,7 +45,7 @@ export class Condition extends ProxyProto {
         this.clear();
         if (this.statements) for (let proto of this.statements) {
             if (proto.validate()) {
-                this.appendProto(proto);
+                this.append(proto);
                 return proto;
             }
         }

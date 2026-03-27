@@ -74,12 +74,12 @@ export class Match<T = any> extends ProxyProto {
         this.clear();
         for (let proto of this.cases) {
             if (proto.condition.includes(this.exp$.value)) {
-                this.appendProto(proto);
+                this.append(proto);
                 return this.matched = proto;
             }
         }
         if (this.#default) {
-            this.appendProto(this.#default);
+            this.append(this.#default);
             return this.matched = this.#default;
         }
     }

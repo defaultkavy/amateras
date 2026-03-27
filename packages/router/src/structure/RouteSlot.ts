@@ -13,7 +13,7 @@ export class RouteSlot extends ProxyProto {
         if (this.page === page) return;
         this.clear();
         this.layout = () => $(page);
-        this.appendProto(page);
+        this.append(page);
         if (this.page !== page) this.page?.removeNode();
         this.page = page;
         if (!page.builded) page.build();

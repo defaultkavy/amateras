@@ -52,7 +52,7 @@ export abstract class Proto {
         let firstChild = this.firstProto;
         if (firstChild) {
             let currentProto: null | Proto = firstChild;
-            while (!!currentProto) {
+            while (currentProto) {
                 protos.add(currentProto);
                 currentProto = currentProto.sibling;
             }
@@ -60,13 +60,21 @@ export abstract class Proto {
         return protos
     }
 
-    appendProto(...protos: Proto[]) {
+    append(...protos: Proto[]) {
         forEach(protos, proto => {
-            if (proto.parent !== this) proto.parent?.removeProto(proto);
+            if (proto.parent !== this) proto.parent?.removeProtos(proto);
+            // directly set sibling of last child
             if (this.lastProto) {
+                // proto already in the last place
+                if (this.lastProto === proto) return;
+                // proto is first child, set first child as second proto
+                else if (this.firstProto === proto) this.firstProto = proto.sibling;
+                proto.sibling = _null;
                 this.lastProto.sibling = proto;
                 this.lastProto = proto;
-            } else {
+            } 
+            // if no children
+            else {
                 this.firstProto = proto;
                 this.lastProto = proto;
             }
@@ -75,7 +83,12 @@ export abstract class Proto {
         })
     }
 
-    insertProto(proto: Proto, position = -1) {
+    replaceProtos(...protos: Proto[]) {
+        this.clear();
+        this.processProtos(...protos);
+    }
+
+    insert(proto: Proto, position = -1) {
         if (position === 0) {
             if (this.firstProto) proto.sibling = this.firstProto;
             this.firstProto = proto;
@@ -84,29 +97,36 @@ export abstract class Proto {
             let protoArr = _Array_from(this.protos);
             let index = position < 0 ? protoArr.length + position + 1 : position;
             protoArr.splice(index, 0, proto);
-            this.processProtos(protoArr);
+            this.processProtos(...protoArr);
         }
         (proto as Mutable<Proto>).parent = this;
         proto.global = this.global;
     }
 
-    removeProto(...protos: Proto[]) {
+    removeProtos(...protos: Proto[]) {
         let protoSet = this.protos;
         forEach(protos, proto => {
             (proto as Mutable<Proto>).parent = null;
-            this.sibling = null;
+            proto.sibling = null;
             protoSet.delete(proto);
         })
-        this.processProtos(protoSet);
+        this.processProtos(...protoSet);
     }
 
-    private processProtos(protos: Set<Proto> | Proto[]) {
+    private processProtos(...protos: Proto[]) {
         let prevProto: null | Proto = null;
-        forEach(protos, (proto, i) => {
-            if (i === 0) this.firstProto = proto;
-            if (prevProto) prevProto.sibling = proto;
-            prevProto = proto;
-        })
+        if (protos.length)
+            forEach(protos, (proto, i) => {
+                if (i === 0) this.firstProto = proto;
+                if (prevProto) {
+                    prevProto.sibling = proto;
+                    if (prevProto.sibling === prevProto) console.debug('process');
+                }
+                prevProto = proto;
+                (proto as Mutable<Proto>).parent = this;
+            })
+        // if no children then reset firstProto
+        else this.firstProto = _null;
         this.lastProto = prevProto;
     }
 
@@ -139,7 +159,7 @@ export abstract class Proto {
 
     clear(dispose = false) {
         let protos = this.protos;
-        this.removeProto(...protos);
+        this.removeProtos(...protos);
         if (dispose) forEach(protos, proto => proto.dispose())
     }
 

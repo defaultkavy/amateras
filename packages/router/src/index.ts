@@ -94,7 +94,7 @@ $.process.craft.add((value) => {
         let proto = Proto.proto;
         let router = new value() as RouterProto;
         proto?.global.router.routers.add(router);
-        proto?.appendProto(router);
+        proto?.append(router);
         return router;
     }
 })

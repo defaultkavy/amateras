@@ -7,7 +7,7 @@ globalThis.For = For;
 $.process.craft.add((value, list, layout) => {
     if (value === For) {
         let forProto = new For(list, layout);
-        Proto.proto?.appendProto(forProto);
+        Proto.proto?.append(forProto);
         return forProto;
     }
 })

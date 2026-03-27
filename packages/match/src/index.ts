@@ -21,7 +21,7 @@ $.process.craft.add((value, arg1, arg2) => {
     }
     if (value === Match) {
         let proto = new Match(arg1, arg2);
-        Proto.proto?.appendProto(proto);
+        Proto.proto?.append(proto);
         return proto
     }
     if (value === Case) {

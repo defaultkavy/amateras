@@ -33,9 +33,11 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         this.attrProcess(props)
     }
 
-    on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void) {
+    on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions): void
+    on(type: string, listener: (event: Event & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions): void;
+    on(type: string, listener: (event: Event & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions) {
         let setListener = (node: Node) => {
-            node.addEventListener(type, listener as any)
+            node.addEventListener(type, listener as any, options)
             this.ondispose(() => this.node?.removeEventListener(type, listener as any))
         }
         if (this.node) setListener(this.node);

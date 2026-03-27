@@ -16,10 +16,6 @@ declare global {
         export type CSSValueExtends = ValueOf<CSSValueMap>;
         export interface CSSValueMap {}
 
-        export interface AttrMap {
-            css: $.CSSMap
-        }
-
         export type CSSMap = { [key: string]: $.CSSMap | $.CSSValue } | $.CSSDeclarationMap;
         export type CSSDeclarationMap = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] | $.CSSValue }
         export type CSSRootMap = { [key: string]: $.CSSMap };

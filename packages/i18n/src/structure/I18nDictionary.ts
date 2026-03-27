@@ -1,4 +1,5 @@
-import { _instanceof, isFunction, isObject } from "@amateras/utils";
+import { onclient } from "@amateras/core";
+import { isAsyncFunction, isFunction, isObject } from "@amateras/utils";
 
 export class I18nDictionary {
     #context: I18nDictionaryContext | Promise<I18nDictionaryContext> | null = null;
@@ -9,9 +10,17 @@ export class I18nDictionary {
     }
 
     async context(): Promise<I18nDictionaryContext> {
-        if (this.#context) return await this.#context;
+        let dispatchEvent = () => onclient() && window.dispatchEvent(new Event('i18ncontext'));
+        if (this.#context) {
+            if (isAsyncFunction(this.#context))
+                return await (this.#context as Promise<I18nDictionaryContext>)
+                    .finally(dispatchEvent);
+            else return this.#context;
+        }
         if (!this.#fetch) throw 'I18n Context Fetch Error';
-        return this.#context = this.#fetch().then((module) => module.default);
+        return this.#context = this.#fetch()
+            .then((module) => module.default)
+            .finally(dispatchEvent);
     }
 
     async find(path: string, context?: I18nDictionaryContext): Promise<string | undefined> {

@@ -192,4 +192,9 @@ export abstract class Proto {
      * it's useful when you need re-render content of component while content updated.
      */
     mutate() {}
+
+    get text(): string {
+        return this.children.map(proto => proto.text).join('')
+    }
+
 }

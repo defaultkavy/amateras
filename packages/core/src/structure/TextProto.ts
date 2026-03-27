@@ -19,4 +19,8 @@ export class TextProto extends NodeProto<Text> {
         forEach(this.modifiers, mod => mod(node));
         return [node];
     }
+
+    override get text(): string {
+        return this.content;
+    }
 }

@@ -1,9 +1,8 @@
-import { onclient } from "@amateras/core";
 import { symbol_Statement } from "@amateras/core";
 import { Proto } from "@amateras/core";
 import { ProxyProto } from "@amateras/core";
 import type { Signal } from "@amateras/signal";
-import { forEach } from "@amateras/utils";
+import { _Array_from, _null, forEach } from "@amateras/utils";
 
 export type ForLayout<T> = (item: T, index: number) => void;
 export type ForList<T extends object = object> = Signal<T[]> | Signal<Set<T>>
@@ -19,16 +18,27 @@ export class For<T extends object = object> extends ProxyProto {
         this.#layout = layout;
 
         let update = () => {
-            let {n: newItemList, d: deleteItemList} = this.run();
-            forEach(newItemList, proto => proto.build());
-            if (!this.inDOM()) return;
-            forEach(deleteItemList, proto => proto.removeNode());
-            let nodes = onclient() ? this.toDOM() : [];
-            let prevNode: Node | undefined
-            forEach(nodes, node => {
-                if (node.parentNode) prevNode = node;
-                else prevNode = prevNode?.parentNode?.insertBefore(node, prevNode.nextSibling)
-            })
+            const deleted = this.exec();
+            forEach(this.protos, proto => proto.builded || proto.build())
+            forEach(deleted, proto => proto.removeNode())
+            // if (!this.inDOM()) return;
+            let thisNode = this.node;
+            let parentNode = thisNode?.parentNode;
+            if (thisNode && parentNode) {
+                let nodes = this.toDOM();
+                let arr = _Array_from(parentNode.childNodes);
+                let currentPosition = arr.indexOf(thisNode);
+                forEach(nodes, node => {
+                    if (node !== thisNode) {
+                        let currentNode = parentNode.childNodes[currentPosition];
+                        if (currentNode !== node) {
+                            let nextNode = parentNode.childNodes[currentPosition + 1] ?? _null;
+                            parentNode.insertBefore(node, nextNode)
+                        }
+                    }
+                    currentPosition++;
+                })
+            }
             this.parent?.mutate()
         }
 
@@ -38,28 +48,22 @@ export class For<T extends object = object> extends ProxyProto {
 
     override build() {
         this.#itemProtoMap = new WeakMap();
-        this.run();
-        forEach(this.protos, itemProto => itemProto.build());
+        this.exec();
+        this.protos.forEach(proto => proto.builded || proto.build())
         return this;
     }
 
-    run() {
-        let newItemList: ForItem[] = [];
-        let oldItemList = new Set(this.protos);
-        this.clear();
+    private exec() {
+        let deleted = this.protos;
+        let added = new Set<ForItem>();
         forEach(this.list$.value, (item, i) => {
-            let itemProto = this.#itemProtoMap.get(item);
-            if (!itemProto) {
-                itemProto = new ForItem();
-                newItemList.push(itemProto);
-                this.#itemProtoMap.set(item, itemProto);
-                itemProto.layout = () => this.#layout(item, i);
-            }
-            else oldItemList.delete(itemProto);
-            this.appendProto(itemProto);
+            let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => this.#layout(item, i));
+            this.#itemProtoMap.set(item, itemProto);
+            deleted.delete(itemProto);
+            added.add(itemProto);
         })
-        
-        return { n: newItemList, d: oldItemList }
+        this.replaceProtos(...added);
+        return deleted;
     }
 
     override removeNode(): void {

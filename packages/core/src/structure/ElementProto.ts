@@ -8,15 +8,29 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     #attr: Record<string, string> = {};
     declare layout: $.Layout | null;
     #innerHTML = '';
+    private __props__: $.Props | null
     constructor(tagname: string, props: $.Props | null, layout?: $.Layout | null) {
         super(() => layout?.(this));
         this.tagname = tagname;
-        if (props) this.attrProcess(props);
+        this.__props__ = props;
     }
 
     override dispose(): void {
         super.dispose();
         this.layout = null;
+    }
+
+    override build(cascading?: boolean): this {
+        super.build(cascading);
+        if (this.__props__) {
+            this.props(this.__props__);
+            this.__props__ = _null;
+        }
+        return this;
+    }
+
+    props({...props}: $.Props) {
+        this.attrProcess(props)
     }
 
     on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void) {

@@ -12,9 +12,13 @@ declare global {
         export function effect(callback: (untrack: UntrackFunction) => void): void;
         export function compute<T>(callback: (untrack: UntrackFunction) => T): Signal<T>;
         export function optional<T>(signal: Signal<T | undefined | null> | Signal<T | null> | Signal<T | undefined>): Signal<NonNullable<T>> | null
+        export function resolve<T>(value: OrSignal<T>, handle?: (value: T) => void): T;
     }
+
+    type OrSignal<T = any> = T | SignalTypes<T>
 }
 
+export type SignalTypes<T> = T extends any ? Signal<T> : never;
 export type SignalStore<T, K extends keyof T = never> = Signal<T> & {[key in K as Exclude<T[K], undefined> extends Function ? never : `${string & key}$`]: Signal<T[key]>}
 
 _Object_assign($, {
@@ -53,6 +57,18 @@ _Object_assign($, {
     optional<T>(signal: Signal<T | undefined | null>): Signal<Exclude<T, null | undefined>> | null {
         if (signal.value) return signal as any;
         else return _null
+    },
+
+    resolve: (value: OrSignal, handle?: (value: any) => void) => {
+        if (_instanceof(value, Signal<any>)) {
+            if (handle) {
+                value.subscribe(handle);
+                handle(value);
+            }
+            return value.value
+        }
+        handle?.(value);
+        return value
     }
 })
 

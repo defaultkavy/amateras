@@ -1,10 +1,12 @@
 import { _null, _Object_assign, forEach, isFunction, isNull, isObject, isUndefined } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
+import { symbol_Signal } from "@amateras/core";
 
 export interface Signal<T> {
     (): T;
 }
 export class Signal<T = any> extends Function {
+    [symbol_Signal]: true = true;
     private linked: Signal | null = _null;
     private _value: T
     private subs: null | ((value: T) => void)[] = _null;
@@ -29,6 +31,16 @@ export class Signal<T = any> extends Function {
     get value(): T {
         if (this.linked) return this.linked.value;
         return this._value;
+    }
+
+    dispose() {
+        this.subs = _null;
+        this.linked = _null;
+        forEach(this.computes, signal => signal.deref()?.dispose());
+        this.computes = _null;
+        this.exec = _null;
+        this._value = _null as any;
+        this.props = _null;
     }
 
     set(resolver: T | ((oldValue: T) => T),) {

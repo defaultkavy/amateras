@@ -119,10 +119,7 @@ export abstract class Proto {
         if (protos.length)
             forEach(protos, (proto, i) => {
                 if (i === 0) this.firstProto = proto;
-                if (prevProto) {
-                    prevProto.sibling = proto;
-                    if (prevProto.sibling === prevProto) console.debug('process');
-                }
+                if (prevProto) prevProto.sibling = proto;
                 prevProto = proto;
                 (proto as Mutable<Proto>).parent = this;
             })

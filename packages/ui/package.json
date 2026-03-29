@@ -2,7 +2,8 @@
     "name": "@amateras/ui",
     "peerDependencies": {
       "@amateras/core": "workspace:*",
-      "@amateras/utils": "workspace:*"
+      "@amateras/utils": "workspace:*",
+      "@amateras/signal": "workspace:*"
     },
     "imports": {
       "#structure/*": "./src/structure/*.ts",

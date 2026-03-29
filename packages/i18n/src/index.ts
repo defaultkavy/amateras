@@ -17,6 +17,10 @@ declare global {
     export interface GlobalEventHandlersEventMap {
         localeupdate: Event;
     }
+
+    export interface ProtoEventMap {
+        i18nupdate: [I18nTranslation]
+    }
 }
 
 declare module '@amateras/core' {

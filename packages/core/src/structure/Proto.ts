@@ -17,6 +17,7 @@ export abstract class Proto {
     firstProto: Proto | null = _null;
     lastProto: Proto | null = _null;
     builded = false;
+    listeners: { [key: string]: Set<(src: Proto) => void> } | null = _null;
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
      * @deprecated
@@ -137,6 +138,7 @@ export abstract class Proto {
         if (cascading) forEach(this.protos, proto => {
             proto.build()
         });
+        this.dispatch('builded', this);
         return this
     }
 
@@ -197,4 +199,19 @@ export abstract class Proto {
         return this.children.map(proto => proto.text).join('')
     }
 
+    dispatch(type: string, src: Proto, options?: {bubbles?: boolean}) {
+        if (options?.bubbles) this.parent?.dispatch(type, src, options);
+        let handlerSet = this.listeners?.[type];
+        forEach(handlerSet, handle => handle(src));
+    }
+
+    listen<K extends keyof ProtoEventMap>(type: K, handle: (...args: ProtoEventMap[K]) => void): void;
+    listen(type: string, handle: (src: Proto) => void): void;
+    listen(type: string, handle: (...args: any) => void) {
+        let listeners = this.listeners ?? {};
+        this.listeners = listeners;
+        let handleSet = listeners[type] ?? new Set();
+        this.listeners[type] = handleSet;
+        handleSet.add(handle)
+    }
 }

@@ -36,7 +36,7 @@ export class Match<T = any> extends ProxyProto {
     }
 
     override build(): this {
-        super.build();
+        super.build(false);
         this.validate();
         // update function for Signal subscribe
         let update = () => {
@@ -50,11 +50,9 @@ export class Match<T = any> extends ProxyProto {
         }
         // build cases proto and subscribe expression signal
         forEach(this.cases, proto => {
-            proto.build();
             this.exp$.subscribe(update);
             proto.ondispose(() => this.exp$.unsubscribe(update));
         })
-        this.#default?.build();
         return this;
     }
 
@@ -75,11 +73,13 @@ export class Match<T = any> extends ProxyProto {
         for (let proto of this.cases) {
             if (proto.condition.includes(this.exp$.value)) {
                 this.append(proto);
+                if (!proto.builded) proto.build();
                 return this.matched = proto;
             }
         }
         if (this.#default) {
             this.append(this.#default);
+            if (!this.#default.builded) this.#default.build();
             return this.matched = this.#default;
         }
     }

@@ -136,11 +136,11 @@ export namespace $ {
         // };
     }
 
-    export const context = (proto: {proto: Proto | null}, parent: Proto | null, callback: () => void) => {
-        let cacheProtoParent = proto.proto;
-        proto.proto = parent;
+    export const context = (object: {proto: Proto | null}, parent: Proto | null, callback: () => void) => {
+        let cacheProtoParent = object.proto;
+        object.proto = parent;
         callback();
-        proto.proto = cacheProtoParent;
+        object.proto = cacheProtoParent;
     }
 
     export const call = <T>(callback: () => T) => callback();

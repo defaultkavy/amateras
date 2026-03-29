@@ -1,4 +1,4 @@
-import { _null, _Object_assign, forEach, isFunction, isNull, isObject, isUndefined } from "@amateras/utils";
+import { _null, _Object_assign, _Object_entries, forEach, isFunction, isNull, isObject, isUndefined } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
 import { symbol_Signal } from "@amateras/core";
 
@@ -11,12 +11,14 @@ export class Signal<T = any> extends Function {
     private _value: T
     private subs: null | ((value: T) => void)[] = _null;
     private props: string[] | null;
+    private converts: Record<string, (value: any) => Signal> | null;
     exec: null | Function = _null;
     computes: Set<WeakRef<Signal>> | null = _null;
-    constructor(value: T, props: string[] | null = _null) {
+    constructor(value: T, props: string[] | null = _null, convert: Record<string, (value: any) => Signal> | null = _null) {
         super()
         this._value = value;
         this.props = props;
+        this.converts = convert;
         this.assignProperties();
         return new Proxy(this, {
             apply: () => this._exec()
@@ -78,7 +80,8 @@ export class Signal<T = any> extends Function {
     link(target$: Signal) {
         this.linked = target$;
         this.props = target$.props;
-        this.assignProperties();
+        this.converts = target$.converts;
+        this.assignProperties(target$);
         this.emit();
         target$.subscribe(() => this.emit());
     }
@@ -87,16 +90,22 @@ export class Signal<T = any> extends Function {
         return validator(this)
     }
 
-    private assignProperties() {
+    private assignProperties(target$?: Signal) {
         if (!isObject(this.value) || isNull(this.value)) return;
         forEach(this.props, propName => {
             //@ts-ignore
-            let prop$ = $.signal(this.value[propName]);
-            _Object_assign(this, { [`${propName as string}$`]: prop$ })
+            let prop$ = target$?.[`${propName}$`] ?? $.signal(this.value[propName]);
+            _Object_assign(this, { [`${propName}$`]: prop$ })
             this.subscribe(v => {
                 //@ts-ignore
                 prop$.set(v[propName])
             })
+        })
+
+        if (this.converts) forEach(_Object_entries(this.converts), ([propName, resolve]) => {
+            //@ts-ignore
+            let prop$ = target$?.[`${propName}$`] ?? resolve(this.value[propName]);
+            _Object_assign(this, { [`${propName}$`]: prop$ });
         })
     }
 

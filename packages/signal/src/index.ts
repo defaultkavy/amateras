@@ -7,7 +7,8 @@ declare global {
     export function $<T>(signal: Signal<T>): Signal<T>;
 
     export namespace $ {
-        export function signal<T extends Record<string, any>, K extends keyof T>(value: T, properties: K[]): SignalStore<T, K>
+        export function signal<T extends Record<string, any>, P extends ((keyof T) & string)[], C extends SignalConvert<T, P>>(value: T, properties: P, convert: C): SignalStore<T, P[number], C>
+        export function signal<T extends Record<string, any>, K extends (keyof T) & string, P extends K[]>(value: T, properties: P): SignalStore<T, P[number]>
         export function signal<T>(value: T): Signal<T>;
         export function effect(callback: (untrack: UntrackFunction) => void): void;
         export function compute<T>(callback: (untrack: UntrackFunction) => T): Signal<T>;
@@ -15,15 +16,22 @@ declare global {
         export function resolve<T>(value: OrSignal<T>, handle?: (value: T) => void): T;
     }
 
-    type OrSignal<T = any> = T | SignalTypes<T>
+    export type OrSignal<T = any> = T | SignalTypes<T>
 }
 
+export type SignalConvert<T extends Record<string, any>, P extends ((keyof T) & string)[]> = {
+    [key in Exclude<keyof T, P[number]>]?: (value: T[key]) => Signal
+};
 export type SignalTypes<T> = T extends any ? Signal<T> : never;
-export type SignalStore<T, K extends keyof T = never> = Signal<T> & {[key in K as Exclude<T[K], undefined> extends Function ? never : `${string & key}$`]: Signal<T[key]>}
+export type SignalStore<T, K extends keyof T = never, C extends Partial<Record<string, (value: any) => Signal>> = {}> = SignalTypes<T> & {
+    [key in K as Exclude<T[K], undefined> extends Function ? never : `${string & key}$`]: SignalTypes<T[key]>
+} & {
+    [key in keyof C as string extends string ? `${string & key}$` : never]: C[key] extends (value: any) => Signal ? ReturnType<C[key]> : never;
+};
 
 _Object_assign($, {
-    signal(value: any, properties?: string[]) {
-        return new Signal(value, properties);
+    signal(value: any, properties?: string[], convert?: any) {
+        return new Signal(value, properties, convert);
     },
 
     effect(

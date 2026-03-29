@@ -5,7 +5,7 @@ import { _null, _Object_assign, isAsyncFunction, toURL } from "@amateras/utils";
 
 declare global {
     export namespace $ {
-        export function fetch<T, R>(url: string | URL, options?: RequestInit & FetchOptions<T, R>): Promise<{record: T, result: R}>
+        export function fetch<T, R>(url: string | URL, options?: RequestInit & FetchOptions<T, R>): Promise<FetchResult<T, R>>
     }
     export var prefetch: {[key: string]: { expired: number, data: any }}
 }
@@ -21,6 +21,11 @@ declare module "@amateras/core" {
 export type FetchOptions<T, R> = {
     record?: (res: Response) => Promise<T> | T;
     then?: (result: T) => R;
+}
+
+export type FetchResult<T, R> = {
+    record: T;
+    result: R;
 }
 
 GlobalState.assign({

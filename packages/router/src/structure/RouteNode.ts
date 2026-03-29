@@ -1,4 +1,4 @@
-import { symbol_ProtoType } from "@amateras/core";
+import { Proto, symbol_ProtoType } from "@amateras/core";
 import { _null, isArray } from "@amateras/utils";
 import type { Widget } from "@amateras/widget";
 import type { AsyncWidget, PageLayout } from "../types";
@@ -31,7 +31,7 @@ export class RouteNode extends Route {
     }
 
     async usePage(path: string, params: Record<string, string>, slot: RouteSlot) {
-        let page = this.pages.get(path);
+        let page = this.pages.get(path)!;
         if (!page) {
             let layout = this.#layout;
             let _layout;
@@ -44,7 +44,9 @@ export class RouteNode extends Route {
                 ?   () => $(this.#layout as Widget, params, () => $(page!.slot)) 
                 :   this.#layout as PageLayout;
             }
-            page = new Page(this, _layout, params);
+            $.context(Proto, slot, () => {
+                page = new Page(this, _layout, params);
+            })
             this.pages.set(path, page);
         }
         // let prevPage = this.page;

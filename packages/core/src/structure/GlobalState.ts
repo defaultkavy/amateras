@@ -1,11 +1,13 @@
 import { _Object_assign, forEach } from "@amateras/utils";
+import type { Proto } from "./Proto";
 
 export class GlobalState {
     static disposers = new Set<(global: GlobalState) => void>()
     promises = new Set<Promise<any>>();
+    constructor(root: Proto) {}
     dispose() {
         this.promises.clear();
-        forEach(GlobalState.disposers, disposer => disposer(this))
+        forEach(GlobalState.disposers, disposer => disposer(this));
     }
 
     static assign(obj: object) {

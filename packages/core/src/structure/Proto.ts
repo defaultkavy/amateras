@@ -12,7 +12,7 @@ export abstract class Proto {
     private disposers: Function[] | null = _null;
     layout: $.Layout | null;
     readonly parent: Proto | null = _null;
-    global: GlobalState = Proto.proto?.global ?? new GlobalState();
+    global: GlobalState = Proto.proto?.global ?? new GlobalState(this);
     sibling: Proto | null = _null;
     firstProto: Proto | null = _null;
     lastProto: Proto | null = _null;

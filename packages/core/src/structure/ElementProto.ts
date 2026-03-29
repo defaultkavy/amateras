@@ -21,11 +21,11 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     override build(cascading?: boolean): this {
-        super.build(cascading);
         if (this.__props__) {
             this.props(this.__props__);
             this.__props__ = _null;
         }
+        super.build(cascading);
         return this;
     }
 

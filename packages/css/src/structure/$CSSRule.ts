@@ -25,6 +25,8 @@ export class $CSSRule extends $CSS {
 
 const processCSSMap = (rule: $CSSRule, cssMap: $.CSSMap) => {
     for (let [key, value] of _Object_entries(cssMap)) {
+        // not record __selector__ in cssMap
+        if (key === '__selector__') continue;
         if (isString(value) || isNumber(value) || _instanceof(value, $CSS)) rule.declarations.set(key, `${value}`);
         else {
             // 兼容较旧浏览器不支持无 & 前缀的子规则

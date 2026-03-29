@@ -46,6 +46,7 @@ _Object_assign($, {
         // The CSS root object properties value should be $CSSObject,
         // just create rule from for each propperty.
         return map(_Object_entries(cssRootMap), ([key, value]) => {
+            // __selector__ record the selector key
             let rule = createRule(() => key, {...value, __selector__: key});
             cssGlobalRuleSet.add(rule);
             return rule;

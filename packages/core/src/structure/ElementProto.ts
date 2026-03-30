@@ -29,8 +29,10 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         return this;
     }
 
-    props({...props}: $.Props) {
-        this.attrProcess(props)
+    props({ ...props }: $.Props) {
+        let {class: className, ...propsFiltered} = props;
+        if (className) this.addClass(...className.split(' '));
+        this.attrProcess(propsFiltered);
     }
 
     on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions): void

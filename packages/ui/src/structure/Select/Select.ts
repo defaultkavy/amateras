@@ -1,8 +1,11 @@
 import { ElementProto, onclient } from "@amateras/core";
-import { _Array_from, _null, isUndefined } from "@amateras/utils";
+import { _null, isUndefined } from "@amateras/utils";
 import type { SelectContent } from "./SelectContent";
 import type { SelectItem } from "./SelectItem";
 import type { SelectTrigger } from "./SelectTrigger";
+import { float, type FloatDisconnect } from "#lib/float";
+import type { SelectValue } from "./SelectValue";
+import { toCSS } from "#lib/toCSS";
 
 export interface SelectProps {
     disabled?: OrSignal<boolean>;
@@ -10,19 +13,26 @@ export interface SelectProps {
 }
 
 export class Select extends ElementProto {
+    static tagname = 'select-proto';
     $trigger: SelectTrigger | null = _null;
     $content: SelectContent | null = _null;
     private clickListener: ((e: MouseEvent) => void) | null = _null;
     #value: any = _null;
     selected: SelectItem | null = _null;
-    items = new Set<SelectItem>();
+    itemMap = new Map<any, SelectItem>();
+    $value: SelectValue | null = _null;
+    private disconnect: FloatDisconnect | null = _null;
     constructor(props: $.Props<SelectProps>, layout?: $.Layout<Select>) {
-        super('selector', props, layout);
-        this.listen('i18nupdate', () => this.renderValue());
+        super(Select.tagname, props, layout);
+        this.listen('i18nupdate', () => this.$value?.render());
     }
 
     static {
-        $.style(this, 'selector{display:inline-block;width:10rem;user-select:none}')
+        $.style(this, toCSS(this.tagname, {
+            display: 'inline-block',
+            width: '10rem',
+            userSelect: 'none'
+        }))
     }
 
     override props({value, disabled, ...props}: $.Props<SelectProps>): void {
@@ -47,30 +57,24 @@ export class Select extends ElementProto {
         if (isUndefined(val)) return;
         $.resolve(val, val => {
             this.#value = val;
-            this.renderValue();
+            let $item = this.itemMap.get(val);
+            this.selected = $item ?? _null;
+            this.$value?.render();
         })
         this.node?.dispatchEvent(new Event('select-value'));
-    }
-
-    private renderValue() {
-        this.selected = _Array_from(this.items).find(item => item.value() === this.#value) ?? _null;
-        if (onclient()) {
-            let placeholderNode = this.$trigger?.$placeholder.node;
-            if (placeholderNode && this.selected) placeholderNode.textContent = this.selected.text;
-        } 
-        if (this.selected && this.$trigger) this.$trigger.$placeholder.content = this.selected.text;
     }
 
     open() {
         this.attr('opened', '');
         if (onclient() && this.$content) {
-            this.$content.render();
-            document.body?.append(...this.$content.toDOM());
+            this.disconnect = float(this.$trigger?.node!, this.$content.node!);
+            document.body.append(...this.$content.toDOM());
             this.clickListener = (e) => {
                 if (e.target === this.$trigger?.node) return;
                 if (e.target && this.$content?.node?.contains(e.target as Node)) return;
                 this.close();
             }
+            this.selected?.node?.focus();
             window.addEventListener('click', this.clickListener)
         }
     }
@@ -80,6 +84,8 @@ export class Select extends ElementProto {
         if (!onclient()) return;
         this.$content?.removeNode();
         if (this.clickListener) window.removeEventListener('click', this.clickListener);
+        this.disconnect?.();
+        this.disconnect = _null;
     }
 
     override toDOM(children?: boolean): HTMLElement[] {
@@ -87,7 +93,7 @@ export class Select extends ElementProto {
         if (children && this.$trigger) {
             this.node?.append(...this.$trigger.toDOM());
             this.$content?.toDOM();
-            this.renderValue();
+            this.$value?.render();
         }
         return [this.node!]
     }

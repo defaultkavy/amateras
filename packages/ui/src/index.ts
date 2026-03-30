@@ -13,3 +13,4 @@ export * from "#structure/Select/SelectValue";
 export * from "#structure/Select/SelectContent";
 export * from "#structure/Select/SelectItem";
 export * from "#structure/Select/SelectGroup";
+export * from "#structure/Select/SelectArrow";

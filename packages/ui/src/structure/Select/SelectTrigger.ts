@@ -1,25 +1,64 @@
-import { ElementProto, TextProto } from "@amateras/core";
+import { ElementProto } from "@amateras/core";
 import { _null, isNull, _instanceof } from "@amateras/utils";
 import { Select } from "./Select";
+import { toCSS } from "#lib/toCSS";
 
 export interface SelectTriggerProps {
     placeholder?: OrSignal<string | null>;
 }
 
 export class SelectTrigger extends ElementProto {
-    $placeholder = new TextProto('');
+    static tagname = 'select-trigger'
     $select: Select | null = _null;
     constructor(props: $.Props<SelectTriggerProps>, layout?: $.Layout<SelectTrigger>) {
-        super('selector-trigger', {tabindex: 0, ...props}, () => {
-            $(this.$placeholder);
-            layout?.(this)
-        });
+        super(SelectTrigger.tagname, {tabindex: 0, ...props}, layout);
         this.on('click', e => isNull(this.$select?.attr('opened')) ? this.$select.open() : this.$select?.close())
+        this.on('keydown', e => {
+            switch (e.key) {
+                case ' ': {
+                    e.preventDefault();
+                    break;
+                }
+            }
+        })
+        this.on('keyup', e => {
+            switch (e.key) {
+                case ' ':
+                case 'Enter': {
+                    e.preventDefault();
+                    this.$select?.open();
+                    break;
+                }
+            }
+        })
     }
 
-    override props({ placeholder, ...props }: $.Props<SelectTriggerProps>): void {
-        super.props(props);
-        this.placeholder(placeholder ?? _null);
+    static {
+        $.style(this, toCSS(this.tagname, {
+            display: 'flex',
+            gap: '0.5rem',
+            placeContent: 'space-between',
+            placeItems: 'center',
+            boxSizing: 'border-box',
+            border: '1px solid var(--input)',
+            background: 'color-mix(in oklch, var(--input) 30%, transparent)',
+            padding: 'calc(var(--spacing) * 2) calc(var(--spacing) * 2.5)',
+            borderRadius: 'var(--radius)',
+            fontSize: '0.875rem',
+            fontWeight: 'var(--font-weight-medium)',
+            lineHeight: '1',
+
+            '&:hover': {
+                background: 'color-mix(in oklch, var(--input) 50%, transparent)'
+            },
+            '&:focus': {
+                outline: '0.1rem solid var(--border)'
+            },
+
+            '*': {
+                pointerEvents: 'none',
+            }
+        }))
     }
 
     override build(cascading?: boolean): this {
@@ -27,16 +66,5 @@ export class SelectTrigger extends ElementProto {
         this.$select = this.findAbove<Select>(proto => _instanceof(proto, Select));
         if (this.$select) this.$select.$trigger = this;
         return this;
-    }
-
-    placeholder(text: OrSignal<string | null>) {
-        $.resolve(text, text => {
-            this.$placeholder.content = text ?? 'Select';
-            if (this.$placeholder.node) this.$placeholder.node.textContent = text;
-        });
-    }
-
-    static {
-        $.style(this, 'selector-trigger{display:block;padding:0.1rem 0.2rem;border:0.1rem solid #a5a5a5;width:100%;min-height:1rem;box-sizing:border-box;background:white;color:black;font-size:0.875rem;&:hover{background:#eeeeee}}')
     }
 }

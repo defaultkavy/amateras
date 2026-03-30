@@ -12,14 +12,14 @@ declare global {
         export interface TextProcessorValueMap {
             i18n: I18nTranslation
         }
+
+        export interface ProtoEventMap {
+            i18nupdate: [I18nTranslation]
+        }
     }
 
     export interface GlobalEventHandlersEventMap {
         localeupdate: Event;
-    }
-
-    export interface ProtoEventMap {
-        i18nupdate: [I18nTranslation]
     }
 }
 

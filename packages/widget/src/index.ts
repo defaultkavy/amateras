@@ -5,6 +5,7 @@ import { WidgetConstructor, type Widget } from "./structure/Widget";
 export type WidgetChildrenLayout<$$ extends Constructor | null> = (proto: $$ extends Constructor ? InstanceType<$$> : undefined) => void;
 export type WidgetConstructLayout<$$ extends Constructor | null, Store> = (
     context: {
+        $$: Widget,
         store: Store, 
         children: (proto?: Proto) => void
     }

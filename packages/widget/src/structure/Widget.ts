@@ -11,6 +11,7 @@ export const WidgetConstructor = <$$ extends Constructor | null, Props, Store>
         declare static store: Store;
         static override [symbol_ProtoType] = 'Widget';
         static stores = stores;
+        declare context: WidgetContext;
         
         constructor(...args: Props extends unknown ? [] : [Props, WidgetChildrenLayout<$$>]) {
             super(() => {
@@ -25,11 +26,35 @@ export const WidgetConstructor = <$$ extends Constructor | null, Props, Store>
                         _Object_assign(store, ancestorStore);
                     }
                 });
-                stores.set(this, store);
+
                 //@ts-ignore
-                layout({store, children: (proto) => children?.(proto)});
+                this.context = new WidgetContext(this, store, (proto) => children?.(proto));
+                stores.set(this, store);
+                layout(this.context);
             });
         }
+
+        override dispose(): void {
+            super.dispose();
+            stores.delete(this);
+            this.context._store = null;
+        }
+    }
+}
+
+class WidgetContext {
+    $$: Widget;
+    _store: any;
+    children: (proto?: Proto) => void;
+    constructor($$: Widget, store: any, children: (proto?: Proto) => void) {
+        this.$$ = $$;
+        this._store = store;
+        this.children = children;
+    }
+
+    get store() {
+        //@ts-ignore
+        return this.$$.constructor.stores.get(this.$$)!
     }
 }
 

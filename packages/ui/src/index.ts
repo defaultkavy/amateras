@@ -18,3 +18,4 @@ export * from "#structure/Button";
 export * from "#structure/Badge";
 export * from "#structure/Icon";
 export * from "#structure/Card";
+export * from "#structure/DescriptionList";

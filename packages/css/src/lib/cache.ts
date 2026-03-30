@@ -1,7 +1,7 @@
 import type { $CSSRule } from "#structure/$CSSRule";
 import type { ElementProto } from "@amateras/core";
 
-export const cssRuleByProtoMap = new WeakMap<ElementProto, $CSSRule>();
+export const cssRuleByProtoMap = new WeakMap<ElementProto, Set<$CSSRule>>();
 export const cssGlobalRuleSet = new Set<$CSSRule>();
 
 /** A Map to store ${@link $CSSRule} by JSON string.

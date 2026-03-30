@@ -80,16 +80,9 @@ _Object_assign($, {
     }
 })
 
-
 let toTextProto = (signal: Signal) => {
     if (_instanceof(signal, Signal)) {
         let proto = new TextProto(`${signal}`);
-        proto.ondom(node => {
-            let fn = (value: any) => node.textContent = `${value}`;
-            signal.subscribe(fn);
-            proto.ondispose(() => signal.unsubscribe(fn));
-        })
-
         let fn = (value: any) => proto.content = `${value}`;
         signal.subscribe(fn);
         proto.ondispose(() => signal.unsubscribe(fn));

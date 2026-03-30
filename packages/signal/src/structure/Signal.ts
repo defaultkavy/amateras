@@ -1,6 +1,6 @@
 import { _null, _Object_assign, _Object_entries, forEach, isFunction, isNull, isObject, isUndefined } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
-import { symbol_Signal } from "@amateras/core";
+import { Proto, symbol_Signal } from "@amateras/core";
 
 export interface Signal<T> {
     (): T;
@@ -16,6 +16,7 @@ export class Signal<T = any> extends Function {
     computes: Set<WeakRef<Signal>> | null = _null;
     constructor(value: T, props: string[] | null = _null, convert: Record<string, (value: any) => Signal> | null = _null) {
         super()
+        Proto.proto?.global.signals.add(this);
         this._value = value;
         this.props = props;
         this.converts = convert;

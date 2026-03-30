@@ -1,7 +1,7 @@
 import { computeCleanup, track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
-import { TextProto } from "@amateras/core";
-import { _instanceof, _Object_assign, isEqual, forEach, isBoolean, _null } from "@amateras/utils";
+import { GlobalState, TextProto } from "@amateras/core";
+import { _instanceof, _Object_assign, isIncluded, forEach, isBoolean, _null } from "@amateras/utils";
 
 declare global {
     export function $<T>(signal: Signal<T>): Signal<T>;
@@ -19,6 +19,12 @@ declare global {
     export type OrSignal<T = any> = T | SignalTypes<T>
 }
 
+declare module '@amateras/core' {
+    export interface GlobalState {
+        signals: Set<Signal>;
+    }
+}
+
 export type SignalConvert<T extends Record<string, any>, P extends ((keyof T) & string)[]> = {
     [key in Exclude<keyof T, P[number]>]?: (value: T[key]) => Signal
 };
@@ -28,6 +34,15 @@ export type SignalStore<T, K extends keyof T = never, C extends Partial<Record<s
 } & {
     [key in keyof C as string extends string ? `${string & key}$` : never]: C[key] extends (value: any) => Signal ? ReturnType<C[key]> : never;
 };
+
+GlobalState.assign({
+    signals: new Set()
+})
+
+GlobalState.disposers.add(global => {
+    forEach(global.signals, signal => signal.dispose());
+    global.signals.clear();
+})
 
 _Object_assign($, {
     signal(value: any, properties?: string[], convert?: any) {
@@ -96,7 +111,7 @@ $.process.craft.add(toTextProto)
 $.process.attr.add((name, signal, proto) => {
     if (_instanceof(signal, Signal)) {
         if (proto.tagname === 'input') {
-            if (isEqual(name, ['value', 'checked'] as const)) {
+            if (isIncluded(name, ['value', 'checked'] as const)) {
                 proto.on('input', e => signal.set((e.currentTarget as HTMLInputElement)[name]));
                 let value = signal.value;
                 if (isBoolean(value)) value && proto.attr(name, '');

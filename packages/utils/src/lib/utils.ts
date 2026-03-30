@@ -117,3 +117,13 @@ export const toURL = (path: string | URL) => {
     if (_instanceof(path, _URL)) return path;
     return new URL(path, globalThis.origin ?? 'http://localhost')
 }
+
+// object member compare
+export const isEqual = <T extends Object>(target: T, reference: Record<keyof T, any>, props?: (keyof T)[]) => {
+    for (let [ key, value ] of _Object_entries(target)) {
+        if (props && !props.includes(key as any)) continue;
+        if (reference[key as keyof T] === value) continue;
+        else return false;
+    }
+    return true
+}

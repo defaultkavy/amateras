@@ -5,13 +5,13 @@ import type { Signal } from "@amateras/signal";
 import { _Array_from, _null, forEach } from "@amateras/utils";
 
 export type ForLayout<T> = (item: T, index: number) => void;
-export type ForList<T extends object = object> = Signal<T[]> | Signal<Set<T>>
+export type ForList<T> = Signal<T[]> | Signal<Set<T>>
 
-export class For<T extends object = object> extends ProxyProto {
+export class For<T = any> extends ProxyProto {
     static override [symbol_Statement] = true;
     #layout: ForLayout<T>;
     list$: ForList<T>;
-    #itemProtoMap = new WeakMap<T, ForItem>();
+    #itemProtoMap = new Map<T, ForItem>();
     constructor(list: ForList<T>, layout: ForLayout<T>) {
         super();
         this.list$ = list;
@@ -21,7 +21,6 @@ export class For<T extends object = object> extends ProxyProto {
             const deleted = this.exec();
             forEach(this.protos, proto => proto.builded || proto.build())
             forEach(deleted, proto => proto.removeNode())
-            // if (!this.inDOM()) return;
             let thisNode = this.node;
             let parentNode = thisNode?.parentNode;
             if (thisNode && parentNode) {
@@ -47,7 +46,7 @@ export class For<T extends object = object> extends ProxyProto {
     }
 
     override build() {
-        this.#itemProtoMap = new WeakMap();
+        this.#itemProtoMap = new Map();
         this.exec();
         this.protos.forEach(proto => proto.builded || proto.build())
         return this;
@@ -58,7 +57,8 @@ export class For<T extends object = object> extends ProxyProto {
         let added = new Set<ForItem>();
         forEach(this.list$.value, (item, i) => {
             $.context(Proto, this, () => {
-                let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => this.#layout(item, i));
+                let layout = this.#layout;
+                let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => layout(item, i));
                 this.#itemProtoMap.set(item, itemProto);
                 deleted.delete(itemProto);
                 added.add(itemProto);
@@ -71,6 +71,12 @@ export class For<T extends object = object> extends ProxyProto {
     override removeNode(): void {
         this.node?.remove();
         forEach(this.protos, proto => proto.removeNode())
+    }
+
+    override dispose(): void {
+        super.dispose();
+        forEach(this.#itemProtoMap.values(), $item => $item.dispose())
+        this.#itemProtoMap.clear();
     }
 }
 

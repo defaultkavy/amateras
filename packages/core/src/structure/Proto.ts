@@ -202,7 +202,7 @@ export abstract class Proto {
         forEach(handlerSet, handle => handle(src));
     }
 
-    listen<K extends keyof ProtoEventMap>(type: K, handle: (...args: ProtoEventMap[K]) => void): void;
+    listen<K extends keyof $.ProtoEventMap>(type: K, handle: (...args: $.ProtoEventMap[K]) => void): void;
     listen(type: string, handle: (src: Proto) => void): void;
     listen(type: string, handle: (...args: any) => void) {
         let listeners = this.listeners ?? {};

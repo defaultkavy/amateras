@@ -2,7 +2,7 @@ import { cssGlobalRuleSet, cssRuleByProtoMap } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { $CSSRule } from "#structure/$CSSRule";
 import { ElementProto, type Proto, onserver } from "@amateras/core";
-import { _Array_from, _instanceof, _Object_assign, _Object_entries, forEach, map, UID } from "@amateras/utils";
+import { _Array_from, _instanceof, _Object_assign, _Object_entries, forEach, map, toArray, UID } from "@amateras/utils";
 import type { $CSSDeclarationMap } from "./types";
 
 declare global {
@@ -23,6 +23,10 @@ declare global {
         export namespace CSS {
             export function text(proto: Proto): string;
             export function rules(proto: Proto): $CSSRule[];
+        }
+
+        export interface AttrMap {
+            css: OrArray<$.CSSMap | $CSSRule>;
         }
     }
 }
@@ -65,7 +69,9 @@ export const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
     let rule = $.css(cssMap);
     let selector = rule.selector.slice(1);
     proto.addClass(selector);
-    cssRuleByProtoMap.set(proto, rule);
+    const ruleSet = cssRuleByProtoMap.get(proto) ?? new Set();
+    ruleSet.add(rule);
+    cssRuleByProtoMap.set(proto, ruleSet);
 }
 
 // Assign html render methods to $.CSS
@@ -75,8 +81,8 @@ if (onserver()) {
             let ruleSet = new Set<$CSSRule>();
 
             forEach([proto, ...proto.protos], childProto => {
-                let rule = cssRuleByProtoMap.get(childProto as any);
-                if (rule) ruleSet.add(rule);
+                let protoCSSRules = cssRuleByProtoMap.get(childProto as any);
+                forEach(protoCSSRules, rule => ruleSet.add(rule));
                 if (proto !== childProto)
                     forEach(this.rules(childProto), rule => ruleSet.add(rule));
             })
@@ -92,7 +98,10 @@ if (onserver()) {
 
 // Add processor of css attribute
 $.process.attr.add((key, value, proto) => {
-    if (key === 'css') return assignCSS(proto, value), true;
+    if (key === 'css') {
+        forEach(toArray(value), value => assignCSS(proto, value))
+        return true;
+    }
 })
 
 export * from "#structure/$CSS";

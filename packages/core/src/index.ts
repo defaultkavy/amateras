@@ -105,11 +105,15 @@ export namespace $ {
     /** Layout 是一个 Proto 模板函数，所有在此函数中运行 $ 函数所创建的 Proto 都会被加入到运行 Layout 的 Proto 中。 */
     export type Layout<E extends Proto = any> = (proto: E) => void;
     /** Props 是组件函数的参数，集合了该组件的自定义属性，以及组件 Layout 函数和元素属性的传递。 */
-    export type Props<T = {}> = { [key: string]: any } & T;
+    export type Props<T = {}> = { [key: string]: any } & T & Partial<AttrMap>;
 
     export type CraftMiddleware = (...args: any[]) => any;
     export type TextMiddleware = (value: any) => Proto | undefined;
     export type AttrMiddleware = (name: string, value: any, proto: ElementProto) => any;
+    
+    export interface AttrMap {}
+    
+    export interface ProtoEventMap {}
 
     export const process = {
         craft: new Set<CraftMiddleware>(),

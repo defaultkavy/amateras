@@ -2,7 +2,7 @@ import { Case } from "#structure/Case";
 import { Default } from "#structure/Default";
 import { Match } from "#structure/Match";
 import { Proto } from '@amateras/core';
-import { _instanceof, is, isEqual } from '@amateras/utils';
+import { _instanceof, is, isIncluded } from '@amateras/utils';
 import './global';
 
 globalThis.Match = Match;
@@ -12,7 +12,7 @@ globalThis.Default = Default;
 $.process.craft.add((value, arg1, arg2) => {
     if (import.meta.hot) {
         if (_instanceof(Proto.proto, Match)) {
-            if (!isEqual(value, [Case, Default])) throw 'Match layout only includes Case and Default';
+            if (!isIncluded(value, [Case, Default])) throw 'Match layout only includes Case and Default';
         }
         else {
             if (value === Case) throw 'Case must be inside Match layout';

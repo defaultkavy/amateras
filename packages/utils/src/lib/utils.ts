@@ -27,6 +27,8 @@ interface forEach {
     <K, V>(map: Map<K, V> | null | undefined, fn: (value: [K, V], index: number, map: Map<K, V>) => void): void;
     <N extends Node>(set: NodeListOf<N> | null | undefined, fn: (value: N, index: number, parent: NodeListOf<N>) => Promise<void>): void;
     <N extends Node>(set: NodeListOf<N> | null | undefined, fn: (value: N, index: number, parent: NodeListOf<N>) => void): void;
+    <K>(iterator: MapIterator<K>, fn: (value: K, index: number, arr: Array<K>) => Promise<void>): void;
+    <K>(iterator: MapIterator<K>, fn: (value: K, index: number, arr: Array<K>) => void): void;
 }
 export const forEach: forEach = async (arr: any, fn: any) => {
     if (!arr) return;

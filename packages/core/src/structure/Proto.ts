@@ -31,6 +31,7 @@ export abstract class Proto {
         forEach(Proto.disposer, disposer => disposer(this));
         forEach(this.disposers, disposer => disposer());
         forEach(this.protos, proto => proto.dispose());
+        this.global = _null as any;
         this.sibling = _null;
         this.firstProto = _null;
         this.lastProto = _null;

@@ -16,3 +16,4 @@ export * from "#structure/Select/SelectGroup";
 export * from "#structure/Select/SelectArrow";
 export * from "#structure/Button";
 export * from "#structure/Badge";
+export * from "#structure/Icon";

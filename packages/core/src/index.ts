@@ -184,7 +184,7 @@ export namespace $ {
 
     export const stylesheet = onclient() ? new CSSStyleSheet() : _null;
     export const styleMap = new Map<Constructor<ElementProto>, Set<string>>();
-    export const style = (proto: Constructor<ElementProto> | null, css: string | string[]) => {
+    export const style = (proto: Constructor<ElementProto<any>> | null, css: string | string[]) => {
         let rules = toArray(css)
         if (proto) {
             let set = styleMap.get(proto) ?? new Set();

@@ -6,7 +6,7 @@ export type StoreValue<S extends Store> = S extends Store<infer T> ? T : never;
 
 export class Store<T = any> {
     init: StoreInit<T>;
-    map = new Map<Proto, T>();
+    map = new WeakMap<Proto, T>();
     constructor(init: StoreInit<T>) {
         this.init = init;
     }
@@ -16,6 +16,7 @@ export class Store<T = any> {
         if (!root) throw `Store.create(): ${ERROR_MESSAGE}`;
         const value = this.init();
         this.map.set(root, value);
+        root.ondispose(() => this.map.delete(root));
         return value;
     }
 
@@ -24,7 +25,7 @@ export class Store<T = any> {
         if (!proto) throw `Store.get(): ${ERROR_MESSAGE}`;
         const value = this.getValueFromProto(proto);
         if (isUndefined(value)) throw 'Store.get(): value not found';
-        return value; 
+        return value;
     }
 
     private getValueFromProto(proto: Proto | null): T | undefined {

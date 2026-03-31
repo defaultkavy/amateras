@@ -178,7 +178,7 @@ declare global {
 export interface RouterProto {
     route<_Path extends RoutePath, Props>(
         path: ValidatePath<_Path, Props, _Path>,
-        widget: Widget<any, Props>,
+        widget: Widget<Props>,
         handle?: (route: Route<'', _Path, PathToParamsMap<_Path>>) => void): this
 
     route<_Path extends RoutePath, Props>(

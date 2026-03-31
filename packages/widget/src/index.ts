@@ -1,80 +1,24 @@
-import { Proto } from "@amateras/core";
-import { _Object_assign } from "@amateras/utils";
-import { WidgetConstructor, type Widget } from "./structure/Widget";
-
-export type WidgetChildrenLayout<$$ extends Constructor | null> = (proto: $$ extends Constructor ? InstanceType<$$> : undefined) => void;
-export type WidgetConstructLayout<$$ extends Constructor | null, Store> = (
-    context: {
-        $$: Widget,
-        store: Store, 
-        children: (proto?: Proto) => void
-    }
-) => void;
-
-export type WidgetStore<W extends Widget> = W['store'];
-
-type WidgetInitLayoutStore<ParentStore, Store> = 
-    ParentStore extends Record<string, any>
-    ?   Store extends Record<string, any>
-        ?   Prettify<ParentStore & Store>
-        :   ParentStore
-    :   Store extends Record<string, any>
-        ?   Store
-        :   {}
-
-export type WidgetInit<$$ extends Constructor | null = null, Store = any, Ancestors = Widget[], ParentStore = any> = 
-    | {
-        ancestors?: Ancestors,
-        store?: Store,
-        $$?: $$,
-        layout: WidgetConstructLayout<$$, WidgetInitLayoutStore<ParentStore, Store>>
-    }
-
-type MergeAncestorStore<T extends any[]> = 
-    MergeUnionType<
-        T extends Array<infer W> 
-        ?   W extends Widget<any, any, infer Store> 
-            ?   Store
-            :   never
-        : never
-    >
-
-type MergeUnionType<U> = 
-    (
-        U extends any 
-        ? (k: U) => void 
-        : never
-    ) extends (k: infer I) => void
-        ?   I
-        :   never;
-
-type WidgetCraftArguments<$$ extends Constructor | null, Props> = 
-        RequiredKeys<Props> extends never
-        ?   [children?: WidgetChildrenLayout<$$>] | [props?: $.Props<Props>, children?: WidgetChildrenLayout<$$>]
-        :   [props: $.Props<Props>, children?: WidgetChildrenLayout<$$>]
+import { WidgetConstructor, type Widget } from '#structure/Widget';
+import { type Proto } from '@amateras/core';
+import { _Object_assign } from '@amateras/utils';
 
 declare global {
-    export function $<$$ extends Constructor | null, Props = never>(
-            widget: Widget<$$, Props>,
-            ...args: WidgetCraftArguments<$$, Props>
-        ): Widget<$$, Props>;
-
     export namespace $ {
-        export function widget<
-        Props extends $.Props, 
-        Store, 
-        Ancestors, 
-        ParentStore extends MergeAncestorStore<Ancestors extends any[] ? Ancestors : []>,
-        $$ extends Constructor | null = null
-        >(init: (props: Props) => WidgetInit<$$, Store, Ancestors, ParentStore>): Widget<$$, Props, Store>;
+        export function widget<Props = {}, Parent extends Proto = never>(builder: WidgetBuilder<Props, Parent>): Widget<Props, Parent>;
     }
+
+    export function $<Props, Parent extends Proto>(block: Widget<Props, Parent>, ...args: BlockCraftArguments<Props, Parent>): Widget<Props, Parent>;
 }
+export type WidgetBuilder<Props = any, Parent extends Proto = any> = (props: $.Props<Props>, children: $.Layout<Parent>) => void;
+type BlockCraftArguments<Props, Parent extends Proto> = 
+        RequiredKeys<Props> extends never
+        ?   [children?: $.Layout<Parent>] | [props?: $.Props<Props>, children?: $.Layout<Parent>]
+        :   [props: $.Props<Props>, children?: $.Layout<Parent>];
 
 _Object_assign($, {
-    widget(arg1: any) {
-        let Widget = WidgetConstructor(arg1);
-        return Widget;
+    widget(builder: WidgetBuilder) {
+        return WidgetConstructor(builder);
     }
 })
 
-export * from "#structure/Widget";
+export * from '#structure/Widget';

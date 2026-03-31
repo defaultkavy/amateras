@@ -1,9 +1,8 @@
 import { _undefined, isFunction, isUndefined, map } from "@amateras/utils";
-import type { Widget } from "@amateras/widget";
 import type { AliasRequired, AsyncWidget, PageLayout, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
 import type { Page } from "./Page";
 import type { RouteSlot } from "./RouteSlot";
-
+import type { Widget } from "../../../widget/src";
 
 export abstract class Route<ParentPath extends RoutePath = any, Path extends RoutePath = any, Params = any> {
     declare protos: Set<Page | Route>;
@@ -99,7 +98,7 @@ export interface Route<ParentPath extends RoutePath = any, Path extends RoutePat
     
     route<_Path extends string, Props>(
         path: ValidatePath<_Path, Props, PathConcat<ParentPath, Path, _Path>>,
-        widget: Widget<any, Props>,
+        widget: Widget<Props>,
         handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this
 
     route<_Path extends string, Props>(

@@ -1,0 +1,15 @@
+{
+    "name": "@amateras/store",
+    "peerDependencies": {
+      "@amateras/core": "workspace:*",
+      "@amateras/utils": "workspace:*"
+    },
+    "imports": {
+      "#structure/*": "./src/structure/*.ts",
+      "#lib/*": "./src/lib/*.ts",
+      "#node/*": "./src/node/*.ts"
+    },
+    "exports": {
+      ".": "./src/index.ts"
+    }
+}

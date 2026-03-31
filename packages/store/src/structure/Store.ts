@@ -1,20 +1,20 @@
 import { Proto } from "@amateras/core";
 import { isUndefined } from "@amateras/utils";
 
-export type StoreInit<T> = () => T;
+export type StoreInit<T, Args extends any[] = []> = (...args: Args) => T;
 export type StoreValue<S extends Store> = S extends Store<infer T> ? T : never;
 
-export class Store<T = any> {
-    init: StoreInit<T>;
+export class Store<T = any, Args extends any[] = []> {
+    init: StoreInit<T, Args>;
     map = new WeakMap<Proto, T>();
-    constructor(init: StoreInit<T>) {
+    constructor(init: StoreInit<T, Args>) {
         this.init = init;
     }
 
-    create(): T {
+    create(...args: Args): T {
         const root = Proto.proto;
         if (!root) throw `Store.create(): ${ERROR_MESSAGE}`;
-        const value = this.init();
+        const value = this.init(...args);
         this.map.set(root, value);
         root.ondispose(() => this.map.delete(root));
         return value;

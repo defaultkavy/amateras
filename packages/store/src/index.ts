@@ -3,7 +3,7 @@ import { _Object_assign } from "@amateras/utils";
 
 declare global {
     export namespace $ {
-        export function store<T>(init: StoreInit<T>): Store<T>
+        export function store<T, Args extends any[]>(init: StoreInit<T, Args>): Store<T, Args>
     }
 }
 

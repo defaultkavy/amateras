@@ -127,13 +127,12 @@ export namespace $ {
         Proto.proto?.ondispose(disposer);
     }
 
-    export const render = (proto: Proto, element: HTMLElement | (() => HTMLElement)) => {
+    export const render = (proto: Proto, query: string) => {
         // Disable render on server side
         if (onserver()) return;
-        element = isFunction(element) ? element() : element;
         
-        let nodes = proto.build().toDOM()
-        element.replaceChildren(...nodes);
+        let nodes = $(proto).build().toDOM()
+        document.querySelector(query)?.replaceChildren(...nodes);
         // if (!hmr(element, proto)) {
         //     let nodes = proto.build().toDOM()
         //     element.replaceChildren(...nodes);

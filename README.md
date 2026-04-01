@@ -37,7 +37,7 @@ import 'amateras';
 
 const $h1 = $('h1', {class: 'title'}, () => $`Hello World!`)
 
-$.render($h1, () => document.body);
+$.render($h1, 'body');
 ```
 
 ## 计数组件范例
@@ -46,21 +46,19 @@ import 'amateras';
 import 'amateras/signal';
 import 'amateras/widget';
 
-const Counter = $.widget(() => ({
-    layout() {
-        const count$ = $.signal(0);
-        const double$ = $.compute(() => count$() * 2);
+const Counter = $.widget(() => {
+    const count$ = $.signal(0);
+    const double$ = $.compute(() => count$() * 2);
 
-        console.log('This template only run once.');
+    console.log('This template only run once.');
 
-        $('button', $$ => { 
-            $([ double$ ])
-            $$.on('click', () => count$.set(val => val + 1));
-        })
-    }
-}))
+    $('button', $$ => { 
+        $([ double$ ])
+        $$.on('click', () => count$.set(val => val + 1));
+    })
+})
 
-$.render($(Counter), () => document.body);
+$.render(Counter, 'body');
 ```
 
 ## 为什么是 Amateras？

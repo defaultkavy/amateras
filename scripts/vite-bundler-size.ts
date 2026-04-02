@@ -89,7 +89,7 @@ const data = await analysisPackageSize()
 console.table(data);
 
 function toMarkdownTable(data: Record<string, ModuleInfo>) {
-    const header = ['模块库', '体积', 'Gzip', '简介'];
+    const header = ['Modules', 'Size', 'Gziped', 'Description'];
     const contents: string[][] = [];
     for (const [name, info] of Object.entries(data)) {
         if (name === 'core') contents.push([name, info.total_size, info.total_gzip, info.description])

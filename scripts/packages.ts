@@ -8,50 +8,53 @@ type Package = {
 export const packages: Package[] = [
     {
         name: "core",
-        description: "核心模块",
+        description: "Core module",
     }, {
         name: "widget",
-        description: "组件模块",
+        description: "Component module",
     }, {
         name: "signal",
-        description: "响应式数据模块",
+        description: "Reactive data module",
+    }, {
+        name: 'store',
+        description: 'Access data between widgets'
     }, {
         name: "css",
-        description: "样式模块",
+        description: "CSS-in-JS module",
     }, {
         name: "for",
-        description: "控制流 For 模块",
+        description: "For loop control-flow",
     }, {
         name: "if",
-        description: "控制流 If 模块",
+        description: "If/Else/ElseIf control-flow",
     }, {
         name: "match",
-        description: "控制流 Match 模块",
+        description: "Match/Case/Default control-flow",
     }, {
         name: "router",
-        description: "页面路由器模块",
+        description: "Router module",
     }, {
         name: "i18n",
-        description: "多语言界面模块",
+        description: "Translation module",
     }, {
         name: "idb",
-        description: "IndexedDB 模块",
+        description: "IndexedDB module",
     }, {
         name: "markdown",
-        description: "Markdown 转换 HTML 模块",
+        description: "Markdown to HTML module",
         codeInsert: 'import { Markdown } from "amateras/markdown"; new Markdown();'
     }, {
         name: "prefetch",
-        description: "SSR 数据预取"
+        description: "SSR data prefetch"
     }, {
         name: "meta",
-        description: "SSR 页面 `meta` 标签管理"
+        description: "SSR `meta` tag manager"
     }, {
         name: "ui",
-        description: "UI 组件模块"
+        description: "UI components"
     }, {
         name: "utils",
-        description: "通用工具库",
+        description: "Utilities module",
         codeInsert: 'import * as utils from "amateras/utils";'
     }
 ]

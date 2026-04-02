@@ -56,6 +56,7 @@ export const isBoolean = (target: any): target is boolean => _typeof(target, 'bo
 export const isNumber = (target: any): target is number => _typeof(target, 'number');
 export const isObject = (target: any): target is object => _typeof(target, 'object');
 export const isFunction = (target: any): target is Function => _typeof(target, 'function');
+export const isSymbol = (target: any): target is symbol => _typeof(target, 'symbol');
 export const isAsyncFunction = (target: any): target is AsyncFunction<Awaited<ReturnType<typeof target>>> => _instanceof(target, (async () => 0).constructor as any)
 export const isUndefined = (target: any): target is undefined => target === undefined;
 export const isNull = (target: any): target is null => target === _null;

@@ -1,5 +1,90 @@
 # Changelog
 
+## [0.13.0] - 2026-04-02
+
+### Features
+- **Signal Improvement**: Create signal with object type value will create `SignalObject`, you can access properties of object by adding `$` after property name (e.g, data$.name$). Each properties are `Signal` and only created when the value is accessed.
+  ```ts
+  const user$ = $.signal({
+    name: 'Amateras',
+    age: '16'
+  })
+  console.log(user$.name$()) // 'Amateras'
+  ```
+- **Store**: Create store and binding it with proto lifecycle is really easy and so convenient!
+  ```ts
+  const GlobalStore = $.store(() => ({
+    userList: []
+  }))
+
+  const App = $.widget(($app) => {
+    // create store and bind lifecycle with this widget proto
+    const store = GlobalStore.create();
+
+    $(UserListWidget)
+
+    $('button', $$ => {
+      $$.on('click', () => {
+        $app.dispose() // force dispose the App widget
+        // store will be clean on memory
+      })
+    })
+  })
+
+  const UserListWidget = $.widget(() => {
+    // get store that created by ancestor proto
+    const store = GlobalStore.get();
+    for (const user of store.userList) {
+      $(...)
+    }
+  })
+
+  $.render(App, 'body')
+  ```
+- **New UI Components**: Select, Icon, Button, Badge, Card, DescriptionList
+- **Global State Async Task**: Use `GlobalState.asyncTask` method to create promise queue, this method will automatic delete promise from queue when promise finally done.
+- **Lifecycle of Proto and Signal**: Larger codebase comes with complexier memory handler, so I am trying to design the lifecycle of proto. Now you will see `Proto.dispose` and new `Signal.dispose` is really works on server/client side, specially in SSR process. I have improved memory leak situation on these modules: core, signal, for, match.
+- **Builded Proto**: New `Proto.builded` property to ensure the proto is already builded.
+- **Craft**: New `$.craft` function is similar to `$` function, but it never build and append to proto, even in layout function.
+- **Proto Text Content**: Now you can use `Proto.text` to get all display text inside this proto.
+- **Element Proto Properties Handle Method**: Override `ElementProto.props` method make process custom properties more easier, and this make handle `Signal` type value automatic update value works pretty well.
+- **Signal Value Resolver**: `$.resovle` is a helper for handle `OrSignal` type, it's useful when writing custom attribute method, make signal auto update workflow more clearer.
+- **Prefetch Return Data**: `$.fetch` return `record` and `result` data in object.
+- **Proto Event Listener**: This is a Proto base event listener by using `Proto.listen` and `Proto.dispatch`, this help the communicate between protos. You can add custom event name and provided parameters of listener by declare `ProtoEventMap` in namespace `$`.
+- **CSS Variable Name Configuration**: When you use `$.css.variable` to define CSS variables, you can set options to modify variable name:
+  ```ts
+  const text = $.css.variable({
+    sm: '0.8rem',
+    base: '1rem'
+  }, {
+    unique: false, // no generate random id for these variables
+    prefix: 'text-' // set prefix of these variables name
+  })
+  ```
+- **Text Proto Content Modify Affect Text Node**: When you change `TextProto.textContent`, the changes will apply to Text Node.
+- **Utils `isEqual`**: New `isEqual` function to check members is equal between two objects.
+- **Utils `isSymbol`**: New `isSymbol` function to check value is `symbol` type, instead of `typeof value === 'symbol'`.
+- **I18n Events**: New `i18nupdate` proto event, trigger on translation text updated.
+
+### Changes
+- New Proto Tree Structure With Memory Used Friendly: In the past, every proto create a `Set` object for record every child proto, turns out the `Set` object is very heavy data in memory. So, I found a way to link these protos: Linked List Data Structure. Each proto have a `sibling` property that point to next proto in the same parent, when getting proto's children, it will iterate each child then return a list. This method will slightly slower than `Set`, but it saved much memory used.
+- Refactor Widget Module: `$.widget` is now more convenient to use, no more widget store, ancestor, layout configuration.
+  ```ts
+  const App = $.widget<{name: string}>(({name}, children) => {
+    $('h1', $$ => $`New Version of Widget!`)
+  })
+  ```
+- Render Method Changes: You can pass in un-builded `Proto` type in first argument, and use query selector in second argument.
+  ```ts
+  $.render(App, 'body')
+  ```
+
+### Fixes
+- Router scroll restoration will reset scroll position to `0` when cached page opened.
+- `Case` and `Default` should not be builded when not match condition.
+- Fix `GlobalState` assignment on different types of Proto.
+- Import core module on `amateras/index.ts` entry file with file path directly to avoid bun.lock compile error.
+
 ## [0.12.0] - 2026-03-23
 
 ### Features

@@ -1,4 +1,4 @@
-import { _null, _Object_assign, _Object_entries, forEach, isFunction, isNull, isObject, isString, isSymbol, isUndefined } from "@amateras/utils";
+import { _null, _Object_entries, forEach, isFunction, isString, isSymbol, isUndefined } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
 import { Proto, symbol_Signal } from "@amateras/core";
 import type { SignalTypes } from "..";
@@ -12,16 +12,13 @@ export class Signal<T = any> extends Function {
     private linked: Signal | null = _null;
     private _value: T
     private subs: null | ((value: T) => void)[] = _null;
-    private converts: Record<string, (value: any) => Signal> | null;
     private map: null | Record<string, Signal> = _null;
     exec: null | Function = _null;
     computes: Set<WeakRef<Signal>> | null = _null;
-    constructor(value: T, convert: Record<string, (value: any) => Signal> | null = _null) {
+    constructor(value: T) {
         super()
         Proto.proto?.global.signals.add(this);
         this._value = value;
-        this.converts = convert;
-        // this.assignProperties();
         return new Proxy(this, {
             apply: () => this._exec(),
             get: (target, propName) => {
@@ -98,16 +95,6 @@ export class Signal<T = any> extends Function {
 
     is<T>(validator: (signal: this) => boolean): this is SignalTypes<T> {
         return validator(this)
-    }
-
-    private assignProperties(target$?: Signal) {
-        if (!isObject(this.value) || isNull(this.value)) return;
-
-        if (this.converts) forEach(_Object_entries(this.converts), ([propName, resolve]) => {
-            //@ts-ignore
-            let prop$ = target$?.[`${propName}$`] ?? resolve(this.value[propName]);
-            _Object_assign(this, { [`${propName}$`]: prop$ });
-        })
     }
 
     override toString(): string {

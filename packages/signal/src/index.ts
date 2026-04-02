@@ -41,9 +41,7 @@ GlobalState.disposers.add(global => {
 })
 
 _Object_assign($, {
-    signal(value: any, convert?: any) {
-        return new Signal(value, convert);
-    },
+    signal: (value: any) => new Signal(value),
 
     effect(
         callback: (

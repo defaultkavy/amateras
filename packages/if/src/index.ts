@@ -2,7 +2,7 @@ import './global';
 import { If } from "#structure/If";
 import { Proto } from "@amateras/core";
 import { _instanceof, _null, isIncluded } from "@amateras/utils";
-import { Signal } from '@amateras/signal';
+import { Signal, type SignalObject, type SignalTypes } from '@amateras/signal';
 import { ElseIf } from '#structure/ElseIf';
 import { Else } from '#structure/Else';
 import { Condition } from '#structure/Condition';
@@ -10,6 +10,14 @@ import { Condition } from '#structure/Condition';
 globalThis.If = If;
 globalThis.Else = Else;
 globalThis.ElseIf = ElseIf;
+
+export type IfLayout<T> = (value: T extends SignalTypes<infer V>
+    ?   V extends object
+        ?   SignalObject<V> 
+        :   V extends null 
+            ?   never
+            :   Signal<V>
+    : never) => void;
 
 /**This map store condition with parent Proto,
  * all related Statement should be under same parent Proto.

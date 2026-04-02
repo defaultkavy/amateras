@@ -1,28 +1,37 @@
-import { _null, _Object_assign, _Object_entries, forEach, isFunction, isNull, isObject, isUndefined } from "@amateras/utils";
+import { _null, _Object_assign, _Object_entries, forEach, isFunction, isNull, isObject, isString, isSymbol, isUndefined } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
 import { Proto, symbol_Signal } from "@amateras/core";
+import type { SignalTypes } from "..";
 
 export interface Signal<T> {
     (): T;
 }
+
 export class Signal<T = any> extends Function {
     [symbol_Signal]: true = true;
     private linked: Signal | null = _null;
     private _value: T
     private subs: null | ((value: T) => void)[] = _null;
-    private props: string[] | null;
     private converts: Record<string, (value: any) => Signal> | null;
+    private map: null | Record<string, Signal> = _null;
     exec: null | Function = _null;
     computes: Set<WeakRef<Signal>> | null = _null;
-    constructor(value: T, props: string[] | null = _null, convert: Record<string, (value: any) => Signal> | null = _null) {
+    constructor(value: T, convert: Record<string, (value: any) => Signal> | null = _null) {
         super()
         Proto.proto?.global.signals.add(this);
         this._value = value;
-        this.props = props;
         this.converts = convert;
-        this.assignProperties();
+        // this.assignProperties();
         return new Proxy(this, {
-            apply: () => this._exec()
+            apply: () => this._exec(),
+            get: (target, propName) => {
+                if (isSymbol(propName) || (isString(propName) && !propName.endsWith('$'))) return this[propName as keyof this];
+                const value = this._value[propName.slice(0, -1) as keyof T];
+                if (!this.map) this.map = {};
+                const signal = this.map[propName] ?? new Signal(value);
+                this.map[propName] = signal;
+                return signal;
+            }
         });
     }
 
@@ -43,7 +52,8 @@ export class Signal<T = any> extends Function {
         this.computes = _null;
         this.exec = _null;
         this._value = _null as any;
-        this.props = _null;
+        if (this.map) forEach(_Object_entries(this.map), ([_, value]) => value.dispose());
+        this.map = _null;
     }
 
     set(resolver: T | ((oldValue: T) => T),) {
@@ -80,28 +90,18 @@ export class Signal<T = any> extends Function {
 
     link(target$: Signal) {
         this.linked = target$;
-        this.props = target$.props;
         this.converts = target$.converts;
-        this.assignProperties(target$);
+        // this.assignProperties(target$);
         this.emit();
         target$.subscribe(() => this.emit());
     }
 
-    is<T extends Signal>(validator: (signal: this) => boolean): this is T {
+    is<T>(validator: (signal: this) => boolean): this is SignalTypes<T> {
         return validator(this)
     }
 
     private assignProperties(target$?: Signal) {
         if (!isObject(this.value) || isNull(this.value)) return;
-        forEach(this.props, propName => {
-            //@ts-ignore
-            let prop$ = target$?.[`${propName}$`] ?? $.signal(this.value[propName]);
-            _Object_assign(this, { [`${propName}$`]: prop$ })
-            this.subscribe(v => {
-                //@ts-ignore
-                prop$.set(v[propName])
-            })
-        })
 
         if (this.converts) forEach(_Object_entries(this.converts), ([propName, resolve]) => {
             //@ts-ignore

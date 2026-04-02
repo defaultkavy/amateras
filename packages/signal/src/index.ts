@@ -7,13 +7,11 @@ declare global {
     export function $<T>(signal: Signal<T>): Signal<T>;
 
     export namespace $ {
-        export function signal<T extends Record<string, any>, P extends ((keyof T) & string)[], C extends SignalConvert<T, P>>(value: T, properties: P, convert: C): SignalStore<T, P[number], C>
-        export function signal<T extends Record<string, any>, K extends (keyof T) & string, P extends K[]>(value: T, properties: P): SignalStore<T, P[number]>
-        export function signal<T>(value: T): Signal<T>;
+        export function signal<T>(value: T): SignalTypes<T>;
         export function effect(callback: (untrack: UntrackFunction) => void): void;
         export function compute<T>(callback: (untrack: UntrackFunction) => T): Signal<T>;
         export function optional<T>(signal: Signal<T | undefined | null> | Signal<T | null> | Signal<T | undefined>): Signal<NonNullable<T>> | null
-        export function resolve<T>(value: OrSignal<T>, handle?: (value: T) => void): T;
+        export function resolve<T>(value: T, handle?: (value: T extends OrSignal<infer K> ? K : T) => void): T;
     }
 
     export type OrSignal<T = any> = T | SignalTypes<T>
@@ -25,15 +23,13 @@ declare module '@amateras/core' {
     }
 }
 
-export type SignalConvert<T extends Record<string, any>, P extends ((keyof T) & string)[]> = {
-    [key in Exclude<keyof T, P[number]>]?: (value: T[key]) => Signal
-};
-export type SignalTypes<T> = T extends any ? Signal<T> : never;
-export type SignalStore<T, K extends keyof T = never, C extends Partial<Record<string, (value: any) => Signal>> = {}> = SignalTypes<T> & {
-    [key in K as Exclude<T[K], undefined> extends Function ? never : `${string & key}$`]: SignalTypes<T[key]>
-} & {
-    [key in keyof C as string extends string ? `${string & key}$` : never]: C[key] extends (value: any) => Signal ? ReturnType<C[key]> : never;
-};
+export type SignalTypes<T> = [T] extends [object]
+    ?   SignalObject<T>
+    :   Signal<T>
+
+export type SignalObject<T> = Signal<T> & {
+    [key in keyof T as Exclude<T[key], undefined> extends Function ? never : `${string & key}$`]: SignalTypes<T[key]>
+}
 
 GlobalState.assign({
     signals: new Set()
@@ -45,8 +41,8 @@ GlobalState.disposers.add(global => {
 })
 
 _Object_assign($, {
-    signal(value: any, properties?: string[], convert?: any) {
-        return new Signal(value, properties, convert);
+    signal(value: any, convert?: any) {
+        return new Signal(value, convert);
     },
 
     effect(

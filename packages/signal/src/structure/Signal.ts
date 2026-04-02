@@ -26,7 +26,7 @@ export class Signal<T = any> extends Function {
             apply: () => this._exec(),
             get: (target, propName) => {
                 if (isSymbol(propName) || (isString(propName) && !propName.endsWith('$'))) return this[propName as keyof this];
-                const value = this._value[propName.slice(0, -1) as keyof T];
+                const value = this.value[propName.slice(0, -1) as keyof T];
                 if (!this.map) this.map = {};
                 const signal = this.map[propName] ?? new Signal(value);
                 this.map[propName] = signal;
@@ -57,7 +57,8 @@ export class Signal<T = any> extends Function {
     }
 
     set(resolver: T | ((oldValue: T) => T),) {
-        if (isFunction(resolver)) this.set(resolver(this.value));
+        if (this.linked) this.linked.set(resolver);
+        else if (isFunction(resolver)) this.set(resolver(this.value));
         else if (this.value !== resolver) {
             this._value = resolver;
             this.emit();
@@ -89,9 +90,8 @@ export class Signal<T = any> extends Function {
     }
 
     link(target$: Signal) {
+        if (this === target$) throw 'Signal.link(): cannot link self'
         this.linked = target$;
-        this.converts = target$.converts;
-        // this.assignProperties(target$);
         this.emit();
         target$.subscribe(() => this.emit());
     }

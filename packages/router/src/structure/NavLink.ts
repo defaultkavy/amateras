@@ -1,10 +1,9 @@
 import { Link } from "#structure/Link";
-import type { ElementProto } from "@amateras/core";
 import { _null, toURL } from "@amateras/utils";
 
 export class NavLink extends Link {
-    constructor(attr: $.Props | null, layout?: $.Layout<ElementProto<HTMLAnchorElement>>) {
-        super(attr, layout);
+    constructor(attr: $.Props | null, layout?: $.Layout<NavLink>) {
+        super(attr, layout as any);
         this.global.router.navlinks.add(this);
     }
 

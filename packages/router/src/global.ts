@@ -8,6 +8,9 @@ declare global {
     export var NavLink: typeof _NavLink.NavLink;
     export function $(Router: Router): _Router.RouterProto;
 
+    export type Link = _Link.Link;
+    export type NavLink = _NavLink.NavLink;
+
     export namespace $ {
         export function router(handle: RouterHandle): Router;
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.13.1] - 2026-04-03
+
+### Features
+- **New Utility Types**: New `OptionalStrings` type.
+- **New CSS Property Value Types**: `placeContent` `placeItems` `placeSelf`
+- **New CSS Property Types**: `textBox` `textBoxTrim` `textBoxEdge`
+
+### Fixes
+- Fix reading linked signal value cause maximum call stacks.
+- Remove border from last child of `DescriptionList`
+- The parameter type of layout function should be self on `NavLink` and `Link`.
+- The default style of `svg` fit the `icon` size.
+
 ## [0.13.0] - 2026-04-02
 
 ### Features

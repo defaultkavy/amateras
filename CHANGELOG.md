@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.13.2] - 2026-04-03
+
+### Fixes
+- Fix text display no correctly when using signal in `$` function.
+
 ## [0.13.1] - 2026-04-03
 
 ### Features

@@ -43,4 +43,13 @@ declare global {
         ? false 
         : true
         : never;
+    type OptionalStrings<Arr extends string[], First = true> = Arr extends [infer S1, ...infer Rest]
+        ?   S1 extends string
+            ?   Rest extends [string, ...any]
+                ?   First extends true
+                    ?   `${S1}${OptionalStrings<Rest, false> | ''}`
+                    :   ` ${S1}${OptionalStrings<Rest, false>}`
+                :   ` ${S1}` | ''
+            :   never
+        :   never;
 }

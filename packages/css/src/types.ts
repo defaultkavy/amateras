@@ -211,9 +211,9 @@ export interface $CSSDeclarationMap {
     paintOrder: string;
     perspective: string;
     perspectiveOrigin: string;
-    placeContent: string;
-    placeItems: string;
-    placeSelf: string;
+    placeContent: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    placeItems: 'normal' | 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'left' | 'right';
+    placeSelf: 'auto' | 'normal' | 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'left' | 'right';
     pointerEvents: 'auto' | 'none';
     position: 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
     quotes: string;
@@ -250,6 +250,9 @@ export interface $CSSDeclarationMap {
     textAlign: 'left' | 'right' | 'center' | 'justify' | 'start' | 'end';
     textAlignLast: 'auto' | 'left' | 'right' | 'center' | 'justify' | 'start' | 'end';
     textAnchor: 'start' | 'middle' | 'end';
+    textBox: OptionalStrings<['trim-both' | 'trim-end' | 'trim-start', 'cap' | 'ex' | 'text', 'alphabetic' | 'text']>;
+    textBoxEdge: 'auto' | 'text' | OptionalStrings<['text' | 'cap' | 'ex', 'text' | 'alphabetic']>;
+    textBoxTrim: 'trim-both' | 'trim-end' | 'trim-start';
     textCombineUpright: 'none' | 'all';
     textDecoration: 'none' | 'underline' | 'overline' | 'line-through' | 'grammar-error' | 'spelling-error' | 'solid' | 'double' | 'dotted' | 'dashed' | 'wavy';
     textDecorationColor: string;

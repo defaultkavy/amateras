@@ -15,10 +15,13 @@ export class Icon extends ElementProto {
         $.style(this, toCSS(this.tagname, {
             display: 'inline-block',
             verticalAlign: 'middle',
+            height: '1rem',
+            width: '1rem',
+
             'svg': {
                 display: 'block',
-                height: '1rem',
-                width: '1rem'
+                height: 'auto',
+                width: '100%'
             }
         }))
     }

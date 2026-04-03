@@ -25,6 +25,9 @@ export class DescriptionContent extends ElementProto {
         $.style(this, toCSS(this.tagname, {
             paddingBlock: '1rem',
             borderBottom: `1px solid color-mix(in oklch, var(--input) 50%, transparent)`,
+            '&:last-child': {
+                borderBottom: 'none'
+            }
         }))
     }
 }

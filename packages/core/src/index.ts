@@ -14,7 +14,10 @@ function createProto(insert: boolean, ...args: any) {
     }
     for (let process of $.process.craft) {
         let result = process(...args);
-        if (!isUndefined(result)) return result;
+        if (!isUndefined(result)) {
+            addProtoToParent(result);
+            return result;
+        }
     }
     const [arg1, arg2, arg3] = args;
 

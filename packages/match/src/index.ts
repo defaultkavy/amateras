@@ -20,9 +20,7 @@ $.process.craft.add((value, arg1, arg2) => {
         }
     }
     if (value === Match) {
-        let proto = new Match(arg1, arg2);
-        Proto.proto?.append(proto);
-        return proto
+        return new Match(arg1, arg2);
     }
     if (value === Case) {
         return is(Proto.proto, Match)?.case(arg1, arg2)

@@ -1,6 +1,5 @@
 import './global';
 import { If } from "#structure/If";
-import { Proto } from "@amateras/core";
 import { _instanceof, _null, isIncluded } from "@amateras/utils";
 import { Signal, type SignalObject, type SignalTypes } from '@amateras/signal';
 import { ElseIf } from '#structure/ElseIf';
@@ -25,11 +24,9 @@ export type IfLayout<T> = (value: T extends SignalTypes<infer V>
 let condition: Condition | null = null;
 // add condition statement craft function
 $.process.craft.add((value, arg1, arg2) => {
-    let parentProto = Proto.proto;
     // when value equal If, mean this is a new start of condition statement
     if (value === If) {
         condition = new Condition();
-        parentProto?.append(condition);
     }
 
     // if condition is null, mean this is not a condition statement code

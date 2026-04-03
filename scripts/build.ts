@@ -1,10 +1,11 @@
 import { build } from "vite";
 import { packages } from "./packages";
+import package_json from '../package.json';
 import fs from 'fs';
 import path from 'path';
 const outputDir = path.resolve(__dirname + '/../build')
 
-console.log('[build] Start build js file');
+console.log(`[build] Start build js file on v${package_json.version}`);
 
 if (fs.existsSync(outputDir)) fs.rm(outputDir, {force: true, recursive: true}, () => {});
 

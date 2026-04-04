@@ -1,4 +1,5 @@
 import package_json from '../package.json';
+import { packages } from './packages';
 const prefix = 
 `https://unpkg.com/amateras@${package_json.version}/build`
 
@@ -6,21 +7,7 @@ const remap = {
     'amateras': `${prefix}/core.js`,
 }
 
-const packageNames = [
-    'core',
-    'utils',
-    'signal',
-    'for',
-    'if',
-    'match',
-    'css',
-    'i18n',
-    'idb',
-    'meta',
-    'prefetch',
-    'router',
-    'widget'
-]
+const packageNames = packages.map(p => p.name);
 
 const map = {
     ...remap,

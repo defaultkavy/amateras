@@ -6,9 +6,9 @@ on:
       - master
     paths:
       - 'CHANGELOG.md'
-  workflow_dispatch: # 添加手动触发开关
+  workflow_dispatch:
     inputs:
-      force_update_release_note:
+      force_update:
         description: '是否强制更新已存在的 Release Note'
         required: false
         default: false
@@ -29,36 +29,43 @@ jobs:
       - name: Process Versions
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FORCE_UPDATE: ${{ github.event.inputs.force_update_release_note }}
+          FORCE_UPDATE: ${{ github.event.inputs.force_update || 'false' }}
         run: |
-          # 1. 提取所有符合 ## [x.y.z] 格式的版本号
-          ALL_VERSIONS=$(grep -oP '^## \[\K[^\]]+' CHANGELOG.md)
+          # 提取 CHANGELOG 中的所有版本号
+          ALL_VERSIONS=$(grep -oP '^## \[\K[^\]]+' CHANGELOG.md || true)
+
+          if [ -z "$ALL_VERSIONS" ]; then
+            echo "未在 CHANGELOG.md 中检测到任何符合 ## [x.y.z] 格式的版本号。"
+            exit 0
+          fi
 
           for VER in $ALL_VERSIONS; do
             TAG_NAME="v$VER"
             
-            # 2. 提取当前版本的内容块
+            # 1. 检查本地或远程是否存在该 Git Tag
+            # 使用 git rev-parse 检查，如果不存在则跳过当前循环
+            if ! git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+                echo ">>> [跳过] $TAG_NAME：Git Tag 尚未创建，无需发布 Release Note。"
+                continue
+            fi
+
+            # 2. 提取 Release Note 内容
             sed -n "/^## \[$VER\]/,/^## /p" CHANGELOG.md | sed '1d;$d' > current_note.md
             if [ ! -s current_note.md ]; then
                 sed -n "/^## \[$VER\]/,\$p" CHANGELOG.md | sed '1d' > current_note.md
             fi
 
-            # 3. 检查状态
-            TAG_EXISTS=$(git rev-parse "$TAG_NAME" >/dev/null 2>&1 && echo "true" || echo "false")
+            # 3. 检查 Release 状态
             RELEASE_EXISTS=$(gh release view "$TAG_NAME" >/dev/null 2>&1 && echo "true" || echo "false")
 
-            # 4. 执行逻辑
-            if [ "$TAG_EXISTS" = "true" ]; then
-                if [ "$RELEASE_EXISTS" = "false" ]; then
-                    echo ">>> [创建] 发现 Tag $TAG_NAME 但无 Release，正在创建..."
-                    gh release create "$TAG_NAME" --title "$TAG_NAME" --notes-file current_note.md
-                elif [ "$FORCE_UPDATE" = "true" ]; then
-                    echo ">>> [强制更新] 正在同步 $TAG_NAME 的 Release Note..."
-                    gh release edit "$TAG_NAME" --notes-file current_note.md
-                else
-                    echo ">>> [跳过] $TAG_NAME 已存在 Release。"
-                fi
+            # 4. 执行发布逻辑
+            if [ "$RELEASE_EXISTS" = "false" ]; then
+                echo ">>> [创建] 发现 Tag $TAG_NAME 且无 Release，正在创建..."
+                gh release create "$TAG_NAME" --title "$TAG_NAME" --notes-file current_note.md
+            elif [ "$FORCE_UPDATE" = "true" ]; then
+                echo ">>> [更新] 正在手动强制同步 $TAG_NAME 的内容..."
+                gh release edit "$TAG_NAME" --notes-file current_note.md
             else
-                echo ">>> [忽略] 未发现 Tag $TAG_NAME，请确保 Git Tag 已推送到仓库。"
+                echo ">>> [忽略] $TAG_NAME 已存在 Release Note，不再重复处理。"
             fi
           done

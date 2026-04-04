@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.13.3] - 2026-04-04
+- Fix member signal didn't emited subscribers when parent signal updated.
+
 ## [0.13.2] - 2026-04-03
 
 ### Fixes

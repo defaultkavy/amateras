@@ -27,6 +27,7 @@ export class Signal<T = any> extends Function {
                 if (!this.map) this.map = {};
                 const signal = this.map[propName] ?? new Signal(value);
                 this.map[propName] = signal;
+                this.subscribe(() => signal.set(this.value[propName.slice(0, -1) as keyof T]))
                 return signal;
             }
         });

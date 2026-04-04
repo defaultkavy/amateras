@@ -1,6 +1,6 @@
 {
   "name": "amateras",
-  "version": "0.13.2",
+  "version": "0.13.3",
   "description": "Amateras is a JavaScript library for building user interface.",
   "module": "index.ts",
   "type": "module",
@@ -17,7 +17,8 @@
   "unpkg": "./build/import-map.js",
   "scripts": {
     "build": "bun ./scripts/build.ts",
-    "size": "bun ./scripts/vite-bundler-size.ts"
+    "size": "bun ./scripts/vite-bundler-size.ts",
+    "publish": "bun ./scripts/publish.ts"
   },
   "exports": {
     ".": {

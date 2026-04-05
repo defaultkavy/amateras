@@ -109,6 +109,7 @@ export class SelectItem extends ElementProto {
         super.build(cascading);
         this.$select = this.findAbove<Select>(proto => _instanceof(proto, Select));
         this.$content = this.findAbove<SelectContent>(proto => _instanceof(proto, SelectContent));
+        if (this.$select && this.$select.value() === this.#value) this.$select.selected = this;
         this.$select?.itemMap.set(this.#value, this);
         return this;
     }

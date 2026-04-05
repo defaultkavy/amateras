@@ -32,10 +32,9 @@ export class CardHeader extends ElementProto {
 
     static {
         $.style(this, toCSS(this.tagname, {
-            display: 'grid',
+            display: 'flex',
             width: '100%',
-            gridTemplateRows: 'auto auto',
-            // gridTemplateColumns: '1fr auto',
+            flexDirection: 'column',
             gap: 'var(--spacing)',
             container: 'card-header / inline-size ',
 

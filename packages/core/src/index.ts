@@ -38,8 +38,8 @@ function createProto(insert: boolean, ...args: any) {
     // Function Handler
     if (isFunction(arg1)) {
         let args: [any, any] = isFunction(arg2) ? [{}, arg2] : [arg2, arg3];
+        // Constructor Handler
         let target = new arg1(...args);
-        // Widget Handler
         if (_instanceof(target, Proto)) {
             addProtoToParent(target);
             return target;
@@ -83,7 +83,7 @@ type ElementProtoArguments<C extends Constructor> =
 
 export function $<T extends ElementProto<any>, C extends Constructor<T>, R extends InstanceType<C>>(constructor: C, ...args: ElementProtoArguments<C>): R;
 export function $(template: TemplateStringsArray, ...args: any[]): Proto[];
-export function $(proto: Proto): Proto;
+export function $<T extends Proto>(proto: T | Constructor<T>): T;
 export function $(args: any[]): Proto[];
 export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
 export function $<T extends string>(tagname: T, layout?: $.Layout<ElementProto>): ElementProto;
@@ -130,7 +130,7 @@ export namespace $ {
         Proto.proto?.ondispose(disposer);
     }
 
-    export const render = (proto: Proto, query: string) => {
+    export const render = (proto: Proto | Constructor<Proto>, query: string) => {
         // Disable render on server side
         if (onserver()) return;
         

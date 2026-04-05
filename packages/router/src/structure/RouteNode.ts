@@ -1,6 +1,6 @@
 import { Proto, symbol_ProtoType } from "@amateras/core";
 import { _null, isArray } from "@amateras/utils";
-import type { Widget } from "@amateras/widget";
+import type { WidgetConstructor } from "@amateras/widget";
 import type { AsyncWidget, PageLayout } from "../types";
 import { Page } from "./Page";
 import { Route } from "./Route";
@@ -9,8 +9,8 @@ import type { RouteSlot } from "./RouteSlot";
 export class RouteNode extends Route {
     pages = new Map<string, Page>();
     page: Page | null = _null;
-    #layout: Widget | PageLayout | AsyncWidget;
-    constructor(path: string, layout: Widget | PageLayout | AsyncWidget) {
+    #layout: WidgetConstructor | PageLayout | AsyncWidget;
+    constructor(path: string, layout: WidgetConstructor | PageLayout | AsyncWidget) {
         super(path);
         this.#layout = layout;
     }
@@ -41,7 +41,7 @@ export class RouteNode extends Route {
             } else {
                 //@ts-ignore
                 _layout = this.#layout[symbol_ProtoType] === 'Widget' // is widget constructor
-                ?   () => $(this.#layout as Widget, params, () => $(page!.slot)) 
+                ?   () => $(this.#layout as WidgetConstructor, params, () => $(page!.slot)) 
                 :   this.#layout as PageLayout;
             }
             $.context(Proto, slot, () => {

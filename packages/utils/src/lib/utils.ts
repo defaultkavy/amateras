@@ -48,6 +48,8 @@ interface map {
 }
 export const map: map = (arr: any, fn: any) => _Array_from(arr).map(fn);
 
+export const filterValue = <T, V>(arr: Array<T>, ...values: V[]): Array<Exclude<T, V>> => arr.filter(item => !values.includes(item as any)) as any;
+
 // type check
 export const _typeof = (target: any, type: 'string' | 'number' | 'object' | 'boolean' | 'function' | 'bigint' | 'symbol' | 'undefined') => typeof target === type;
 export const isIncluded = <T, V>(target: T, args: V[]): target is V & T => args.includes(target as any);

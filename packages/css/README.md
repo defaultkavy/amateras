@@ -1,6 +1,6 @@
 # amateras/css
 
-## Usage
+## Import
 ```ts
 import 'amateras';
 import 'amateras/css';
@@ -21,23 +21,27 @@ const style = $.css({
     }
 })
 
-$(document.body).css(style).content([
-    $('p').content('Text with blue color.')
-]);
+$('div', { css: style }, $$ => {
+    $('p', $$ => $`Change the size of window to see the color changes.`)
+})
 ```
 
-## Define Style in Method Chain
+## Define Style in Layout
+There are two way to define CSS rule of proto.
 ```ts
-$(document.body).content([
-    $('h1').css({ color: 'red' }).content('This is a title with red color!')
-])
+$('div', $$ => {
+    $$.css({
+        padding: '1rem 2rem'
+    })
+    $('h1', { css: { color: 'red' } }, $$ => $`This is a title with red color!`)
+})
 ```
 
 ## Define Variables
 
 ### Single Variable
 ```ts
-const largeText = $.css.variables('1.2rem');
+const largeText = $.css.variable('1.2rem');
 
 $.css({
     fontSize: largeText
@@ -46,7 +50,9 @@ $.css({
 
 ### Variable Group
 ```ts
-const text = $.css.variables({
+import 'amateras/css/variable';
+
+const text = $.css.variable({
     small: '0.8rem',
     medium: '1rem',
     large: '1.2rem'
@@ -59,6 +65,8 @@ $.css({
 
 ## Define Keyframes
 ```ts
+import 'amateras/css/keyframes';
+
 const keyframes = $.css.keyframes({
     fadeIn: {
         '0%': { opacity: 0 },
@@ -101,11 +109,6 @@ $.CSS({
         }
     },
 })
-
-$(document.body).content([
-    $('h1').class('title').content('A red color title.')
-])
-
 ```
 
 ### CSS Colors Preset

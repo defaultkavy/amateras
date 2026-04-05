@@ -1,37 +1,33 @@
 # amateras/i18n
 
-## Usage
+## Import
 ```ts
 import 'amateras';
 import 'amateras/i18n';
+```
 
-const $t = $.i18n()
-// add 'en' locale dictionary context
+## Usage
+```ts
+const i18n = $.i18n('en')
 .add('en', {
     homepage: {
         _: 'Home',
         hello: 'Hello, $name$!',
     }
 })
-// set 'en' as locale language
-.locale('en')
 
-$(document.body).content([
-    $('h1').content( $t('homepage') )
-    // <h1><text>Home</text></h1>
-    $t('homepage.hello', {name: 'Amateras'}) 
-    // <text>Hello, Amateras!</text>
-])
+$('div', $$ => {
+    $('h1', $$ => $([ i18n.t('homepage') ]))
+    $('p', $$ => $([ i18n.t('homepage.hello', { name: 'Amateras' }) ]))
+})
 ```
 
 ## Change Language
 ```ts
-$t.locale('zh')
-// all translation text will be updated
+i18n.locale('zh');
 ```
 
 ## Import Dictionary Context
-
 ```ts
 // ./i18n/en.ts
 export default {
@@ -47,27 +43,23 @@ export default {
 const $t = $.i18n()
 .add('en', () => import('./i18n/en.ts'))
 .add('zh', () => import('./i18n/zh.ts'))
-// set 'zh' as locale language
-// and fetch file automatically from path
-.locale('zh');
 ```
 
-## Directory Shortcut
-
+## Translation Directory Shortcut
 ```ts
-const $t = $.i18n('en')
+const i18n = $.i18n('en')
 .add('en', {
     page1: {
         section2: {
             button3: {
-                text: 'Too deep!'
+                text: 'Deep Button Text'
             }
         }
     }
 })
 
-const $t_button = $t.dir('page1.section2.button3');
+const i18n_button = i18n.dir('page1.section2.button3');
 
-$t_button('text') // Too deep!
-$t('page1.section2.button3.text') // Too deep!
+i18n.t('page1.section2.button3.text') // Deep Button Text
+i18n_button.t('text') // Deep Button Text
 ```

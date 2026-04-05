@@ -1,34 +1,12 @@
 # amateras/signal
 
-## Usage
-
+## Import
 ```ts
 import 'amateras';
 import 'amateras/signal';
-
-// define a signal with value 0
-const count$ = $.signal(0);
-
-// this variable will be auto recalculate when count$ changes
-const doubleCount$ = $.compute(() => count$() * 2);
-
-// the console message will fired when count$ changes
-$.effect(() => console.log( count$() ))
-
-$(document.body).content([
-    // Display Counts
-    $('p').content( $`Counts: ${count$}` ),
-
-    // Display Double Counts
-    $('p').content( $`Double Counts: ${doubleCount$}` ),
-
-    // Create a button that make counts plus 1 on click
-    $('button').content('Add Count').on('click', () => count$.set(value => value + 1))
-])
 ```
 
 ## Read and Write
-
 ```ts
 const number$ = $.signal(0);
 const string$ = $.singal('');
@@ -48,21 +26,22 @@ boolean$(); // true
 object$(); // { number: 42 }
 ```
 
-## Use in attribute methods
-
+## Set as Attribute Value
 ```ts
 const src$ = $.signal('/image-1.png');
 
-$(document.body).content([
+$('div', $$ => {
     // you can set signal variable in attribute
-    $('img').src( src$ ),
+    $('img', { src: src$ }),
 
-    $('button').content('Change Image').on('click', () => src$.set('/image-2.png'))
-])
+    $('button', $$ => {
+        $$.on('click', () => src$.set('/image-2.png'))
+        $`Change Image`
+    })
+})
 ```
 
-## Reactive object
-
+## Signal Object
 ```ts
 const user$ = $.signal({
     name: 'Amateras',
@@ -73,21 +52,22 @@ const user$ = $.signal({
     }
 })
 
-$(document.body).content([
-    // Display name and age
-    $('h1').content( $`${user$.name$} (${user$.age$})` ),
-    // Display avatar image
-    $('img').src( user$.avatar$.url$ ),
-    // Change the user$ when button is clicked
-    $('button')
-    .content('Change User')
-    .on('click', () => user$.set({
-        name: 'Tsukimi',
-        age: 10,
-        avatar: {
-            url: '/tsukimi/avatar.png',
-            size: '350x350'
-        }
-    }))
-])
+user$.name$() // "Amateras"
+user$.age$() // 16
+user$.avatar$.url() // "/amateras/avatar.png"
+```
+
+## Compute and Effect
+```ts
+const count$ = $.signal(0);
+const double$ = $.compute(() => count$() + 1);
+
+$.effect(() => {
+    console.log(`Count is ${count$()}`)
+})
+
+$('button', $$ => {
+    $$.on('click', () => count$.set(value => value + 1))
+    $`You have clicked this button in half of ${double$} times.`
+})
 ```

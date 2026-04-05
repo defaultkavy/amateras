@@ -1,35 +1,36 @@
 # Amateras
-Amateras is a JavaScript library for building user interface, write native JavaScript code and run it without compiler.
+Amateras is a JavaScript library for building user interface. Its gold is to allow writing and running code directly without a compiler, enabling developers to build user interfaces efficiently using only JavaScript or TypeScript syntax.
 
-## Before You Ask Why
-- **Simplfied Develop**: No JSX, no compiler.
-- **Fast Performance**：No cost of VDOM diff, Fine-grained Reactive Framework.
-- **Typesafe**：TypeScript first class framework.
-- **Server and Client**：You can directly run client code on server-side。
-- **Light**：High modularity design, only import the code that you need.
+## Advantages
+- **Minimalist Development**: No JSX, no compiler, zero setup.
+- **Fast Performance**：No diffing overhead, a fine-grained reactive framework.
+- **Type Safety**：Provides a TypeScript type-safe coding experience.
+- **Execute Everywhere**：Capable of running on both the client and server sides。
+- **Lightweight Size**：Extremely small bundle size with high modularity design, only import the code that you need.
 
 ## Features
-- Componentization (widget)
-- Control-flow (if, match, for)
-- Build-in Router (router)
-- Reactive Data (signal)
-- Multi Languages (I18n)
+- Component-based modules (widget)
+- Control flow support (if, match, for)
+- SPA Router (router)
+- Reactive data (signal)
+- Internationalization (i18n)
 - CSS-in-JS (css)
-- Server-side Render ([tsukimi](https://github.com/defaultkavy/tsukimi))
+- Server-Side Rendering ([tsukimi](https://github.com/defaultkavy/tsukimi))
 
-## Import
-Amateras provide two ways to import library.
+## How to Use
+Amateras provides two ways to import the library.
 
-### Import Map
-This script will create a import map in your page, insert this line before your project code.
-```html
-<script src="https://unpkg.com/amateras"></script>
-```
+1. **Using Import Map**
+   
+   This script will create a import map in your page, insert this line before your project code.
+   ```html
+   <script src="https://unpkg.com/amateras"></script>
+   ```
 
-### Install via Package Manager
-```sh
-bun add amateras
-```
+2. **Install via Package Manager**
+   ```sh
+   bun add amateras
+   ```
 
 ## Example
 ```ts

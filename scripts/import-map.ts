@@ -4,7 +4,7 @@ const prefix =
 `https://unpkg.com/amateras@${package_json.version}/build`
 
 const remap = {
-    'amateras': `${prefix}/core.js`,
+    'amateras': `${prefix}/core.js`
 }
 
 const packageNames = packages.map(p => p.name);

@@ -8,7 +8,7 @@ export abstract class Proto {
     static proto: Proto | null = _null; 
     static [symbol_ProtoType] = 'Proto';
     static [symbol_Statement] = false;
-    static disposer: ((proto: Proto) => void)[] = []
+    static disposer: ((proto: Proto) => void)[] = [];
     private disposers: Function[] | null = _null;
     layout: $.Layout | null;
     readonly parent: Proto | null = _null;

@@ -26,6 +26,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
             fontFamily: 'inherit',
             outline: '0.1rem solid oklch(from var(--border) l c h / 0)',
             whiteSpace: 'nowrap',
+            gap: `var(--spacing)`,
             
             border: '1px solid oklch(from var(--input) l c h / .2)',
             background: 'oklch(from var(--input) l c h / .025)',

@@ -37,21 +37,22 @@ export class Select extends ElementProto {
 
     override props({value, disabled, ...props}: $.Props<SelectProps>): void {
         super.props(props);
-        if (disabled) this.disabled(disabled);
+        this.disabled(disabled);
         this.value(value);
     }
 
     disabled(): boolean;
-    disabled(bool: OrSignal<boolean>): void
+    disabled(bool?: OrSignal<boolean>): void
     disabled(bool?: OrSignal<boolean>) {
         if (!arguments.length) return this.attr('disabled') === '';
+        if (isUndefined(bool)) return;
         $.resolve(bool, bool => {
             this.attr('disabled', bool ? '' : _null);
         });
     }
 
     value(): any;
-    value(val: OrSignal<any>): void;
+    value(val?: OrSignal<any>): void;
     value(val?: OrSignal<any>) {
         if (!arguments.length) return this.#value;
         if (isUndefined(val)) return;

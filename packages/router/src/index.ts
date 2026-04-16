@@ -4,7 +4,7 @@ import { Page } from '#structure/Page';
 import { Route } from '#structure/Route';
 import { RouteGroup } from '#structure/RouteGroup';
 import { RouteNode } from '#structure/RouteNode';
-import { RouterProto } from '#structure/Router';
+import { Router } from '#structure/Router';
 import { RouterConstructor } from '#structure/RouterConstructor';
 import { symbol_ProtoType } from '@amateras/core';
 import { GlobalState } from '@amateras/core';
@@ -17,25 +17,27 @@ declare module "@amateras/core" {
     export interface GlobalState {
         title: string | null
         router: {
-            routers: Set<RouterProto>;
+            routers: Set<Router>;
             resolve: (path: string) => Promise<void>[];
             href: URL;
             routes: Route[];
             matchPaths: string[];
             navlinks: Set<NavLink>;
+            scrollQueue: Set<Promise<any>>;
+            postScrollRestoration(promise: Promise<any>): void;
         }
     }
 }
 
 let routePlannerPrototype = {
-    route(this: Route | RouterProto, path: string, layout: PageLayout<string>, handle?: (route: Route) => void) {
+    route(this: Route | Router, path: string, layout: PageLayout<string>, handle?: (route: Route) => void) {
         let route = new RouteNode(path, layout);
         this.routes.set(path, route);
         handle?.(route);
         return this;
     },
 
-    group(this: Route | RouterProto, path: string, handle?: (route: Route) => void) {
+    group(this: Route | Router, path: string, handle?: (route: Route) => void) {
         let group = new RouteGroup(path);
         this.routes.set(path, group);
         handle?.(group);
@@ -51,14 +53,19 @@ _Object_assign(Route.prototype, routePlannerPrototype);
 _Object_assign(Router.prototype, routePlannerPrototype);
 GlobalState.assign(() => ({
     router: {
-        routers: new Set<RouterProto>(),
+        routers: new Set<Router>(),
         resolve(this, path: string) {
             return map(this.routers, router => router.resolve(path));
         },
         href: new URL('http://localhost'),
         routes: [],
         matchPaths: [],
-        navlinks: new Set()
+        navlinks: new Set(),
+        scrollQueue: new Set<Promise<any>>(),
+        postScrollRestoration(promise: Promise<any>) {
+            promise.finally(() => this.scrollQueue.delete(promise));
+            this.scrollQueue.add(promise);
+        }
     }
 }))
 
@@ -70,15 +77,15 @@ GlobalState.disposers.add(({router}) => {
 })
 
 _Object_assign($, {
-    router: (handle: ($$: RouterProto) => void) => RouterConstructor(handle),
-    open: RouterProto.open,
-    replace: RouterProto.replace,
-    back: RouterProto.back,
-    forward: RouterProto.forward,
-    scrollRestoration: RouterProto.scrollRestoration,
+    router: (handle: ($$: Router) => void) => RouterConstructor(handle),
+    open: Router.open,
+    replace: Router.replace,
+    back: Router.back,
+    forward: Router.forward,
+    scrollRestoration: Router.scrollRestoration,
 
-    title(title: OrPromise<string>) {
-        let page = Proto.proto?.findAbove<Page>(proto => is(proto, Page));
+    title(title: OrPromise<string>, parent: Proto | null = Proto.proto) {
+        let page = parent?.findAbove<Page>(proto => is(proto, Page));
         if (page) {
             page.title = title;
             page.updateTitle();
@@ -92,7 +99,7 @@ globalThis.NavLink = NavLink;
 $.process.craft.add((value) => {
     if (isFunction(value) && value[symbol_ProtoType] === 'Router') {
         let proto = Proto.proto;
-        let router = new value() as RouterProto;
+        let router = new value() as Router;
         proto?.global.router.routers.add(router);
         return router;
     }

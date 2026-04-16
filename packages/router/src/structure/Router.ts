@@ -7,7 +7,7 @@ import type { Route } from "./Route";
 import { RouteSlot } from "./RouteSlot";
 
 type Mode = 1 | 2;
-type RouterDicrection = 'forward' | 'back';
+export type RouterDicrection = 'forward' | 'back';
 
 let index = 0;
 const [PUSH, REPLACE] = [1, 2] as const;
@@ -21,7 +21,7 @@ if (onclient()) history.scrollRestoration = 'manual';
 type ScrollData = {[key: number]: { [id: string]: { x: number, y: number }}};
 
 const scrollRecord = (e?: Event) => {
-    const data = RouterProto.scrollHistory;
+    const data = Router.scrollHistory;
     if (e) {
         let element = e.target as HTMLElement;
         if (element.nodeName === '#document')  {
@@ -34,15 +34,16 @@ const scrollRecord = (e?: Event) => {
     storage?.setItem(SCROLL_KEY, _JSON_stringify(data));
 }
 
-export class RouterProto extends Proto {
-    direction: RouterDicrection = FORWARD;
+export class Router extends Proto {
+    static direction: RouterDicrection = FORWARD;
     prev: URL | null = _null;
+    url: URL | null = _null;
     routes = new Map<string, Route>();
     slot = new RouteSlot();
-    static routers = new Set<RouterProto>();
+    static routers = new Set<Router>();
     constructor() {
         super(() => $(this.slot));
-        if (onclient()) RouterProto.routers.add(this);
+        if (onclient()) Router.routers.add(this);
     }
 
     set href(url: URL) {
@@ -53,8 +54,8 @@ export class RouterProto extends Proto {
         if (onclient()) {
             const resolve = () => {
                 const stateIndex = history.state?.index ?? 0;
-                if (index > stateIndex) this.direction = BACK;
-                if (index < stateIndex) this.direction = FORWARD;
+                if (index > stateIndex) Router.direction = BACK;
+                if (index < stateIndex) Router.direction = FORWARD;
                 index = stateIndex;
                 this.prev = this.href;
                 this.href = toURL(location.href);
@@ -79,6 +80,7 @@ export class RouterProto extends Proto {
     async resolve(path: string | URL) {
         if (!path) return;
         let url = toURL(path);
+        this.global.router.scrollQueue.clear();
         for (let [,route] of this.routes) {
             let routes = await route.resolve(url.pathname, this.slot, {});
             // 一旦有一个 route 解析成功就跳过剩下的 routes
@@ -98,17 +100,21 @@ export class RouterProto extends Proto {
                 break;
             };
         }
+        this.url = url;
         // NavLink 检测匹配
         forEach(this.global.router.navlinks, navlink => navlink.checkActive())
         // location 变更事件触发
-        RouterProto.dispatchEvent();
+        Router.dispatchEvent();
         // restore scroll position
-        RouterProto.scrollRestoration();
+        Promise.all(this.global.router.scrollQueue).then(() => {
+            // make sure after scroll queue promises resolved is still the same page
+            if (url === this.url) Router.scrollRestoration()
+        });
     }
 
     static open(path: string, target: string = '_self') {
         if (toURL(path).origin !== origin) open(path, target);
-        else RouterProto.writeState(path, PUSH, target);
+        else Router.writeState(path, PUSH, target);
     }
 
     static forward() {
@@ -120,7 +126,7 @@ export class RouterProto extends Proto {
     }
 
     static replace(path: string) {
-        RouterProto.writeState(path, REPLACE);
+        Router.writeState(path, REPLACE);
     }
 
     static get scrollData(): ScrollData[number] {
@@ -133,14 +139,17 @@ export class RouterProto extends Proto {
 
     static scrollRestoration() {
         if (onclient()) {
-            let scrollData = RouterProto.scrollData ?? {x: 0, y: 0};
+            let scrollData = Router.scrollData ?? {x: 0, y: 0};
             let scrollDataElements = _Object_entries(scrollData);
             if (scrollDataElements.length)
                 forEach(scrollDataElements, ([id, {x, y}]) => {
                     if (id === '#document') window.scrollTo(x, y);
                     else document.querySelector(`#${id}`)?.scrollTo(x, y)
                 });
-            else window.scrollTo(0, 0)
+            else {
+                document.querySelectorAll('*').forEach(el => el.scrollTo(0, 0))
+                window.scrollTo(0, 0)
+            }
         }
     }
 
@@ -152,7 +161,7 @@ export class RouterProto extends Proto {
         if (mode === PUSH) index++;
         if (onclient()) scrollRecord();
         forEach(this.routers, router => {
-            router.direction = FORWARD;
+            Router.direction = FORWARD;
             if (onclient()) {
                 router.prev = toURL(location.href);
                 history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
@@ -160,7 +169,7 @@ export class RouterProto extends Proto {
             router.href = url;
             router.resolve(path)
         })
-        RouterProto.dispatchEvent();
+        Router.dispatchEvent();
     }
 
     private static dispatchEvent() {
@@ -175,7 +184,7 @@ declare global {
 }
 
 
-export interface RouterProto {
+export interface Router {
     route<_Path extends RoutePath, Props>(
         path: ValidatePath<_Path, Props, _Path>,
         widget: Widget<Props>,

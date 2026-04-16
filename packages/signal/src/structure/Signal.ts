@@ -19,15 +19,17 @@ export class Signal<T = any> extends Function {
         super()
         Proto.proto?.global.signals.add(this);
         this._value = value;
+        // if value is Signal, use linked signal to prevent modify the original signal value
+        if (_instanceof(value, Signal)) this.link(value);
         return new Proxy(this, {
             apply: () => this._exec(),
-            get: (target, propName) => {
+            get: (_, propName) => {
                 if (isSymbol(propName) || (isString(propName) && !propName.endsWith('$'))) return this[propName as keyof this];
-                const value = this.value[propName.slice(0, -1) as keyof T];
+                const value = this.value[propName as keyof T] ?? this.value[propName.slice(0, -1) as keyof T];
                 if (!this.map) this.map = {};
                 const signal = this.map[propName] ?? new Signal(value);
+                if (!this.map[propName]) this.subscribe(() => signal.set(this.value[propName as keyof T] ?? this.value[propName.slice(0, -1) as keyof T]));
                 this.map[propName] = signal;
-                this.subscribe(() => signal.set(this.value[propName.slice(0, -1) as keyof T]))
                 return signal;
             }
         });
@@ -55,7 +57,8 @@ export class Signal<T = any> extends Function {
     }
 
     set(resolver: T | ((oldValue: T) => T),) {
-        if (this.linked) this.linked.set(resolver);
+        // if value is Signal, use linked signal to prevent modify the original signal value
+        if (_instanceof(resolver, Signal)) this.link(resolver);
         else if (isFunction(resolver)) this.set(resolver(this.value));
         else if (this.value !== resolver) {
             this._value = resolver;

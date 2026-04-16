@@ -37,7 +37,7 @@ export class I18nTranslation extends ProxyProto {
         forEach(this.protos, proto => proto.removeNode());
         super.build();
         this.node?.replaceWith(...this.toDOM());
-        this.dispatch('i18nupdate', this, {bubbles: true})
+        this.dispatch('i18nupdate', [this], {bubbles: true})
         return this;
     }
 }

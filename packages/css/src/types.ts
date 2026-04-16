@@ -85,6 +85,7 @@ export interface $CSSDeclarationMap {
     content: string;
     counterIncrement: string;
     counterReset: string;
+    container: string;
     containerName: string;
     containerType: 'inline-size' | 'size' | 'normal' | 'scroll-state';
     cursor: 'auto' | 'default' | 'none' | 'context-menu' | 'help' | 'pointer' | 'progress' | 'wait' | 'cell' | 'crosshair' | 'text' | 'vertical-text' | 'alias' | 'copy' | 'move' | 'no-drop' | 'not-allowed' | 'e-resize' | 'n-resize' | 'ne-resize' | 'nw-resize' | 's-resize' | 'se-resize' | 'sw-resize' | 'w-resize' | 'ew-resize' | 'ns-resize' | 'nesw-resize' | 'nwse-resize' | 'col-resize' | 'row-resize' | 'all-scroll' | 'zoom-in' | 'zoom-out' | 'grab' | 'grabbing';
@@ -234,6 +235,9 @@ export interface $CSSDeclarationMap {
     scrollMarginInline: string;
     scrollMarginInlineStart: string;
     scrollMarginInlineEnd: string;
+    scrollbarWidth: 'thin' | 'none' | 'auto'
+    scrollbarGutter: OptionalStrings<['stable', 'both-edges']>
+    scrollbarColor: 'auto';
     shapeRendering: 'auto' | 'optimizeSpeed' | 'crispEdges' | 'geometricPrecision';
     stopColor: string;
     stopOpacity: string;
@@ -270,6 +274,7 @@ export interface $CSSDeclarationMap {
     textTransform: 'none' | 'capitalize' | 'uppercase' | 'lowercase';
     textUnderlineOffset: string;
     textUnderlinePosition: 'auto' | 'under' | 'left' | 'right';
+    textWrap: 'auto' | 'wrap' | 'nowrap' | 'balance' | 'pretty' | 'stable'
     top: string;
     touchAction: 'auto' | 'none' | 'pan-x' | 'pan-y' | 'manipulation';
     transform: string;

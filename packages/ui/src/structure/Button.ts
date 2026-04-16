@@ -24,6 +24,8 @@ export class Button extends ElementProto<HTMLButtonElement> {
             fontWeight: 'var(--font-weight-medium)',
             fontFamily: 'inherit',
             outline: '0.1rem solid oklch(from var(--border) l c h / 0)',
+            userSelect: 'none',
+            gap: 'calc(var(--spacing) * 2.5)',
             
             border: '1px solid oklch(from var(--input) l c h / .2)',
             background: 'oklch(from var(--input) l c h / .025)',
@@ -99,6 +101,7 @@ export class Button extends ElementProto<HTMLButtonElement> {
             '&[size="icon-xs"]': {
                 width: 'calc(var(--spacing) * 6)',
                 height: 'calc(var(--spacing) * 6)',
+                padding: '0',
 
                 'svg': {
                     width: 'calc(var(--spacing) * 3)',
@@ -112,7 +115,8 @@ export class Button extends ElementProto<HTMLButtonElement> {
 
             '&[size="icon-sm"]': {
                 width: 'calc(var(--spacing) * 7)',
-                height: 'calc(var(--spacing) * 7)'
+                height: 'calc(var(--spacing) * 7)',
+                padding: '0',
             },
 
             '&[size="lg"]': {
@@ -121,7 +125,8 @@ export class Button extends ElementProto<HTMLButtonElement> {
 
             '&[size="icon-lg"]': {
                 width: 'calc(var(--spacing) * 9)',
-                height: 'calc(var(--spacing) * 9)'
+                height: 'calc(var(--spacing) * 9)',
+                padding: '0',
             },
 
             '&[disabled]': {

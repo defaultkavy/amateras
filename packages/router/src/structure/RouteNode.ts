@@ -1,4 +1,4 @@
-import { Proto, symbol_ProtoType } from "@amateras/core";
+import { onclient, Proto, symbol_ProtoType } from "@amateras/core";
 import { _null, isArray } from "@amateras/utils";
 import type { WidgetConstructor } from "@amateras/widget";
 import type { AsyncWidget, PageLayout } from "../types";
@@ -36,7 +36,9 @@ export class RouteNode extends Route {
             let layout = this.#layout;
             let _layout;
             if (isArray(layout)) {
-                let widget = await layout[0]().then(mod => mod.default);
+                let promise = layout[0]()
+                if (onclient()) promise.catch(() => location.reload());
+                let widget = await promise.then(mod => mod.default);
                 _layout = () => $(widget, params, () => $(page!.slot));
             } else {
                 //@ts-ignore

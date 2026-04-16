@@ -31,9 +31,9 @@ export type SignalObject<T> = Signal<T> & {
     [key in keyof T as Exclude<T[key], undefined> extends Function ? never : `${string & key}$`]: SignalTypes<T[key]>
 }
 
-GlobalState.assign({
+GlobalState.assign(() => ({
     signals: new Set()
-})
+}))
 
 GlobalState.disposers.add(global => {
     forEach(global.signals, signal => signal.dispose());

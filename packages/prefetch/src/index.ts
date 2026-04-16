@@ -28,11 +28,11 @@ export type FetchResult<T, R> = {
     result: R;
 }
 
-GlobalState.assign({
+GlobalState.assign(() => ({
     prefetch: {
         caches: {}
     }
-})
+}))
 
 if (!globalThis.prefetch) globalThis.prefetch = {}
 

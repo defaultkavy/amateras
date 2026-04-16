@@ -48,8 +48,8 @@ let routePlannerPrototype = {
 }
 
 _Object_assign(Route.prototype, routePlannerPrototype);
-_Object_assign(RouterProto.prototype, routePlannerPrototype);
-_Object_assign(GlobalState.prototype, {
+_Object_assign(Router.prototype, routePlannerPrototype);
+GlobalState.assign(() => ({
     router: {
         routers: new Set<RouterProto>(),
         resolve(this, path: string) {
@@ -60,7 +60,7 @@ _Object_assign(GlobalState.prototype, {
         matchPaths: [],
         navlinks: new Set()
     }
-})
+}))
 
 GlobalState.disposers.add(({router}) => {
     router.routers.clear();

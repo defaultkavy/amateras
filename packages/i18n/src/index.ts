@@ -31,11 +31,11 @@ declare module '@amateras/core' {
     }
 }
 
-GlobalState.assign({
+GlobalState.assign(() => ({
     i18n: {
         session: _null
     }
-})
+}))
 
 _Object_assign($, {
     i18n(defaultLocale: string) {

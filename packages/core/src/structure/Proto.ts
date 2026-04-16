@@ -17,7 +17,7 @@ export abstract class Proto {
     firstProto: Proto | null = _null;
     lastProto: Proto | null = _null;
     builded = false;
-    listeners: { [key: string]: Set<(src: Proto) => void> } | null = _null;
+    listeners: { [key: string]: Set<(...args: any[]) => void> } | null = _null;
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
      * @deprecated
@@ -196,11 +196,21 @@ export abstract class Proto {
     get text(): string {
         return this.children.map(proto => proto.text).join('')
     }
-
-    dispatch(type: string, src: Proto, options?: {bubbles?: boolean}) {
-        if (options?.bubbles) this.parent?.dispatch(type, src, options);
+    
+    dispatch<K extends keyof $.ProtoEventMap>(type: K, args: $.ProtoEventMap[K], options?: {bubbles?: boolean}): boolean
+    dispatch(type: string, args: any[], options?: {bubbles?: boolean}): boolean
+    dispatch(type: string, args: any[], options?: {bubbles?: boolean}): boolean {
         let handlerSet = this.listeners?.[type];
-        forEach(handlerSet, handle => handle(src));
+        let preventDefault = false;
+        if (options?.bubbles) {
+            let prevent = this.parent?.dispatch(type, args, options);
+            if (!preventDefault) preventDefault = prevent ?? false;
+        }
+        forEach(handlerSet, handle => {
+            let prevent = handle(...args) ?? false;
+            if (!preventDefault) preventDefault = prevent;
+        });
+        return preventDefault;
     }
 
     listen<K extends keyof $.ProtoEventMap>(type: K, handle: (...args: $.ProtoEventMap[K]) => void): void;

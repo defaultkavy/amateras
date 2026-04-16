@@ -136,7 +136,7 @@ export abstract class Proto {
         if (cascading) forEach(this.protos, proto => {
             proto.build()
         });
-        this.dispatch('builded', this);
+        this.dispatch('builded', [this]);
         return this
     }
 

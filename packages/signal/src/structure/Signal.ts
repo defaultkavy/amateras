@@ -1,4 +1,4 @@
-import { _null, _Object_entries, forEach, isFunction, isString, isSymbol, isUndefined } from "@amateras/utils";
+import { _instanceof, _null, _Object_entries, forEach, isFunction, isString, isSymbol, isUndefined } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
 import { Proto, symbol_Signal } from "@amateras/core";
 import type { SignalTypes } from "..";
@@ -99,6 +99,10 @@ export class Signal<T = any> extends Function {
 
     is<T>(validator: (signal: this) => boolean): this is SignalTypes<T> {
         return validator(this)
+    }
+
+    exists(): SignalTypes<Exclude<T, null>> | null {
+        return this.value === _null ? _null : this as any;
     }
 
     override toString(): string {

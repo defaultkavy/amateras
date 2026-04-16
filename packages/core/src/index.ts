@@ -180,8 +180,8 @@ export namespace $ {
         return cases.get(condition)?.() ?? cases.get(symbol_default)?.();
     }
 
-    export const async = (fn: () => Promise<void>) => {
-        Proto.proto?.global.asyncTask(fn());
+    export const tuple = <T extends any[]>(...args: T) => args;
+
     }
 
     export const stylesheet = onclient() ? new CSSStyleSheet() : _null;

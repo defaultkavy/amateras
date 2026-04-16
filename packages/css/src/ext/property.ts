@@ -26,9 +26,8 @@ declare global {
 
         export type CSSPropertyMap = { 
             [key: string]: 
-                [$.CSSPropertySyntax, string | number, boolean]
-                | [$.CSSPropertySyntax, string | number]
-                | ['*']
+                [syntax: $.CSSPropertySyntax, initialValue?: string | number, inherits?: boolean]
+                | [syntax: '*']
         } 
     }
 }

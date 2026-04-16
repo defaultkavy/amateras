@@ -87,9 +87,10 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
         _Path extends RoutePath,
         _Params extends AliasRequired<Params, PathToParamsMap<_Path>>,
         Required extends keyof _Params extends [never] ? [] : [_Params | (() => _Params)]
-    >(path: _Path, ...required: Required): void;
+    >(path: _Path, ...required: Required): this;
     alias(path: string, required?: RouteParams | (() => RouteParams)) {
         this.paths.set(path, required)
+        return this;
     }
 }
 

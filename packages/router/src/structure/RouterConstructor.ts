@@ -1,14 +1,14 @@
 import { symbol_ProtoType } from "@amateras/core";
-import { RouterProto } from "./Router";
+import { Router } from "./Router";
 
-export type RouterHandle = ($$: RouterProto) => void;
+export type RouterHandle = ($$: Router) => void;
 
-export interface Router {
-    new(): RouterProto;
+export interface RouterConstructor {
+    new(): Router;
 }
 
 export const RouterConstructor = (handle: RouterHandle) => {
-    return class extends RouterProto {
+    return class extends Router {
         static override [symbol_ProtoType] = 'Router';
         constructor() {
             super();

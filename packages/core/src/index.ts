@@ -81,27 +81,15 @@ type ElementProtoArguments<C extends Constructor> =
     ?   [layout?: ConstructorParameters<C>[1]] | [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
     :   [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
 
-export function $<T extends ElementProto<any>, C extends Constructor<T>, R extends InstanceType<C>>(constructor: C, ...args: ElementProtoArguments<C>): R;
-export function $(template: TemplateStringsArray, ...args: any[]): Proto[];
-export function $<T extends Proto>(proto: T | Constructor<T>): T;
-export function $(args: any[]): Proto[];
-export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
-export function $<T extends string>(tagname: T, layout?: $.Layout<ElementProto>): ElementProto;
-export function $<T extends keyof HTMLElementTagNameMap>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
-export function $<T extends string>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto>): ElementProto;
+export function $<K extends $.Overload[keyof $.Overload][0][0], T extends $.OverloadResolver<[K]>>(arg1: K, ...args: T[1]): T[0];
+export function $<K extends $.Overload[keyof $.Overload][0][0], L extends $.Overload[keyof $.Overload][0][1], T extends $.OverloadResolver<[K, L]>>(arg1: K, arg2: L, ...args: T[1]): T[0];
 export function $(...args: any): any {
     return createProto(true, ...args);
 }
 
 interface Craft {
-    <T extends ElementProto<any>, C extends Constructor<T>, R extends InstanceType<C>>(constructor: C, ...args: ElementProtoArguments<C>): R;
-    (template: TemplateStringsArray, ...args: any[]): Proto[];
-    (proto: Proto): Proto;
-    (args: any[]): Proto[];
-    <T extends keyof HTMLElementTagNameMap>(tagname: T, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
-    <T extends string>(tagname: T, layout?: $.Layout<ElementProto>): ElementProto;
-    <T extends keyof HTMLElementTagNameMap>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto<HTMLElementTagNameMap[T]>>): ElementProto;
-    <T extends string>(tagname: T, attr: $.Props, layout?: $.Layout<ElementProto>): ElementProto;
+    <K extends $.Overload[keyof $.Overload][0][0], T extends $.OverloadResolver<[K]>>(arg1: K, ...args: T[1]): T[0];
+    <K extends $.Overload[keyof $.Overload][0][0], L extends $.Overload[keyof $.Overload][0][1], T extends $.OverloadResolver<[K, L]>>(arg1: K, arg2: L, ...args: T[1]): T[0];
 }
 
 export namespace $ {
@@ -113,7 +101,56 @@ export namespace $ {
     export type CraftMiddleware = (...args: any[]) => any;
     export type TextMiddleware = (value: any) => Proto | undefined;
     export type AttrMiddleware = (name: string, value: any, proto: ElementProto) => any;
+
+    export interface Overload<I extends any[] = any> {
+        proto: [
+            input: [Proto],
+            output: I[0] extends Constructor<infer P> ? P : I[0],
+            args: []
+        ]
+        template: [
+            input: [TemplateStringsArray],
+            output: Proto[],
+            args: any[]
+        ]
+        arr: [
+            input: [any[]],
+            output: Proto[],
+            args: []
+        ]
+        elementConstructor: [
+            input: [Constructor],
+            output: I[0] extends Constructor<infer E>
+                ?   E extends ElementProto<any>
+                    ?   InstanceType<I[0]> 
+                    :   never
+                :   never,
+            args: I[0] extends Constructor<infer E>
+                ?   E extends ElementProto<any>
+                    ?   ElementProtoArguments<I[0]>
+                    :   never
+                :   never,
+        ]
+        string: [
+            input: [string] | [keyof HTMLElementTagNameMap],
+            output: I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto,
+            args: [
+                props?: $.Props, 
+                layout?: 
+                    |   $.Layout<I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto>] 
+                    |   [layout?: $.Layout<I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto>
+                ]
+        ]
+    }
     
+    export type OverloadResolver<K extends any[]> = {
+        [I in keyof Overload<K>]: Overload<K>[I] extends [infer Input, infer Output, infer Args]
+            ?   K extends Input
+                ?   [Output, Args] 
+                :   never
+            :   never
+        }[keyof Overload<K>];
+
     export interface AttrMap {}
     
     export interface ProtoEventMap {}
@@ -133,8 +170,8 @@ export namespace $ {
     export const render = (proto: Proto | Constructor<Proto>, query: string) => {
         // Disable render on server side
         if (onserver()) return;
-        
-        let nodes = $(proto).build().toDOM()
+
+        let nodes = $(proto as Proto).build().toDOM()
         document.querySelector(query)?.replaceChildren(...nodes);
         // if (!hmr(element, proto)) {
         //     let nodes = proto.build().toDOM()

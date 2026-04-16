@@ -8,7 +8,7 @@ export const WidgetConstructor = (builder: WidgetBuilder) => {
         constructor(props: $.Props, layout?: $.Layout) {
             super(() => builder(props, (proto) => layout?.(proto)));
         }
-    }
+    } as unknown as WidgetConstructor
 }
 
 export interface WidgetConstructor<Props = {}, Parent extends Proto = any> extends Constructor<Proto> {

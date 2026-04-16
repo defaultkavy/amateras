@@ -4,14 +4,20 @@ import { GlobalState, TextProto } from "@amateras/core";
 import { _instanceof, _Object_assign, isIncluded, forEach, isBoolean, _null } from "@amateras/utils";
 
 declare global {
-    export function $<T>(signal: Signal<T>): Signal<T>;
-
     export namespace $ {
         export function signal<T>(value: T): SignalTypes<T>;
         export function effect(callback: (untrack: UntrackFunction) => void, signals?: Signal[]): void;
         export function compute<T>(callback: (untrack: UntrackFunction) => T): SignalTypes<T>;
         export function optional<T>(signal: Signal<T | undefined | null> | Signal<T | null> | Signal<T | undefined>): Signal<NonNullable<T>> | null
         export function resolve<T>(value: T, handle?: (value: T extends Signal<infer K> | SignalObject<infer K> ? K : T) => void): T;
+
+        export interface Overload<I> {
+            signal: [
+                input: [Signal],
+                output: TextProto,
+                args: []
+            ]
+        }
     }
 
     export type OrSignal<T = any> = T | SignalTypes<T>

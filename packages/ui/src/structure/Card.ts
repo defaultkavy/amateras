@@ -36,7 +36,6 @@ export class CardHeader extends ElementProto {
             width: '100%',
             flexDirection: 'column',
             gap: 'var(--spacing)',
-            container: 'card-header / inline-size ',
 
             paddingInline: 'calc(var(--spacing) * 4)',
         }))
@@ -51,6 +50,7 @@ export class CardContent extends ElementProto {
 
     static {
         $.style(this, toCSS(this.tagname, {
+            display: 'block',
             paddingInline: 'calc(var(--spacing) * 4)',
         }))
     }

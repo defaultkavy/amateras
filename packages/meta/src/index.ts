@@ -6,7 +6,7 @@ import type { MetaConfig } from "./types";
 
 declare global {
     export namespace $ {
-        function meta(config: MetaConfig): void
+        function meta(config: MetaConfig, parent?: Proto | null): void
         
         export namespace meta {
             function resolve(config: MetaConfig): void
@@ -22,11 +22,10 @@ declare module '@amateras/core' {
 }
 
 _Object_assign($, {
-    meta(config: MetaConfig) {
+    meta(config: MetaConfig, parent = Proto.proto) {
         if (onclient()) return;
-        let proto = Proto.proto;
-        if (!proto) return;
-        proto.global.meta = deepMerge(proto.global.meta ?? {}, config);
+        if (!parent) return;
+        parent.global.meta = deepMerge(parent.global.meta ?? {}, config);
     },
 })
 

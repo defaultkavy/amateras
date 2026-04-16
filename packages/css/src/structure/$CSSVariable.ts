@@ -24,7 +24,7 @@ export class $CSSVariable<V = string> extends $CSS {
         return `var(${this.name}, ${value})`
     }
 
-    declare(value?: V | $CSSVariable) {
+    declare(value?: $.CSSValue | $CSSVariable) {
         return {[this.name]: `${value ?? this.value}`}
     }
 

@@ -18,4 +18,8 @@ export class $CSSProperty extends $CSS {
     toString() {
         return `var(${this.name})`
     }
+
+    declare(value?: $.CSSValue) {
+        return {[this.name]: `${value ?? this.initialValue}`}
+    }
 }

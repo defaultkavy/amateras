@@ -105,6 +105,10 @@ export abstract class Proto {
         proto.global = this.global;
     }
 
+    remove() {
+        this.parent?.removeProtos(this);
+    }
+
     removeProtos(...protos: Proto[]) {
         let protoSet = this.protos;
         forEach(protos, proto => {

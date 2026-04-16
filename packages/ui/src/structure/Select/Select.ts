@@ -60,6 +60,7 @@ export class Select extends ElementProto {
             let $item = this.itemMap.get(val);
             this.selected = $item ?? _null;
             this.$value?.render();
+            this.dispatch('selectvalue', [this, val], {bubbles: true})
         })
         this.node?.dispatchEvent(new Event('select-value'));
     }
@@ -101,5 +102,13 @@ export class Select extends ElementProto {
     override toString(): string {
         let triggerHTML = this.$trigger?.toString() ?? '';
         return this.parseHTML({children: triggerHTML});
+    }
+}
+
+declare global {
+    export namespace $ {
+        export interface ProtoEventMap {
+            selectvalue: [$select: Select, value: any]
+        }
     }
 }

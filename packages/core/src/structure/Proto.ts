@@ -120,11 +120,12 @@ export abstract class Proto {
     }
 
     private processProtos(...protos: Proto[]) {
-        let prevProto: null | Proto = null;
+        let prevProto: null | Proto = _null;
         if (protos.length)
             forEach(protos, (proto, i) => {
                 if (i === 0) this.firstProto = proto;
                 if (prevProto) prevProto.sibling = proto;
+                proto.sibling = _null;
                 prevProto = proto;
                 (proto as Mutable<Proto>).parent = this;
             })

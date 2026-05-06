@@ -20,6 +20,7 @@ export class Button extends ElementProto<HTMLButtonElement> {
             padding: `0 calc(var(--spacing) * 2.5)`,
             borderRadius: 'var(--radius)',
             height: 'calc(var(--spacing) * 8)',
+            lineHeight: '1rem',
             transition: '0.2s all ease',
             fontWeight: 'var(--font-weight-medium)',
             fontFamily: 'inherit',
@@ -35,19 +36,21 @@ export class Button extends ElementProto<HTMLButtonElement> {
                 outline: '0.1rem solid var(--border)'
             },
 
-            '&:active': {
+            '&:not([disabled]):active': {
                 translate: '0 0.125rem'
             },
 
             '&:not([disabled]):hover': {
                 background: 'oklch(from var(--input) l c h / .1)',
-                color: 'oklch(from var(--fg) l c h / 1)',
             },
 
             '&[variant="primary"]': {
                 border: 'none',
                 color: 'oklch(from var(--primary-fg) l c h)',
-                background: 'var(--primary-bg)'
+                background: 'var(--primary-bg)',
+                '&:not([disabled]):hover': {
+                    background: 'oklch(from var(--primary-bg) l c h / .8)',
+                },
             },
 
             '&[variant="secondary"]': {
@@ -94,8 +97,9 @@ export class Button extends ElementProto<HTMLButtonElement> {
 
             '&[size="xs"]': {
                 padding: 'calc(var(--spacing) * 2)',
-                fontSize: 'var(--text_xs)',
-                height: 'calc(var(--spacing) * 6)'
+                fontSize: 'var(--text-xs)',
+                lineHeight: 'var(--text-xs)',
+                height: 'calc(var(--spacing) * 6)',
             },
 
             '&[size="icon-xs"]': {

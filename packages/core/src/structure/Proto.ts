@@ -8,8 +8,6 @@ export abstract class Proto {
     static proto: Proto | null = _null; 
     static [symbol_ProtoType] = 'Proto';
     static [symbol_Statement] = false;
-    static disposer: ((proto: Proto) => void)[] = [];
-    private disposers: Function[] | null = _null;
     layout: $.Layout | null;
     readonly parent: Proto | null = _null;
     global: GlobalState = Proto.proto?.global ?? new GlobalState(this);
@@ -29,14 +27,12 @@ export abstract class Proto {
     }
 
     dispose() {
-        forEach(Proto.disposer, disposer => disposer(this));
-        forEach(this.disposers, disposer => disposer());
+        this.dispatch('dispose', [this])
         forEach(this.protos, proto => proto.dispose());
         this.global = _null as any;
         this.sibling = _null;
         this.firstProto = _null;
         this.lastProto = _null;
-        this.disposers = _null;
         (this as Mutable<this>).parent = _null;
         this.layout = _null;
     }
@@ -154,9 +150,11 @@ export abstract class Proto {
         return children ? map(this.protos, proto => proto.toDOM(children)).flat() : [];
     }
 
+    /**
+     * @deprecated use Proto.listen('dispose') instead
+     */
     ondispose(disposer: () => void) {
-        this.disposers = this.disposers ?? [];
-        this.disposers.push(disposer);
+        this.listen('dispose', disposer);
     }
 
     removeNode() {
@@ -175,10 +173,10 @@ export abstract class Proto {
         return _null;
     }
 
-    findBelow(filter: (proto: Proto) => boolean | void): Proto | null {
+    findBelow<T extends Proto>(filter: (proto: Proto) => boolean | void): T | null {
         for (let proto of this.protos) {
-            if (filter(proto)) return proto;
-            let nested = proto.findBelow(filter);
+            if (filter(proto)) return proto as T;
+            let nested = proto.findBelow<T>(filter);
             if (nested) return nested;
         }
         return _null;

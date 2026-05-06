@@ -135,7 +135,7 @@ export namespace $ {
             input: [string] | [keyof HTMLElementTagNameMap],
             output: I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto,
             args: [
-                props?: $.Props, 
+                props?: I[0] extends keyof HTMLElementTagNameMap ? $.Props<{}, HTMLElementTagNameMap[I[0]]> : $.Props, 
                 layout?: 
                     |   $.Layout<I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto>] 
                     |   [layout?: $.Layout<I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto>
@@ -151,7 +151,11 @@ export namespace $ {
             :   never
         }[keyof Overload<K>];
 
-    export interface AttrMap {}
+    export interface AttrMap<T> extends ElementProtoOnEventMap<T> {}
+
+    type ElementProtoOnEventMap<T> = {
+        [key in keyof HTMLElementEventMap as string extends string ? `on${key}` : never]: string | ((event: HTMLElementEventMap[key] & { currentTarget: T }) => void)
+    }
     
     export interface ProtoEventMap {}
 

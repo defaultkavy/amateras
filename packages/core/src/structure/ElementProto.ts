@@ -1,4 +1,4 @@
-import { _Array_from, _null, _Object_assign, _Object_entries, forEach, isNull, isUndefined, map } from "@amateras/utils";
+import { _Array_from, _null, _Object_assign, _Object_entries, forEach, isFunction, isNull, isUndefined, map } from "@amateras/utils";
 import { NodeProto } from "./NodeProto";
 
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
@@ -32,6 +32,13 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     props({ ...props }: $.Props) {
         let {class: className, ...propsFiltered} = props;
         if (className) this.addClass(...className.split(' '));
+        // handle event listener in props
+        forEach(_Object_entries(propsFiltered), ([name, value]) => {
+            if (name.startsWith('on') && isFunction(value)) {
+                this.on(name.replace('on', ''), value);
+                delete propsFiltered[name];
+            }
+        })
         this.attrProcess(propsFiltered);
     }
 

@@ -42,19 +42,19 @@ export const packages: Package[] = [
         name: "css-variable",
         description: "CSS variable module",
         entry: 'css/src/ext/variable.ts',
-        mapped: false,
+        mapped: true,
         listed: false
     }, {
         name: "css-keyframes",
         description: "CSS keyframes module",
         entry: 'css/src/ext/keyframes.ts',
-        mapped: false,
+        mapped: true,
         listed: false
     }, {
         name: "css-property",
         description: "CSS property module",
         entry: 'css/src/ext/property.ts',
-        mapped: false,
+        mapped: true,
         listed: false
     }, {
         name: "for",
@@ -120,7 +120,6 @@ export const packages: Package[] = [
     }, {
         name: "utils",
         description: "Utilities module",
-        codeInsert: 'import * as utils from "amateras/utils";',
         entry: 'utils/src/index.ts',
         mapped: true,
         listed: true

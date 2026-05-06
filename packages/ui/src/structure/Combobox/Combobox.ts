@@ -1,6 +1,6 @@
 import { type FloatDisconnect, float } from "#lib/float";
 import { toCSS } from "#lib/toCSS";
-import { ElementProto, onclient } from "@amateras/core";
+import { ElementProto, onclient, Proto } from "@amateras/core";
 import { _null, _Array_from, _instanceof, isNull, isUndefined, forEach } from "@amateras/utils";
 import type { ComboboxChips } from "./ComboboxChips";
 import { type ComboboxList, ComboboxItem } from "./ComboboxList";
@@ -302,7 +302,7 @@ export class ComboboxEmpty extends ElementProto {
 
 declare global {
     export namespace $ {
-        export interface ProtoEventMap {
+        export interface ProtoEventMap<P extends Proto> {
             combobox_create: [string];
             combobox_select: [string];
             combobox_unselect: [string];

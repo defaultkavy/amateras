@@ -201,7 +201,7 @@ export abstract class Proto {
         return this.children.map(proto => proto.text).join('')
     }
     
-    dispatch<K extends keyof $.ProtoEventMap>(type: K, args: $.ProtoEventMap[K], options?: {bubbles?: boolean}): boolean
+    dispatch<K extends keyof $.ProtoEventMap<this>>(type: K, args: $.ProtoEventMap<this>[K], options?: {bubbles?: boolean}): boolean
     dispatch(type: string, args: any[], options?: {bubbles?: boolean}): boolean
     dispatch(type: string, args: any[], options?: {bubbles?: boolean}): boolean {
         let handlerSet = this.listeners?.[type];
@@ -217,7 +217,7 @@ export abstract class Proto {
         return preventDefault;
     }
 
-    listen<K extends keyof $.ProtoEventMap>(type: K, handle: (...args: $.ProtoEventMap[K]) => void): void;
+    listen<K extends keyof $.ProtoEventMap<this>>(type: K, handle: (...args: $.ProtoEventMap<this>[K]) => void): void;
     listen(type: string, handle: (src: Proto) => void): void;
     listen(type: string, handle: (...args: any) => void) {
         let listeners = this.listeners ?? {};

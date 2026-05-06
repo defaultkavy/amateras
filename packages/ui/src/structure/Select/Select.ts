@@ -1,4 +1,4 @@
-import { ElementProto, onclient } from "@amateras/core";
+import { ElementProto, onclient, Proto } from "@amateras/core";
 import { _instanceof, _null, isUndefined } from "@amateras/utils";
 import type { SelectContent } from "./SelectContent";
 import { SelectItem } from "./SelectItem";
@@ -108,7 +108,7 @@ export class Select extends ElementProto {
 
 declare global {
     export namespace $ {
-        export interface ProtoEventMap {
+        export interface ProtoEventMap<P extends Proto> {
             selectvalue: [$select: Select, value: any]
         }
     }

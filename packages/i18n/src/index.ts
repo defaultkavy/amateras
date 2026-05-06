@@ -1,7 +1,7 @@
 import { I18n } from "#structure/I18n";
 import { I18nTranslation as _I18nTranslation, I18nTranslation } from "#structure/I18nTranslation";
 import { _instanceof, _null, _Object_assign, forEach } from "@amateras/utils";
-import { GlobalState, ProxyProto } from "@amateras/core";
+import { GlobalState, Proto, ProxyProto } from "@amateras/core";
 import type { I18nSession } from "#structure/I18nSession";
 
 declare global {
@@ -13,7 +13,7 @@ declare global {
             i18n: I18nTranslation
         }
 
-        export interface ProtoEventMap {
+        export interface ProtoEventMap<P extends Proto> {
             i18nupdate: [I18nTranslation]
         }
     }

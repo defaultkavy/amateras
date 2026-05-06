@@ -58,10 +58,10 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
         if (!_instanceof(oldProto, NodeProto) || !_instanceof(newProto, NodeProto)) return;
         newProto.node = oldProto.node;
         oldProto.dispose();
-        if (newProto.modifiers) forEach(newProto.modifiers, mod => {
-            if (!newProto.node) throw 'diff:transferNode:newProto.node==null'
-            mod(newProto.node)
-        })
+        // if (newProto.modifiers) forEach(newProto.modifiers, mod => {
+        //     if (!newProto.node) throw 'diff:transferNode:newProto.node==null'
+        //     mod(newProto.node)
+        // })
     }
 
     if (!oldProto) {

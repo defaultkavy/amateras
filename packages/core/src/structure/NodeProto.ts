@@ -4,20 +4,18 @@ import { onclient } from "#env";
 
 export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Proto {
     node: null | N = _null;
-    modifiers: null | ((node: N) => void)[] = _null
     constructor(layout?: $.Layout) {
         super(layout);
     }
 
+    /**@deprecated - use `Proto.listen` on 'dom' event instead */
     ondom(callback: (node: N) => void) {
-        this.modifiers = this.modifiers ?? [];
-        this.modifiers.push(callback);
+        this.listen('dom', callback as any)
     }
 
     override dispose(): void {
         super.dispose();
         this.node = _null;
-        this.modifiers = _null
     }
 
     inDOM() {

@@ -23,7 +23,7 @@ declare global {
 
         export function title(title: OrPromise<string>, parent?: Proto | null): void;
 
-        interface ProtoEventMap {
+        interface ProtoEventMap<P extends Proto> {
             pageswitch: [slot: RouteSlot, direction: _Router.RouterDicrection]
         }
 

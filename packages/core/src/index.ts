@@ -5,6 +5,7 @@ import { ElementProto } from './structure/ElementProto';
 import { Proto } from './structure/Proto';
 import { TextProto } from './structure/TextProto';
 import type { ProxyProto } from '#structure/ProxyProto';
+import type { NodeProto } from '#structure/NodeProto';
 
 function createProto(insert: boolean, ...args: any) {
     const prevProtoParent = Proto.proto;
@@ -170,9 +171,10 @@ export namespace $ {
         [key in keyof HTMLElementEventMap as string extends string ? `on${key}` : never]: string | ((event: HTMLElementEventMap[key] & { currentTarget: T }) => void)
     }
     
-    export interface ProtoEventMap {
+    export interface ProtoEventMap<P extends Proto> {
         dispose: [];
-        builded: []
+        builded: [];
+        dom: [node: P extends NodeProto ? Exclude<P['node'], null> : Node]
     }
 
     export const process = {

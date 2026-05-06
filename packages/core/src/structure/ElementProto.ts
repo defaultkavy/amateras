@@ -72,7 +72,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         if (this.#innerHTML && this.node.innerHTML !== this.#innerHTML) this.node.innerHTML = this.#innerHTML;
         else if (children) this.DOMProcess();
         forEach(_Object_entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
-        forEach(this.modifiers, process => process(element));
+        this.dispatch('dom', [this.node])
         return [element];
     }
 

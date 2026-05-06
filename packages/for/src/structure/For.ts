@@ -27,12 +27,14 @@ export class For<T = any> extends ProxyProto {
                 let nodes = this.toDOM();
                 let arr = _Array_from(parentNode.childNodes);
                 let currentPosition = arr.indexOf(thisNode);
+                let nextNode: Node | null = _null;
                 forEach(nodes, node => {
                     if (node !== thisNode) {
                         let currentNode = parentNode.childNodes[currentPosition];
                         if (currentNode !== node) {
-                            let nextNode = parentNode.childNodes[currentPosition + 1] ?? _null;
-                            parentNode.insertBefore(node, nextNode)
+                            if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? _null;
+                            else nextNode = parentNode.childNodes[currentPosition + 1] ?? _null;
+                            parentNode.insertBefore(node, nextNode);
                         }
                     }
                     currentPosition++;

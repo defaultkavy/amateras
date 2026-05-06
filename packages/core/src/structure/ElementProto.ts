@@ -67,10 +67,6 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     override toDOM(children = true): H[] {
-        if (!this.visible) {
-            this.removeNode();
-            return [];
-        }
         let element = this.node ?? document.createElement(this.tagname) as H;
         this.node = element;
         if (this.#innerHTML && this.node.innerHTML !== this.#innerHTML) this.node.innerHTML = this.#innerHTML;
@@ -83,7 +79,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     private DOMProcess() {
         let thisNode = this.node;
         if (thisNode) {
-            let nodes = map(this.protos, proto => proto.toDOM()).flat();
+            let nodes = map(_Array_from(this.protos).filter(proto => proto.visible), proto => proto.toDOM()).flat();
             let nextNode: Node | null = _null;
             forEach(nodes, (node, i) => {
                 let currentNode = thisNode.childNodes[i];

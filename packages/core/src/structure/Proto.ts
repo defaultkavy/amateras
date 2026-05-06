@@ -147,7 +147,7 @@ export abstract class Proto {
     }
 
     toDOM(children = true): Node[] {
-        return children ? map(this.protos, proto => proto.toDOM(children)).flat() : [];
+        return children ? map(_Array_from(this.protos).filter(proto => proto.visible), proto => proto.toDOM(children)).flat() : [];
     }
 
     /**

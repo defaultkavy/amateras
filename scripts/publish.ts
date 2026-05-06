@@ -94,6 +94,9 @@ function versionTarget() {
     function bump(index: number) {
         const num = Number(version_semList[index]);
         version_semList[index] = `${num + 1}`;
+        while (index++ < 2) {
+            version_semList[index] = '0';
+        }
     }
 }
 

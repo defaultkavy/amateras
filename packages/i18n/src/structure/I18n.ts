@@ -10,13 +10,11 @@ export class I18n<D extends I18nDictionaryContext = {}> {
     dictionaries = new Map<string, I18nDictionary>();
     defaultLocale: string;
     sessions = new Set<I18nSession>();
-    session = new I18nSession(this);
     path = '';
     static key = '__locale__';
     constructor(defaultLocale: string) {
         this.defaultLocale = defaultLocale;
         this.#locale = defaultLocale;
-        this.sessions.add(this.session);
     }
 
     add(lang: string, dictionary: I18nDictionaryContext | I18nDictionaryContextImporter) {
@@ -75,11 +73,11 @@ export class I18n<D extends I18nDictionaryContext = {}> {
     private getSession() {
         let parentProto = Proto.proto;
         if (parentProto) {
-            let session = parentProto.global.i18n.session ?? new I18nSession(this);
+            let session = parentProto.global.i18n.session ?? new I18nSession(this, parentProto.global);
             parentProto.global.i18n.session = session;
             return session;
         }
-        else return this.session;
+        else throw 'I18n.getSession(): session not found from Proto.proto'
     }
 
     private readStoreLocale() {

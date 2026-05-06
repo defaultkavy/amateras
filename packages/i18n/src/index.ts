@@ -1,7 +1,7 @@
 import { I18n } from "#structure/I18n";
 import { I18nTranslation as _I18nTranslation, I18nTranslation } from "#structure/I18nTranslation";
-import { _instanceof, _null, _Object_assign } from "@amateras/utils";
-import { GlobalState } from "@amateras/core";
+import { _instanceof, _null, _Object_assign, forEach } from "@amateras/utils";
+import { GlobalState, ProxyProto } from "@amateras/core";
 import type { I18nSession } from "#structure/I18nSession";
 
 declare global {
@@ -37,6 +37,10 @@ GlobalState.assign(() => ({
     }
 }))
 
+GlobalState.disposers.add(global => {
+    global.i18n.session = _null;
+})
+
 _Object_assign($, {
     i18n(defaultLocale: string) {
         return new I18n(defaultLocale)
@@ -45,7 +49,24 @@ _Object_assign($, {
 
 $.process.text.add(value => {
     if (_instanceof(value, I18nTranslation)) {
-        return value
+        const $proxy = new ProxyProto();
+        value.onupdate(result => {
+            $proxy.layout = () => $([ ...result ]);
+            forEach($proxy.protos, proto => proto.removeNode());
+            $proxy.build();
+            $proxy.node?.replaceWith(...$proxy.toDOM());
+            $proxy.dispatch('i18nupdate', [this], {bubbles: true})
+        })
+        value.update();
+        return $proxy;
+    }
+})
+$.process.attr.add((name, value, proto) => {
+    if (_instanceof(value, I18nTranslation)) {
+        value.onupdate((result) => {
+            proto.attr(name, result.join(''))
+        })
+        value.update();
     }
 })
 

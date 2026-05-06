@@ -2,14 +2,16 @@ import { isUndefined, map } from "@amateras/utils";
 import type { I18nTranslationResult } from "../types";
 import type { I18n } from "./I18n";
 import type { I18nTranslation, I18nTranslationOptions } from "./I18nTranslation";
-import { onclient } from "@amateras/core";
+import { GlobalState, onclient } from "@amateras/core";
 
 export class I18nSession {
     translations = new Set<I18nTranslation>()
     i18n: I18n;
     #locale: string;
-    constructor(i18n: I18n) {
+    global: GlobalState;
+    constructor(i18n: I18n, global: GlobalState) {
         this.i18n = i18n;
+        this.global = global;
         this.#locale = i18n.locale();
         i18n.sessions.add(this);
     }

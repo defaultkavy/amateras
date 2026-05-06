@@ -143,7 +143,7 @@ export abstract class Proto {
     }
 
     toString(): string {
-        return map(this.protos, proto => `${proto}`).join('')
+        return map(_Array_from(this.protos).filter(proto => proto.visible), proto => `${proto}`).join('')
     }
 
     toDOM(children = true): Node[] {

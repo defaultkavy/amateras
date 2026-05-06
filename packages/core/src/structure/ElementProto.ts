@@ -54,12 +54,12 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     override toString(): string {
-        return this.visible ? this.parseHTML() : '';
+        return this.parseHTML();
     }
 
     parseHTML(options?: { children?: string, attr?: string }) {
         let tagname = this.tagname;
-        let childrenHTML = options?.children ?? (this.#innerHTML || map(this.protos, proto => `${proto}`).join(''));
+        let childrenHTML = options?.children ?? (this.#innerHTML || map(this.protos, proto => proto.visible ? `${proto}` : '').join(''));
         let attr = options?.attr ?? map(_Object_entries(this.#attr), ([key, value]) => value.length ? `${key}="${value}"` : key).join(' ');
         let attrText = attr.length ? ' ' + attr : '';
         if (SELF_CLOSING_TAGNAMES.includes(tagname)) return `<${tagname}${attrText} />`;

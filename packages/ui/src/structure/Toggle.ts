@@ -1,3 +1,4 @@
+import { pointerHoverMediaQuery } from "#lib/hover";
 import { toCSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 import { _null, isNull, isUndefined } from "@amateras/utils";
@@ -37,25 +38,24 @@ export class Toggle extends ElementProto<HTMLButtonElement> {
             background: 'oklch(from var(--input) l c h / .025)',
             color: 'oklch(from var(--fg) l c h / .8)',
 
-            '&:not([disabled]):hover': {
-                background: 'oklch(from var(--input) l c h / .1)',
-                color: 'oklch(from var(--fg) l c h)',
+            [pointerHoverMediaQuery]: {
+                '&:not([disabled]):hover': {
+                    background: 'oklch(from var(--input) l c h / .1)',
+                    color: 'oklch(from var(--fg) l c h)',
+                },
             },
 
             '&[checked]': {
                 color: 'oklch(from var(--primary-fg) l c h)',
                 background: 'oklch(from var(--primary-bg) l c h / .8)',
 
-                '&:not([disabled]):hover': {
-                    background: 'oklch(from var(--primary-bg) l c h)',
-                    color: 'oklch(from var(--primary-fg) l c h)',
+                [pointerHoverMediaQuery]: {
+                    '&:not([disabled]):hover': {
+                        background: 'oklch(from var(--primary-bg) l c h)',
+                        color: 'oklch(from var(--primary-fg) l c h)',
+                    },
                 },
             },
-
-            // '&[checked]': {
-            //     border: '1px solid oklch(from var(--input) l c h / .3)',
-            //     background: 'oklch(from var(--input) l c h / .1)',
-            // },
 
             '&[variant="primary"]': {
                 '&[checked]': {

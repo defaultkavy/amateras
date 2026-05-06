@@ -1,3 +1,4 @@
+import { pointerHoverMediaQuery } from "#lib/hover";
 import { toCSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
@@ -40,54 +41,71 @@ export class Button extends ElementProto<HTMLButtonElement> {
                 translate: '0 0.125rem'
             },
 
-            '&:not([disabled]):hover': {
-                background: 'oklch(from var(--input) l c h / .1)',
+            [pointerHoverMediaQuery]: {
+                '&:not([disabled]):hover': {
+                    background: 'oklch(from var(--input) l c h / .1)',
+                },
             },
 
             '&[variant="primary"]': {
                 border: 'none',
                 color: 'oklch(from var(--primary-fg) l c h)',
                 background: 'var(--primary-bg)',
-                '&:not([disabled]):hover': {
-                    background: 'oklch(from var(--primary-bg) l c h / .8)',
-                },
+
+                [pointerHoverMediaQuery]: {
+                    '&:not([disabled]):hover': {
+                        background: 'oklch(from var(--primary-bg) l c h / .8)',
+                    }
+                }
             },
 
             '&[variant="secondary"]': {
                 border: 'none',
                 color: 'oklch(from var(--secondary-fg) l c h)',
                 background: 'var(--secondary-bg)',
-                '&:not([disabled]):hover': {
-                    background: 'oklch(from var(--secondary-bg) l c h / .8)'
-                }
+
+                [pointerHoverMediaQuery]: {
+                    '&:not([disabled]):hover': {
+                        background: 'oklch(from var(--secondary-bg) l c h / .8)'
+                    }
+                },
             },
 
             '&[variant="destructive"]': {
                 border: 'none',
                 color: 'oklch(from var(--destructive-fg) l c h)',
                 background: 'oklch(from var(--destructive-bg) l c h / .3)',
-                '&:not([disabled]):hover': {
-                    background: 'oklch(from var(--destructive-bg) l c h / .5)'
-                }
+
+                [pointerHoverMediaQuery]: {
+                    '&:not([disabled]):hover': {
+                        background: 'oklch(from var(--destructive-bg) l c h / .5)'
+                    }
+                },
             },
 
             '&[variant="ghost"]': {
                 border: 'none',
                 color: 'oklch(from var(--fg) l c h)',
                 background: 'oklch(from var(--input) l c h / 0)',
-                '&:not([disabled]):hover': {
-                    background: 'oklch(from var(--input) l c h / .1)'
-                }
+
+                [pointerHoverMediaQuery]: {
+                    '&:not([disabled]):hover': {
+                        background: 'oklch(from var(--input) l c h / .1)'
+                    }
+                },
             },
 
             '&[variant="link"]': {
                 border: 'none',
                 color: 'oklch(from var(--fg) l c h)',
                 background: 'oklch(from var(--input) l c h / 0)',
-                '&:not([disabled]):hover': {
-                    textDecoration: 'underline',
-                    textUnderlineOffset: '0.2rem'
-                }
+
+                [pointerHoverMediaQuery]: {
+                    '&:not([disabled]):hover': {
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '0.2rem'
+                    }
+                },
             },
 
             '&[size="icon"]': {

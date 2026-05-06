@@ -3,7 +3,7 @@ import { ElementProto } from "@amateras/core";
 
 export interface BadgeProps {
     variant?: 'primary' | 'outline' | 'secondary' | 'ghost' | 'destructive' | 'link' | string & {};
-    size?: 'base' | 'icon' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg' | string & {}
+    size?: 'base' | 'icon' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg' | string & {}
 }
 
 export class Badge extends ElementProto<HTMLButtonElement> {
@@ -20,6 +20,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
             padding: `0 calc(var(--spacing) * 2)`,
             borderRadius: 'calc(var(--radius) * 2.6)',
             height: 'calc(var(--spacing) * 5)',
+            lineHeight: 'var(--text-xs)',
             transition: '0.2s all ease',
             fontSize: 'var(--text-xs)',
             fontWeight: 'var(--font-weight-medium)',
@@ -82,6 +83,13 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                     textDecoration: 'underline',
                     textUnderlineOffset: '0.2rem'
                 }
+            },
+
+            '&[size="sm"]': {
+                padding: '0 calc(var(--spacing) * 1)',
+                fontSize: 'var(--text-xs2)',
+                lineHeight: 'var(--text-xs2)',
+                height: 'calc(var(--spacing) * 4)'
             },
 
             'a[disabled] &': {

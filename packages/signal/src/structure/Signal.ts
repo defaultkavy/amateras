@@ -130,10 +130,6 @@ export class Signal<T = any> extends Function {
         return validator(this)
     }
 
-    exists(): SignalTypes<Exclude<T, null>> | null {
-        return this.value === _null ? _null : this as any;
-    }
-
     override toString(): string {
         return `${this.value}`
     }

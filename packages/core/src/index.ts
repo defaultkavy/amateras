@@ -157,7 +157,10 @@ export namespace $ {
         [key in keyof HTMLElementEventMap as string extends string ? `on${key}` : never]: string | ((event: HTMLElementEventMap[key] & { currentTarget: T }) => void)
     }
     
-    export interface ProtoEventMap {}
+    export interface ProtoEventMap {
+        dispose: [];
+        builded: []
+    }
 
     export const process = {
         craft: new Set<CraftMiddleware>(),

@@ -18,6 +18,7 @@ export * from "#structure/Badge";
 export * from "#structure/Icon";
 export * from "#structure/Card";
 export * from "#structure/DescriptionList";
+export * from "#structure/ContextMenu";
 export * from "#structure/Input";
 export * from "#structure/Switch";
 export * from "#structure/Toggle";

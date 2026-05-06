@@ -27,7 +27,7 @@ export class Waterfall extends ElementProto {
         $.style(Waterfall, 'waterfall{display:block;position:relative;min-height:100dvh}')
     }
 
-    override toDOM(children?: boolean): HTMLElement[] {
+    override toDOM(children = true): HTMLElement[] {
         super.toDOM(children);
         if (this.node) this.observer?.observe(this.node);
         return [this.node!]

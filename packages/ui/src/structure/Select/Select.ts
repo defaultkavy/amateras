@@ -90,7 +90,7 @@ export class Select extends ElementProto {
         this.disconnect = _null;
     }
 
-    override toDOM(children?: boolean): HTMLElement[] {
+    override toDOM(children = true): HTMLElement[] {
         super.toDOM(false);
         if (children && this.$trigger) {
             this.node?.append(...this.$trigger.toDOM());

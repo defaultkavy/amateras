@@ -12,7 +12,7 @@ export class WaterfallItem extends ElementProto {
         $.style(WaterfallItem, 'waterfall-item{display:block;position:absolute}')
     }
 
-    override toDOM(children?: boolean): HTMLElement[] {
+    override toDOM(children = true): HTMLElement[] {
         super.toDOM(children);
         const $waterfall = this.findAbove<Waterfall>(proto => is(proto, Waterfall));
         this.node?.querySelectorAll('img').forEach(img => $waterfall?.observer?.observe(img));

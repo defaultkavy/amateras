@@ -1,7 +1,7 @@
 import { computeCleanup, track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
-import { GlobalState, TextProto } from "@amateras/core";
-import { _instanceof, _Object_assign, isIncluded, forEach, isBoolean, _null } from "@amateras/utils";
+import { GlobalState, Proto, ProxyProto, TextProto } from "@amateras/core";
+import { _instanceof, _Object_assign, forEach, _null, isString, _undefined, isBoolean, isNumber } from "@amateras/utils";
 
 declare global {
     export namespace $ {
@@ -73,7 +73,12 @@ _Object_assign($, {
     ) {
         let result = track(callback);
         let compute = $.signal(result);
-        compute.exec = () => compute.set(callback(untrack));
+        let proto = Proto.proto;
+        compute.exec = () => {
+            $.context(Proto, proto, () => {
+                compute.set(callback(untrack));
+            })
+        }
         forEach(trackSet, signal => {
             signal.computes = signal.computes ?? new Set();
             let ref = new WeakRef(compute);
@@ -102,36 +107,41 @@ _Object_assign($, {
     }
 })
 
-let toTextProto = (signal: Signal) => {
+let toProxyProto = (signal: Signal) => {
     if (_instanceof(signal, Signal)) {
-        let proto = new TextProto(`${signal}`);
-        let fn = (value: any) => proto.content = `${value}`;
+        let proxy = new ProxyProto();
+        let $text: undefined | TextProto = _undefined;
+        let fn = (value: any) => {
+            // improve text content update performance
+            if (isString(value) || isBoolean(value) || isNumber(value)) {
+                if ($text) $text.content = `${value}`;
+                else proxy.layout = () => $text = $([ value ]).at(0) as TextProto;
+                if (!proxy.builded) proxy.build();
+            } else {
+                $text = _undefined;
+                proxy.layout = () => $([ value ]);
+                forEach(proxy.protos, proto => proto.removeNode())
+                // clean children nodes and dispose
+                proxy.clear(true);
+                if (proxy.builded) proxy.build();
+                proxy.node?.replaceWith(...proxy.toDOM());
+            }
+        }
         signal.subscribe(fn);
-        proto.ondispose(() => signal.unsubscribe(fn));
+        proxy.listen('dispose', () => signal.unsubscribe(fn));
         fn(signal.value);
-        return proto;
+        return proxy;
     }
 }
 
-$.process.text.add(toTextProto)
-$.process.craft.add(toTextProto)
+$.process.text.add(toProxyProto)
+$.process.craft.add(toProxyProto)
 $.process.attr.add((name, signal, proto) => {
     if (_instanceof(signal, Signal)) {
-        if (proto.tagname === 'input') {
-            if (isIncluded(name, ['value', 'checked'] as const)) {
-                proto.on('input', e => signal.set((e.currentTarget as HTMLInputElement)[name]));
-                let value = signal.value;
-                if (isBoolean(value)) value && proto.attr(name, '');
-                else proto.attr(name, `${value}`)
-            }
-        } 
-        else {
-            let setNodeAttr = () => proto.attr(name, signal.value as any);
-            signal.subscribe(setNodeAttr);
-            setNodeAttr();
-            proto.ondispose(() => signal.unsubscribe(setNodeAttr))
-        }
-        
+        let setNodeAttr = () => proto.attr(name, signal.value as any);
+        signal.subscribe(setNodeAttr);
+        setNodeAttr();
+        proto.listen('dispose', () => signal.unsubscribe(setNodeAttr))
         return true;
     }
 })

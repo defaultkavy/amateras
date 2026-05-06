@@ -1,4 +1,4 @@
-import { _instanceof, _null, _Object_entries, forEach, isFunction, isString, isSymbol, isUndefined } from "@amateras/utils";
+import { _instanceof, _null, _Object_entries, forEach, isFunction, isNull, isObject, isString, isSymbol, isUndefined } from "@amateras/utils";
 import { ontrack, trackSet } from "#lib/track";
 import { Proto, symbol_Signal } from "@amateras/core";
 import type { SignalTypes } from "..";
@@ -25,12 +25,28 @@ export class Signal<T = any> extends Function {
             apply: () => this._exec(),
             get: (_, propName) => {
                 if (isSymbol(propName) || (isString(propName) && !propName.endsWith('$'))) return this[propName as keyof this];
-                const value = this.value[propName as keyof T] ?? this.value[propName.slice(0, -1) as keyof T];
+                // remove $ at last position of prop name
+                propName = propName.slice(0, -1);
                 if (!this.map) this.map = {};
-                const signal = this.map[propName] ?? new Signal(value);
-                if (!this.map[propName]) this.subscribe(() => signal.set(this.value[propName as keyof T] ?? this.value[propName.slice(0, -1) as keyof T]));
-                this.map[propName] = signal;
-                return signal;
+                const cachedSignal = this.map[propName];
+                if (cachedSignal) return cachedSignal;
+                else {
+                    const signal = this.map[propName] ?? new Signal<any>(null);
+                    this.map[propName] = signal;
+                    // set signal value (before subscribe)
+                    this.setPropValue(signal, propName);
+                    signal.subscribe(newValue => {
+                        // set member value to parent source object
+                        if (isObject(this.value) && !isNull(this.value)) {
+                            // avoid getter only member
+                            if (Object.getOwnPropertyDescriptor(this.value, propName)?.writable) this.value[propName as keyof T] = newValue;
+                        }
+                        // emit parent signal
+                        if (!isNull(this.value)) this.emit();
+                    })
+                    this.subscribe(() => this.setPropValue(signal, propName));
+                    return signal;
+                }
             }
         });
     }
@@ -38,6 +54,17 @@ export class Signal<T = any> extends Function {
     private _exec() {
         if (ontrack) trackSet.add(this);
         return this.value;
+    }
+
+    private setPropValue(signal: Signal, propName: string) {
+        if (isObject(this.value) && !isNull(this.value)) {
+            // parent signal value is object, set value from this object member
+            const value = this.value[propName as keyof T];
+            signal.set(value);
+        } else {
+            // parent signal value is not object, member signal value change to null quietly
+            signal._value = null;
+        }
     }
     
     get value(): T {
@@ -62,12 +89,14 @@ export class Signal<T = any> extends Function {
         else if (isFunction(resolver)) this.set(resolver(this.value));
         else if (this.value !== resolver) {
             this._value = resolver;
+            this.linked = _null;
             this.emit();
         }
     }
 
     modify(callback: (value: T) => void) {
         callback(this.value);
+        this.linked?.emit();
         this.emit();
     }
     

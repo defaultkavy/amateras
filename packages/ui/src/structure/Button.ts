@@ -2,18 +2,18 @@ import { toCSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export interface ButtonProps {
-    variant?: 'primary' | 'outline' | 'secondary' | 'ghost' | 'destructive' | 'link' | string & {};
-    size?: 'base' | 'icon' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg' | string & {}
+    variant?: OrSignal<'primary' | 'outline' | 'secondary' | 'ghost' | 'destructive' | 'link' | string & {}>;
+    size?: OrSignal<'base' | 'icon' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg' | string & {}>;
 }
 
 export class Button extends ElementProto<HTMLButtonElement> {
     static tagname = 'button';
-    constructor(props: $.Props<ButtonProps>, layout?: $.Layout<Button>) {
-        super(Button.tagname, props, layout)
+    constructor(props: $.Props<ButtonProps, HTMLButtonElement>, layout?: $.Layout<Button>) {
+        super('button', {ui: 'button', ...props}, layout)
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toCSS('button[ui="button"]', {
             display: 'inline-flex',
             placeContent: 'center',
             placeItems: 'center',

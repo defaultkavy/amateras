@@ -52,8 +52,7 @@ $.process.craft.add((value, arg1, arg2) => {
     if (isIncluded(value, [If, Else, ElseIf])) {
         let args: [Signal | Signal[] | null, () => void] = (_instanceof(arg1, Signal) || isArray(arg1)) ? [arg1, arg2] : [_null, arg1];
         let statement = new value(...args);
-        condition.statements = condition.statements ?? [];
-        condition.statements?.push(statement);
+        condition.append(statement);
     }
     else {
         condition = _null;

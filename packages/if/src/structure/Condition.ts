@@ -5,13 +5,12 @@ import type { ConditionStatement } from "./ConditionStatement";
 
 export class Condition extends ProxyProto {
     static override [symbol_Statement] = true;
-    statements: ConditionStatement[] | null = _null;
     declare layout: null;
     statement: ConditionStatement | null = _null;
 
     override build() {
         // run base build method with empty protos
-        super.build(false);
+        super.build(false, false);
         // set condition matched proto
         this.validate()?.build();
         // update function for Signal subscribe
@@ -20,15 +19,15 @@ export class Condition extends ProxyProto {
             if (!matchProto?.builded) matchProto?.build();
             if (this.statement === matchProto) return;
             this.statement = matchProto ?? _null;
-            forEach(this.statements, proto => proto !== matchProto && proto.removeNode())
+            forEach(this.protos, proto => !proto.visible && proto.removeNode());
             this.node?.replaceWith(...this.toDOM());
             this.parent?.mutate();
         }
         // build statements proto and subscribe expression signal
-        forEach(this.statements, proto => {
+        forEach(this.protos, proto => {
             forEach(proto.exps, exp$ => {
                 exp$?.subscribe(update);
-                proto.ondispose(() => {
+                proto.listen('dispose', () => {
                     exp$?.unsubscribe(update)
                 });
             })
@@ -36,18 +35,20 @@ export class Condition extends ProxyProto {
         return this;
     }
 
+    override get protos(): Set<ConditionStatement> {
+        return super.protos as Set<ConditionStatement>
+    }
+
     override dispose(): void {
         super.dispose();
-        forEach(this.statements, statement => statement.dispose());
         this.statement = _null;
-        this.statements = _null;
     }
 
     validate() {
-        this.clear();
-        if (this.statements) for (let proto of this.statements) {
+        forEach(this.protos, proto => proto.visible = false);
+        for (let proto of this.protos) {
             if (proto.validate()) {
-                this.append(proto);
+                proto.visible = true;
                 return proto;
             }
         }

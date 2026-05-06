@@ -106,9 +106,16 @@ export const sleep = async (ms: number) => new _Promise(resolve => setTimeout(re
 
 export const toArray = <T>(item: OrArray<T>): T[] => _instanceof(item, Array) ? item : [item];
 
-export const trycatch = <D>(callback: () => D): Result<D, Error> => {
+export interface trycatch {
+    <D>(callback: () => D): D extends Promise<infer T> ? Promise<Result<T, Error>> : Result<D, Error>
+}
+
+//@ts-ignore
+export const trycatch: trycatch = async (callback: any) => {
     try {
-        return [callback(), _null];
+        const result = callback();
+        if (_instanceof(result, Promise)) return await result.then(res => [res, _null]);
+        return [result, _null];
     } catch (err) {
         return [_null, _instanceof(err, Error) ? err : new Error(_JSON_stringify(err))];
     }
@@ -116,17 +123,30 @@ export const trycatch = <D>(callback: () => D): Result<D, Error> => {
 
 export const uppercase = (str: string, start?: number, end?: number) => `${slice(str, 0, start)}${slice(str, start, end).toUpperCase()}${end ? slice(str, end) : ''}`
 const _URL = URL;
-export const toURL = (path: string | URL) => {
+export const toURL = (path: string | URL, base = globalThis.origin ?? 'http://localhost') => {
     if (_instanceof(path, _URL)) return path;
-    return new URL(path, globalThis.origin ?? 'http://localhost')
+    return new URL(path, base)
 }
 
 // object member compare
-export const isEqual = <T extends Object>(target: T, reference: Record<keyof T, any>, props?: (keyof T)[]) => {
+export const isEqual = <T extends Object>(target: T, reference: any, props?: (keyof T)[]) => {
+    const propsSet = props ? new Set(props) : _null;
     for (let [ key, value ] of _Object_entries(target)) {
-        if (props && !props.includes(key as any)) continue;
-        if (reference[key as keyof T] === value) continue;
-        else return false;
+        if (propsSet && !propsSet.has(key as any)) continue;
+        const targetValue = reference[key as keyof T];
+        if (targetValue !== value) {
+            if (isNull(targetValue) || isNull(value)) return false;
+            if (Number.isNaN(targetValue) && Number.isNaN(value)) continue;
+            if (isObject(targetValue) && isObject(value)) {
+                if (isArray(value) && isArray(targetValue)) {
+                    if (value.length !== targetValue.length) return false;
+                    
+                }
+                if (isEqual(value, targetValue)) continue;
+                else return false
+            }
+            return false;
+        }
     }
     return true
 }

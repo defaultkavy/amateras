@@ -144,7 +144,7 @@ export class Router extends Proto {
             if (scrollDataElements.length)
                 forEach(scrollDataElements, ([id, {x, y}]) => {
                     if (id === '#document') window.scrollTo(x, y);
-                    else document.querySelector(`#${id}`)?.scrollTo(x, y)
+                    else document.getElementById(id)?.scrollTo(x, y)
                 });
             else {
                 document.querySelectorAll('*').forEach(el => el.scrollTo(0, 0))

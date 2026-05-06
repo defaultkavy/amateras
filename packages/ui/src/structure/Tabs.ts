@@ -5,12 +5,12 @@ export interface TabsOptions {
     targetId?: string;
 }
 export class Tabs extends ElementProto {
-    targetId: string;
+    targetId: string | null;
     $container: TabsContainer | null = _null;
     triggers = new Map<string, TabTrigger>();
-    constructor({targetId, ...props}: $.Props, layout?: $.Layout<Tabs>) {
+    constructor({targetId, ...props}: $.Props<TabsOptions>, layout?: $.Layout<Tabs>) {
         super('tabs', props, layout);
-        this.targetId = targetId;
+        this.targetId = targetId ?? _null;
     }
 
     static {

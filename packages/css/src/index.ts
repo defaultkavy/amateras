@@ -25,7 +25,7 @@ declare global {
             export function rules(proto: Proto): $CSSRule[];
         }
 
-        export interface AttrMap {
+        export interface AttrMap<T> {
             css: OrArray<$.CSSMap | $CSSRule>;
         }
     }

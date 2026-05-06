@@ -1,7 +1,7 @@
 import { ElementProto, onclient } from "@amateras/core";
-import { _null, isUndefined } from "@amateras/utils";
+import { _instanceof, _null, isUndefined } from "@amateras/utils";
 import type { SelectContent } from "./SelectContent";
-import type { SelectItem } from "./SelectItem";
+import { SelectItem } from "./SelectItem";
 import type { SelectTrigger } from "./SelectTrigger";
 import { float, type FloatDisconnect } from "#lib/float";
 import type { SelectValue } from "./SelectValue";
@@ -76,7 +76,7 @@ export class Select extends ElementProto {
                 if (e.target && this.$content?.node?.contains(e.target as Node)) return;
                 this.close();
             }
-            this.selected?.node?.focus();
+            this.selected?.node?.focus() ?? this.$content?.findBelow<SelectItem>(proto => _instanceof(proto, SelectItem))?.node?.focus();
             window.addEventListener('click', this.clickListener)
         }
     }

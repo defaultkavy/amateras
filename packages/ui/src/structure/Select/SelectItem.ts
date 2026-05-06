@@ -13,7 +13,7 @@ export class SelectItem extends ElementProto {
     $select: Select | null = _null;
     $content: SelectContent | null = _null;
     #value: any = _null;
-    constructor(props: $.Props, layout?: $.Layout<Select>) {
+    constructor(props: $.Props<SelectItemProps>, layout?: $.Layout<Select>) {
         super(SelectItem.tagname, {tabindex: 0, ...props}, layout);
         this.on('click', () => {
             this.$select?.close();

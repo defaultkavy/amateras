@@ -5,7 +5,12 @@ import { _null, _Object_assign, isAsyncFunction, toURL } from "@amateras/utils";
 
 declare global {
     export namespace $ {
-        export function fetch<T, R>(url: string | URL, options?: RequestInit & FetchOptions<T, R>): Promise<FetchResult<T, R>>
+        export function fetch<T, R>(url: string | URL, options?: RequestInit & FetchOptions<T, R>, proto?: Proto | null): Promise<FetchResult<T, R>>
+
+        export namespace fetch {
+            export let origin: string;
+            export let server: Bun.Server<undefined> | null
+        }
     }
     export var prefetch: {[key: string]: { expired: number, data: any }}
 }
@@ -13,7 +18,8 @@ declare global {
 declare module "@amateras/core" {
     export interface GlobalState {
         prefetch: {
-            caches: {[key: string]: { expired: number, data: any }}
+            caches: {[key: string]: { expired: number, data: any }};
+            req: null | Request
         }
     }
 }
@@ -30,7 +36,8 @@ export type FetchResult<T, R> = {
 
 GlobalState.assign(() => ({
     prefetch: {
-        caches: {}
+        caches: {},
+        req: null
     }
 }))
 
@@ -41,9 +48,8 @@ _Object_assign($, {
     // 保证每次全局渲染都在抓取完毕之后：将 Promise 添加到 global.prefetch.fetches 让根原型能确保所有 fetch 运行结束
     // 将已抓取的资料发送到客户端：从 record 函数回传的资料将会被记录在 global.prefetch.caches 当中，并且以抓取 URL 作为索引。
     // 客户端不会用到过时的资料：每个发送到客户端的资料缓存都附上了过期时间
-    async fetch<T, R>(url: string | URL, options?: RequestInit & FetchOptions<T, R>) {
-        url = toURL(url);
-        let proto = Proto.proto;
+    async fetch<T, R>(url: string | URL, options?: RequestInit & FetchOptions<T, R>, proto = Proto.proto) {
+        url = toURL(url, $.fetch.origin);
         let cache = onclient() ? prefetch[url.href] : _null;
         let then = options?.then;
         let request = new Promise(async (resolve) => {
@@ -52,7 +58,17 @@ _Object_assign($, {
                 resolve({record: cache.data, result});
                 return ;
             }
-            let response = await fetch(url, options);
+            let { origin, server } = $.fetch;
+            let cookies = proto?.global.prefetch.req?.headers.get('cookie') || '';
+            let response = url.origin === origin && server 
+            ?   await server.fetch(new Request(url, {
+                ...options,
+                headers: {
+                    ...options?.headers,
+                    'Cookie': cookies
+                }
+            }))
+            :   await fetch(url, options);
             let recordFn = options?.record;
             if (recordFn) {
                 let record = isAsyncFunction(recordFn) ? await recordFn(response) : recordFn(response);
@@ -67,4 +83,9 @@ _Object_assign($, {
         if (onserver()) proto?.global.asyncTask(request)
         return request
     }
+})
+
+_Object_assign($.fetch, {
+    origin: onclient() ? location.origin : 'http://localhost',
+    server: null
 })

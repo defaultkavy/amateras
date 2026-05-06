@@ -1,5 +1,53 @@
 # Changelog
 
+## [0.14.0] - 2026-05-07
+
+### Features
+- **New UI Component**: `Combobox`, `Toggle`, `Switch`, `Input`, `ContextMenu`, `Field`
+- **New Utility Function**: `isEqual`, `$.tuple`
+- **Handle Async Task in SSR Process**: Use `$.async` method to handle multiple async task, every SSR request will waiting to response until all task queue is cleared.
+- **Nested Object Signal**: Now nested signal is supported.
+- **Customize Page Switch Behaviour**: New `pageswitch` proto event, block default behaviour and handle it is possible now.
+- **Auto Reload Updated Sources**: Now page will be automatic reloaded if source file is re-bundled.
+- **Mutiple Conditions of `If`**: Use array to pass mutiple conditions signal, the statement will be rendered when all conditions is passed.
+- **Assign Event Listener in Attribute Map**: You can assign `onclick` in element's attribute instead of using `Proto.on` method.
+- **Visible Proto Rendering**: New `Proto.visible` property, set to `false` and run `toDOM()` method from parent will automatic remove this proto's node from DOM tree, but it still is child of the parent proto.
+- **Auto Set Cookie on Every `$.fetch` in SSR**: The first request from client that render page content will be store to every `GlobalState` of session, every request to the same origin in this session by `$.fetch`, will share the same cookie from the first client request.
+- **Send Request to `Bun.Server` in SSR**: The request to server from the same process is possible now, set `$.fetch.server = Bun.serve({ ... })` to enable this feature.
+
+### Changes
+- New `$.Overload` interface provide more accurate function `$` overload recognition based on parameters.
+- Improve component CSS: `Card`, `CardHeader`, `SelectContent`, `Badge`, `Button`
+- New proto event `selectvalue` on `Select` component.
+- New proto event `builded` and `dispose` on `Proto`.
+- Deprecate `Proto.ondispose`, use instead `Proto.listen` on `dispose` event.
+- Deprecate `Proto.ondom`, use instead `Proto.listen` on `dom` event.
+- Method `$CSSVariable.declare` accept `$.CSSValue` type argument.
+- New `$CSSProperty.declare` method.
+- New `Proto.remove` method to remove proto from parent.
+- Improve type `$.CSSPropertyMap`.
+- New property of `$CSSDeclarationMap`: `container`
+- Improve `Proto.dispatch` method overload.
+- Remove function `$.dispose`.
+- Rename `RouterProto` to `Router`.
+- Now `I18nTranslation` class not extends from `ProxyProto`, but it still render as a `ProxyProto`.
+- New `clear` arguments of `Proto.build`.
+- Remove signal auto set value from input element content feature.
+- Now `Signal` object will be render as `ProxyProto` to handle more complex value.
+- Remove `TextBlock` component from `amateras/ui`.
+- Now `Select` component focus first option when opened even value is unset.
+
+### Fixes
+- Fix `Select` component didn't display selected value correctly.
+- Fix `GlobalState` assign properties in prototype not working correctly.
+- Fix `Route.alias` method not return `Route` instance.
+- Fix `Proto.processProtos` method not process proto sibling correctly.
+- Fix `For` render item order not correctly.
+- Fix the I18n directory fetch process didn't awaited in SSR process.
+- Fix children of ConditionStatement cannot get store from parent.
+- Fix scroll restoration not found element id error.
+- Fix vite bundler will bundle all `amateras/ui` components code to production code.
+
 ## [0.13.3] - 2026-04-04
 - Fix member signal didn't emited subscribers when parent signal updated.
 

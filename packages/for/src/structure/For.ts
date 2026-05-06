@@ -44,7 +44,7 @@ export class For<T = any> extends ProxyProto {
         }
 
         this.list$.subscribe(update);
-        this.ondispose(() => this.list$.unsubscribe(update));
+        this.listen('dispose', () => this.list$.unsubscribe(update));
     }
 
     override build() {

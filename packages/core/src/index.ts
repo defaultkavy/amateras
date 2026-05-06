@@ -185,10 +185,6 @@ export namespace $ {
 
     export const craft: Craft = (...args: any) => createProto(false, ...args);
 
-    export const dispose = (disposer: () => void) => {
-        Proto.proto?.ondispose(disposer);
-    }
-
     export const render = (proto: Proto | Constructor<Proto>, query: string) => {
         // Disable render on server side
         if (onserver()) return;

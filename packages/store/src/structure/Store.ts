@@ -16,7 +16,7 @@ export class Store<T = any, Args extends any[] = []> {
         if (!root) throw `Store.create(): ${ERROR_MESSAGE}`;
         const value = this.init(...args);
         this.map.set(root, value);
-        root.ondispose(() => this.map.delete(root));
+        root.listen('dispose', () => this.map.delete(root));
         return value;
     }
 

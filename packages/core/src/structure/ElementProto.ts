@@ -47,10 +47,10 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     on(type: string, listener: (event: Event & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions) {
         let setListener = (node: Node) => {
             node.addEventListener(type, listener as any, options)
-            this.ondispose(() => this.node?.removeEventListener(type, listener as any))
+            this.listen('dispose', () => this.node?.removeEventListener(type, listener as any))
         }
         if (this.node) setListener(this.node);
-        else this.ondom(setListener);
+        else this.listen('dom', setListener);
     }
 
     override toString(): string {

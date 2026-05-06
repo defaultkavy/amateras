@@ -51,7 +51,7 @@ export class Match<T = any> extends ProxyProto {
         // build cases proto and subscribe expression signal
         forEach(this.cases, proto => {
             this.exp$.subscribe(update);
-            proto.ondispose(() => this.exp$.unsubscribe(update));
+            proto.listen('dispose', () => this.exp$.unsubscribe(update));
         })
         return this;
     }

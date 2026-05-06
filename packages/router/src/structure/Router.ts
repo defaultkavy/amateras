@@ -67,7 +67,7 @@ export class Router extends Proto {
                 capture: true,
                 passive: false
             });
-            this.ondispose(() => {
+            this.listen('dispose', () => {
                 _removeEventListener?.('popstate', resolve);
                 _removeEventListener?.('scroll', scrollRecord, {
                     capture: true

@@ -14,7 +14,7 @@ export class GlobalState {
             if (obj) _Object_assign(this, obj);
         })
         this.root = root;
-        root.ondispose(() => this.dispose());
+        root.listen('dispose', () => this.dispose());
     }
     
     dispose() {

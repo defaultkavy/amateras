@@ -239,7 +239,7 @@ export namespace $ {
 
     export const tuple = <T extends any[]>(...args: T) => args;
 
-    export const async = (fn: (parent: Proto | null) => Promise<void>) => Proto.proto?.global.asyncTask(fn(Proto.proto));
+    export const async = <T>(fn: (parent: Proto | null) => Promise<T>): Promise<T> => Proto.proto?.global.asyncTask(fn(Proto.proto)) ?? fn(Proto.proto);
 
     export const stylesheet = onclient() ? new CSSStyleSheet() : _null;
     export const styleMap = new Map<Constructor<ElementProto>, Set<string>>();

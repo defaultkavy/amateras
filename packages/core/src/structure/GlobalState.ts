@@ -30,5 +30,6 @@ export class GlobalState {
     asyncTask(promise: Promise<any>) {
         this.promises.add(promise);
         promise.finally(() => this.promises.delete(promise));
+        return promise;
     }
 }

@@ -18,3 +18,6 @@ export * from "#structure/Badge";
 export * from "#structure/Icon";
 export * from "#structure/Card";
 export * from "#structure/DescriptionList";
+export * from "#structure/Combobox/Combobox";
+export * from "#structure/Combobox/ComboboxList";
+export * from "#structure/Combobox/ComboboxChips";

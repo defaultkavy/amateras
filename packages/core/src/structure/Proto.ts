@@ -17,6 +17,7 @@ export abstract class Proto {
     firstProto: Proto | null = _null;
     lastProto: Proto | null = _null;
     builded = false;
+    visible = true;
     listeners: { [key: string]: Set<(...args: any[]) => void> } | null = _null;
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
@@ -41,7 +42,7 @@ export abstract class Proto {
     }
 
     get children(): this['__child__'][] {
-        return map(this.protos, proto => {
+        return map(Array.from(this.protos).filter(proto => proto.visible), proto => {
             //@ts-ignore
             if (proto.constructor[symbol_Statement]) 
                 return proto.children

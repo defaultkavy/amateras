@@ -18,10 +18,11 @@ export class TextProto extends NodeProto<Text> {
     }
 
     override toString(): string {
-        return this.#content;
+        return this.visible ? this.#content : '';
     }
 
     override toDOM(): Text[] {
+        if (!this.visible) return [];
         if (this.node) return [this.node];
         let node = new Text(this.#content);
         this.node = node;

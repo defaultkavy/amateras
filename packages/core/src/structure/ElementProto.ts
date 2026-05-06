@@ -9,7 +9,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     declare layout: $.Layout | null;
     #innerHTML = '';
     private __props__: $.Props | null
-    constructor(tagname: string, props: $.Props | null, layout?: $.Layout | null) {
+    constructor(tagname: string, props: $.Props<any, any> | null, layout?: $.Layout | null) {
         super(() => layout?.(this));
         this.tagname = tagname;
         this.__props__ = props;
@@ -54,7 +54,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     override toString(): string {
-        return this.parseHTML()
+        return this.visible ? this.parseHTML() : '';
     }
 
     parseHTML(options?: { children?: string, attr?: string }) {
@@ -67,14 +67,33 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     override toDOM(children = true): H[] {
-        if (this.node) return [this.node];
-        let element = document.createElement(this.tagname) as H;
+        if (!this.visible) {
+            this.removeNode();
+            return [];
+        }
+        let element = this.node ?? document.createElement(this.tagname) as H;
         this.node = element;
-        if (this.#innerHTML) this.node.innerHTML = this.#innerHTML;
-        else if (children) element.append(...map(this.protos, proto => proto.toDOM(children)).flat());
+        if (this.#innerHTML && this.node.innerHTML !== this.#innerHTML) this.node.innerHTML = this.#innerHTML;
+        else if (children) this.DOMProcess();
         forEach(_Object_entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
         forEach(this.modifiers, process => process(element));
         return [element];
+    }
+
+    private DOMProcess() {
+        let thisNode = this.node;
+        if (thisNode) {
+            let nodes = map(this.protos, proto => proto.toDOM()).flat();
+            let nextNode: Node | null = _null;
+            forEach(nodes, (node, i) => {
+                let currentNode = thisNode.childNodes[i];
+                if (currentNode !== node) {
+                    if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? _null;
+                    else nextNode = thisNode.childNodes[i + 1] ?? _null;
+                    thisNode.insertBefore(node, nextNode);
+                }
+            })
+        }
     }
 
     private attrProcess(attrObj: $.Props) {

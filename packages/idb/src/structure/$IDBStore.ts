@@ -1,4 +1,4 @@
-import { _instanceof, _Object_assign, _Promise } from "@amateras/utils";
+import { _Object_assign } from "@amateras/utils";
 import { $IDBIndex, type $IDBIndexConfig } from "./$IDBIndex";
 import { $IDBRequest } from "#lib/$IDBRequest";
 import { $IDBStoreBase } from "./$IDBStoreBase";
@@ -59,7 +59,7 @@ export interface $IDBStore<Config extends $IDBStoreConfig = any> {
     count(query?: $IDBStoreKey<Config> | IDBKeyRange): Promise<number>;
 
     /** {@link IDBObjectStore.get} */
-    get(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema']>
+    get(query: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema'] | undefined>
 
     /** {@link IDBObjectStore.getAll} */
     getAll(query?: $IDBStoreKey<Config> | IDBKeyRange): Promise<Config['schema'][]>

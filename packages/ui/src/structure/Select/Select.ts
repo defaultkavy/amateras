@@ -76,7 +76,8 @@ export class Select extends ElementProto {
                 if (e.target && this.$content?.node?.contains(e.target as Node)) return;
                 this.close();
             }
-            this.selected?.node?.focus() ?? this.$content?.findBelow<SelectItem>(proto => _instanceof(proto, SelectItem))?.node?.focus();
+            if (this.selected?.node) this.selected.node.focus();
+            else this.$content?.findBelow<SelectItem>(proto => _instanceof(proto, SelectItem))?.node?.focus();
             window.addEventListener('click', this.clickListener)
         }
     }

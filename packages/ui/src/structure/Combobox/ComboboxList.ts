@@ -26,7 +26,7 @@ export class ComboboxList extends ElementProto {
     filter(input: string) {
         if (!this.$combobox) return;
         const items: ComboboxItem[] = [];
-        if (this.$createItem) this.$createItem.visible = !!input && !this.$combobox.itemMap.has(input);
+        if (this.$createItem) this.$createItem.visible = !!input.trim() && !this.$combobox.itemMap.has(input.trim());
         forEach(this.$combobox.itemMap, ([_, $item]) => {
             $item.visible = false;
             if ($item.text.toLowerCase().includes(input.toLowerCase())) {
@@ -56,16 +56,6 @@ export class ComboboxList extends ElementProto {
     focusFirstItem() {
         if (this.$createItem?.visible && this.children[1]) this.focus(1);
         else this.focus(0)
-    }
-
-    override mutate(): void {
-        // super.mutate();
-        // const items = this.findBelowAll<ComboboxItem>(proto => _instanceof(proto, ComboboxItem));
-        // console.debug(items)
-        // this.$combobox?.itemMap.clear();
-        // forEach(items, $item => {
-        //     this.$combobox?.itemMap.set($item.value(), $item);
-        // })
     }
 }
 
@@ -176,11 +166,7 @@ export class ComboboxCreateItem extends ElementProto {
     $list: ComboboxList | null = _null;
     constructor(props: $.Props, layout?: $.Layout<ComboboxCreateItem>) {
         super('combobox-create-item', props, layout);
-
         this.on('mousedown', e => e.preventDefault())
-
-        this.on('click', () => {
-        })
     }
 
     static {

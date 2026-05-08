@@ -127,7 +127,7 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
 
     const oldProtoList = _Array_from(oldProto.protos);
     const newProtoList = _Array_from(newProto.protos);
-    let length = Math.max(oldProto.protos.size, newProto.protos.size);
+    let length = Math.max(oldProto.protos.length, newProto.protos.length);
     let prevNode: Node | undefined = is(oldProto, ProxyProto)?.node ?? _undefined;
     for (let i = 0; i < length; i++) {
         const oldChildProto = oldProtoList[i];

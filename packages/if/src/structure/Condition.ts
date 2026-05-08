@@ -35,8 +35,8 @@ export class Condition extends ProxyProto {
         return this;
     }
 
-    override get protos(): Set<ConditionStatement> {
-        return super.protos as Set<ConditionStatement>
+    override get protos(): ConditionStatement[] {
+        return super.protos as ConditionStatement[]
     }
 
     override dispose(): void {

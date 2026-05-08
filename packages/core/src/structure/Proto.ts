@@ -1,5 +1,5 @@
 import { symbol_ProtoType, symbol_Statement } from "#lib/symbols";
-import { _Array_from, _null, forEach, map } from "@amateras/utils";
+import { _null, forEach, map } from "@amateras/utils";
 import { GlobalState } from "./GlobalState";
 
 export type ProtoLayout = (...args: any[]) => void;
@@ -46,13 +46,13 @@ export abstract class Proto {
         }).flat()
     }
 
-    get protos(): Set<Proto> {
-        let protos = new Set<Proto>();
+    get protos(): Proto[] {
+        let protos: Proto[] = [];
         let firstChild = this.firstProto;
         if (firstChild) {
             let currentProto: null | Proto = firstChild;
             while (currentProto) {
-                protos.add(currentProto);
+                protos.push(currentProto);
                 currentProto = currentProto.sibling;
             }
         }
@@ -93,7 +93,7 @@ export abstract class Proto {
             this.firstProto = proto;
         }
         else {
-            let protoArr = _Array_from(this.protos);
+            let protoArr = this.protos;
             let index = position < 0 ? protoArr.length + position + 1 : position;
             protoArr.splice(index, 0, proto);
             this.processProtos(...protoArr);
@@ -107,7 +107,7 @@ export abstract class Proto {
     }
 
     removeProtos(...protos: Proto[]) {
-        let protoSet = this.protos;
+        let protoSet = new Set(this.protos);
         forEach(protos, proto => {
             (proto as Mutable<Proto>).parent = null;
             proto.sibling = null;
@@ -143,7 +143,7 @@ export abstract class Proto {
     }
 
     toString(): string {
-        return map(_Array_from(this.protos).filter(proto => proto.visible), proto => `${proto}`).join('')
+        return map(this.protos.filter(proto => proto.visible), proto => `${proto}`).join('')
     }
 
     toDOM(children = true): Node[] {

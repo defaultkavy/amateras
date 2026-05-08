@@ -55,7 +55,7 @@ export class For<T = any> extends ProxyProto {
     }
 
     private exec() {
-        let deleted = this.protos;
+        let deleted = new Set(this.protos);
         let added = new Set<ForItem>();
         forEach(this.list$.value, (item, i) => {
             $.context(Proto, this, () => {
@@ -83,5 +83,5 @@ export class For<T = any> extends ProxyProto {
 }
 
 export class ForItem extends Proto {
-    static override [symbol_Statement] = true
+    static override [symbol_Statement] = true;
 }

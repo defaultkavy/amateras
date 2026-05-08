@@ -29,7 +29,7 @@ export class ComboboxChips extends ProxyProto {
         if (!$item) throw 'ComboboxChips.addChip: $item not found';
         const $chip = this.chipMap.get(value) ?? $(ComboboxChip, {value, label: $item.label()});
         this.chipMap.set(value, $chip);
-        if (this.protos.has($chip)) return;
+        if (this.protos.includes($chip)) return;
         this.append($chip);
         if (!$chip.builded) $chip.build();
         this.node?.replaceWith(...this.toDOM());

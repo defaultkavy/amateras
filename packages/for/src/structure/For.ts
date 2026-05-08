@@ -70,11 +70,6 @@ export class For<T = any> extends ProxyProto {
         return deleted;
     }
 
-    override removeNode(): void {
-        this.node?.remove();
-        forEach(this.protos, proto => proto.removeNode())
-    }
-
     override dispose(): void {
         super.dispose();
         forEach(this.#itemProtoMap.values(), $item => $item.dispose())

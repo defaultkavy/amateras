@@ -67,6 +67,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     override toDOM(children = true): H[] {
+        super.toDOM();
         let element = this.node ?? document.createElement(this.tagname) as H;
         this.node = element;
         if (this.#innerHTML && this.node.innerHTML !== this.#innerHTML) this.node.innerHTML = this.#innerHTML;
@@ -74,22 +75,6 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         forEach(_Object_entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
         this.dispatch('dom', [this.node])
         return [element];
-    }
-
-    private DOMProcess() {
-        let thisNode = this.node;
-        if (thisNode) {
-            let nodes = map(_Array_from(this.protos).filter(proto => proto.visible), proto => proto.toDOM()).flat();
-            let nextNode: Node | null = _null;
-            forEach(nodes, (node, i) => {
-                let currentNode = thisNode.childNodes[i];
-                if (currentNode !== node) {
-                    if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? _null;
-                    else nextNode = thisNode.childNodes[i + 1] ?? _null;
-                    thisNode.insertBefore(node, nextNode);
-                }
-            })
-        }
     }
 
     private attrProcess(attrObj: $.Props) {

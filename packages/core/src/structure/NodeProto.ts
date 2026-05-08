@@ -1,4 +1,4 @@
-import { _null } from "@amateras/utils";
+import { _null, forEach, map } from "@amateras/utils";
 import { Proto } from "./Proto";
 import { onclient } from "#env";
 
@@ -25,5 +25,22 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
 
     override removeNode(): void {
         this.node?.remove();
+    }
+
+    protected DOMProcess() {
+        let thisNode = this.node;
+        if (thisNode) {
+            let protos = this.protos;
+            let nodes = map(protos.filter(proto => proto.visible), proto => proto.toDOM()).flat();
+            let nextNode: Node | null = _null;
+            forEach(nodes, (node, i) => {
+                let currentNode = thisNode.childNodes[i];
+                if (currentNode !== node) {
+                    if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? _null;
+                    else nextNode = thisNode.childNodes[i + 1] ?? _null;
+                    thisNode.insertBefore(node, nextNode);
+                }
+            })
+        }
     }
 }

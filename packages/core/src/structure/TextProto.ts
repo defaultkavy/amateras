@@ -21,6 +21,7 @@ export class TextProto extends NodeProto<Text> {
     }
 
     override toDOM(): Text[] {
+        super.toDOM();
         if (this.node) return [this.node];
         let node = new Text(this.#content);
         this.node = node;

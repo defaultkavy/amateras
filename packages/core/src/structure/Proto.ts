@@ -147,7 +147,12 @@ export abstract class Proto {
     }
 
     toDOM(children = true): Node[] {
-        return children ? map(_Array_from(this.protos).filter(proto => proto.visible), proto => proto.toDOM(children)).flat() : [];
+        let nodes: Node[] = []
+        forEach(this.protos, proto => {
+            if (!proto.visible) proto.removeNode();
+            else if (children) nodes.push(...proto.toDOM())
+        });
+        return nodes;
     }
 
     /**

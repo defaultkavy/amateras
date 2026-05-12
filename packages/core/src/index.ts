@@ -1,8 +1,8 @@
 import { onclient, onserver } from '#env';
 import { _instanceof, _null, forEach, isArray, isFunction, isString, isUndefined, toArray } from '@amateras/utils';
 import './global';
-import { ElementProto } from './structure/ElementProto';
-import { Proto } from './structure/Proto';
+import { ElementProto, type ElementProtoConstructor } from './structure/ElementProto';
+import { Proto, type ProtoConstructor } from './structure/Proto';
 import { TextProto } from './structure/TextProto';
 import type { ProxyProto } from '#structure/ProxyProto';
 import type { NodeProto } from '#structure/NodeProto';

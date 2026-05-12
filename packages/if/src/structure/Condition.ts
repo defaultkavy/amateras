@@ -22,6 +22,7 @@ export class Condition extends ProxyProto {
             forEach(this.protos, proto => !proto.visible && proto.removeNode());
             this.node?.replaceWith(...this.toDOM());
             this.parent?.mutate();
+            this.parent?.dispatch('mutate', [], {bubbles: true});
         }
         // build statements proto and subscribe expression signal
         forEach(this.protos, proto => {
@@ -42,6 +43,11 @@ export class Condition extends ProxyProto {
     override dispose(): void {
         super.dispose();
         this.statement = _null;
+    }
+
+    override mutate(): void {
+        super.mutate();
+        this.parent?.mutate();
     }
 
     validate() {

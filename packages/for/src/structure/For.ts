@@ -41,6 +41,7 @@ export class For<T = any> extends ProxyProto {
                 })
             }
             this.parent?.mutate()
+            this.parent?.dispatch('mutate', [], {bubbles: true});
         }
 
         this.list$.subscribe(update);
@@ -74,6 +75,11 @@ export class For<T = any> extends ProxyProto {
         super.dispose();
         forEach(this.#itemProtoMap.values(), $item => $item.dispose())
         this.#itemProtoMap.clear();
+    }
+
+    override mutate(): void {
+        super.mutate();
+        this.parent?.mutate();
     }
 }
 

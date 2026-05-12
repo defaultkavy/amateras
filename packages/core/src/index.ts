@@ -179,7 +179,8 @@ export namespace $ {
     export interface ProtoEventMap<P extends Proto> {
         dispose: [];
         builded: [];
-        dom: [node: P extends NodeProto ? Exclude<P['node'], null> : Node]
+        dom: [node: P extends NodeProto ? Exclude<P['node'], null> : Node];
+        mutate: [];
     }
 
     export const process = {

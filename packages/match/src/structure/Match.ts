@@ -47,6 +47,7 @@ export class Match<T = any> extends ProxyProto {
             if (matchProto !== this.#default) this.#default?.removeNode();
             this.node?.replaceWith(...this.toDOM());
             this.parent?.mutate();
+            this.parent?.dispatch('mutate', [], {bubbles: true});
         }
         // build cases proto and subscribe expression signal
         forEach(this.cases, proto => {
@@ -54,6 +55,11 @@ export class Match<T = any> extends ProxyProto {
             proto.listen('dispose', () => this.exp$.unsubscribe(update));
         })
         return this;
+    }
+
+    override mutate(): void {
+        super.mutate();
+        this.parent?.mutate();
     }
 
     case(condition: T, layout: CaseLayout) {

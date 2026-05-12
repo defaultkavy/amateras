@@ -18,6 +18,11 @@ export abstract class ConditionStatement extends Proto {
         this.exps = _null;
     }
 
+    override mutate(): void {
+        super.mutate();
+        this.parent?.mutate();
+    }
+
     validate() {
         if (!this.exps) return true;
         return !this.exps.find(exp$ => !exp$.value)

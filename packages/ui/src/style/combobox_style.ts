@@ -1,4 +1,4 @@
-import type { CSSMap } from "./toCSS";
+import type { CSSMap } from "../lib/toCSS";
 
 export const item_css = {
     display: 'flex',

@@ -2,6 +2,7 @@ import { ElementProto } from "@amateras/core";
 import { _null, _instanceof } from "@amateras/utils";
 import { Select } from "./Select";
 import { toCSS } from "#lib/toCSS";
+import { content_css } from "../../style/content_style";
 
 export class SelectContent extends ElementProto {
     static tagname = 'select-content'
@@ -11,23 +12,7 @@ export class SelectContent extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            maxHeight: '50dvh',
-            overflowY: 'auto',
-            display: 'block',
-            boxSizing: 'border-box',
-            border: '1px solid var(--input)',
-            background: 'oklch(from var(--bg) l c h)',
-            padding: 'calc(var(--spacing) * 2) calc(var(--spacing) * 1.25)',
-            borderRadius: 'var(--radius)',
-            userSelect: 'none',
-
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'var(--input) transparent',
-        }))
+        $.style(this, toCSS(this.tagname, content_css))
     }
 
     override build(cascading?: boolean): this {

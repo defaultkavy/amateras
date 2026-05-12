@@ -4,7 +4,8 @@ import { ElementProto, onclient, Proto } from "@amateras/core";
 import { _null, _Array_from, _instanceof, isNull, isUndefined, forEach } from "@amateras/utils";
 import type { ComboboxChips } from "./ComboboxChips";
 import { type ComboboxList, ComboboxItem } from "./ComboboxList";
-import { item_css } from "#lib/combobox_style";
+import { item_css } from "../../style/combobox_style";
+import { content_css } from "../../style/content_style";
 
 export interface ComboboxProps {
     values?: OrSignal<any[]>;
@@ -167,7 +168,7 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
                     return;
                 }
                 case 'Backspace': {
-                    if (e.currentTarget.value.length === 0) this.$combobox?.$chips?.children.at(-1)?.delete();
+                    if (e.currentTarget.value.length === 0) this.$combobox?.$chips?.visibleChildren.at(-1)?.delete();
                     return;
                 }
                 case 'ArrowRight': {
@@ -252,23 +253,7 @@ export class ComboboxContent extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            maxHeight: '50dvh',
-            overflowY: 'auto',
-            display: 'block',
-            boxSizing: 'border-box',
-            border: '1px solid var(--input)',
-            background: 'oklch(from var(--bg) l c h)',
-            padding: 'calc(var(--spacing) * 2) calc(var(--spacing) * 1.25)',
-            borderRadius: 'var(--radius)',
-            userSelect: 'none',
-
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'var(--input) transparent',
-        }))
+        $.style(this, toCSS(this.tagname, content_css))
     }
     
     override build(cascading?: boolean): this {

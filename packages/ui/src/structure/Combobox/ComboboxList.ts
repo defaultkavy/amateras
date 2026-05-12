@@ -4,7 +4,7 @@ import { ElementProto } from "@amateras/core";
 import { _null, _instanceof, forEach, isUndefined } from "@amateras/utils";
 import { check_svg } from "../../icon/check.svg";
 import { Combobox } from "./Combobox";
-import { item_css } from "#lib/combobox_style";
+import { item_css } from "../../style/combobox_style";
 
 
 export class ComboboxList extends ElementProto {
@@ -171,9 +171,7 @@ export class ComboboxCreateItem extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
-            ...item_css
-        }))
+        $.style(this, toCSS(this.tagname, item_css))
     }
     
     override build(cascading?: boolean): this {

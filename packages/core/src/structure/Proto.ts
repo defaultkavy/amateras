@@ -19,6 +19,7 @@ export abstract class Proto {
     lastProto: Proto | null = _null;
     builded = false;
     visible = true;
+    virtual = false;
     listeners: { [key: string]: Set<(...args: any[]) => void> } | null = _null;
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}

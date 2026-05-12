@@ -12,6 +12,7 @@ export class ComboboxList extends ElementProto {
     $focusedItem: ComboboxItem | ComboboxCreateItem | null = _null;
     $createItem: ComboboxCreateItem | null = _null;
     declare __child__: ComboboxItem | ComboboxCreateItem;
+    override virtual = true;
     constructor(props: $.Props, layout?: $.Layout<ComboboxList>) {
         super('combobox-list', props, layout);
     }

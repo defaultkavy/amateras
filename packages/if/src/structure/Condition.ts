@@ -7,6 +7,7 @@ export class Condition extends ProxyProto {
     static override [symbol_Statement] = true;
     declare layout: null;
     statement: ConditionStatement | null = _null;
+    override virtual = true;
 
     override build() {
         // run base build method with empty protos

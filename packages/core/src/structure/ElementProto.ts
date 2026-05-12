@@ -73,12 +73,15 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
 
     override toDOM(children = true): H[] {
         super.toDOM();
+        let initialized = !!this.node;
         let element = this.node ?? document.createElement(this.tagname) as H;
         this.node = element;
-        if (this.#innerHTML && this.node.innerHTML !== this.#innerHTML) this.node.innerHTML = this.#innerHTML;
-        else if (children) this.DOMProcess();
-        forEach(_Object_entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
-        this.dispatch('dom', [this.node])
+        if (children) {
+            if (this.#innerHTML && !initialized) this.node.innerHTML = this.#innerHTML;
+            else if (!initialized || this.virtual) this.DOMProcess();
+        }
+        if (!initialized) forEach(_Object_entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
+        if (!initialized) this.dispatch('dom', [this.node])
         return [element];
     }
 

@@ -13,7 +13,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     static override readonly [symbol_ProtoType] = 'Element' as any;
     declare layout: $.Layout | null;
     #innerHTML = '';
-    private __props__: $.Props | null
+    private __props__: $.Props | null;
     constructor(tagname: string, props: $.Props<any, any> | null, layout?: $.Layout | null) {
         super(() => layout?.(this));
         this.tagname = tagname;

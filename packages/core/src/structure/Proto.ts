@@ -25,6 +25,7 @@ export abstract class Proto {
      * @deprecated
      */
     declare __child__: Proto;
+    declare __protos__: Proto;
     constructor(layout?: $.Layout) {
         this.layout = layout ?? _null;
     }
@@ -41,7 +42,7 @@ export abstract class Proto {
     }
 
     get children(): this['__child__'][] {
-        return map(Array.from(this.protos).filter(proto => proto.visible), proto => {
+        return map(this.protos, proto => {
             //@ts-ignore
             if (proto.constructor[symbol_Statement]) 
                 return proto.children
@@ -49,7 +50,7 @@ export abstract class Proto {
         }).flat()
     }
 
-    get protos(): Proto[] {
+    get protos(): this['__protos__'][] {
         let protos: Proto[] = [];
         let firstChild = this.firstProto;
         if (firstChild) {

@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.14.1] - 2026-05-13
+
+### Features
+- New proto event `mutate`, emit on control-flow content changes.
+- New `Proto.__protos__` type member to declare `Proto.protos` getter return type.
+- New `Proto.virtual` member used to improve `Proto.toDOM` performance, only process children DOM changes when `Proto.virtual` is true.
+
+### Changes
+- The `Proto.protos` getter return an `Array<Proto>` instead of `Set<Proto>` now for improve DX and get better performance.
+- Private method `DOMProcess` move to `NodeProto` now.
+- Improve `$.Overload` type check with constructor using `Symbol` type.
+
+### Fixes
+- Fix `Select` component not focus the selected item when opened.
+- Fix DOM render process didn't remove node when `Proto.visible` is false.
+- Fix `Combobox` component active the `ComboboxCreateItem` option when input is only space character.
+- 
+
 ## [0.14.0] - 2026-05-07
 
 ### Features

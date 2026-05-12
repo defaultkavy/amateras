@@ -1,11 +1,16 @@
 import { _Array_from, _null, _Object_assign, _Object_entries, forEach, isFunction, isNull, isUndefined, map } from "@amateras/utils";
 import { NodeProto } from "./NodeProto";
+import { symbol_ProtoType } from "#lib/symbols";
 
 const SELF_CLOSING_TAGNAMES = ['img', 'hr', 'br', 'input', 'link', 'meta'];
+export interface ElementProtoConstructor extends Constructor<ElementProto> {
+    [symbol_ProtoType]: 'Element'
+}
 
 export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto<H> {
     tagname: string;
     #attr: Record<string, string> = {};
+    static override readonly [symbol_ProtoType] = 'Element' as any;
     declare layout: $.Layout | null;
     #innerHTML = '';
     private __props__: $.Props | null

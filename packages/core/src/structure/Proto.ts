@@ -3,10 +3,13 @@ import { _null, forEach, map } from "@amateras/utils";
 import { GlobalState } from "./GlobalState";
 
 export type ProtoLayout = (...args: any[]) => void;
+export interface ProtoConstructor extends Constructor<Proto> {
+    [symbol_ProtoType]: 'Proto'
+}
 
 export abstract class Proto {
     static proto: Proto | null = _null; 
-    static [symbol_ProtoType] = 'Proto';
+    static readonly [symbol_ProtoType] = 'Proto';
     static [symbol_Statement] = false;
     layout: $.Layout | null;
     readonly parent: Proto | null = _null;

@@ -3,7 +3,7 @@ import type { WidgetBuilder } from "..";
 
 export const WidgetConstructor = (builder: WidgetBuilder) => {
     return class extends Proto {
-        static override [symbol_ProtoType] = 'Widget';
+        static override readonly [symbol_ProtoType] = 'Widget' as any;
         static override name = 'Widget';
         constructor(props: $.Props, layout?: $.Layout) {
             super(() => builder(props, (proto) => layout?.(proto)));
@@ -11,7 +11,7 @@ export const WidgetConstructor = (builder: WidgetBuilder) => {
     } as unknown as WidgetConstructor
 }
 
-export interface WidgetConstructor<Props = {}, Parent extends Proto = any> extends Constructor<Proto> {
+export interface WidgetConstructor<Props = {}, Parent extends Proto = any> {
     [symbol_ProtoType]: 'Widget';
     new (builder: WidgetBuilder): Widget<Props, Parent>;
 }

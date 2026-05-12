@@ -108,9 +108,14 @@ export namespace $ {
     export type AttrMiddleware = (name: string, value: any, proto: ElementProto) => any;
 
     export interface Overload<I extends any[] = any> {
+        protoConstructor: [
+            input: [ProtoConstructor],
+            output: I[0] extends Constructor<infer P> ? P extends Proto ? P : never : never,
+            args: I[0] extends Constructor<infer P> ? P extends Proto ? ConstructorParameters<I[0]> : never : never
+        ]
         proto: [
             input: [Proto],
-            output: I[0] extends Constructor<infer P> ? P : I[0],
+            output: I[0],
             args: []
         ]
         template: [
@@ -124,7 +129,7 @@ export namespace $ {
             args: []
         ]
         elementConstructor: [
-            input: [Constructor],
+            input: [ElementProtoConstructor],
             output: I[0] extends Constructor<infer E>
                 ?   E extends ElementProto<any>
                     ?   InstanceType<I[0]> 

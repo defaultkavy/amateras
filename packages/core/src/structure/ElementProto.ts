@@ -117,6 +117,10 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         return this;
     }
 
+    hasAttr(attrName: string) {
+        return !isNull(this.attr(attrName));
+    }
+
     addClass(...tokens: string[]) {
         this.token('add', 'class', ...tokens)
         this.node?.classList.add(...tokens);

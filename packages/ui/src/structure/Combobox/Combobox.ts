@@ -20,6 +20,7 @@ export class Combobox extends ElementProto {
     $input: ComboboxInput | null = _null;
     itemMap = new Map<any, ComboboxItem>();
     #values = new Set<any>();
+    #initialized = false;
     private disconnect: FloatDisconnect | null = _null;
     constructor(props: $.Props<ComboboxProps>, layout?: $.Layout<Combobox>) {
         super('combobox', props, layout);
@@ -34,12 +35,13 @@ export class Combobox extends ElementProto {
     }
 
     override toDOM(children = true): HTMLElement[] {
-        super.toDOM(false);
-        if (children && this.$trigger) {
+        const nodes = super.toDOM(false);
+        if (!this.#initialized && children && this.$trigger) {
             this.node?.append(...this.$trigger.toDOM());
             this.$content?.toDOM();
+            this.#initialized = true
         }
-        return [this.node!]
+        return nodes;
     }
 
     override props({ values, ...props }: $.Props<ComboboxProps>): void {

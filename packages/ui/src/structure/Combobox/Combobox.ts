@@ -1,7 +1,7 @@
 import { type FloatDisconnect, float } from "#lib/float";
 import { toCSS } from "#lib/toCSS";
 import { ElementProto, onclient, Proto } from "@amateras/core";
-import { _null, _Array_from, _instanceof, isNull, isUndefined, forEach } from "@amateras/utils";
+import { _null, _Array_from, _instanceof, isNull, isUndefined, forEach, map } from "@amateras/utils";
 import type { ComboboxChips } from "./ComboboxChips";
 import { type ComboboxList, ComboboxItem } from "./ComboboxList";
 import { item_css } from "../../style/combobox_style";
@@ -19,7 +19,7 @@ export class Combobox extends ElementProto {
     $chips: ComboboxChips | null = _null;
     $input: ComboboxInput | null = _null;
     itemMap = new Map<any, ComboboxItem>();
-    #values = new Set<string>();
+    #values = new Set<any>();
     private disconnect: FloatDisconnect | null = _null;
     constructor(props: $.Props<ComboboxProps>, layout?: $.Layout<Combobox>) {
         super('combobox', props, layout);
@@ -31,12 +31,6 @@ export class Combobox extends ElementProto {
             width: '10rem',
             userSelect: 'none'
         }))
-    }
-
-    override build(cascading?: boolean): this {
-        super.build(cascading);
-        forEach(this.#values, value => this.select(value));
-        return this;
     }
 
     override toDOM(children = true): HTMLElement[] {
@@ -76,19 +70,18 @@ export class Combobox extends ElementProto {
         $item.selected(bool);
         if (bool) {
             this.#values.add(value);
-            this.$chips?.appendChip(value);
             this.dispatch('combobox_select', [value])
         } else {
             this.#values.delete(value);
-            this.$chips?.removeChip(value);
             this.dispatch('combobox_unselect', [value])
         }
 
-        this.dispatch('combobox_input', [value])
+        this.$chips?.toDOM();
+        this.dispatch('combobox_input', []);
     }
 
     get selected() {
-        return _Array_from(this.itemMap.values()).filter($item => $item.selected())
+        return map(this.#values, value => this.itemMap.get(value)!)
     }
 
     values(): any[]
@@ -98,6 +91,10 @@ export class Combobox extends ElementProto {
         if (isUndefined(values)) return;
         $.resolve(values, values => {
             this.#values = new Set(values);
+            forEach(this.itemMap.values(), $item => {
+                $item.selected(this.#values.has($item.value()));
+            })
+            this.$chips?.toDOM();
         })
     }
 }
@@ -107,6 +104,9 @@ export class ComboboxTrigger extends ElementProto {
     $combobox: Combobox | null = _null;
     constructor(props: $.Props, layout?: $.Layout<ComboboxTrigger>) {
         super('combobox-trigger', props, layout);
+
+        this.on('dragover', e => this.$combobox?.$chips?.dragover(e))
+        this.on('dragend', e => this.$combobox?.$chips?.dragend())
     }
 
     static {
@@ -145,7 +145,7 @@ export class ComboboxTrigger extends ElementProto {
 export class ComboboxInput extends ElementProto<HTMLInputElement> {
     $combobox: Combobox | null = _null;
     constructor(props: $.Props<{}, HTMLInputElement>, layout?: $.Layout<ComboboxInput>) {
-        super('input', {ui: 'combobox-input', ...props}, layout);
+        super('input', {ui: 'combobox-input', autocomplete: 'off', ...props}, layout);
         this.on('focus', e => isNull(this.$combobox?.attr('opened')) && this.$combobox.open())
         this.on('blur', e => {
             this.$combobox?.close();
@@ -206,8 +206,7 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
                     } else {
                         this.dispatch('combobox_create', [e.currentTarget.value], {bubbles: true})
                     }
-                    e.currentTarget.value = '';
-                    this.$combobox?.$list?.filter('');
+                    this.clearValue();
                     return;
                 }
             }
@@ -218,6 +217,7 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
 
     static {
         $.style(this, toCSS('input[ui="combobox-input"]', {
+            display: 'inline',
             border: 'unset',
             background: 'unset',
             color: 'oklch(from var(--fg) l c h / .9)',
@@ -229,6 +229,7 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
             flex: '1',
             minWidth: '2rem',
             padding: `0 calc(var(--spacing) * 1.25)`,
+            outline: 'unset',
 
             '&:focus': {
                 outline: 'unset'
@@ -241,6 +242,11 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
         this.$combobox = this.findAbove<Combobox>(proto => _instanceof(proto, Combobox));
         if (this.$combobox) this.$combobox.$input = this;
         return this;
+    }
+
+    clearValue() {
+        if (this.node) this.node.value = '';
+        this.$combobox?.$list?.filter('');
     }
 }
 
@@ -291,7 +297,7 @@ declare global {
             combobox_create: [string];
             combobox_select: [string];
             combobox_unselect: [string];
-            combobox_input: [string];
+            combobox_input: [];
         }
     }
 }

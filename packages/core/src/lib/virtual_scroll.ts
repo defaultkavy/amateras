@@ -17,6 +17,7 @@ const render = ($parent: ElementProto) => {
     forEach($parent.children, $child => {
         if (!_instanceof($child, ElementProto)) return;
         if (!$child.node) return;
+        if ($child.node.contains(document.activeElement)) return $child.visible = true;
         const { translate } = $child.node.style;
         const top = translate.split(' ')[1] as string;
         const topPos = parentRect.top + parseInt(top);

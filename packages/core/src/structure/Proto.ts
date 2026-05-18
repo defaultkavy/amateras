@@ -50,6 +50,10 @@ export abstract class Proto {
             else return proto
         }).flat()
     }
+    
+    get visibleChildren(): this['__child__'][] {
+        return this.children.filter(proto => proto.visible);
+    }
 
     get protos(): this['__protos__'][] {
         let protos: Proto[] = [];

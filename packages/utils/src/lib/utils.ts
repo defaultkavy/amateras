@@ -140,6 +140,10 @@ export const toURL = (path: string | URL, base = globalThis.origin ?? 'http://lo
 // object member compare
 export const isEqual = <T extends Object>(target: T, reference: any, props?: (keyof T)[]) => {
     const propsSet = props ? new Set(props) : _null;
+    if (target === reference) return true;
+    const targetEntries = _Object_entries(target);
+    const refEntries = _Object_entries(reference);
+    if (targetEntries.length !== refEntries.length) return false;
     for (let [ key, value ] of _Object_entries(target)) {
         if (propsSet && !propsSet.has(key as any)) continue;
         const targetValue = reference[key as keyof T];

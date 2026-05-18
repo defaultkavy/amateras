@@ -82,12 +82,21 @@ export const _bind = <T extends Function>(target: T, obj: Object): T => target.b
 export const _Promise = Promise;
 
 // utils function
-export const debounce = () => {
-    let timer: number;
-    return (fn: Function, timeout: number) => {
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(fn, timeout);
-    }
+export const debounce = (fn: Function, timeout: number) => {
+    let timer: ReturnType<typeof setTimeout> | null = _null;
+    let rerun = false;
+    return () => {
+        if (timer) {
+            rerun = true;
+            return
+        }
+        timer = setTimeout(() => {
+            timer = _null;
+            if (rerun) fn();
+            rerun = false;
+        }, timeout);
+        return fn();
+    } 
 }
 
 const LOWER = 'abcdefghijklmnopqrstuvwxyz';

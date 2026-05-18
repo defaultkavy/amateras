@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient, onserver } from "@amateras/core";
 import { forEach, is } from "@amateras/utils";
 export interface WaterfallOptions {
@@ -32,7 +32,7 @@ export class Waterfall extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS('waterfall', {
+        $.style(this, toUICSS('waterfall', {
             display: 'block',
             position: 'relative',
         }))
@@ -86,7 +86,7 @@ export class WaterfallItem extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS('waterfall-item', {
+        $.style(this, toUICSS('waterfall-item', {
             display: 'block',
             position: onclient() ? 'absolute' : 'static'
         }))

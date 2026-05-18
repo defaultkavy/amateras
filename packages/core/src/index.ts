@@ -260,6 +260,8 @@ export namespace $ {
     if (stylesheet) document.adoptedStyleSheets.push(stylesheet);
 
     if (onclient()) document.querySelector('style#__ssr__')?.remove();
+
+    stylesheet?.insertRule(`@layer base, ui`)
 }
 
 export type $ = typeof $;

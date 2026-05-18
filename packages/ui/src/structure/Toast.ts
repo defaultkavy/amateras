@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient } from "@amateras/core";
 import { _null } from "@amateras/utils";
 
@@ -37,7 +37,7 @@ class ToastContainer extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             position: 'fixed',
             inset: '0 0 0 0',
             pointerEvents: 'none'
@@ -60,7 +60,7 @@ class ToastList extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             flexDirection: 'column',
             gap: 'calc(var(--spacing) * 2)',

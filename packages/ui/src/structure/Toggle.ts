@@ -1,5 +1,5 @@
 import { pointerHoverMediaQuery } from "#lib/hover";
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 import { _null, isNull, isUndefined } from "@amateras/utils";
 
@@ -18,7 +18,7 @@ export class Toggle extends ElementProto<HTMLButtonElement> {
     }
 
     static {
-        $.style(this, toCSS('button[ui="toggle"]', {
+        $.style(this, toUICSS('button[ui="toggle"]', {
             display: 'inline-flex',
             placeContent: 'center',
             placeItems: 'center',

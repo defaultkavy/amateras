@@ -1,5 +1,5 @@
 import { type FloatDisconnect, float } from "#lib/float";
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient, Proto } from "@amateras/core";
 import { _null, _Array_from, _instanceof, isNull, isUndefined, forEach, map } from "@amateras/utils";
 import type { ComboboxChips } from "./ComboboxChips";
@@ -27,7 +27,7 @@ export class Combobox extends ElementProto {
     }
     
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'inline-block',
             width: '10rem',
             userSelect: 'none'
@@ -112,7 +112,7 @@ export class ComboboxTrigger extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             flexWrap: 'wrap',
             columnGap: 'calc(var(--spacing) * 1.25)',
@@ -218,7 +218,7 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
     }
 
     static {
-        $.style(this, toCSS('input[ui="combobox-input"]', {
+        $.style(this, toUICSS('input[ui="combobox-input"]', {
             display: 'inline',
             border: 'unset',
             background: 'unset',
@@ -261,7 +261,7 @@ export class ComboboxContent extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, content_css))
+        $.style(this, toUICSS(this.tagname, content_css))
     }
     
     override build(cascading?: boolean): this {
@@ -280,7 +280,7 @@ export class ComboboxEmpty extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             ...item_css
         }))
     }

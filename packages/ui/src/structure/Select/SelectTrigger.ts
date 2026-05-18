@@ -1,7 +1,7 @@
 import { ElementProto } from "@amateras/core";
 import { _null, isNull, _instanceof } from "@amateras/utils";
 import { Select } from "./Select";
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 
 export interface SelectTriggerProps {
     placeholder?: OrSignal<string | null>;
@@ -34,7 +34,7 @@ export class SelectTrigger extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             gap: '0.5rem',
             placeContent: 'space-between',

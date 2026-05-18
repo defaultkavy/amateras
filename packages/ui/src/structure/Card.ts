@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export interface CardProps {
@@ -12,7 +12,7 @@ export class Card extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             flexDirection: 'column',
             gap: 'calc(var(--spacing))',
@@ -31,7 +31,7 @@ export class CardHeader extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             width: '100%',
             flexDirection: 'column',
@@ -49,7 +49,7 @@ export class CardContent extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'block',
             paddingInline: 'calc(var(--spacing) * 4)',
         }))
@@ -63,7 +63,7 @@ export class CardTitle extends ElementProto<HTMLHeadingElement> {
     }
 
     static {
-        $.style(this, toCSS(`card ${this.tagname}`, {
+        $.style(this, toUICSS(`card ${this.tagname}`, {
             fontWeight: 'var(--font-weight-medium)',
             lineHeight: '1.375',
             fontSize: 'var(--text-base)',
@@ -79,7 +79,7 @@ export class CardDescription extends ElementProto<HTMLParagraphElement> {
     }
 
     static {
-        $.style(this, toCSS(`card ${this.tagname}`, {
+        $.style(this, toUICSS(`card ${this.tagname}`, {
             fontWeight: 'var(--font-weight-medium)',
             lineHeight: 'var(--line-height-sm)',
             fontSize: 'var(--text-sm)',

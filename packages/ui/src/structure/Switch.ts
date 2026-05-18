@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export class Switch extends ElementProto {
@@ -8,7 +8,7 @@ export class Switch extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS('input[ui="switch"]', {
+        $.style(this, toUICSS('input[ui="switch"]', {
             appearance: 'none',
             display: 'inline-flex',
             height: 'calc(var(--spacing) * 5)',

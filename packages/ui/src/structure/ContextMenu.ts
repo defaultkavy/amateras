@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient } from "@amateras/core";
 import { _instanceof, _null } from "@amateras/utils";
 
@@ -10,7 +10,7 @@ export class ContextMenu extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'block',
             position: 'fixed',
             top: '0',
@@ -63,7 +63,7 @@ export class ContextMenuItem extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'block',
             boxSizing: 'border-box',
             padding: 'calc(var(--spacing) * 2) calc(var(--spacing) * 1.25)',

@@ -1,7 +1,7 @@
 import { ElementProto } from "@amateras/core";
 import { _null, _instanceof } from "@amateras/utils";
 import { Select } from "./Select";
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { content_css } from "../../style/content_style";
 
 export class SelectContent extends ElementProto {
@@ -12,7 +12,7 @@ export class SelectContent extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, content_css))
+        $.style(this, toUICSS(this.tagname, content_css))
     }
 
     override build(cascading?: boolean): this {

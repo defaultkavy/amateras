@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export class DescriptionList extends ElementProto {
@@ -8,7 +8,7 @@ export class DescriptionList extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             flexDirection: 'column',
         }))
@@ -22,7 +22,7 @@ export class DescriptionContent extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             paddingBlock: '1rem',
             borderBottom: `1px solid color-mix(in oklch, var(--input) 50%, transparent)`,
             '&:last-child': {
@@ -39,7 +39,7 @@ export class DescriptionTerm extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             fontSize: `var(--text-sm)`,
             fontWeight: `var(--font-weight-medium)`
         }))
@@ -53,7 +53,7 @@ export class DescriptionDetail extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             margin: '0',
             fontSize: `var(--text-sm)`,
             color: `var(--muted)`

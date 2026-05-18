@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 import { _instanceof, isUndefined } from "@amateras/utils";
 
@@ -14,7 +14,7 @@ export class Field extends ElementProto<HTMLElement> {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             flexDirection: 'column',
             gap: 'calc(var(--spacing) * 2)',
@@ -68,7 +68,7 @@ export class FieldLabel extends ElementProto<HTMLElement> {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             'field &': {
                 display: 'block',
                 userSelect: 'none',
@@ -93,7 +93,7 @@ export class FieldDescription extends ElementProto<HTMLElement> {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             'field &': {
                 display: 'block',
                 color: 'var(--muted)',

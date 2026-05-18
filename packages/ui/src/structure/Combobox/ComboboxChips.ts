@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { Icon } from "#structure/Icon";
 import { ElementProto, ProxyProto } from "@amateras/core";
 import { _null, _instanceof, isUndefined, forEach, map, isEqual } from "@amateras/utils";
@@ -132,7 +132,7 @@ export class ComboboxChip extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'inline-flex',
             placeItems: 'center',
             fontSize: 'var(--text-xs)',

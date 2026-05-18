@@ -1,5 +1,5 @@
 import { input_css } from "../style/input_style";
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export class Input extends ElementProto<HTMLInputElement> {
@@ -9,7 +9,7 @@ export class Input extends ElementProto<HTMLInputElement> {
     }
 
     static {
-        $.style(this, toCSS('input[ui="input"]', {
+        $.style(this, toUICSS('input[ui="input"]', {
             ...input_css
         }))
     }

@@ -1,7 +1,7 @@
 import { ElementProto } from "@amateras/core";
 import { _null, isUndefined, _instanceof } from "@amateras/utils";
 import { Select } from "./Select";
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { SelectContent } from "./SelectContent";
 import { item_css } from "../../style/combobox_style";
 
@@ -68,7 +68,7 @@ export class SelectItem extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, item_css))
+        $.style(this, toUICSS(this.tagname, item_css))
     }
 
     value(): any;

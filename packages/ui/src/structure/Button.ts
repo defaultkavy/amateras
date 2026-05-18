@@ -1,10 +1,10 @@
 import { pointerHoverMediaQuery } from "#lib/hover";
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export interface ButtonProps {
     variant?: OrSignal<'primary' | 'outline' | 'secondary' | 'ghost' | 'destructive' | 'link' | string & {}>;
-    size?: OrSignal<'base' | 'icon' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg' | string & {}>;
+    size?: OrSignal<'base' | 'icon' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg' | 'custom' | string & {}>;
 }
 
 export class Button extends ElementProto<HTMLButtonElement> {
@@ -14,7 +14,7 @@ export class Button extends ElementProto<HTMLButtonElement> {
     }
 
     static {
-        $.style(this, toCSS('button[ui="button"]', {
+        $.style(this, toUICSS('button[ui="button"]', {
             display: 'inline-flex',
             placeContent: 'center',
             placeItems: 'center',
@@ -149,6 +149,11 @@ export class Button extends ElementProto<HTMLButtonElement> {
                 width: 'calc(var(--spacing) * 9)',
                 height: 'calc(var(--spacing) * 9)',
                 padding: '0',
+            },
+
+            '&[size="custom"]': {
+                padding: `calc(var(--spacing) * 2)`,
+                height: 'unset',
             },
 
             '&[disabled]': {

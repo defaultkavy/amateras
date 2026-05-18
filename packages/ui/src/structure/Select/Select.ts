@@ -5,7 +5,7 @@ import { SelectItem } from "./SelectItem";
 import type { SelectTrigger } from "./SelectTrigger";
 import { float, type FloatDisconnect } from "#lib/float";
 import type { SelectValue } from "./SelectValue";
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 
 export interface SelectProps {
     disabled?: OrSignal<boolean>;
@@ -28,7 +28,7 @@ export class Select extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'inline-block',
             width: '10rem',
             userSelect: 'none'

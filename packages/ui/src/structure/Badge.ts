@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export interface BadgeProps {
@@ -13,7 +13,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             display: 'inline-flex',
             placeContent: 'center',
             placeItems: 'center',

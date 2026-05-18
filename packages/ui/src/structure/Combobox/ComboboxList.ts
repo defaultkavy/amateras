@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { Icon } from "#structure/Icon";
 import { ElementProto } from "@amateras/core";
 import { _null, _instanceof, forEach, isUndefined, _Array_from, isEqual } from "@amateras/utils";
@@ -105,7 +105,7 @@ export class ComboboxItem extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
             ...item_css,
 
             'icon[ui="combobox-item-check"]': {
@@ -186,7 +186,7 @@ export class ComboboxCreateItem extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, item_css))
+        $.style(this, toUICSS(this.tagname, item_css))
     }
     
     override build(cascading?: boolean): this {

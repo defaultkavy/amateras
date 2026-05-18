@@ -2,6 +2,10 @@ import { _Object_entries, isObject } from "@amateras/utils";
 
 export type CSSMap = Partial<CSSStyleDeclaration> & {[key: string]: CSSMap | string}
 
+export const toUICSS = (selector: string, map: CSSMap): string => {
+    return `@layer ui { ${toCSS(selector, map)} }`
+}
+
 export const toCSS = (selector: string, map: CSSMap): string => {
     let text = [];
     for (let [key, value] of _Object_entries(map)) {

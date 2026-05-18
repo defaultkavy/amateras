@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { Icon } from "#structure/Icon";
 import { chevron_down_svg } from "../../icon/chevron_down.svg";
 
@@ -8,7 +8,7 @@ export class SelectArrow extends Icon {
     }
 
     static {
-        $.style(this, toCSS(`select-proto[opened] ${this.tagname}`, {
+        $.style(this, toUICSS(`select-proto[opened] ${this.tagname}`, {
             rotate: '180deg'
         }))
     }

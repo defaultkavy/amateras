@@ -1,4 +1,4 @@
-import { toCSS } from "#lib/toCSS";
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient } from "@amateras/core";
 import { Input } from "./Input";
 import { input_css } from "../style/input_style";
@@ -22,7 +22,7 @@ export class Searchbar extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, {
+        $.style(this, toUICSS(this.tagname, {
 
         }))
     }
@@ -96,7 +96,7 @@ export class SearchbarInput extends Input {
     }
 
     static {
-        $.style(this, toCSS(`input[ui="searchbar-input"]`, {
+        $.style(this, toUICSS(`input[ui="searchbar-input"]`, {
             ...input_css,
             width: '100%'
         }))
@@ -122,7 +122,7 @@ export class SearchbarContent extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, content_css))
+        $.style(this, toUICSS(this.tagname, content_css))
     }
     
     override build(cascading?: boolean): this {
@@ -174,7 +174,7 @@ export class SearchbarItem extends ElementProto {
     }
 
     static {
-        $.style(this, toCSS(this.tagname, item_css))
+        $.style(this, toUICSS(this.tagname, item_css))
     }
         
     override build(cascading?: boolean): this {

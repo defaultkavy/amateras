@@ -1,18 +1,18 @@
 import { symbol_Statement } from "@amateras/core";
 import { Proto } from "@amateras/core";
 import { ProxyProto } from "@amateras/core";
-import type { Signal } from "@amateras/signal";
+import type { SignalTypes } from "@amateras/signal";
 import { _Array_from, _null, forEach } from "@amateras/utils";
 
-export type ForLayout<T> = (item: T, index: number) => void;
-export type ForList<T> = Signal<T[]> | Signal<Set<T>>
+export type ForLayout<T extends any[] = [any]> = (item: T['length'] extends 1 ? T[0] : T, index: number) => void;
+export type ForIterable = SignalTypes<any[]> | SignalTypes<Set<any>> | SignalTypes<Map<any, any>>
 
-export class For<T = any> extends ProxyProto {
+export class For<T extends [K: any, V: any] = [any, any]> extends ProxyProto {
     static override [symbol_Statement] = true;
     #layout: ForLayout<T>;
-    list$: ForList<T>;
-    #itemProtoMap = new Map<T, ForItem>();
-    constructor(list: ForList<T>, layout: ForLayout<T>) {
+    list$: ForIterable;
+    #itemProtoMap = new Map<T[0], ForItem>();
+    constructor(list: ForIterable, layout: ForLayout<T>) {
         super();
         this.list$ = list;
         this.#layout = layout;
@@ -58,10 +58,10 @@ export class For<T = any> extends ProxyProto {
     private exec() {
         let deleted = new Set(this.protos);
         let added = new Set<ForItem>();
-        forEach(this.list$.value, (item, i) => {
+        forEach(_Array_from(this.list$.value), (item, i) => {
             $.context(Proto, this, () => {
                 let layout = this.#layout;
-                let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => layout(item, i));
+                let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => layout(item as any, i));
                 this.#itemProtoMap.set(item, itemProto);
                 deleted.delete(itemProto);
                 added.add(itemProto);

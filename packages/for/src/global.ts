@@ -1,4 +1,5 @@
 import * as _For from "#structure/For";
+import type { SignalObject } from "@amateras/signal";
 
 declare global {
     export var For: typeof _For.For
@@ -7,9 +8,18 @@ declare global {
     export namespace $ {
         export interface Overload<I> {
             for: [
-                input: [typeof _For.For, _For.ForList<any>],
+                input: [typeof _For.For, _For.ForIterable],
                 output: _For.For,
-                args: [layout: I[1] extends _For.ForList<infer T> ? _For.ForLayout<T> : never]
+                args: [
+                    layout: _For.ForLayout<
+                        I[1] extends SignalObject<infer T>
+                        ?   T extends Array<infer K> | Set<infer K>
+                            ?   [K]
+                            :   T extends Map<infer K, infer V>
+                                ?   [K, V]
+                                :   never
+                        :   never
+                    > ]
             ]
         }
     }

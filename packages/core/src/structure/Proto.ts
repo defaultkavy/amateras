@@ -160,13 +160,6 @@ export abstract class Proto {
         return nodes;
     }
 
-    /**
-     * @deprecated use Proto.listen('dispose') instead
-     */
-    ondispose(disposer: () => void) {
-        this.listen('dispose', disposer);
-    }
-
     removeNode() {
         forEach(this.protos, proto => proto.removeNode());
     }

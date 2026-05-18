@@ -120,10 +120,10 @@ export interface trycatch {
 }
 
 //@ts-ignore
-export const trycatch: trycatch = async (callback: any) => {
+export const trycatch: trycatch = (callback: any) => {
     try {
         const result = callback();
-        if (_instanceof(result, Promise)) return await result.then(res => [res, _null]);
+        if (_instanceof(result, Promise)) return result.then(res => [res, _null]);
         return [result, _null];
     } catch (err) {
         return [_null, _instanceof(err, Error) ? err : new Error(_JSON_stringify(err))];

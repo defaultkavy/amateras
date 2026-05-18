@@ -8,11 +8,6 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
         super(layout);
     }
 
-    /**@deprecated - use `Proto.listen` on 'dom' event instead */
-    ondom(callback: (node: N) => void) {
-        this.listen('dom', callback as any)
-    }
-
     override dispose(): void {
         super.dispose();
         this.node = _null;

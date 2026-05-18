@@ -134,7 +134,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     style(declarations: Partial<CSSStyleDeclaration>) {
         let setStyle = () => this.node && _Object_assign(this.node.style, declarations);
         setStyle();
-        if (!this.node) this.ondom(setStyle);
+        if (!this.node) this.listen('dom', setStyle);
     }
 
     private token(method: 'add' | 'delete', name: string, ...tokens: string[]) {

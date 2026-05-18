@@ -38,15 +38,13 @@ export const forEach: forEach = async (arr: any, fn: any) => {
     return isAsyncFunction(fn) ? asyncHandle() : handle();
 };
 interface map {
-    <T, R>(arr: Array<T>, fn: (value: T, index: number, array: Array<T>) => R): R[];
-    <T, R>(set: Set<T>, fn: (value: T, index: number, set: Set<T>) => R): R[];
-    <T extends WeakKey>(set: WeakSet<T>, fn: (value: T, index: number, set: WeakSet<T>) => Promise<void>): T[];
-    <T extends WeakKey>(set: WeakSet<T>, fn: (value: T, index: number, set: WeakSet<T>) => void): T[];
-    <T, R>(list: Array<T> | Set<T>, fn: (value: T, index: number, set: Array<T> | Set<T>) => R): R[];
-    <K, V, R>(map: Map<K, V>, fn: (value: [K, V], index: number, map: Map<K, V>) => R): R[];
-    <N extends Node, R>(set: NodeListOf<N>, fn: (value: N, index: number, parent: NodeListOf<N>) => R): R[];
+    <A extends Array<any> | null | undefined, T extends A extends Array<infer I> ? I : never, R>(arr: A, fn: (value: T, index: number, array: Array<T>) => R): A extends Nullish ? undefined | R[] : R[];
+    <S extends Set<any> | null | undefined, T extends S extends Set<infer I> ? I : never, R>(set: S, fn: (value: T, index: number, set: Set<T>) => R): S extends Nullish ? undefined | R[] : R[];
+    <A extends Array<any> | Set<any> | null | undefined, T extends A extends Array<infer I> | Set<infer I> ? I : never, R>(list: A, fn: (value: T, index: number, set: Array<T> | Set<T>) => R): A extends Nullish ? undefined | R[] : R[];
+    <M extends Map<any, any> | null | undefined, T extends M extends Map<infer K, infer V> ? [K, V] : never, R>(map: M, fn: (value: T, index: number, map: Map<T[0], T[1]>) => R): M extends Nullish ? undefined | R[] : R[];
+    <L extends NodeListOf<any> | null | undefined, N extends L extends NodeListOf<infer T> ? T : never, R>(list: L, fn: (value: N, index: number, parent: NodeListOf<N>) => R): L extends Nullish ? undefined | R[] : R[];
 }
-export const map: map = (arr: any, fn: any) => _Array_from(arr).map(fn);
+export const map: map = (arr: any, fn: any) => arr ? _Array_from(arr).map(fn) as any : _undefined;
 
 export const filterValue = <T, V>(arr: Array<T>, ...values: V[]): Array<Exclude<T, V>> => arr.filter(item => !values.includes(item as any)) as any;
 

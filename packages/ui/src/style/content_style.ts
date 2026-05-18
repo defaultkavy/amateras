@@ -16,4 +16,4 @@ export const content_css: CSSMap = {
 
     scrollbarWidth: 'thin',
     scrollbarColor: 'var(--input) transparent',
-}
+} satisfies CSSMap

@@ -1,6 +1,6 @@
 import type { CSSMap } from "../lib/toCSS";
 
-export const input_css: CSSMap = {
+export const input_css = {
     borderRadius: 'var(--radius)',
     height: 'calc(var(--spacing) * 8)',
     transition: '0.2s all ease',
@@ -16,4 +16,4 @@ export const input_css: CSSMap = {
     '&:focus-visible': {
         outlineColor: 'var(--border)'
     },
-}
+} satisfies CSSMap

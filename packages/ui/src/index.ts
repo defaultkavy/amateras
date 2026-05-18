@@ -25,5 +25,6 @@ export * from "#structure/Toggle";
 export * from "#structure/Combobox/Combobox";
 export * from "#structure/Combobox/ComboboxList";
 export * from "#structure/Combobox/ComboboxChips";
+export * from "#structure/Toast";
 export * from "#structure/Searchbar";
 export * from "#structure/TextArea";

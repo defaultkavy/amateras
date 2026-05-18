@@ -19,6 +19,7 @@ export class Switch extends ElementProto {
             borderRadius: 'calc(var(--spacing) * 5)',
             transition: 'all .3s ease',
             padding: '0',
+            flexShrink: '0',
 
             '&::after': {
                 content: '""',

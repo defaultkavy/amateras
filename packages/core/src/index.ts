@@ -274,3 +274,4 @@ export * from "#structure/ProxyProto";
 export * from "#structure/TextProto";
 export * from "#env";
 export * from "#lib/symbols";
+export * from "#lib/virtual_scroll";

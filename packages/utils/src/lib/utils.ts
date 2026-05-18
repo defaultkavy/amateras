@@ -121,7 +121,7 @@ export interface trycatch {
 export const trycatch: trycatch = (callback: any) => {
     try {
         const result = callback();
-        if (_instanceof(result, Promise)) return result.then(res => [res, _null]);
+        if (_instanceof(result, Promise)) return result.then(res => [res, _null]).catch(err => [_null, new Error(err)]);
         return [result, _null];
     } catch (err) {
         return [_null, _instanceof(err, Error) ? err : new Error(_JSON_stringify(err))];

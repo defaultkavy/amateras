@@ -1,6 +1,6 @@
-import { ElementProto, onclient } from "@amateras/core";
-import { forEach } from "@amateras/utils";
-import type { WaterfallItem } from "./WaterfallItem";
+import { toCSS } from "#lib/toCSS";
+import { ElementProto, onclient, onserver } from "@amateras/core";
+import { forEach, is } from "@amateras/utils";
 export interface WaterfallOptions {
     gap?: number;
     columns?: number;
@@ -8,6 +8,7 @@ export interface WaterfallOptions {
 }
 export class Waterfall extends ElementProto {
     declare __child__: WaterfallItem;
+    declare __protos__: WaterfallItem;
     gap: number;
     columns: number;
     size: number;
@@ -17,23 +18,27 @@ export class Waterfall extends ElementProto {
         this.gap = gap ?? 0;
         this.columns = columns ?? 1;
         this.size = size ?? 0;
-        if (onclient()) this.observer = new ResizeObserver(() => {
+        if (onclient()) this.observer = new ResizeObserver((ent) => {
             if (!this.inDOM()) return;
-            requestAnimationFrame(() => this.refresh());
+            requestAnimationFrame(() => this.resize());
         })
+        this.listen('dom', node => this.observer?.observe(node));
+        this.listen('waterfall_resize', () => this.resize());
+        this.listen('mutate', () => this.resize());
+
+        if (onserver()) {
+            this.attr('style', `display: flex; flex-direction: column; gap: ${gap}px`)
+        }
     }
 
     static {
-        $.style(Waterfall, 'waterfall{display:block;position:relative;min-height:100dvh}')
+        $.style(this, toCSS('waterfall', {
+            display: 'block',
+            position: 'relative',
+        }))
     }
 
-    override toDOM(children = true): HTMLElement[] {
-        super.toDOM(children);
-        if (this.node) this.observer?.observe(this.node);
-        return [this.node!]
-    }
-
-    refresh() {
+    resize() {
         if (!this.node) return;
         const colList: Column[] = [];
         type Column = {
@@ -51,23 +56,54 @@ export class Waterfall extends ElementProto {
         // calculate item height and position
         forEach(this.children, $item => {
             if (!$item.node) return;
-            if (!$item.ratio) {
-                if ($item.node.offsetHeight && $item.node.offsetWidth)
-                    $item.ratio = $item.node.offsetWidth / $item.node.offsetHeight;
+            // if (!$item.ratio) {
+            //     if ($item.node.offsetHeight && $item.node.offsetWidth)
+            //         $item.ratio = $item.node.offsetWidth / $item.node.offsetHeight;
+            // }
+            if ($item.node.offsetHeight) {
+                $item.height = $item.node.offsetHeight;
             }
-            const itemHeight = colWidth / $item.ratio;
+            // const itemHeight = colWidth / $item.ratio;
             const shortestCol = colList.sort((a, b) => a.height - b.height)[0]!;
             $item.style({
-                height: `${itemHeight}px`,
+                // height: `${$item.height}px`,
                 width: `${colWidth}px`,
-                top: `${shortestCol.height}px`,
-                left: `${shortestCol.left}px`
+                translate: `${shortestCol.left}px ${shortestCol.height}px`,
             })
-            shortestCol.height += itemHeight + this.gap;
+            shortestCol.height += $item.height + this.gap;
+        })
+        this.style({
+            height: `${colList.sort((a, b) => b.height - a.height)[0]!.height}px`
         })
     }
+}
 
-    override mutate(): void {
-        this.refresh();
+export class WaterfallItem extends ElementProto {
+    ratio = 0;
+    height = 0;
+    constructor(props: $.Props, layout?: $.Layout<WaterfallItem>) {
+        super('waterfall-item', props, layout);
+    }
+
+    static {
+        $.style(this, toCSS('waterfall-item', {
+            display: 'block',
+            position: onclient() ? 'absolute' : 'static'
+        }))
+    }
+
+    override toDOM(children = true): HTMLElement[] {
+        let nodes = super.toDOM(children);
+        const $waterfall = this.findAbove<Waterfall>(proto => is(proto, Waterfall));
+        this.node?.querySelectorAll('[observe]').forEach(img => $waterfall?.observer?.observe(img));
+        return nodes;
+    }
+}
+
+declare global {
+    export namespace $ {
+        export interface ProtoEventMap<P> {
+            waterfall_resize: []
+        }
     }
 }

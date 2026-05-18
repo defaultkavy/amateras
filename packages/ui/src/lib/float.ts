@@ -16,27 +16,31 @@ export const float = (reference: Element, self: HTMLElement, options?: FloatOpti
     let resizeObserver = new ResizeObserver(() => update(reference, self, record));
     let listener = () => update(reference, self, record);
     resizeObserver.observe(reference);
-    window.addEventListener('resize', listener);
+    addEventListener('resize', listener);
     return () => {
         resizeObserver.disconnect();
-        window.removeEventListener('resize', listener);
+        removeEventListener('resize', listener);
     }
 }
 
-const update = (reference: Element, {style}: HTMLElement, record: FloatRectRecord) => {
-    let rect = reference.getBoundingClientRect();
-    let rectWindow = {
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-        height: rect.height
+const update = (reference: Element, element: HTMLElement, record: FloatRectRecord) => {
+    let refBox = reference.getBoundingClientRect();
+    let elementBox = {
+        top: refBox.top + refBox.height + scrollY,
+        left: refBox.left,
+        width: refBox.width,
+        height: element.offsetHeight
     }
-    let {top, left, width, height} = rectWindow;
-    if (isEqual(record, rectWindow, ['top', 'left', 'height', 'width'])) return;
+    let atBottomY = elementBox.top + elementBox.height;
+    let atTopY = elementBox.top - refBox.height - elementBox.height; 
+    if (atBottomY > scrollY + innerHeight && atTopY > scrollY) elementBox.top = atTopY;
+    let {top, left, width, height} = elementBox;
+    if (isEqual(record, elementBox, ['top', 'left', 'height', 'width'])) return;
+
     _Object_assign(record, {top, left, width, height})
-    style.top = `${height + top}px`;
-    style.left = `${left}px`
-    style.width = `${width}px`
+    element.style.top = `${top}px`;
+    element.style.left = `${left}px`
+    element.style.width = `${width}px`
 }
 
 type FloatRectRecord = {

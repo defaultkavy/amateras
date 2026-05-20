@@ -24,6 +24,14 @@ export class Field extends ElementProto<HTMLElement> {
                 flexDirection: 'row',
                 placeItems: 'center',
                 width: 'unset'
+            },
+
+            '&:has(field-error) input[ui="input"]': {
+                borderColor: 'var(--destructive-fg)',
+
+                '&:focus-visible': {
+                    outlineColor: 'color-mix(in oklch, var(--destructive-fg) 30%, transparent)'
+                }
             }
         }))
     }
@@ -104,6 +112,21 @@ export class FieldDescription extends ElementProto<HTMLElement> {
             'field[disabled] &': {
                 pointerEvents: 'none'
             }
+        }))
+    }
+}
+
+export class FieldError extends ElementProto {
+    static tagname = 'field-error';
+    constructor(props: $.Props, layout?: $.Layout<FieldError>) { 
+        super(FieldError.tagname, props, layout)
+    }
+
+    static {
+        $.style(this, toUICSS(this.tagname, {
+            fontSize: 'var(--text-sm)',
+            color: 'var(--destructive-fg)',
+            display: 'block'
         }))
     }
 }

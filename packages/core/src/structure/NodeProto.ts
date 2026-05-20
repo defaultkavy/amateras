@@ -1,16 +1,16 @@
-import { _null, forEach, map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { Proto } from "./Proto";
 import { onclient } from "#env";
 
 export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Proto {
-    node: null | N = _null;
+    node: null | N = Utils.Null;
     constructor(layout?: $.Layout) {
         super(layout);
     }
 
     override dispose(): void {
         super.dispose();
-        this.node = _null;
+        this.node = Utils.Null;
     }
 
     inDOM() {
@@ -26,13 +26,13 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
         let thisNode = this.node;
         if (thisNode) {
             let protos = this.protos;
-            let nodes = map(protos.filter(proto => proto.visible), proto => proto.toDOM()).flat();
-            let nextNode: Node | null = _null;
-            forEach(nodes, (node, i) => {
+            let nodes = Utils.map(protos.filter(proto => proto.visible), proto => proto.toDOM()).flat();
+            let nextNode: Node | null = Utils.Null;
+            Utils.forEach(nodes, (node, i) => {
                 let currentNode = thisNode.childNodes[i];
                 if (currentNode !== node) {
-                    if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? _null;
-                    else nextNode = thisNode.childNodes[i + 1] ?? _null;
+                    if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? Utils.Null;
+                    else nextNode = thisNode.childNodes[i + 1] ?? Utils.Null;
                     thisNode.insertBefore(node, nextNode);
                 }
             })

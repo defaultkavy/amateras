@@ -1,5 +1,5 @@
 import { ElementProto, onclient, Proto } from "@amateras/core";
-import { _instanceof, _null, isUndefined } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { SelectContent } from "./SelectContent";
 import { SelectItem } from "./SelectItem";
 import type { SelectTrigger } from "./SelectTrigger";
@@ -14,14 +14,14 @@ export interface SelectProps {
 
 export class Select extends ElementProto {
     static tagname = 'select-proto';
-    $trigger: SelectTrigger | null = _null;
-    $content: SelectContent | null = _null;
-    private clickListener: ((e: MouseEvent) => void) | null = _null;
-    #value: any = _null;
-    selected: SelectItem | null = _null;
+    $trigger: SelectTrigger | null = Utils.Null;
+    $content: SelectContent | null = Utils.Null;
+    private clickListener: ((e: MouseEvent) => void) | null = Utils.Null;
+    #value: any = Utils.Null;
+    selected: SelectItem | null = Utils.Null;
     itemMap = new Map<any, SelectItem>();
-    $value: SelectValue | null = _null;
-    private disconnect: FloatDisconnect | null = _null;
+    $value: SelectValue | null = Utils.Null;
+    private disconnect: FloatDisconnect | null = Utils.Null;
     constructor(props: $.Props<SelectProps>, layout?: $.Layout<Select>) {
         super(Select.tagname, props, layout);
         this.listen('i18nupdate', () => this.$value?.render());
@@ -45,9 +45,9 @@ export class Select extends ElementProto {
     disabled(bool?: OrSignal<boolean>): void
     disabled(bool?: OrSignal<boolean>) {
         if (!arguments.length) return this.attr('disabled') === '';
-        if (isUndefined(bool)) return;
+        if (Utils.isUndefined(bool)) return;
         $.resolve(bool, bool => {
-            this.attr('disabled', bool ? '' : _null);
+            this.attr('disabled', bool ? '' : Utils.Null);
         });
     }
 
@@ -55,11 +55,11 @@ export class Select extends ElementProto {
     value(val?: OrSignal<any>): void;
     value(val?: OrSignal<any>) {
         if (!arguments.length) return this.#value;
-        if (isUndefined(val)) return;
+        if (Utils.isUndefined(val)) return;
         $.resolve(val, val => {
             this.#value = val;
             let $item = this.itemMap.get(val);
-            this.selected = $item ?? _null;
+            this.selected = $item ?? Utils.Null;
             this.$value?.render();
             this.dispatch('selectvalue', [this, val], {bubbles: true})
         })
@@ -77,18 +77,18 @@ export class Select extends ElementProto {
                 this.close();
             }
             if (this.selected?.node) this.selected.node.focus();
-            else this.$content?.findBelow<SelectItem>(proto => _instanceof(proto, SelectItem))?.node?.focus();
+            else this.$content?.findBelow<SelectItem>(proto => Utils.isInstanceof(proto, SelectItem))?.node?.focus();
             window.addEventListener('click', this.clickListener)
         }
     }
 
     close() {
-        this.attr('opened', _null);
+        this.attr('opened', Utils.Null);
         if (!onclient()) return;
         this.$content?.removeNode();
         if (this.clickListener) window.removeEventListener('click', this.clickListener);
         this.disconnect?.();
-        this.disconnect = _null;
+        this.disconnect = Utils.Null;
     }
 
     override toDOM(children = true): HTMLElement[] {

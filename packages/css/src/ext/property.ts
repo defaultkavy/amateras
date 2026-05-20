@@ -2,8 +2,7 @@ import { cssGlobalRuleSet } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { camelCaseToDash } from "#lib/utils";
 import { $CSSProperty } from "#structure/$CSSProperty";
-import { _Object_assign, _Object_entries, forEach, isString, isUndefined } from "@amateras/utils";
-import { UID } from "@amateras/utils";
+import { UID, Utils } from '@amateras/utils';
 
 declare global {
     export namespace $ {
@@ -32,11 +31,11 @@ declare global {
     }
 }
 
-_Object_assign($.css, {
+Utils.assign($.css, {
     property(resolver: $.CSSPropertyMap | string, initialValue?: string | number, inherits?: boolean) {
         let id = UID.generate('css-property', {lettercase: 'lower'})
-        if (isString(resolver)) {
-            if (isUndefined(initialValue) || isUndefined(inherits)) throw 'Register CSS Property Error';
+        if (Utils.isString(resolver)) {
+            if (Utils.isUndefined(initialValue) || Utils.isUndefined(inherits)) throw 'Register CSS Property Error';
             let name = `--${id}`;
             let property = new $CSSProperty({ name, syntax: resolver, initialValue: `${initialValue}`, inherits });
             let rule = createRule(() => `@property ${name}`, {
@@ -48,10 +47,10 @@ _Object_assign($.css, {
             return property;
         } else {
             let propertyMap = {};
-            forEach(_Object_entries(resolver), ([key, [syntax, initialValue, inherits]]) => {
+            Utils.forEach(Utils.entries(resolver), ([key, [syntax, initialValue, inherits]]) => {
                 let name = `--${camelCaseToDash(key)}-${id}`
                 let property = new $CSSProperty({ name, syntax, initialValue: `${initialValue}`, inherits });
-                _Object_assign(propertyMap, { [key]: property });
+                Utils.assign(propertyMap, { [key]: property });
                 let rule = createRule(() => `@property ${name}`, {
                     syntax: `'${syntax}'`,
                     inherits: `${inherits ?? true}`,

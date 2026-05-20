@@ -1,5 +1,5 @@
-import { _Object_assign } from "@amateras/utils"
-import { $IDBBuilder } from "#structure/builder/$IDBBuilder"
+import { Utils } from '@amateras/utils';
+import { $IDBBuilder } from "#structure/builder/$IDBBuilder";
 
 declare global {
     export namespace $ {
@@ -12,6 +12,6 @@ declare global {
     }
 }
 
-_Object_assign($, {
+Utils.assign($, {
     idb: (name: string, version: number) => new $IDBBuilder({name, version, stores: {}})
 })

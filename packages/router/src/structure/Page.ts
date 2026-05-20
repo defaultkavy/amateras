@@ -1,5 +1,5 @@
 import { onclient, Proto } from "@amateras/core";
-import { _instanceof, _null, is } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { AsyncWidget, PageLayout } from "../types";
 import type { RouteNode } from "./RouteNode";
 import { RouteSlot } from "./RouteSlot";
@@ -7,7 +7,7 @@ import { RouteSlot } from "./RouteSlot";
 export class Page extends Proto {
     slot = new RouteSlot();
     route: RouteNode;
-    title: string | Promise<string> | null = _null;
+    title: string | Promise<string> | null = Utils.Null;
     declare layout: () => void | AsyncWidget[0];
     constructor(route: RouteNode, layout: PageLayout, params: Record<string, string>) {
         super(() => layout({
@@ -18,7 +18,7 @@ export class Page extends Proto {
     }
 
     updateTitle() {
-        let title = this.title ?? this.findAbove<Page>(proto => is(proto, Page)?.title)?.title ?? _null;
+        let title = this.title ?? this.findAbove<Page>(proto => Utils.is(proto, Page)?.title)?.title ?? Utils.Null;
         let setTitle = (str: string) => {
             if (onclient()) document.title = str;
             this.global.title = str;
@@ -26,7 +26,7 @@ export class Page extends Proto {
 
         // set title
         if (title) { 
-            if (_instanceof(title, Promise)) title.then(t => {
+            if (Utils.isInstanceof(title, Promise)) title.then(t => {
                 this.title = t;
                 setTitle(t)
             });

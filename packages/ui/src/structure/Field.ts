@@ -1,6 +1,6 @@
 import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
-import { _instanceof, isUndefined } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export interface FieldProps {
     for?: OrSignal<string>;
@@ -51,7 +51,7 @@ export class Field extends ElementProto<HTMLElement> {
     for(name?: OrSignal<string>): void
     for(name?: OrSignal<string>) {
         if (!arguments.length) return this.attr('for');
-        if (isUndefined(name)) return;
+        if (Utils.isUndefined(name)) return;
         $.resolve(name, name => {
             this.attr('for', name);
             this.setFor();
@@ -61,7 +61,7 @@ export class Field extends ElementProto<HTMLElement> {
     private setFor() {
         const name = this.for();
         this.findBelow(proto => {
-            if (_instanceof(proto, ElementProto)) {
+            if (Utils.isInstanceof(proto, ElementProto)) {
                 if (proto.tagname === 'input') proto.attr('id', name);
                 if (proto.tagname === 'label') proto.attr('for', name)
             }

@@ -1,5 +1,5 @@
 import { Proto } from "@amateras/core";
-import { isUndefined } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export type StoreInit<T, Args extends any[] = []> = (...args: Args) => T;
 export type StoreValue<S extends Store> = S extends Store<infer T> ? T : never;
@@ -24,7 +24,7 @@ export class Store<T = any, Args extends any[] = []> {
         const proto = Proto.proto;
         if (!proto) throw `Store.get(): ${ERROR_MESSAGE}`;
         const value = this.getValueFromProto(proto);
-        if (isUndefined(value)) throw 'Store.get(): value not found';
+        if (Utils.isUndefined(value)) throw 'Store.get(): value not found';
         return value;
     }
 

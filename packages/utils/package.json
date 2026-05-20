@@ -14,5 +14,6 @@
         "bun": "./src/index.bun.ts",
         "default": "./src/index.ts"
       }
-    }
+    },
+    "sideEffects": false
 }

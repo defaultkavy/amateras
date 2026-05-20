@@ -1,5 +1,5 @@
 import { ElementProto } from "@amateras/core";
-import { _null, isUndefined, _instanceof } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { Select } from "./Select";
 import { toUICSS } from "#lib/toCSS";
 import { SelectContent } from "./SelectContent";
@@ -11,9 +11,9 @@ export interface SelectItemProps {
 
 export class SelectItem extends ElementProto {
     static tagname = 'select-item'
-    $select: Select | null = _null;
-    $content: SelectContent | null = _null;
-    #value: any = _null;
+    $select: Select | null = Utils.Null;
+    $content: SelectContent | null = Utils.Null;
+    #value: any = Utils.Null;
     constructor(props: $.Props<SelectItemProps>, layout?: $.Layout<Select>) {
         super(SelectItem.tagname, {tabindex: 0, ...props}, layout);
         this.on('click', () => {
@@ -24,7 +24,7 @@ export class SelectItem extends ElementProto {
             let focus = (dir: 'up' | 'down') => {
                 e.preventDefault();
                 if (!this.$content) return;
-                let items = this.$content?.findBelowAll<SelectItem>(proto => _instanceof(proto, SelectItem))
+                let items = this.$content?.findBelowAll<SelectItem>(proto => Utils.isInstanceof(proto, SelectItem))
                 let currentPosition = items.indexOf(this);
                 let targetIndex = dir === 'up' ? currentPosition - 1 : currentPosition + 1;
                 if (targetIndex < 0 || targetIndex >= items.length) targetIndex = dir === 'up' ? -1 : 0;
@@ -75,7 +75,7 @@ export class SelectItem extends ElementProto {
     value(val: OrSignal<any>): void;
     value(val?: OrSignal<any>) {
         if (!arguments.length) return this.#value;
-        if (isUndefined(val)) return;
+        if (Utils.isUndefined(val)) return;
         $.resolve(val, val => {
             this.#value = val;
         })
@@ -93,8 +93,8 @@ export class SelectItem extends ElementProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$select = this.findAbove<Select>(proto => _instanceof(proto, Select));
-        this.$content = this.findAbove<SelectContent>(proto => _instanceof(proto, SelectContent));
+        this.$select = this.findAbove<Select>(proto => Utils.isInstanceof(proto, Select));
+        this.$content = this.findAbove<SelectContent>(proto => Utils.isInstanceof(proto, SelectContent));
         if (this.$select && this.$select.value() === this.#value) this.$select.selected = this;
         this.$select?.itemMap.set(this.#value, this);
         return this;

@@ -1,4 +1,4 @@
-import { _Array_from, _null, _Object_assign, _Object_entries, forEach, isFunction, isNull, isUndefined, map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { NodeProto } from "./NodeProto";
 import { symbol_ProtoType } from "#lib/symbols";
 
@@ -28,7 +28,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     override build(cascading?: boolean): this {
         if (this.__props__) {
             this.props(this.__props__);
-            this.__props__ = _null;
+            this.__props__ = Utils.Null;
         }
         super.build(cascading);
         return this;
@@ -38,8 +38,8 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         let {class: className, ...propsFiltered} = props;
         if (className) this.addClass(...className.split(' '));
         // handle event listener in props
-        forEach(_Object_entries(propsFiltered), ([name, value]) => {
-            if (name.startsWith('on') && isFunction(value)) {
+        Utils.forEach(Utils.entries(propsFiltered), ([name, value]) => {
+            if (name.startsWith('on') && Utils.isFunction(value)) {
                 this.on(name.replace('on', ''), value);
                 delete propsFiltered[name];
             }
@@ -64,8 +64,8 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
 
     parseHTML(options?: { children?: string, attr?: string }) {
         let tagname = this.tagname;
-        let childrenHTML = options?.children ?? (this.#innerHTML || map(this.protos, proto => proto.visible ? `${proto}` : '').join(''));
-        let attr = options?.attr ?? map(_Object_entries(this.#attr), ([key, value]) => value.length ? `${key}="${value}"` : key).join(' ');
+        let childrenHTML = options?.children ?? (this.#innerHTML || Utils.map(this.protos, proto => proto.visible ? `${proto}` : '').join(''));
+        let attr = options?.attr ?? Utils.map(Utils.entries(this.#attr), ([key, value]) => value.length ? `${key}="${value}"` : key).join(' ');
         let attrText = attr.length ? ' ' + attr : '';
         if (SELF_CLOSING_TAGNAMES.includes(tagname)) return `<${tagname}${attrText} />`;
         return `<${tagname}${attrText}>${childrenHTML}</${tagname}>`;
@@ -80,16 +80,16 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
             if (this.#innerHTML && !initialized) this.node.innerHTML = this.#innerHTML;
             else if (!initialized || this.virtual) this.DOMProcess();
         }
-        if (!initialized) forEach(_Object_entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
+        if (!initialized) Utils.forEach(Utils.entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
         if (!initialized) this.dispatch('dom', [this.node])
         return [element];
     }
 
     private attrProcess(attrObj: $.Props) {
-        forEach(_Object_entries(attrObj), ([key, value]) => {
+        Utils.forEach(Utils.entries(attrObj), ([key, value]) => {
             for (let process of $.process.attr) {
                 let result = process(key, value, this as any);
-                if (!isUndefined(result)) return;
+                if (!Utils.isUndefined(result)) return;
             }
             this.attr(key, value);
         })
@@ -105,8 +105,8 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     attr(attrName: string, attrValue: string | null): this;
     attr(attrName?: string, attrValue?: string | null) {
         if (!arguments.length) return this.#attr;
-        if (isUndefined(attrValue)) return this.#attr[attrName!] ?? _null;
-        if (isNull(attrValue)) {
+        if (Utils.isUndefined(attrValue)) return this.#attr[attrName!] ?? Utils.Null;
+        if (Utils.isNull(attrValue)) {
             delete this.#attr[attrName!];
             this.node?.removeAttribute(attrName!);
         }
@@ -118,7 +118,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     hasAttr(attrName: string) {
-        return !isNull(this.attr(attrName));
+        return !Utils.isNull(this.attr(attrName));
     }
 
     addClass(...tokens: string[]) {
@@ -132,7 +132,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     style(declarations: Partial<CSSStyleDeclaration>) {
-        let setStyle = () => this.node && _Object_assign(this.node.style, declarations);
+        let setStyle = () => this.node && Utils.assign(this.node.style, declarations);
         setStyle();
         if (!this.node) this.listen('dom', setStyle);
     }
@@ -140,7 +140,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     private token(method: 'add' | 'delete', name: string, ...tokens: string[]) {
         let value = this.#attr[name];
         let tokenArr = new Set(value?.split(' ') ?? []);
-        forEach(tokens, t => tokenArr[method](t));
-        this.#attr[name] = _Array_from(tokenArr).join(' ');
+        Utils.forEach(tokens, t => tokenArr[method](t));
+        this.#attr[name] = Utils.arrayFrom(tokenArr).join(' ');
     }
 }

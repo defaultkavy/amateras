@@ -1,7 +1,7 @@
 import { symbol_Statement } from "@amateras/core";
 import { Proto } from "@amateras/core";
 import type { Signal } from "@amateras/signal";
-import { _null, toArray } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export type ConditionLayout = (...value: Signal<any>[]) => void;
 
@@ -10,12 +10,12 @@ export abstract class ConditionStatement extends Proto {
     exps: Signal<any>[] | null;
     constructor(expression: OrArray<Signal<any>> | null, layout: ConditionLayout) {
         super(() => layout(...this.exps ?? []));
-        this.exps = expression ? toArray(expression) : _null;
+        this.exps = expression ? Utils.toArray(expression) : Utils.Null;
     }
 
     override dispose(): void {
         super.dispose();
-        this.exps = _null;
+        this.exps = Utils.Null;
     }
 
     override mutate(): void {

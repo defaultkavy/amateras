@@ -1,16 +1,16 @@
 import { toUICSS } from "#lib/toCSS";
 import { Icon } from "#structure/Icon";
 import { ElementProto } from "@amateras/core";
-import { _null, _instanceof, forEach, isUndefined, _Array_from, isEqual } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { check_svg } from "../../icon/check.svg";
 import { Combobox } from "./Combobox";
 import { item_css } from "../../style/combobox_style";
 
 
 export class ComboboxList extends ElementProto {
-    $combobox: Combobox | null = _null;
-    $focusedItem: ComboboxItem | ComboboxCreateItem | null = _null;
-    $createItem: ComboboxCreateItem | null = _null;
+    $combobox: Combobox | null = Utils.Null;
+    $focusedItem: ComboboxItem | ComboboxCreateItem | null = Utils.Null;
+    $createItem: ComboboxCreateItem | null = Utils.Null;
     declare __child__: ComboboxItem | ComboboxCreateItem;
     override virtual = true;
     constructor(props: $.Props, layout?: $.Layout<ComboboxList>) {
@@ -19,7 +19,7 @@ export class ComboboxList extends ElementProto {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$combobox = this.findAbove<Combobox>(proto => _instanceof(proto, Combobox));
+        this.$combobox = this.findAbove<Combobox>(proto => Utils.isInstanceof(proto, Combobox));
         if (this.$combobox) this.$combobox.$list = this;
         // render chips after item built
         this.$combobox?.$chips?.toDOM();
@@ -29,8 +29,8 @@ export class ComboboxList extends ElementProto {
     filter(input: string) {
         if (!this.$combobox) return;
         const items: ComboboxItem[] = [];
-        if (this.$createItem) this.$createItem.visible = !!input.trim() && !_Array_from(this.$combobox.itemMap.values()).find($item => $item.text === input.trim());
-        forEach(this.$combobox.itemMap, ([_, $item]) => {
+        if (this.$createItem) this.$createItem.visible = !!input.trim() && !Utils.arrayFrom(this.$combobox.itemMap.values()).find($item => $item.text === input.trim());
+        Utils.forEach(this.$combobox.itemMap, ([_, $item]) => {
             $item.visible = false;
             if ($item.text.toLowerCase().includes(input.toLowerCase())) {
                 $item.visible = true;
@@ -64,8 +64,8 @@ export class ComboboxList extends ElementProto {
     override mutate(): void {
         super.mutate();
         this.$combobox?.itemMap.clear();
-        forEach(this.children, proto => {
-            if (_instanceof(proto, ComboboxItem)) {
+        Utils.forEach(this.children, proto => {
+            if (Utils.isInstanceof(proto, ComboboxItem)) {
                 this.$combobox?.itemMap.set(proto.value(), proto)
             }
         })
@@ -73,7 +73,7 @@ export class ComboboxList extends ElementProto {
         if (!this.$combobox) return;
         const cacheValues = this.$combobox.values();
         const filteredValues = cacheValues.filter(val => this.$combobox?.itemMap.has(val))
-        if (!isEqual(cacheValues, filteredValues)) {
+        if (!Utils.isEqual(cacheValues, filteredValues)) {
             this.$combobox?.values(filteredValues);
             this.$combobox?.dispatch('combobox_input', []);
         }
@@ -87,9 +87,9 @@ export interface ComboboxItemProps {
 
 export class ComboboxItem extends ElementProto {
     static tagname = 'combobox-item'
-    $combobox: Combobox | null = _null;
-    $list: ComboboxList | null = _null;
-    #value: any = _null;
+    $combobox: Combobox | null = Utils.Null;
+    $list: ComboboxList | null = Utils.Null;
+    #value: any = Utils.Null;
     #selected = false;
     constructor(props: $.Props<ComboboxItemProps>, layout?: $.Layout<ComboboxItem>) {
         super('combobox-item', props, () => {
@@ -121,8 +121,8 @@ export class ComboboxItem extends ElementProto {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$combobox = this.findAbove<Combobox>(proto => _instanceof(proto, Combobox));
-        this.$list = this.findAbove<ComboboxList>(proto => _instanceof(proto, ComboboxList));
+        this.$combobox = this.findAbove<Combobox>(proto => Utils.isInstanceof(proto, Combobox));
+        this.$list = this.findAbove<ComboboxList>(proto => Utils.isInstanceof(proto, ComboboxList));
         this.$combobox?.itemMap.set(this.#value, this);
         if (this.$combobox?.values().includes(this.#value)) {
             this.selected(true);
@@ -141,7 +141,7 @@ export class ComboboxItem extends ElementProto {
     value(val?: OrSignal<any>): void;
     value(val?: OrSignal<any>) {
         if (!arguments.length) return this.#value;
-        if (isUndefined(val)) return;
+        if (Utils.isUndefined(val)) return;
         $.resolve(val, val => {
             this.$combobox?.itemMap.delete(this.#value);
             this.$combobox?.itemMap.set(val, this);
@@ -153,7 +153,7 @@ export class ComboboxItem extends ElementProto {
     selected(val?: OrSignal<boolean>): void;
     selected(val?: OrSignal<boolean>) {
         if (!arguments.length) return this.#selected;
-        if (isUndefined(val)) return;
+        if (Utils.isUndefined(val)) return;
         $.resolve(val, val => {
             this.#selected = val;
             this.attr('selected', val ? '' : null)
@@ -167,15 +167,15 @@ export class ComboboxItem extends ElementProto {
     }
 
     blur() {
-        this.attr('focus', _null)
+        this.attr('focus', Utils.Null)
         if (this.$list) this.$list.$focusedItem = null;
     }
 }
 
 export class ComboboxCreateItem extends ElementProto {
     static tagname = 'combobox-create-item'
-    $combobox: Combobox | null = _null;
-    $list: ComboboxList | null = _null;
+    $combobox: Combobox | null = Utils.Null;
+    $list: ComboboxList | null = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<ComboboxCreateItem>) {
         super('combobox-create-item', props, layout);
         this.on('mousedown', e => e.preventDefault())
@@ -191,8 +191,8 @@ export class ComboboxCreateItem extends ElementProto {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$combobox = this.findAbove<Combobox>(proto => _instanceof(proto, Combobox));
-        this.$list = this.findAbove<ComboboxList>(proto => _instanceof(proto, ComboboxList));
+        this.$combobox = this.findAbove<Combobox>(proto => Utils.isInstanceof(proto, Combobox));
+        this.$list = this.findAbove<ComboboxList>(proto => Utils.isInstanceof(proto, ComboboxList));
         if (this.$list) this.$list.$createItem = this;
         return this;
     }
@@ -203,7 +203,7 @@ export class ComboboxCreateItem extends ElementProto {
     }
 
     blur() {
-        this.attr('focus', _null)
+        this.attr('focus', Utils.Null)
         if (this.$list) this.$list.$focusedItem = null;
     }
 }

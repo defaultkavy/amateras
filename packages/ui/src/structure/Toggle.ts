@@ -1,7 +1,7 @@
 import { pointerHoverMediaQuery } from "#lib/hover";
 import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
-import { _null, isNull, isUndefined } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export interface ToggleProps {
     checked?: OrSignal<boolean>;
@@ -145,10 +145,10 @@ export class Toggle extends ElementProto<HTMLButtonElement> {
     checked(): boolean;
     checked(bool?: OrSignal<boolean>): void;
     checked(bool?: OrSignal<boolean>) {
-        if (!arguments.length) return !isNull(this.attr('checked'));
-        if (isUndefined(bool)) return;
+        if (!arguments.length) return !Utils.isNull(this.attr('checked'));
+        if (Utils.isUndefined(bool)) return;
         $.resolve(bool, bool => {
-            this.attr('checked', bool ? '' : _null);
+            this.attr('checked', bool ? '' : Utils.Null);
             this.node?.dispatchEvent(new Event('input'))
         })
     }

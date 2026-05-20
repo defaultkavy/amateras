@@ -2,7 +2,7 @@ import { symbol_Statement } from "@amateras/core";
 import { Proto } from "@amateras/core";
 import { ProxyProto } from "@amateras/core";
 import type { SignalTypes } from "@amateras/signal";
-import { _Array_from, _null, forEach } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export type ForLayout<T extends any[] = [any]> = (item: T['length'] extends 1 ? T[0] : T, index: number) => void;
 export type ForIterable = SignalTypes<any[]> | SignalTypes<Set<any>> | SignalTypes<Map<any, any>>
@@ -19,21 +19,21 @@ export class For<T extends [K: any, V: any] = [any, any]> extends ProxyProto {
 
         let update = () => {
             const deleted = this.exec();
-            forEach(this.protos, proto => proto.builded || proto.build())
-            forEach(deleted, proto => proto.removeNode())
+            Utils.forEach(this.protos, proto => proto.builded || proto.build())
+            Utils.forEach(deleted, proto => proto.removeNode())
             let thisNode = this.node;
             let parentNode = thisNode?.parentNode;
             if (thisNode && parentNode) {
                 let nodes = this.toDOM();
-                let arr = _Array_from(parentNode.childNodes);
+                let arr = Utils.arrayFrom(parentNode.childNodes);
                 let currentPosition = arr.indexOf(thisNode);
-                let nextNode: Node | null = _null;
-                forEach(nodes, node => {
+                let nextNode: Node | null = Utils.Null;
+                Utils.forEach(nodes, node => {
                     if (node !== thisNode) {
                         let currentNode = parentNode.childNodes[currentPosition];
                         if (currentNode !== node) {
-                            if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? _null;
-                            else nextNode = parentNode.childNodes[currentPosition + 1] ?? _null;
+                            if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? Utils.Null;
+                            else nextNode = parentNode.childNodes[currentPosition + 1] ?? Utils.Null;
                             parentNode.insertBefore(node, nextNode);
                         }
                     }
@@ -58,7 +58,7 @@ export class For<T extends [K: any, V: any] = [any, any]> extends ProxyProto {
     private exec() {
         let deleted = new Set(this.protos);
         let added = new Set<ForItem>();
-        forEach(_Array_from(this.list$.value), (item, i) => {
+        Utils.forEach(Utils.arrayFrom(this.list$.value), (item, i) => {
             $.context(Proto, this, () => {
                 let layout = this.#layout;
                 let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => layout(item as any, i));
@@ -73,7 +73,7 @@ export class For<T extends [K: any, V: any] = [any, any]> extends ProxyProto {
 
     override dispose(): void {
         super.dispose();
-        forEach(this.#itemProtoMap.values(), $item => $item.dispose())
+        Utils.forEach(this.#itemProtoMap.values(), $item => $item.dispose())
         this.#itemProtoMap.clear();
     }
 

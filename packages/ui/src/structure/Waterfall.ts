@@ -1,6 +1,6 @@
 import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient, onserver } from "@amateras/core";
-import { forEach, is } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 export interface WaterfallOptions {
     gap?: number;
     columns?: number;
@@ -54,7 +54,7 @@ export class Waterfall extends ElementProto {
         // add each column data to column list
         for (let i = 0; i < columns; i ++) colList.push({items: [], height: 0, width: colWidth, left: i * (colWidth + this.gap)});
         // calculate item height and position
-        forEach(this.children, $item => {
+        Utils.forEach(this.children, $item => {
             if (!$item.node) return;
             // if (!$item.ratio) {
             //     if ($item.node.offsetHeight && $item.node.offsetWidth)
@@ -94,7 +94,7 @@ export class WaterfallItem extends ElementProto {
 
     override toDOM(children = true): HTMLElement[] {
         let nodes = super.toDOM(children);
-        const $waterfall = this.findAbove<Waterfall>(proto => is(proto, Waterfall));
+        const $waterfall = this.findAbove<Waterfall>(proto => Utils.is(proto, Waterfall));
         this.node?.querySelectorAll('[observe]').forEach(img => $waterfall?.observer?.observe(img));
         return nodes;
     }

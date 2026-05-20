@@ -1,5 +1,5 @@
 import { Link } from "#structure/Link";
-import { _null, toURL } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export class NavLink extends Link {
     constructor(attr: $.Props | null, layout?: $.Layout<NavLink>) {
@@ -11,8 +11,8 @@ export class NavLink extends Link {
         let href = this.attr('href');
         if (!href) return;
         for (let path of this.global.router.matchPaths) {
-            if (toURL(path).href === toURL(href).href) return this.attr('active', ''); 
+            if (Utils.toURL(path).href === Utils.toURL(href).href) return this.attr('active', ''); 
         }
-        this.attr('active', _null);
+        this.attr('active', Utils.Null);
     }
 }

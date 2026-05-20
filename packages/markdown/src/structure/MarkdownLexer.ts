@@ -1,5 +1,5 @@
 import { BLOCK, EMPTY_LINE, INLINE_CONTENT, INLINE_TEXT, TEXT_LINE } from "#lib/type";
-import { forEach, isString } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export class MarkdownLexer {
     blockTokenizers = new Map<string, BlockTokenizer>();
@@ -54,7 +54,7 @@ export class MarkdownLexer {
                     if (index != 0) tokens.push(...this.inlineTokenize(remainStr.substring(0, index)));
                     // handle matched string
                     const {content, data} = tokenizer.handle(matched);
-                    token = { type, ...(isString(content) ? { layout: INLINE_TEXT, text: content } : { layout: INLINE_CONTENT, content })};
+                    token = { type, ...(Utils.isString(content) ? { layout: INLINE_TEXT, text: content } : { layout: INLINE_CONTENT, content })};
                     if (data) token.data = data;
                     remainStr = remainStr.substring(index! + matchStr.length);
                     break;
@@ -70,7 +70,7 @@ export class MarkdownLexer {
     }
 
     use(...handle: ((parser: this) => void)[]) {
-        forEach(handle, fn => fn(this));
+        Utils.forEach(handle, fn => fn(this));
         return this;
     }
 }

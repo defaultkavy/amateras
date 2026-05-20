@@ -9,7 +9,7 @@ import { RouterConstructor } from '#structure/RouterConstructor';
 import { symbol_ProtoType } from '@amateras/core';
 import { GlobalState } from '@amateras/core';
 import { Proto } from '@amateras/core';
-import { _Object_assign, is, isFunction, map } from '@amateras/utils';
+import { Utils } from '@amateras/utils';
 import './global';
 import type { PageLayout } from './types';
 
@@ -49,13 +49,13 @@ let routePlannerPrototype = {
     }
 }
 
-_Object_assign(Route.prototype, routePlannerPrototype);
-_Object_assign(Router.prototype, routePlannerPrototype);
+Utils.assign(Route.prototype, routePlannerPrototype);
+Utils.assign(Router.prototype, routePlannerPrototype);
 GlobalState.assign(() => ({
     router: {
         routers: new Set<Router>(),
         resolve(this, path: string) {
-            return map(this.routers, router => router.resolve(path));
+            return Utils.map(this.routers, router => router.resolve(path));
         },
         href: new URL('http://localhost'),
         routes: [],
@@ -76,7 +76,7 @@ GlobalState.disposers.add(({router}) => {
     router.navlinks.clear();
 })
 
-_Object_assign($, {
+Utils.assign($, {
     router: (handle: ($$: Router) => void) => RouterConstructor(handle),
     open: Router.open,
     replace: Router.replace,
@@ -85,7 +85,7 @@ _Object_assign($, {
     scrollRestoration: Router.scrollRestoration,
 
     title(title: OrPromise<string>, parent: Proto | null = Proto.proto) {
-        let page = parent?.findAbove<Page>(proto => is(proto, Page));
+        let page = parent?.findAbove<Page>(proto => Utils.is(proto, Page));
         if (page) {
             page.title = title;
             page.updateTitle();
@@ -97,7 +97,7 @@ globalThis.Link = Link;
 globalThis.NavLink = NavLink;
 
 $.process.craft.add((value) => {
-    if (isFunction(value) && value[symbol_ProtoType] === 'Router') {
+    if (Utils.isFunction(value) && value[symbol_ProtoType] === 'Router') {
         let proto = Proto.proto;
         let router = new value() as Router;
         proto?.global.router.routers.add(router);

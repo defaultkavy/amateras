@@ -1,6 +1,6 @@
 import { onclient } from "#env";
 import { ElementProto } from "#structure/ElementProto";
-import { _instanceof, forEach } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export const VirtualScroll = ($parent: ElementProto) => {
     if (!onclient()) return;
@@ -14,8 +14,8 @@ const render = ($parent: ElementProto) => {
     if (!$parent.inDOM()) return;
     if (!$parent.node) return;
     const parentRect = $parent.node?.getBoundingClientRect();
-    forEach($parent.children, $child => {
-        if (!_instanceof($child, ElementProto)) return;
+    Utils.forEach($parent.children, $child => {
+        if (!Utils.isInstanceof($child, ElementProto)) return;
         if (!$child.node) return;
         if ($child.node.contains(document.activeElement)) return $child.visible = true;
         const { translate } = $child.node.style;

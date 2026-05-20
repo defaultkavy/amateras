@@ -5,7 +5,7 @@ import { input_css } from "../style/input_style";
 import { content_css } from "../style/content_style";
 import { item_css } from "../style/combobox_style";
 import { float, type FloatDisconnect } from "#lib/float";
-import { _instanceof, _null } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export interface SearchbarProps {
     autoclose?: OrSignal<'' | null>;
@@ -13,10 +13,10 @@ export interface SearchbarProps {
 
 export class Searchbar extends ElementProto {
     static tagname = 'searchbar';
-    private disconnect: FloatDisconnect | null = _null;
-    $content: SearchbarContent | null = _null;
-    $list: SearchbarList | null = _null;
-    $input: SearchbarInput | null = _null;
+    private disconnect: FloatDisconnect | null = Utils.Null;
+    $content: SearchbarContent | null = Utils.Null;
+    $list: SearchbarList | null = Utils.Null;
+    $input: SearchbarInput | null = Utils.Null;
     constructor(props: $.Props<SearchbarProps>, layout?: $.Layout<Searchbar>) {
         super('searchbar', props, layout);
     }
@@ -37,11 +37,11 @@ export class Searchbar extends ElementProto {
     }
 
     close() {
-        this.attr('opened', _null);
+        this.attr('opened', Utils.Null);
         if (!onclient()) return;
         this.$content?.removeNode();
         this.disconnect?.();
-        this.disconnect = _null;
+        this.disconnect = Utils.Null;
     }
 
 
@@ -56,7 +56,7 @@ export class Searchbar extends ElementProto {
 }
 
 export class SearchbarInput extends Input {
-    $searchbar: Searchbar | null = _null;
+    $searchbar: Searchbar | null = Utils.Null;
     constructor(props: $.Props<{}, HTMLInputElement>, layout?: $.Layout<SearchbarInput>) {
         super({ ui: 'searchbar-input', ...props }, layout as $.Layout<Input>);
 
@@ -104,7 +104,7 @@ export class SearchbarInput extends Input {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$searchbar = this.findAbove<Searchbar>(proto => _instanceof(proto, Searchbar));
+        this.$searchbar = this.findAbove<Searchbar>(proto => Utils.isInstanceof(proto, Searchbar));
         if (this.$searchbar) this.$searchbar.$input = this;
         return this;
     }
@@ -112,7 +112,7 @@ export class SearchbarInput extends Input {
 
 export class SearchbarContent extends ElementProto {
     static tagname = 'searchbar-content';
-    $searchbar: Searchbar | null = _null;
+    $searchbar: Searchbar | null = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<SearchbarContent>) {
         super('searchbar-content', props, layout);
         this.listen('mutate', () => {
@@ -127,15 +127,15 @@ export class SearchbarContent extends ElementProto {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$searchbar = this.findAbove<Searchbar>(proto => _instanceof(proto, Searchbar));
+        this.$searchbar = this.findAbove<Searchbar>(proto => Utils.isInstanceof(proto, Searchbar));
         if (this.$searchbar) this.$searchbar.$content = this;
         return this;
     }
 }
 
 export class SearchbarList extends ElementProto {
-    $searchbar: Searchbar | null = _null;
-    $focusedItem: SearchbarItem | null = _null;
+    $searchbar: Searchbar | null = Utils.Null;
+    $focusedItem: SearchbarItem | null = Utils.Null;
     declare __child__: SearchbarItem;
     constructor(props: $.Props, layout?: $.Layout<SearchbarList>) {
         super('combobox-list', props, layout);
@@ -143,7 +143,7 @@ export class SearchbarList extends ElementProto {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$searchbar = this.findAbove<Searchbar>(proto => _instanceof(proto, Searchbar));
+        this.$searchbar = this.findAbove<Searchbar>(proto => Utils.isInstanceof(proto, Searchbar));
         if (this.$searchbar) this.$searchbar.$list = this;
         return this;
     }
@@ -166,7 +166,7 @@ export class SearchbarList extends ElementProto {
 
 export class SearchbarItem extends ElementProto {
     static tagname = 'searchbar-item';
-    $list: SearchbarList | null = _null;
+    $list: SearchbarList | null = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<SearchbarItem>) {
         super('searchbar-item', props, layout)
         this.on('click', () => this.select())
@@ -179,7 +179,7 @@ export class SearchbarItem extends ElementProto {
         
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$list = this.findAbove<SearchbarList>(proto => _instanceof(proto, SearchbarList));
+        this.$list = this.findAbove<SearchbarList>(proto => Utils.isInstanceof(proto, SearchbarList));
         return this;
     }
 
@@ -190,7 +190,7 @@ export class SearchbarItem extends ElementProto {
     }
 
     blur() {
-        this.attr('focus', _null)
+        this.attr('focus', Utils.Null)
         if (this.$list) this.$list.$focusedItem = null;
     }
 

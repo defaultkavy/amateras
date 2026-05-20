@@ -1,5 +1,5 @@
 import { symbol_ProtoType, symbol_Statement } from "#lib/symbols";
-import { _null, forEach, map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { GlobalState } from "./GlobalState";
 
 export type ProtoLayout = (...args: any[]) => void;
@@ -8,19 +8,19 @@ export interface ProtoConstructor extends Constructor<Proto> {
 }
 
 export abstract class Proto {
-    static proto: Proto | null = _null; 
+    static proto: Proto | null = Utils.Null; 
     static readonly [symbol_ProtoType] = 'Proto';
     static [symbol_Statement] = false;
     layout: $.Layout | null;
-    readonly parent: Proto | null = _null;
+    readonly parent: Proto | null = Utils.Null;
     global: GlobalState = Proto.proto?.global ?? new GlobalState(this);
-    sibling: Proto | null = _null;
-    firstProto: Proto | null = _null;
-    lastProto: Proto | null = _null;
+    sibling: Proto | null = Utils.Null;
+    firstProto: Proto | null = Utils.Null;
+    lastProto: Proto | null = Utils.Null;
     builded = false;
     visible = true;
     virtual = false;
-    listeners: { [key: string]: Set<(...args: any[]) => void> } | null = _null;
+    listeners: { [key: string]: Set<(...args: any[]) => void> } | null = Utils.Null;
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
      * @deprecated
@@ -28,22 +28,22 @@ export abstract class Proto {
     declare __child__: Proto;
     declare __protos__: Proto;
     constructor(layout?: $.Layout) {
-        this.layout = layout ?? _null;
+        this.layout = layout ?? Utils.Null;
     }
 
     dispose() {
         this.dispatch('dispose', [this])
-        forEach(this.protos, proto => proto.dispose());
-        this.global = _null as any;
-        this.sibling = _null;
-        this.firstProto = _null;
-        this.lastProto = _null;
-        (this as Mutable<this>).parent = _null;
-        this.layout = _null;
+        Utils.forEach(this.protos, proto => proto.dispose());
+        this.global = Utils.Null as any;
+        this.sibling = Utils.Null;
+        this.firstProto = Utils.Null;
+        this.lastProto = Utils.Null;
+        (this as Mutable<this>).parent = Utils.Null;
+        this.layout = Utils.Null;
     }
 
     get children(): this['__child__'][] {
-        return map(this.protos, proto => {
+        return Utils.map(this.protos, proto => {
             //@ts-ignore
             if (proto.constructor[symbol_Statement]) 
                 return proto.children
@@ -69,7 +69,7 @@ export abstract class Proto {
     }
 
     append(...protos: Proto[]) {
-        forEach(protos, proto => {
+        Utils.forEach(protos, proto => {
             if (proto.parent !== this) proto.parent?.removeProtos(proto);
             // directly set sibling of last child
             if (this.lastProto) {
@@ -77,7 +77,7 @@ export abstract class Proto {
                 if (this.lastProto === proto) return;
                 // proto is first child, set first child as second proto
                 else if (this.firstProto === proto) this.firstProto = proto.sibling;
-                proto.sibling = _null;
+                proto.sibling = Utils.Null;
                 this.lastProto.sibling = proto;
                 this.lastProto = proto;
             } 
@@ -117,7 +117,7 @@ export abstract class Proto {
 
     removeProtos(...protos: Proto[]) {
         let protoSet = new Set(this.protos);
-        forEach(protos, proto => {
+        Utils.forEach(protos, proto => {
             (proto as Mutable<Proto>).parent = null;
             proto.sibling = null;
             protoSet.delete(proto);
@@ -126,17 +126,17 @@ export abstract class Proto {
     }
 
     private processProtos(...protos: Proto[]) {
-        let prevProto: null | Proto = _null;
+        let prevProto: null | Proto = Utils.Null;
         if (protos.length)
-            forEach(protos, (proto, i) => {
+            Utils.forEach(protos, (proto, i) => {
                 if (i === 0) this.firstProto = proto;
                 if (prevProto) prevProto.sibling = proto;
-                proto.sibling = _null;
+                proto.sibling = Utils.Null;
                 prevProto = proto;
                 (proto as Mutable<Proto>).parent = this;
             })
         // if no children then reset firstProto
-        else this.firstProto = _null;
+        else this.firstProto = Utils.Null;
         this.lastProto = prevProto;
     }
 
@@ -144,7 +144,7 @@ export abstract class Proto {
         if (clear) this.clear(true);
         $.context(Proto, this, () => this.layout?.(this));
         this.builded = true;
-        if (cascading) forEach(this.protos, proto => {
+        if (cascading) Utils.forEach(this.protos, proto => {
             proto.build()
         });
         this.dispatch('builded', [this]);
@@ -152,12 +152,12 @@ export abstract class Proto {
     }
 
     toString(): string {
-        return map(this.protos.filter(proto => proto.visible), proto => `${proto}`).join('')
+        return Utils.map(this.protos.filter(proto => proto.visible), proto => `${proto}`).join('')
     }
 
     toDOM(children = true): Node[] {
         let nodes: Node[] = []
-        forEach(this.protos, proto => {
+        Utils.forEach(this.protos, proto => {
             if (!proto.visible) proto.removeNode();
             else if (children) nodes.push(...proto.toDOM())
         });
@@ -165,19 +165,19 @@ export abstract class Proto {
     }
 
     removeNode() {
-        forEach(this.protos, proto => proto.removeNode());
+        Utils.forEach(this.protos, proto => proto.removeNode());
     }
 
     clear(dispose = false) {
         let protos = this.protos;
         this.removeProtos(...protos);
-        if (dispose) forEach(protos, proto => proto.dispose())
+        if (dispose) Utils.forEach(protos, proto => proto.dispose())
     }
 
     findAbove<T extends Proto>(filter: (proto: Proto) => any): T | null {
         let parent = this.parent;
         if (parent) return filter(parent) ? parent as T : parent.findAbove(filter);
-        return _null;
+        return Utils.Null;
     }
 
     findBelow<T extends Proto>(filter: (proto: Proto) => boolean | void): T | null {
@@ -186,7 +186,7 @@ export abstract class Proto {
             let nested = proto.findBelow<T>(filter);
             if (nested) return nested;
         }
-        return _null;
+        return Utils.Null;
     }
 
     findBelowAll<T extends Proto = Proto>(filter: (proto: Proto) => boolean | void): T[] {
@@ -217,7 +217,7 @@ export abstract class Proto {
             let prevent = this.parent?.dispatch(type, args, options);
             if (!preventDefault) preventDefault = prevent ?? false;
         }
-        forEach(handlerSet, handle => {
+        Utils.forEach(handlerSet, handle => {
             let prevent = handle(...args) ?? false;
             if (!preventDefault) preventDefault = prevent;
         });

@@ -1,4 +1,4 @@
-import { _undefined, isFunction, isUndefined, map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { AliasRequired, AsyncWidget, PageLayout, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
 import type { Page } from "./Page";
 import type { RouteSlot } from "./RouteSlot";
@@ -14,7 +14,7 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
     validPaths: string[] = []
     constructor(path: Path) {
         this.path = path;
-        this.paths.set(path, _undefined);
+        this.paths.set(path, Utils.Undefined);
     }
 
     abstract resolve(path: string, slot: RouteSlot, params: Record<string, string>): Promise<Route[] | void>;
@@ -39,11 +39,11 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
                 let pass = () => {
                     passPath += (passPath !== '/' ? '/' : '') + pathSeg;
                 }
-                if (isUndefined(selfSeg)) {
+                if (Utils.isUndefined(selfSeg)) {
                     // all path segment matched;
                     break skipSeg;
                 }
-                if (isUndefined(pathSeg)) {
+                if (Utils.isUndefined(pathSeg)) {
                     // this route path is longer than target path;
                     skip();
                     continue skipPath;
@@ -69,13 +69,13 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
                 pass();
             }
             if (!passPath) continue skipPath;
-            params = {...params, ...isFunction(getParams) ? getParams() : getParams}
+            params = {...params, ...Utils.isFunction(getParams) ? getParams() : getParams}
             break skipPath;
         }
         
         if (!passPath) return;
         let pathId = Route.resolvePath(this.path, params);
-        this.validPaths = map(this.paths, path => Route.resolvePath(path[0], params));
+        this.validPaths = Utils.map(this.paths, path => Route.resolvePath(path[0], params));
         return [pathId, passPath, params] as const
     }
 

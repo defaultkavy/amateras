@@ -1,11 +1,11 @@
-import { _instanceof, _null, _Object_entries, isNumber, isString, map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { $CSS } from "./$CSS";
 
 export class $CSSRule extends $CSS {
     declarations = new Map<string, string>();
     rules = new Map<string, $CSSRule>();
     selector: string;
-    parent: $CSSRule | null = _null;
+    parent: $CSSRule | null = Utils.Null;
     
     readonly css: $.CSSMap;
     constructor(selector: string, cssMap: $.CSSMap, parent: $CSSRule | null) {
@@ -17,17 +17,17 @@ export class $CSSRule extends $CSS {
     }
 
     toString(): string {
-        let declarations = map(this.declarations, ([name, value]) => `${name.replaceAll(/[A-Z]/g, $0 => `-${$0.toLowerCase()}`)}: ${value};`);
-        let rules = map(this.rules, ([_, rule]) => `${rule}`);
+        let declarations = Utils.map(this.declarations, ([name, value]) => `${name.replaceAll(/[A-Z]/g, $0 => `-${$0.toLowerCase()}`)}: ${value};`);
+        let rules = Utils.map(this.rules, ([_, rule]) => `${rule}`);
         return `${this.selector} { ${[...declarations, ...rules].join(' ')} }`
     }
 }
 
 const processCSSMap = (rule: $CSSRule, cssMap: $.CSSMap) => {
-    for (let [key, value] of _Object_entries(cssMap)) {
+    for (let [key, value] of Utils.entries(cssMap)) {
         // not record __selector__ in cssMap
         if (key === '__selector__') continue;
-        if (isString(value) || isNumber(value) || _instanceof(value, $CSS)) rule.declarations.set(key, `${value}`);
+        if (Utils.isString(value) || Utils.isNumber(value) || Utils.isInstanceof(value, $CSS)) rule.declarations.set(key, `${value}`);
         else {
             // 兼容较旧浏览器不支持无 & 前缀的子规则
             let selector = 

@@ -2,7 +2,7 @@ import { cssGlobalRuleSet, cssRuleByProtoMap } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { $CSSRule } from "#structure/$CSSRule";
 import { ElementProto, type Proto, onserver } from "@amateras/core";
-import { _Array_from, _instanceof, _Object_assign, _Object_entries, forEach, map, toArray, UID } from "@amateras/utils";
+import { UID, Utils } from '@amateras/utils';
 import type { $CSSDeclarationMap } from "./types";
 
 declare global {
@@ -38,18 +38,18 @@ declare module "@amateras/core" {
 }
 
 // Assign methods to $ object
-_Object_assign($, {
+Utils.assign($, {
 
     css(cssMap: $.CSSMap | $CSSRule) {
         // If argument is $CSSRule, return it.
-        if (_instanceof(cssMap, $CSSRule)) return cssMap;
+        if (Utils.isInstanceof(cssMap, $CSSRule)) return cssMap;
         return createRule(() => `.${UID.generate('css')}`, cssMap);
     },
     
     CSS(cssRootMap: $.CSSRootMap) {
         // The CSS root object properties value should be $CSSObject,
         // just create rule from for each propperty.
-        return map(_Object_entries(cssRootMap), ([key, value]) => {
+        return Utils.map(Utils.entries(cssRootMap), ([key, value]) => {
             // __selector__ record the selector key
             let rule = createRule(() => key, {...value, __selector__: key});
             cssGlobalRuleSet.add(rule);
@@ -58,9 +58,9 @@ _Object_assign($, {
     },
 })
 
-_Object_assign(ElementProto.prototype, {
+Utils.assign(ElementProto.prototype, {
     css(this: ElementProto, ...cssMap: ($.CSSMap | $CSSRule)[]) {
-        forEach(cssMap, cmap => assignCSS(this, cmap));
+        Utils.forEach(cssMap, cmap => assignCSS(this, cmap));
         return this;
     }
 })
@@ -76,18 +76,18 @@ export const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
 
 // Assign html render methods to $.CSS
 if (onserver()) {
-    _Object_assign($.CSS, {
+    Utils.assign($.CSS, {
         rules(proto: Proto) {
             let ruleSet = new Set<$CSSRule>();
 
-            forEach([proto, ...proto.protos], childProto => {
+            Utils.forEach([proto, ...proto.protos], childProto => {
                 let protoCSSRules = cssRuleByProtoMap.get(childProto as any);
-                forEach(protoCSSRules, rule => ruleSet.add(rule));
+                Utils.forEach(protoCSSRules, rule => ruleSet.add(rule));
                 if (proto !== childProto)
-                    forEach(this.rules(childProto), rule => ruleSet.add(rule));
+                    Utils.forEach(this.rules(childProto), rule => ruleSet.add(rule));
             })
 
-            return _Array_from(ruleSet);
+            return Utils.arrayFrom(ruleSet);
         },
 
         text(proto: Proto) {
@@ -99,7 +99,7 @@ if (onserver()) {
 // Add processor of css attribute
 $.process.attr.add((key, value, proto) => {
     if (key === 'css') {
-        forEach(toArray(value), value => assignCSS(proto, value))
+        Utils.forEach(Utils.toArray(value), value => assignCSS(proto, value))
         return true;
     }
 })

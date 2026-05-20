@@ -1,7 +1,7 @@
 import { type FloatDisconnect, float } from "#lib/float";
 import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient, Proto } from "@amateras/core";
-import { _null, _Array_from, _instanceof, isNull, isUndefined, forEach, map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { ComboboxChips } from "./ComboboxChips";
 import { type ComboboxList, ComboboxItem } from "./ComboboxList";
 import { item_css } from "../../style/combobox_style";
@@ -13,15 +13,15 @@ export interface ComboboxProps {
 
 export class Combobox extends ElementProto {
     static tagname = 'combobox'
-    $trigger: ComboboxTrigger | null = _null;
-    $content: ComboboxContent | null = _null;
-    $list: ComboboxList | null = _null;
-    $chips: ComboboxChips | null = _null;
-    $input: ComboboxInput | null = _null;
+    $trigger: ComboboxTrigger | null = Utils.Null;
+    $content: ComboboxContent | null = Utils.Null;
+    $list: ComboboxList | null = Utils.Null;
+    $chips: ComboboxChips | null = Utils.Null;
+    $input: ComboboxInput | null = Utils.Null;
     itemMap = new Map<any, ComboboxItem>();
     #values = new Set<any>();
     #initialized = false;
-    private disconnect: FloatDisconnect | null = _null;
+    private disconnect: FloatDisconnect | null = Utils.Null;
     constructor(props: $.Props<ComboboxProps>, layout?: $.Layout<Combobox>) {
         super('combobox', props, layout);
     }
@@ -59,11 +59,11 @@ export class Combobox extends ElementProto {
     }
 
     close() {
-        this.attr('opened', _null);
+        this.attr('opened', Utils.Null);
         if (!onclient()) return;
         this.$content?.removeNode();
         this.disconnect?.();
-        this.disconnect = _null;
+        this.disconnect = Utils.Null;
     }
 
     select(value: any, bool = true) {
@@ -83,17 +83,17 @@ export class Combobox extends ElementProto {
     }
 
     get selected() {
-        return map(this.#values, value => this.itemMap.get(value)!)
+        return Utils.map(this.#values, value => this.itemMap.get(value)!)
     }
 
     values(): any[]
     values(values?: OrSignal<any[]>): void;
     values(values?: OrSignal<any[]>) {
-        if (!arguments.length) return _Array_from(this.#values);
-        if (isUndefined(values)) return;
+        if (!arguments.length) return Utils.arrayFrom(this.#values);
+        if (Utils.isUndefined(values)) return;
         $.resolve(values, values => {
             this.#values = new Set(values);
-            forEach(this.itemMap.values(), $item => {
+            Utils.forEach(this.itemMap.values(), $item => {
                 $item.selected(this.#values.has($item.value()));
             })
             this.$chips?.toDOM();
@@ -103,7 +103,7 @@ export class Combobox extends ElementProto {
 
 export class ComboboxTrigger extends ElementProto {
     static tagname = 'combobox-trigger'
-    $combobox: Combobox | null = _null;
+    $combobox: Combobox | null = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<ComboboxTrigger>) {
         super('combobox-trigger', props, layout);
 
@@ -138,17 +138,17 @@ export class ComboboxTrigger extends ElementProto {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$combobox = this.findAbove<Combobox>(proto => _instanceof(proto, Combobox));
+        this.$combobox = this.findAbove<Combobox>(proto => Utils.isInstanceof(proto, Combobox));
         if (this.$combobox) this.$combobox.$trigger = this;
         return this;
     }
 }
 
 export class ComboboxInput extends ElementProto<HTMLInputElement> {
-    $combobox: Combobox | null = _null;
+    $combobox: Combobox | null = Utils.Null;
     constructor(props: $.Props<{}, HTMLInputElement>, layout?: $.Layout<ComboboxInput>) {
         super('input', {ui: 'combobox-input', autocomplete: 'off', ...props}, layout);
-        this.on('focus', e => isNull(this.$combobox?.attr('opened')) && this.$combobox.open())
+        this.on('focus', e => Utils.isNull(this.$combobox?.attr('opened')) && this.$combobox.open())
         this.on('blur', e => {
             this.$combobox?.close();
             this.$combobox?.$chips?.$focusedChip?.blur();
@@ -203,7 +203,7 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
                     e.preventDefault();
                     const $focusedItem = this.$combobox?.$list?.$focusedItem;
                     if (!$focusedItem) return;
-                    if (_instanceof($focusedItem, ComboboxItem)) {
+                    if (Utils.isInstanceof($focusedItem, ComboboxItem)) {
                         this.$combobox?.select($focusedItem.value());
                     } else {
                         this.dispatch('combobox_create', [e.currentTarget.value], {bubbles: true})
@@ -241,7 +241,7 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$combobox = this.findAbove<Combobox>(proto => _instanceof(proto, Combobox));
+        this.$combobox = this.findAbove<Combobox>(proto => Utils.isInstanceof(proto, Combobox));
         if (this.$combobox) this.$combobox.$input = this;
         return this;
     }
@@ -254,8 +254,8 @@ export class ComboboxInput extends ElementProto<HTMLInputElement> {
 
 export class ComboboxContent extends ElementProto {
     static tagname = 'combobox-content';
-    $combobox: Combobox | null = _null;
-    $empty: ComboboxEmpty | null = _null;
+    $combobox: Combobox | null = Utils.Null;
+    $empty: ComboboxEmpty | null = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<ComboboxContent>) {
         super('combobox-content', props, layout);
     }
@@ -266,7 +266,7 @@ export class ComboboxContent extends ElementProto {
     
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$combobox = this.findAbove<Combobox>(proto => _instanceof(proto, Combobox));
+        this.$combobox = this.findAbove<Combobox>(proto => Utils.isInstanceof(proto, Combobox));
         if (this.$combobox) this.$combobox.$content = this;
         return this;
     }
@@ -274,7 +274,7 @@ export class ComboboxContent extends ElementProto {
 
 export class ComboboxEmpty extends ElementProto {
     static tagname = 'combobox-empty'
-    $content: ComboboxContent | null = _null;
+    $content: ComboboxContent | null = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<ComboboxEmpty>) {
         super('combobox-empty', props, layout);
     }
@@ -287,7 +287,7 @@ export class ComboboxEmpty extends ElementProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$content = this.findAbove<ComboboxContent>(proto => _instanceof(proto, ComboboxContent));
+        this.$content = this.findAbove<ComboboxContent>(proto => Utils.isInstanceof(proto, ComboboxContent));
         if (this.$content) this.$content.$empty = this;
         return this;
     }

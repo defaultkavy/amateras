@@ -1,6 +1,6 @@
 import './global';
 import { If } from "#structure/If";
-import { _instanceof, _null, isArray, isIncluded } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { Signal, type SignalObject } from '@amateras/signal';
 import { ElseIf } from '#structure/ElseIf';
 import { Else } from '#structure/Else';
@@ -42,20 +42,20 @@ $.process.craft.add((value, arg1, arg2) => {
 
     // if condition is null, mean this is not a condition statement code
     // or Else/ElseIf not in right place
-    if (!_instanceof(condition, Condition)) {
-        if (isIncluded(value, [Else, ElseIf])) throw 'ElseIf/Else must be after If or ElseIf';
+    if (!Utils.isInstanceof(condition, Condition)) {
+        if (Utils.isIncluded(value, [Else, ElseIf])) throw 'ElseIf/Else must be after If or ElseIf';
         return;
     }
 
     // handle If/Else/ElseIf constructor
     // add them into condition child statements
-    if (isIncluded(value, [If, Else, ElseIf])) {
-        let args: [Signal | Signal[] | null, () => void] = (_instanceof(arg1, Signal) || isArray(arg1)) ? [arg1, arg2] : [_null, arg1];
+    if (Utils.isIncluded(value, [If, Else, ElseIf])) {
+        let args: [Signal | Signal[] | null, () => void] = (Utils.isInstanceof(arg1, Signal) || Utils.isArray(arg1)) ? [arg1, arg2] : [Utils.Null, arg1];
         let statement = new value(...args);
         condition.append(statement);
     }
     else {
-        condition = _null;
+        condition = Utils.Null;
         return;
     }
     return condition;

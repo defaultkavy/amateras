@@ -1,4 +1,4 @@
-import { _Array_from, _Object_assign, forEach } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { $IDB } from "./$IDB";
 import { $IDBStore, type $IDBStoreConfig } from "./$IDBStore";
 
@@ -14,8 +14,8 @@ export class $IDBTransaction<Config extends $IDBTransactionConfig = any> {
         this.#$idb = $idb;
         this.writable = transaction.mode !== 'readonly';
         this.durability = transaction.durability;
-        forEach(_Array_from(transaction.objectStoreNames), name => {
-            _Object_assign(this.stores, { [name]: $idb.stores[name] })
+        Utils.forEach(Utils.arrayFrom(transaction.objectStoreNames), name => {
+            Utils.assign(this.stores, { [name]: $idb.stores[name] })
         })
     }
 

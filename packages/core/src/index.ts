@@ -1,5 +1,5 @@
 import { onclient, onserver } from '#env';
-import { _instanceof, _null, forEach, isArray, isFunction, isString, isUndefined, toArray } from '@amateras/utils';
+import { Utils } from '@amateras/utils';
 import './global';
 import { ElementProto, type ElementProtoConstructor } from './structure/ElementProto';
 import { Proto, type ProtoConstructor } from './structure/Proto';
@@ -16,7 +16,7 @@ function createProto(insert: boolean, ...args: any) {
     }
     for (let process of $.process.craft) {
         let result = process(...args);
-        if (!isUndefined(result)) {
+        if (!Utils.isUndefined(result)) {
             addProtoToParent(result);
             return result;
         }
@@ -24,40 +24,40 @@ function createProto(insert: boolean, ...args: any) {
     const [arg1, arg2, arg3] = args;
 
     // Proto
-    if (_instanceof(arg1, Proto)) {
+    if (Utils.isInstanceof(arg1, Proto)) {
         addProtoToParent(arg1);
         return arg1;
     }
 
     // Element Proto
-    if (isString(arg1)) {
-        let args: [any, any] = isFunction(arg2) ? [,arg2] : [arg2, arg3];
+    if (Utils.isString(arg1)) {
+        let args: [any, any] = Utils.isFunction(arg2) ? [,arg2] : [arg2, arg3];
         let eleProto = new ElementProto(arg1, ...args);
         addProtoToParent(eleProto);
         return eleProto;
     }
     
     // Function Handler
-    if (isFunction(arg1)) {
+    if (Utils.isFunction(arg1)) {
         let args = arg2 ? [arg2, arg3] : [arg3];
-        if (_instanceof(arg1.prototype, ElementProto)) {
-            args = isFunction(arg2) ? [{}, arg2] : [arg2, arg3];
+        if (Utils.isInstanceof(arg1.prototype, ElementProto)) {
+            args = Utils.isFunction(arg2) ? [{}, arg2] : [arg2, arg3];
         }
         // Constructor Handler
         let target = new arg1(...args);
-        if (_instanceof(target, Proto)) {
+        if (Utils.isInstanceof(target, Proto)) {
             addProtoToParent(target);
             return target;
         }
     }
 
-    if (isArray(arg1)) {
+    if (Utils.isArray(arg1)) {
         let valueBuilder = (value: any) => {
             for (let process of $.process.text) {
                 let proto = process(value);
-                if (!isUndefined(proto)) return addProtoToParent(proto);
+                if (!Utils.isUndefined(proto)) return addProtoToParent(proto);
             }
-            let valueTextProto = isUndefined(value) ? _null : new TextProto(`${value}`);
+            let valueTextProto = Utils.isUndefined(value) ? Utils.Null : new TextProto(`${value}`);
             if (valueTextProto) addProtoToParent(valueTextProto);
         }
 
@@ -65,13 +65,13 @@ function createProto(insert: boolean, ...args: any) {
 
         // Variables Array Handler
         if (!arg1.raw) {
-            forEach(arg1, arg => valueBuilder(arg))
+            Utils.forEach(arg1, arg => valueBuilder(arg))
         }
         
         // Template String Array Handler
         else {
-            forEach(arg1 as string[], (str, index) => {
-                let strTextProto = str.length ? new TextProto(str) : _null;
+            Utils.forEach(arg1 as string[], (str, index) => {
+                let strTextProto = str.length ? new TextProto(str) : Utils.Null;
                 let value = values[index];
                 if (strTextProto) addProtoToParent(strTextProto);
                 valueBuilder(value)
@@ -245,16 +245,16 @@ export namespace $ {
 
     export const async = <T>(fn: (parent: Proto | null) => Promise<T>): Promise<T> => Proto.proto?.global.asyncTask(fn(Proto.proto)) ?? fn(Proto.proto);
 
-    export const stylesheet = onclient() ? new CSSStyleSheet() : _null;
+    export const stylesheet = onclient() ? new CSSStyleSheet() : Utils.Null;
     export const styleMap = new Map<Constructor<ElementProto>, Set<string>>();
     export const style = (proto: Constructor<ElementProto<any>> | null, css: string | string[]) => {
-        let rules = toArray(css)
+        let rules = Utils.toArray(css)
         if (proto) {
             let set = styleMap.get(proto) ?? new Set();
-            forEach(rules, rule => set.add(rule));
+            Utils.forEach(rules, rule => set.add(rule));
             styleMap.set(proto, set);
         }
-        if (stylesheet) forEach(rules, rule => stylesheet!.insertRule(rule));
+        if (stylesheet) Utils.forEach(rules, rule => stylesheet!.insertRule(rule));
     }
     
     if (stylesheet) document.adoptedStyleSheets.push(stylesheet);

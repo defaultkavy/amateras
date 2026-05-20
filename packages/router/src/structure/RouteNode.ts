@@ -1,5 +1,5 @@
 import { onclient, Proto, symbol_ProtoType } from "@amateras/core";
-import { _null, isArray } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { WidgetConstructor } from "@amateras/widget";
 import type { AsyncWidget, PageLayout } from "../types";
 import { Page } from "./Page";
@@ -8,7 +8,7 @@ import type { RouteSlot } from "./RouteSlot";
 
 export class RouteNode extends Route {
     pages = new Map<string, Page>();
-    page: Page | null = _null;
+    page: Page | null = Utils.Null;
     #layout: WidgetConstructor | PageLayout | AsyncWidget;
     constructor(path: string, layout: WidgetConstructor | PageLayout | AsyncWidget) {
         super(path);
@@ -35,7 +35,7 @@ export class RouteNode extends Route {
         if (!page) {
             let layout = this.#layout;
             let _layout;
-            if (isArray(layout)) {
+            if (Utils.isArray(layout)) {
                 let promise = layout[0]()
                 if (onclient()) promise.catch(() => location.reload());
                 let widget = await promise.then(mod => mod.default);

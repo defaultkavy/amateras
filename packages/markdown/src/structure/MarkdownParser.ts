@@ -1,4 +1,4 @@
-import { forEach, isString } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { type Token } from "./MarkdownLexer";
 
 export class MarkdownParser {
@@ -13,7 +13,7 @@ export class MarkdownParser {
             const processor = this.processors.get(token.type);
             if (processor) {
                 const result = processor(token, tokens.slice(i));
-                if (isString(result)) {
+                if (Utils.isString(result)) {
                     html += result;
                 } else {
                     html += result.html;
@@ -26,7 +26,7 @@ export class MarkdownParser {
     }
 
     use(...handle: ((parser: this) => void)[]) {
-        forEach(handle, fn => fn(this));
+        Utils.forEach(handle, fn => fn(this));
         return this;
     }
 }

@@ -1,7 +1,7 @@
 import { resolveMeta } from "#lib/resolveMeta";
 import { onclient, onserver } from "@amateras/core";
 import { Proto } from "@amateras/core";
-import { _Object_assign, _Object_entries, isNull, isObject } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { MetaConfig } from "./types";
 
 declare global {
@@ -21,7 +21,7 @@ declare module '@amateras/core' {
     }
 }
 
-_Object_assign($, {
+Utils.assign($, {
     meta(config: MetaConfig, parent = Proto.proto) {
         if (onclient()) return;
         if (!parent) return;
@@ -30,8 +30,8 @@ _Object_assign($, {
 })
 
 function deepMerge(target: Record<any, any>, source: Record<any, any>) {
-    for (const [key, value] of _Object_entries(source)) {
-        if (!isNull(value) && isObject(value)) {
+    for (const [key, value] of Utils.entries(source)) {
+        if (!Utils.isNull(value) && Utils.isObject(value)) {
             if (!target[key]) target[key] = value;
             else deepMerge(target[key], value);
         }
@@ -41,7 +41,7 @@ function deepMerge(target: Record<any, any>, source: Record<any, any>) {
 }
 
 if (onserver()) {
-    _Object_assign($.meta, {
+    Utils.assign($.meta, {
         resolve: resolveMeta
     })
 }

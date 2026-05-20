@@ -1,6 +1,6 @@
 import { symbol_Statement } from "@amateras/core";
 import { Proto } from "@amateras/core";
-import { isArray } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export type CaseLayout = () => void;
 
@@ -10,6 +10,6 @@ export class Case extends Proto {
     condition: any[]
     constructor(condition: any, layout: CaseLayout) {
         super(layout);
-        this.condition = isArray(condition) ? condition : [condition];
+        this.condition = Utils.isArray(condition) ? condition : [condition];
     }
 }

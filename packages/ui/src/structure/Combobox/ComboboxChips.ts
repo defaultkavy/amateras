@@ -1,16 +1,16 @@
 import { toUICSS } from "#lib/toCSS";
 import { Icon } from "#structure/Icon";
 import { ElementProto, ProxyProto } from "@amateras/core";
-import { _null, _instanceof, isUndefined, forEach, map, isEqual } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { x_svg } from "../../icon/x.svg";
 import { Combobox } from "./Combobox";
 import type { ComboboxItemProps } from "./ComboboxList";
 
 export class ComboboxChips extends ProxyProto {
-    $combobox: Combobox | null = _null;
+    $combobox: Combobox | null = Utils.Null;
     chipMap = new Map<any, ComboboxChip>();
-    $focusedChip: ComboboxChip | null = _null;
-    $draggedChip: ComboboxChip | null = _null;
+    $focusedChip: ComboboxChip | null = Utils.Null;
+    $draggedChip: ComboboxChip | null = Utils.Null;
     declare __child__: ComboboxChip;
     #dragValues: any[] = [];
     #cacheValues: any[] = [];
@@ -21,17 +21,17 @@ export class ComboboxChips extends ProxyProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$combobox = this.findAbove<Combobox>(proto => _instanceof(proto, Combobox));
+        this.$combobox = this.findAbove<Combobox>(proto => Utils.isInstanceof(proto, Combobox));
         if (this.$combobox) this.$combobox.$chips = this;
         return this;
     }
 
     override toDOM(): Node[] {
         const values = this.$combobox?.values() ?? [];
-        if (!isEqual(values, this.#cacheValues)) {
+        if (!Utils.isEqual(values, this.#cacheValues)) {
             this.#cacheValues = [...values];
-            forEach(this.children, $chip => $chip.removeNode())
-            this.#cacheChipNodes = map(this.$combobox?.values(), value => {
+            Utils.forEach(this.children, $chip => $chip.removeNode())
+            this.#cacheChipNodes = Utils.map(this.$combobox?.values(), value => {
                 const $chip = this.chipMap.get(value);
                 if (!$chip) return [];
                 if (!$chip.builded) $chip.build();
@@ -60,7 +60,7 @@ export class ComboboxChips extends ProxyProto {
     dragover(e: MouseEvent) {
         if (!this.$draggedChip?.node) return;
         if (!this.$combobox) return;
-        const $chips = map(this.#cacheValues, value => this.chipMap.get(value)!);
+        const $chips = Utils.map(this.#cacheValues, value => this.chipMap.get(value)!);
         const $closest = $chips.reduce((closest, proto) => {
             const rect = proto.node!.getBoundingClientRect();
             const distanceX = e.x - rect.left - rect.width / 2;
@@ -103,8 +103,8 @@ export class ComboboxChips extends ProxyProto {
     override mutate(): void {
         super.mutate();
         this.chipMap.clear();
-        forEach(this.children, proto => {
-            if (_instanceof(proto, ComboboxChip)) {
+        Utils.forEach(this.children, proto => {
+            if (Utils.isInstanceof(proto, ComboboxChip)) {
                 this.chipMap.set(proto.value(), proto)
             }
         })
@@ -119,7 +119,7 @@ export interface ComboboxChipProps {
 
 export class ComboboxChip extends ElementProto {
     static tagname = 'combobox-chip';
-    $chips: ComboboxChips | null = _null;
+    $chips: ComboboxChips | null = Utils.Null;
     #value: any;
     constructor(props: $.Props<ComboboxChipProps>, layout?: $.Layout<ComboboxChip>) {
         super('combobox-chip', {draggable: true, ...props}, layout);
@@ -171,7 +171,7 @@ export class ComboboxChip extends ElementProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$chips = this.findAbove<ComboboxChips>(proto => _instanceof(proto, ComboboxChips));
+        this.$chips = this.findAbove<ComboboxChips>(proto => Utils.isInstanceof(proto, ComboboxChips));
         this.$chips?.chipMap.set(this.value(), this);
         return this;
     }
@@ -185,7 +185,7 @@ export class ComboboxChip extends ElementProto {
     value(val?: OrSignal<any>): void;
     value(val?: OrSignal<any>) {
         if (!arguments.length) return this.#value;
-        if (isUndefined(val)) return;
+        if (Utils.isUndefined(val)) return;
         $.resolve(val, val => {
             this.$chips?.chipMap.delete(val);
             this.$chips?.chipMap.set(val, this);
@@ -203,14 +203,14 @@ export class ComboboxChip extends ElementProto {
     }
 
     blur() {
-        this.attr('focus', _null)
-        if (this.$chips) this.$chips.$focusedChip = _null;
+        this.attr('focus', Utils.Null)
+        if (this.$chips) this.$chips.$focusedChip = Utils.Null;
     }
 }
 
 export class ComboboxChipRemoveButton extends ElementProto<HTMLButtonElement> {
     static tagname = 'button';
-    $chip: ComboboxChip | null = _null;
+    $chip: ComboboxChip | null = Utils.Null;
     constructor(props: $.Props<{}, HTMLButtonElement>, layout?: $.Layout<ComboboxChipRemoveButton>) {
         super('button', {ui: 'combobox-chip-remove', tabindex: '-1', ...props}, () => {
             if (layout) layout(this);
@@ -224,7 +224,7 @@ export class ComboboxChipRemoveButton extends ElementProto<HTMLButtonElement> {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$chip = this.findAbove<ComboboxChip>(proto => _instanceof(proto, ComboboxChip));
+        this.$chip = this.findAbove<ComboboxChip>(proto => Utils.isInstanceof(proto, ComboboxChip));
         return this;
     }
 }

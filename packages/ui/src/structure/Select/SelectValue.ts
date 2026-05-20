@@ -1,6 +1,6 @@
 import { ElementProto, Proto, TextProto } from "@amateras/core";
 import { Select } from "./Select";
-import { _instanceof, _null, isString } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export interface SelectValuerProps {
     placeholder?: OrSignal<string | null> | Proto;
@@ -8,8 +8,8 @@ export interface SelectValuerProps {
 
 export class SelectValue extends ElementProto {
     static tagname = 'select-value';
-    $select: Select | null = _null;
-    $placeholder: Proto | null = _null;
+    $select: Select | null = Utils.Null;
+    $placeholder: Proto | null = Utils.Null;
     $text: TextProto = new TextProto('');
     constructor(props: $.Props<SelectValuerProps>, layout?: $.Layout<Select>) {
         super(SelectValue.tagname, props, layout);
@@ -17,26 +17,26 @@ export class SelectValue extends ElementProto {
 
     override props({ placeholder, ...props }: $.Props<SelectValuerProps>): void {
         super.props(props);
-        this.placeholder(placeholder ?? _null);
+        this.placeholder(placeholder ?? Utils.Null);
     }
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$select = this.findAbove<Select>(proto => _instanceof(proto, Select));
+        this.$select = this.findAbove<Select>(proto => Utils.isInstanceof(proto, Select));
         if (this.$select) this.$select.$value = this;
         return this;
     }
 
     placeholder(text: OrSignal<string | null> | Proto) {
         $.resolve(text, text => {
-            if (isString(text)) $.context(Proto, this, () => this.$placeholder = new TextProto(text));
+            if (Utils.isString(text)) $.context(Proto, this, () => this.$placeholder = new TextProto(text));
             else this.$placeholder = text;
             this.render();
         });
     }
 
     render() {
-        let $content: Proto | TextProto | null = _null;
+        let $content: Proto | TextProto | null = Utils.Null;
         if (this.$select?.selected) {
             $content = this.$text;
             this.$text.content = this.$select.selected.text;

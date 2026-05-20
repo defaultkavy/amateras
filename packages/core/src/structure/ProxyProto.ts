@@ -1,5 +1,5 @@
 import { onclient } from "#env";
-import { forEach } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { NodeProto } from "./NodeProto";
 
 export class ProxyProto extends NodeProto<Text> {
@@ -15,6 +15,6 @@ export class ProxyProto extends NodeProto<Text> {
 
     override removeNode(): void {
         super.removeNode();
-        forEach(this.protos, proto => proto.removeNode())
+        Utils.forEach(this.protos, proto => proto.removeNode())
     }
 }

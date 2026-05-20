@@ -1,9 +1,9 @@
 import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient } from "@amateras/core";
-import { _null } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export class Toast extends ElementProto {
-    static $container: null | ToastContainer = _null;
+    static $container: null | ToastContainer = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<Toast>) {
         super('toast', props, layout);
     }

@@ -1,0 +1,1 @@
+export const remove = <T, V>(arr: Array<T>, ...values: V[]): Array<Exclude<T, V>> => arr.filter(item => !values.includes(item as any)) as any;

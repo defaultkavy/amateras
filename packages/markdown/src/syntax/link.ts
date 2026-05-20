@@ -2,12 +2,12 @@ import { LINK, QUICK_LINK } from "#lib/type";
 import { setInlineTokenizer, setProcessor } from "#lib/util";
 import type { MarkdownLexer, Token } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
-import { isUndefined } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export const linkProcessor = (parser: MarkdownParser) => {
     const linkProcessor = (token: Token) => {
         const {href, email, title} = token.data!;
-        return `<a href="${isUndefined(href) ? `mailto:${email}` : href}"${title ? ` title="${title}"` : ''}>${token.text ?? parser.parse(token.content!)}</a>`
+        return `<a href="${Utils.isUndefined(href) ? `mailto:${email}` : href}"${title ? ` title="${title}"` : ''}>${token.text ?? parser.parse(token.content!)}</a>`
     }
     setProcessor(parser, QUICK_LINK, linkProcessor)
     setProcessor(parser, LINK, linkProcessor)

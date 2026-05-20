@@ -1,4 +1,4 @@
-import { randomId, type RandomIdOptions } from "#lib/utils";
+import { randstr, type RandomIdOptions } from "#lib/randstr";
 import type { Proto } from "@amateras/core";
 
 export class UID {
@@ -6,7 +6,7 @@ export class UID {
 
     static generate(key: string, options?: RandomIdOptions): string {
         const set = UID.map.get(key) ?? new Set();
-        const id = randomId(options);
+        const id = randstr(options);
         if (set.has(id)) return UID.generate(key);
         return id;
     }

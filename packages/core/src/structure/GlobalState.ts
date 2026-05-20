@@ -1,4 +1,4 @@
-import { _null, _Object_assign, forEach } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { Proto } from "./Proto";
 
 export type GlobalStateInitial = (global: GlobalState) => object | void;
@@ -9,9 +9,9 @@ export class GlobalState {
     root: Proto;
     static initials = new Set<GlobalStateInitial>();
     constructor(root: Proto) {
-        forEach(GlobalState.initials, initial => {
+        Utils.forEach(GlobalState.initials, initial => {
             const obj = initial(this);
-            if (obj) _Object_assign(this, obj);
+            if (obj) Utils.assign(this, obj);
         })
         this.root = root;
         root.listen('dispose', () => this.dispose());
@@ -19,8 +19,8 @@ export class GlobalState {
     
     dispose() {
         this.promises.clear();
-        this.root = _null as any;
-        forEach(GlobalState.disposers, disposer => disposer(this));
+        this.root = Utils.Null as any;
+        Utils.forEach(GlobalState.disposers, disposer => disposer(this));
     }
 
     static assign(initial: GlobalStateInitial) {

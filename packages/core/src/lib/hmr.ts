@@ -3,7 +3,7 @@ import { NodeProto } from "#structure/NodeProto";
 import { Proto } from "#structure/Proto";
 import { ProxyProto } from "#structure/ProxyProto";
 import { TextProto } from "#structure/TextProto";
-import { _Array_from, _instanceof, _Object_entries, _undefined, forEach, is } from "@amateras/utils";
+import { Utils } from "@amateras/utils";
 import { symbol_ProtoType } from "./symbols";
 
 const elementProtoMap = (() => {
@@ -46,7 +46,7 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
         // None node Proto type
         if (prevSibling) {
             if (prevSibling.nextSibling)
-                forEach(newProto.toDOM(), newNode => parentElement.insertBefore(newNode,prevSibling.nextSibling))
+                Utils.forEach(newProto.toDOM(), newNode => parentElement.insertBefore(newNode,prevSibling.nextSibling))
             else parentElement.append(...newProto.toDOM())
         }
         else {
@@ -55,7 +55,7 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
     }
 
     function transferNode() {
-        if (!_instanceof(oldProto, NodeProto) || !_instanceof(newProto, NodeProto)) return;
+        if (!Utils.isInstanceof(oldProto, NodeProto) || !Utils.isInstanceof(newProto, NodeProto)) return;
         newProto.node = oldProto.node;
         oldProto.dispose();
         // if (newProto.modifiers) forEach(newProto.modifiers, mod => {
@@ -71,8 +71,8 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
     //@ts-ignore
     if (oldProto.constructor[symbol_ProtoType] !== 'Widget' || newProto.constructor[symbol_ProtoType] !== 'Widget') 
     if (oldProto.constructor !== newProto.constructor) {
-        if (_instanceof(oldProto, NodeProto)) {
-            forEach(newProto.toDOM(), newNode => oldProto.node?.parentNode?.insertBefore(newNode, oldProto.node));
+        if (Utils.isInstanceof(oldProto, NodeProto)) {
+            Utils.forEach(newProto.toDOM(), newNode => oldProto.node?.parentNode?.insertBefore(newNode, oldProto.node));
             oldProto.removeNode();
             oldProto.dispose();
             return;
@@ -82,26 +82,26 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
         return;
     }
     
-    if (_instanceof(oldProto, ProxyProto)) {
+    if (Utils.isInstanceof(oldProto, ProxyProto)) {
         oldProto.node?.replaceWith(...newProto.toDOM());
         oldProto.removeNode();
         return;
     }
-    if (_instanceof(oldProto, TextProto) && _instanceof(newProto, TextProto)) {
+    if (Utils.isInstanceof(oldProto, TextProto) && Utils.isInstanceof(newProto, TextProto)) {
         if (oldProto.content !== newProto.content) {
             oldProto.node!.textContent = newProto.content;
         }
         transferNode();
         return;
     }
-    if (_instanceof(oldProto, ElementProto) && _instanceof(newProto, ElementProto)) {
+    if (Utils.isInstanceof(oldProto, ElementProto) && Utils.isInstanceof(newProto, ElementProto)) {
         if (!oldProto.node) return processNoneNodeProto();
         if (oldProto.tagname !== newProto.tagname) {
             oldProto.node?.replaceWith(...newProto.toDOM());
             return;
         };
-        let newAttrList = _Array_from(_Object_entries(newProto.attr()));
-        let nodeAttrList = _Array_from(oldProto.node.attributes);
+        let newAttrList = Utils.arrayFrom(Utils.entries(newProto.attr()));
+        let nodeAttrList = Utils.arrayFrom(oldProto.node.attributes);
         let length = Math.max(newAttrList.length, nodeAttrList.length);
         for (let i = 0; i < length; i++) {
             let newAttr = newAttrList[i];
@@ -125,10 +125,10 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
         transferNode();
     }
 
-    const oldProtoList = _Array_from(oldProto.protos);
-    const newProtoList = _Array_from(newProto.protos);
+    const oldProtoList = Utils.arrayFrom(oldProto.protos);
+    const newProtoList = Utils.arrayFrom(newProto.protos);
     let length = Math.max(oldProto.protos.length, newProto.protos.length);
-    let prevNode: Node | undefined = is(oldProto, ProxyProto)?.node ?? _undefined;
+    let prevNode: Node | undefined = Utils.is(oldProto, ProxyProto)?.node ?? Utils.Undefined;
     for (let i = 0; i < length; i++) {
         const oldChildProto = oldProtoList[i];
         const newChildProto = newProtoList[i];
@@ -136,10 +136,10 @@ function diff(parentElement: HTMLElement, newProto: Proto, oldProto?: Proto, pre
             if (oldChildProto) oldChildProto.removeNode();
             continue;
         };
-        const parent = is(oldProto, ElementProto)?.node ?? parentElement;
+        const parent = Utils.is(oldProto, ElementProto)?.node ?? parentElement;
         diff(parent, newChildProto, oldChildProto, prevNode);
         // set current child proto to be prev proto;
-        if (_instanceof(newChildProto, NodeProto)) {
+        if (Utils.isInstanceof(newChildProto, NodeProto)) {
             // current proto node should not be undefined
             if (!newChildProto.node) throw 'diff:newChildProto.node==undefined';
             prevNode = newChildProto.node;

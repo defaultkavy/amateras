@@ -1,4 +1,4 @@
-import { _Array_from, _null, _Object_assign, _Object_fromEntries, _Promise, isBoolean } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { $IDBStore, type $IDBStoreConfig } from "./$IDBStore";
 import { $IDBTransaction } from "./$IDBTransaction";
 
@@ -17,7 +17,7 @@ export class $IDB<Config extends $IDBConfig = any> {
         this.idb = idb;
         this.name = idb.name;
         this.version = idb.version;
-        _Object_assign(this, config);
+        Utils.assign(this, config);
     }
 
     /**
@@ -30,7 +30,7 @@ export class $IDB<Config extends $IDBConfig = any> {
     async store<K extends keyof Config['stores'] & string, T>(name: K, handle: (store: $IDBStore<Config['stores'][K]>) => T): Promise<T>
     async store<K extends keyof Config['stores'] & string, T>(name: K, writable: boolean, handle: (store: $IDBStore<Config['stores'][K]>) => T): Promise<T>
     async store<K extends keyof Config['stores'] & string, T>(name: K, resolver: boolean | Function, handle?: Function) {
-        if (isBoolean(resolver)) return this.transaction(name, resolver, $tx => handle!($tx.store(name)));
+        if (Utils.isBoolean(resolver)) return this.transaction(name, resolver, $tx => handle!($tx.store(name)));
         else return this.transaction(name, $tx => resolver($tx.store(name)))
     }
 
@@ -44,12 +44,12 @@ export class $IDB<Config extends $IDBConfig = any> {
     async transaction<K extends keyof Config['stores'] & string, T>(store: K | K[], handle: (transaction: $IDBTransaction<{ stores: Pick<Config['stores'], K> }>) => T): Promise<T>
     async transaction<K extends keyof Config['stores'] & string, T>(store: K | K[], writable: boolean, handle: (transaction: $IDBTransaction<{ stores: Pick<Config['stores'], K> }>) => T): Promise<T>
     async transaction<K extends keyof Config['stores'] & string, T>(store: K | K[], resolver?: boolean | Function, handle?: Function) {
-        handle = isBoolean(resolver) ? handle : resolver;
-        resolver = isBoolean(resolver) ? resolver : false;
+        handle = Utils.isBoolean(resolver) ? handle : resolver;
+        resolver = Utils.isBoolean(resolver) ? resolver : false;
         const tx = this.idb.transaction(store, resolver ? 'readwrite' : 'readonly');
         const $tx = new $IDBTransaction(this, tx);
         const result = handle!($tx);
-        return new _Promise<T>((resolve, reject) => {
+        return new Promise<T>((resolve, reject) => {
             tx.oncomplete = _ => resolve(result);
             tx.onerror = tx.onabort = _ => tx.error && reject(tx.error);
         })

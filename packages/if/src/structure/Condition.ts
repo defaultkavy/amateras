@@ -1,12 +1,12 @@
 import { symbol_Statement } from "@amateras/core";
 import { ProxyProto } from "@amateras/core";
-import { _null, forEach } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { ConditionStatement } from "./ConditionStatement";
 
 export class Condition extends ProxyProto {
     static override [symbol_Statement] = true;
     declare layout: null;
-    statement: ConditionStatement | null = _null;
+    statement: ConditionStatement | null = Utils.Null;
     override virtual = true;
 
     override build() {
@@ -19,15 +19,15 @@ export class Condition extends ProxyProto {
             let matchProto = this.validate();
             if (!matchProto?.builded) matchProto?.build();
             if (this.statement === matchProto) return;
-            this.statement = matchProto ?? _null;
-            forEach(this.protos, proto => !proto.visible && proto.removeNode());
+            this.statement = matchProto ?? Utils.Null;
+            Utils.forEach(this.protos, proto => !proto.visible && proto.removeNode());
             this.node?.replaceWith(...this.toDOM());
             this.parent?.mutate();
             this.parent?.dispatch('mutate', [], {bubbles: true});
         }
         // build statements proto and subscribe expression signal
-        forEach(this.protos, proto => {
-            forEach(proto.exps, exp$ => {
+        Utils.forEach(this.protos, proto => {
+            Utils.forEach(proto.exps, exp$ => {
                 exp$?.subscribe(update);
                 proto.listen('dispose', () => {
                     exp$?.unsubscribe(update)
@@ -43,7 +43,7 @@ export class Condition extends ProxyProto {
 
     override dispose(): void {
         super.dispose();
-        this.statement = _null;
+        this.statement = Utils.Null;
     }
 
     override mutate(): void {
@@ -52,7 +52,7 @@ export class Condition extends ProxyProto {
     }
 
     validate() {
-        forEach(this.protos, proto => proto.visible = false);
+        Utils.forEach(this.protos, proto => proto.visible = false);
         for (let proto of this.protos) {
             if (proto.validate()) {
                 proto.visible = true;

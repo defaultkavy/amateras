@@ -1,7 +1,7 @@
 import { computeCleanup, track, trackSet, untrack, type UntrackFunction } from "#lib/track";
 import { Signal } from "#structure/Signal";
 import { GlobalState, Proto, ProxyProto, TextProto } from "@amateras/core";
-import { _instanceof, _Object_assign, forEach, _null, isString, _undefined, isBoolean, isNumber } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 declare global {
     export namespace $ {
@@ -47,11 +47,11 @@ GlobalState.assign(() => ({
 }))
 
 GlobalState.disposers.add(global => {
-    forEach(global.signals, signal => signal.dispose());
+    Utils.forEach(global.signals, signal => signal.dispose());
     global.signals.clear();
 })
 
-_Object_assign($, {
+Utils.assign($, {
     signal: (value: any) => new Signal(value),
 
     effect(
@@ -61,8 +61,8 @@ _Object_assign($, {
         signals: Signal[] = []
     ) {
         track(callback);
-        forEach(signals, signal => trackSet.add(signal));
-        forEach(trackSet, signal => signal.subscribe(_ => callback(untrack)));
+        Utils.forEach(signals, signal => trackSet.add(signal));
+        Utils.forEach(trackSet, signal => signal.subscribe(_ => callback(untrack)));
         trackSet.clear();
     },
     
@@ -79,7 +79,7 @@ _Object_assign($, {
                 compute.set(callback(untrack));
             })
         }
-        forEach(trackSet, signal => {
+        Utils.forEach(trackSet, signal => {
             signal.computes = signal.computes ?? new Set();
             let ref = new WeakRef(compute);
             signal.computes.add(ref);
@@ -91,11 +91,11 @@ _Object_assign($, {
 
     optional<T>(signal: Signal<T | undefined | null>): Signal<Exclude<T, null | undefined>> | null {
         if (signal.value) return signal as any;
-        else return _null
+        else return Utils.Null
     },
 
     resolve: (value: OrSignal, handle?: (value: any) => void) => {
-        if (_instanceof(value, Signal<any>)) {
+        if (Utils.isInstanceof(value, Signal<any>)) {
             if (handle) {
                 value.subscribe(handle);
                 handle(value.value);
@@ -108,19 +108,19 @@ _Object_assign($, {
 })
 
 let toProxyProto = (signal: Signal) => {
-    if (_instanceof(signal, Signal)) {
+    if (Utils.isInstanceof(signal, Signal)) {
         let proxy = new ProxyProto();
-        let $text: undefined | TextProto = _undefined;
+        let $text: undefined | TextProto = Utils.Undefined;
         let fn = (value: any) => {
             // improve text content update performance
-            if (isString(value) || isBoolean(value) || isNumber(value)) {
+            if (Utils.isString(value) || Utils.isBoolean(value) || Utils.isNumber(value)) {
                 if ($text) $text.content = `${value}`;
                 else proxy.layout = () => $text = $([ value ]).at(0) as TextProto;
                 if (!proxy.builded) proxy.build();
             } else {
-                $text = _undefined;
+                $text = Utils.Undefined;
                 proxy.layout = () => $([ value ]);
-                forEach(proxy.protos, proto => proto.removeNode())
+                Utils.forEach(proxy.protos, proto => proto.removeNode())
                 // clean children nodes and dispose
                 proxy.clear(true);
                 if (proxy.builded) proxy.build();
@@ -137,7 +137,7 @@ let toProxyProto = (signal: Signal) => {
 $.process.text.add(toProxyProto)
 $.process.craft.add(toProxyProto)
 $.process.attr.add((name, signal, proto) => {
-    if (_instanceof(signal, Signal)) {
+    if (Utils.isInstanceof(signal, Signal)) {
         let setNodeAttr = () => proto.attr(name, signal.value as any);
         signal.subscribe(setNodeAttr);
         setNodeAttr();

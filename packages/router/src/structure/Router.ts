@@ -1,6 +1,6 @@
 import { onclient } from "@amateras/core";
 import { Proto } from "@amateras/core";
-import { _JSON_parse, _JSON_stringify, _null, _Object_entries, forEach, map, toURL } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { Widget } from "@amateras/widget";
 import type { AsyncWidget, PageLayout, PathToParamsMap, RoutePath, ValidatePath } from "../types";
 import type { Route } from "./Route";
@@ -13,9 +13,9 @@ let index = 0;
 const [PUSH, REPLACE] = [1, 2] as const;
 const [FORWARD, BACK] = ['forward', 'back'] as const;
 const SCROLL_KEY = '__scroll_history__';
-const storage = onclient() ? sessionStorage : _null;
-const _addEventListener = onclient() ? window.addEventListener : _null;
-const _removeEventListener = onclient() ? window.removeEventListener : _null;
+const storage = onclient() ? sessionStorage : Utils.Null;
+const _addEventListener = onclient() ? window.addEventListener : Utils.Null;
+const _removeEventListener = onclient() ? window.removeEventListener : Utils.Null;
 if (onclient()) history.scrollRestoration = 'manual';
 
 type ScrollData = {[key: number]: { [id: string]: { x: number, y: number }}};
@@ -29,15 +29,15 @@ const scrollRecord = (e?: Event) => {
         }
         else if (element.id !== '') data[index] = { [element.id]: { x: element.scrollLeft, y: element.scrollTop } };
     } else {
-        forEach(_Object_entries(data), ([i]) => +i >= index && delete data[+i]);
+        Utils.forEach(Utils.entries(data), ([i]) => +i >= index && delete data[+i]);
     }
-    storage?.setItem(SCROLL_KEY, _JSON_stringify(data));
+    storage?.setItem(SCROLL_KEY, Utils.stringify(data));
 }
 
 export class Router extends Proto {
     static direction: RouterDicrection = FORWARD;
-    prev: URL | null = _null;
-    url: URL | null = _null;
+    prev: URL | null = Utils.Null;
+    url: URL | null = Utils.Null;
     routes = new Map<string, Route>();
     slot = new RouteSlot();
     static routers = new Set<Router>();
@@ -58,7 +58,7 @@ export class Router extends Proto {
                 if (index < stateIndex) Router.direction = FORWARD;
                 index = stateIndex;
                 this.prev = this.href;
-                this.href = toURL(location.href);
+                this.href = Utils.toURL(location.href);
                 this.resolve(location.href);
             }
             resolve();
@@ -79,7 +79,7 @@ export class Router extends Proto {
 
     async resolve(path: string | URL) {
         if (!path) return;
-        let url = toURL(path);
+        let url = Utils.toURL(path);
         this.global.router.scrollQueue.clear();
         for (let [,route] of this.routes) {
             let routes = await route.resolve(url.pathname, this.slot, {});
@@ -89,9 +89,9 @@ export class Router extends Proto {
                 this.global.router.routes = routes;
                 let parentPaths: string[] = [''];
                 let paths: string[] = [];
-                forEach(routes, route => {
-                    parentPaths = map(route.validPaths, validPath => 
-                        map(parentPaths, path => path + validPath)
+                Utils.forEach(routes, route => {
+                    parentPaths = Utils.map(route.validPaths, validPath => 
+                        Utils.map(parentPaths, path => path + validPath)
                     ).flat()
                     paths.push(...parentPaths);
                     return parentPaths
@@ -102,7 +102,7 @@ export class Router extends Proto {
         }
         this.url = url;
         // NavLink 检测匹配
-        forEach(this.global.router.navlinks, navlink => navlink.checkActive())
+        Utils.forEach(this.global.router.navlinks, navlink => navlink.checkActive())
         // location 变更事件触发
         Router.dispatchEvent();
         // restore scroll position
@@ -113,7 +113,7 @@ export class Router extends Proto {
     }
 
     static open(path: string, target: string = '_self') {
-        if (toURL(path).origin !== origin) open(path, target);
+        if (Utils.toURL(path).origin !== origin) open(path, target);
         else Router.writeState(path, PUSH, target);
     }
 
@@ -134,15 +134,15 @@ export class Router extends Proto {
     }
 
     static get scrollHistory(): ScrollData {
-        return _JSON_parse(storage?.getItem(SCROLL_KEY) ?? '{}')
+        return Utils.json(storage?.getItem(SCROLL_KEY) ?? '{}')
     }
 
     static scrollRestoration() {
         if (onclient()) {
             let scrollData = Router.scrollData ?? {x: 0, y: 0};
-            let scrollDataElements = _Object_entries(scrollData);
+            let scrollDataElements = Utils.entries(scrollData);
             if (scrollDataElements.length)
-                forEach(scrollDataElements, ([id, {x, y}]) => {
+                Utils.forEach(scrollDataElements, ([id, {x, y}]) => {
                     if (id === '#document') window.scrollTo(x, y);
                     else document.getElementById(id)?.scrollTo(x, y)
                 });
@@ -155,15 +155,15 @@ export class Router extends Proto {
 
     private static writeState(path: string | URL | Nullish, mode: Mode, target?: string | null) {
         if (!path) return;
-        let url = toURL(path);
+        let url = Utils.toURL(path);
         if (onclient() && url.href === location.href) return;
         if (target && target !== '_self') return open(url, target);
         if (mode === PUSH) index++;
         if (onclient()) scrollRecord();
-        forEach(this.routers, router => {
+        Utils.forEach(this.routers, router => {
             Router.direction = FORWARD;
             if (onclient()) {
-                router.prev = toURL(location.href);
+                router.prev = Utils.toURL(location.href);
                 history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
             }
             router.href = url;

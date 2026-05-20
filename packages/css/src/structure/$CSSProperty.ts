@@ -1,4 +1,4 @@
-import { _Object_assign } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { $CSS } from "./$CSS";
 
 export interface $CSSPropertyOptions {
@@ -12,7 +12,7 @@ export interface $CSSProperty extends $CSSPropertyOptions {}
 export class $CSSProperty extends $CSS {
     constructor(options: $CSSPropertyOptions) {
         super();
-        _Object_assign(this, options);
+        Utils.assign(this, options);
     }
 
     toString() {

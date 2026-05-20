@@ -1,4 +1,4 @@
-import { _Object_assign } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { $IDBIndex, type $IDBIndexConfig } from "./$IDBIndex";
 import { $IDBRequest } from "#lib/$IDBRequest";
 import { $IDBStoreBase } from "./$IDBStoreBase";
@@ -9,7 +9,7 @@ export class $IDBStore<Config extends $IDBStoreConfig = any> extends $IDBStoreBa
     constructor(store: IDBObjectStore, config: Config) {
         super(store);
         this.#store = store;
-        _Object_assign(this, config);
+        Utils.assign(this, config);
     }
 
     /** {@link IDBObjectStore.put} */

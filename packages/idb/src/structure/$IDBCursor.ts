@@ -1,4 +1,4 @@
-import { _instanceof, _Object_assign, _Promise } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { $IDBRequest } from "#lib/$IDBRequest";
 import { $IDBStore, type $IDBStoreConfig } from "./$IDBStore";
 import { $IDBIndex } from "./$IDBIndex";
@@ -11,7 +11,7 @@ export class $IDBCursor<StoreConfig extends $IDBStoreConfig = any> {
     readonly direction;
     constructor(store: $IDBStoreBase, cursor: IDBCursorWithValue) {
         this.#cursor = cursor;
-        this.store = _instanceof(store, $IDBIndex<StoreConfig>) ? store.store : store as $IDBStore;
+        this.store = Utils.isInstanceof(store, $IDBIndex<StoreConfig>) ? store.store : store as $IDBStore;
         this.direction = cursor.direction;
     }
 

@@ -1,12 +1,12 @@
 import { onclient } from "@amateras/core";
 import { ProxyProto } from "@amateras/core";
-import { _null } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { Page } from "./Page";
 import { Router } from "./Router";
 
 export class RouteSlot extends ProxyProto {
-    page: Page | null = _null;
-    prevPage: Page | null = _null;
+    page: Page | null = Utils.Null;
+    prevPage: Page | null = Utils.Null;
     constructor() {
         super();
     }
@@ -34,7 +34,7 @@ export class RouteSlot extends ProxyProto {
 
     override dispose(): void {
         super.dispose();
-        this.page = _null;
-        this.prevPage = _null;
+        this.page = Utils.Null;
+        this.prevPage = Utils.Null;
     }
 }

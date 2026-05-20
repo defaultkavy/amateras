@@ -1,10 +1,10 @@
 import { toUICSS } from "#lib/toCSS";
 import { ElementProto, onclient } from "@amateras/core";
-import { _instanceof, _null } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export class ContextMenu extends ElementProto {
     static tagname = 'context-menu';
-    private clickListener: ((e: MouseEvent) => void) | null = _null;
+    private clickListener: ((e: MouseEvent) => void) | null = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<ContextMenu>) {
         super(ContextMenu.tagname, props, layout);
     }
@@ -49,14 +49,14 @@ export class ContextMenu extends ElementProto {
     close(dispose = true) {
         this.removeNode();
         if (this.clickListener) window.removeEventListener('click', this.clickListener);
-        this.clickListener = _null;
+        this.clickListener = Utils.Null;
         if (dispose) this.dispose();
     }
 }
 
 export class ContextMenuItem extends ElementProto {
     static tagname = 'context-menu-item'
-    private $menu: null | ContextMenu = _null;
+    private $menu: null | ContextMenu = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<ContextMenuItem>) {
         super(ContextMenuItem.tagname, props, layout);
         this.on('click', () => this.$menu?.close())
@@ -83,7 +83,7 @@ export class ContextMenuItem extends ElementProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$menu = this.findAbove(proto => _instanceof(proto, ContextMenu));
+        this.$menu = this.findAbove(proto => Utils.isInstanceof(proto, ContextMenu));
         return this;
     }
 }

@@ -1,4 +1,4 @@
-import { isUndefined, map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { I18nTranslationResult } from "../types";
 import type { I18n } from "./I18n";
 import type { I18nTranslation, I18nTranslationOptions } from "./I18nTranslation";
@@ -20,11 +20,11 @@ export class I18nSession {
         const dictionary = this.i18n.dictionaries.get(this.#locale);
         if (!dictionary) return {text: [key], args: []};
         const translate = await dictionary.find(key);
-        if (isUndefined(translate)) return {text: [key], args: []};
+        if (Utils.isUndefined(translate)) return {text: [key], args: []};
         const snippets = translate.split(/\$[a-zA-Z0-9_]+\$/);
         if (snippets.length === 1 || !options) return {text: [translate], args: []}
         const matches = translate.matchAll(/(\$([a-zA-Z0-9_]+)\$)/g);
-        return {text: snippets, args: map(matches as unknown as [string, string, string][], ([,,value]) => options[value])}
+        return {text: snippets, args: Utils.map(matches as unknown as [string, string, string][], ([,,value]) => options[value])}
     }
     
     locale(): string;
@@ -42,7 +42,7 @@ export class I18nSession {
         if (locale && locale !== this.#locale) {
             this.#locale = locale;
             return new Promise<void>(async (resolve) => {
-                await Promise.all(map(this.translations, translation => translation.update()));
+                await Promise.all(Utils.map(this.translations, translation => translation.update()));
                 resolve();
                 if (onclient()) dispatchEvent(new Event('localeupdate'));
             })

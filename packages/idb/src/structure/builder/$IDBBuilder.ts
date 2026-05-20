@@ -1,5 +1,5 @@
 import { $IDB, type $IDBConfig } from "#structure/$IDB";
-import { _Array_from, _instanceof, _JSON_stringify, _null, _Object_assign, _Object_fromEntries, _Promise, forEach, isFunction, trycatch } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { $IDBStoreBuilder } from "./$IDBStoreBuilder";
 import type { $IDBIndexConfig } from "#structure/$IDBIndex";
 import type { $IDBStoreConfig } from "#structure/$IDBStore";
@@ -20,7 +20,7 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
     storeMap = new Map<string, $IDBStoreBuilder>();
     #devMode: boolean = false;
     constructor(config: Config) {
-        _Object_assign(this, config);
+        Utils.assign(this, config);
     }
 
     /**
@@ -50,7 +50,7 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
     store<N extends string, B extends $IDBStoreBuilder<any>>(name: N, builder: B): $IDBBuilder<Prettify<Config & { stores: Config['stores'] & Prettify<Record<N, B['config']>> }>>
     store(name: string, builder: $IDBStoreBuilderFunction | $IDBStoreBuilder)
     {
-        this.storeMap.set(name, isFunction(builder) ? builder(new $IDBStoreBuilder({autoIncrement: false, keyPath: null, indexes: {}, name, schema: null})) : builder);
+        this.storeMap.set(name, Utils.isFunction(builder) ? builder(new $IDBStoreBuilder({autoIncrement: false, keyPath: null, indexes: {}, name, schema: null})) : builder);
         return this as any;
     }
 
@@ -58,7 +58,7 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
      * Open IDB and initialize, create new IDB if the name of IDB is not exists, or perform the upgrade if version number change.
      */
     async open(): Promise<$IDB<Config>> {
-        return new _Promise<$IDB>((resolve, reject) => {
+        return new Promise<$IDB>((resolve, reject) => {
             const {version: dbVersion, name: dbName, storeMap} = this;
             const initDBRequest = _indexedDB.open(dbName);
             const createStoresMap = new Map<string, $IDBStoreBuilder<$IDBStoreConfig>>();
@@ -67,12 +67,12 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
             const cachedObjectMap = new Map<string, {key: any, value: any}[]>();
             const unusedStoreNameList: string[] = [];
             const debug = (message: string) => this.#devMode && console.debug(`[$IDBBuilder (${dbName})]`, message);
-            const storesObject: $IDBConfig['stores'] = _Object_fromEntries(_Array_from(storeMap).map(([name, {config: {keyPath, autoIncrement}, indexes}]) => [
+            const storesObject: $IDBConfig['stores'] = Utils.fromEntries(Utils.arrayFrom(storeMap).map(([name, {config: {keyPath, autoIncrement}, indexes}]) => [
                 name, 
                 {
                     autoIncrement, keyPath, name,
-                    schema: _null,
-                    indexes: _Object_fromEntries(_Array_from(indexes).map(([name, {keyPath, multiEntry, unique}]) => [
+                    schema: Utils.Null,
+                    indexes: Utils.fromEntries(Utils.arrayFrom(indexes).map(([name, {keyPath, multiEntry, unique}]) => [
                         name,
                         { keyPath, multiEntry, unique } as $IDBIndexConfig
                     ]))
@@ -83,7 +83,7 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
             const initialCreateDB = () => {
                 debug(`No IDB detected, create IDB`);
                 const {transaction, result: idb} = initDBRequest;
-                forEach(storeMap, ([name, storeBuilder]) => {
+                Utils.forEach(storeMap, ([name, storeBuilder]) => {
                     createStoresMap.set(name, storeBuilder);
                     createIndexMap.set(storeBuilder, new Map(storeBuilder.indexes))
                 })
@@ -98,22 +98,22 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
                 debug(`IDB Detected`);
                 const idb = initDBRequest.result;
                 const $idb = new $IDB(idb, idbConfig);
-                const transaction = idb[objectStoreNames].length ?  idb.transaction(_Array_from(idb[objectStoreNames]), 'readonly') : null;
+                const transaction = idb[objectStoreNames].length ?  idb.transaction(Utils.arrayFrom(idb[objectStoreNames]), 'readonly') : null;
                 const noUpgrade = () => {
                     debug(`No Upgrade`);
                     resolve($idb);
                 }
                 if (idb.version === dbVersion) return noUpgrade();
                 // get unused stores
-                transaction && forEach(_Array_from(transaction[objectStoreNames]), name => storeMap.has(name) && unusedStoreNameList.push(name))
+                transaction && Utils.forEach(Utils.arrayFrom(transaction[objectStoreNames]), name => storeMap.has(name) && unusedStoreNameList.push(name))
                 // check store config matches
-                forEach(storeMap, ([storeName, storeBuilder]) => {
+                Utils.forEach(storeMap, ([storeName, storeBuilder]) => {
                     const {keyPath, autoIncrement} = storeBuilder.config;
                     const indexMap = new Map();
                     const checkIndexes = () =>
-                        forEach(storeBuilder.indexes, ([indexName, indexBuilder]) => {
-                            const [index] = trycatch(() => store?.index(indexName));
-                            const CONFIG_CHANGED = _JSON_stringify(indexBuilder.keyPath) !== _JSON_stringify(index?.keyPath)
+                        Utils.forEach(storeBuilder.indexes, ([indexName, indexBuilder]) => {
+                            const [index] = Utils.trycatch(() => store?.index(indexName));
+                            const CONFIG_CHANGED = Utils.stringify(indexBuilder.keyPath) !== Utils.stringify(index?.keyPath)
                                 || !!indexBuilder.multiEntry !== index?.multiEntry 
                                 || !!indexBuilder.unique !== index?.unique;
                             if (!index || CONFIG_CHANGED) {
@@ -122,15 +122,15 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
                             }
                         })
                     // get store from idb
-                    const [store] = trycatch(() => transaction?.objectStore(storeName));
+                    const [store] = Utils.trycatch(() => transaction?.objectStore(storeName));
                     // create store and break if idb have no store exist
                     if (!store) return createStoresMap.set(storeName, storeBuilder), checkIndexes();
                     // define matches variables
-                    const OBJECT_UPGRADE = _Array_from(storeBuilder.upgrades).find(([upgradeVersion],) => 
+                    const OBJECT_UPGRADE = Utils.arrayFrom(storeBuilder.upgrades).find(([upgradeVersion],) => 
                         dbVersion >= upgradeVersion && idb.version < upgradeVersion
                     )
                     const CONFIG_CHANGED = 
-                        _JSON_stringify(keyPath) !== _JSON_stringify(store.keyPath)
+                        Utils.stringify(keyPath) !== Utils.stringify(store.keyPath)
                         || autoIncrement !== store?.autoIncrement
                     const UPGRADE_NEEDED = OBJECT_UPGRADE || CONFIG_CHANGED;
                     // add indexes
@@ -148,7 +148,7 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
                 for (const [storeName, storeBuilder] of upgradeStoreMap) {
                     const cache: {key: any, value: any}[] = [];
                     // filter version lower than current idb
-                    const upgradeHandleList = _Array_from(storeBuilder.upgrades)
+                    const upgradeHandleList = Utils.arrayFrom(storeBuilder.upgrades)
                         .filter(([upgradeVersion]) => dbVersion >= upgradeVersion && idb.version < upgradeVersion )
                         .sort((a, b) => a[0] - b[0])
                         .map(config => config[1]);
@@ -181,20 +181,20 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
                 /** 'versionchange' type transaction */
                 const transaction = req.transaction as IDBTransaction;
                 // create stores
-                forEach(createStoresMap, ([name, {config}]) => {
+                Utils.forEach(createStoresMap, ([name, {config}]) => {
                     idb[createObjectStore](name, config);
                     debug(`Store Created: ${name}`);
                 });
                 // upgrade stores
-                forEach(upgradeStoreMap, ([name, {config}]) => {
+                Utils.forEach(upgradeStoreMap, ([name, {config}]) => {
                     idb[deleteObjectStore](name); 
                     idb[createObjectStore](name, config);
                     debug(`Store Upgraded: ${name}`);
                 })
                 // create indexes
-                forEach(createIndexMap, ([{config: {name}}, indexMap]) => {
+                Utils.forEach(createIndexMap, ([{config: {name}}, indexMap]) => {
                     const store = transaction.objectStore(name);
-                    forEach(indexMap, ([indexName, {keyPath, ...config}]) => {
+                    Utils.forEach(indexMap, ([indexName, {keyPath, ...config}]) => {
                         // if indexes existed, delete and create again
                         if (store.indexNames.contains(indexName)) store.deleteIndex(indexName);
                         store.createIndex(indexName, keyPath, config);
@@ -202,14 +202,14 @@ export class $IDBBuilder<Config extends $IDBConfig = { name: string, stores: {},
                     })
                 })
                 // delete unused stores
-                if (this.#deleteUnused) forEach(unusedStoreNameList, name => {
+                if (this.#deleteUnused) Utils.forEach(unusedStoreNameList, name => {
                     idb[deleteObjectStore](name);
                     debug(`Unused Store Deleted: ${name}`);
                 });
                 // open db again for insert objects
-                forEach(cachedObjectMap, ([storeName, objectList]) => {
+                Utils.forEach(cachedObjectMap, ([storeName, objectList]) => {
                     const store = transaction.objectStore(storeName);
-                    forEach(objectList, ({key, value}) => {
+                    Utils.forEach(objectList, ({key, value}) => {
                         if (store.autoIncrement || store.keyPath) store.add(value);
                         else store.add(value, key)
                     })

@@ -1,4 +1,4 @@
-import { forEach, map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { I18nSession } from "./I18nSession";
 
 export class I18nTranslation {
@@ -20,8 +20,8 @@ export class I18nTranslation {
         const request = this.session.fetch(this.key, this.options);
         this.session.global.asyncTask(request);
         const {text, args} = await request;
-        const arr = map(text, (str, index) => index < args.length ? [str, args[index]] : [str]).flat();
-        forEach(this.updaters, updaters => updaters(arr))
+        const arr = Utils.map(text, (str, index) => index < args.length ? [str, args[index]] : [str]).flat();
+        Utils.forEach(this.updaters, updaters => updaters(arr))
         this.updating = false;
         return this;
     }

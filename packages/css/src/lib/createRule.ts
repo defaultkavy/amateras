@@ -1,5 +1,5 @@
 import { $CSSRule } from "#structure/$CSSRule";
-import { _JSON_stringify, _null } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { cssRuleByJSONMap } from "./cache";
 
 /** Create and return {@link $CSSRule}, if the rule already exists then return the cached rule.
@@ -14,7 +14,7 @@ import { cssRuleByJSONMap } from "./cache";
 export const createRule = (selector: () => string, cssMap: $.CSSMap, cache = true) => {
     // Convert $CSSObject to JSON,
     // use JSON string as Map key of $CSSRule cache.
-    let cssObjectJSON = cache ? _JSON_stringify(cssMap) : '';
+    let cssObjectJSON = cache ? Utils.stringify(cssMap) : '';
     if (cache) {
         let cachedRule = cssRuleByJSONMap.get(cssObjectJSON);
         // If $CSSRule is cached, return it.
@@ -22,9 +22,9 @@ export const createRule = (selector: () => string, cssMap: $.CSSMap, cache = tru
         if (cachedRule) return cachedRule;
     }
     // If the rule is not cached, create new one.
-    let rule = new $CSSRule(selector(), cssMap, _null);
+    let rule = new $CSSRule(selector(), cssMap, Utils.Null);
     // Insert rule into stylesheet.
-    $.style(_null, `${rule}`);
+    $.style(Utils.Null, `${rule}`);
     // Save the JSON and $CSSRule in cache.
     if (cache) cssRuleByJSONMap.set(cssObjectJSON, rule);
     return rule;

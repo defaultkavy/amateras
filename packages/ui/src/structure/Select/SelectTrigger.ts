@@ -1,5 +1,5 @@
 import { ElementProto } from "@amateras/core";
-import { _null, isNull, _instanceof } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { Select } from "./Select";
 import { toUICSS } from "#lib/toCSS";
 
@@ -9,10 +9,10 @@ export interface SelectTriggerProps {
 
 export class SelectTrigger extends ElementProto {
     static tagname = 'select-trigger'
-    $select: Select | null = _null;
+    $select: Select | null = Utils.Null;
     constructor(props: $.Props<SelectTriggerProps>, layout?: $.Layout<SelectTrigger>) {
         super(SelectTrigger.tagname, {tabindex: 0, ...props}, layout);
-        this.on('click', e => isNull(this.$select?.attr('opened')) ? this.$select.open() : this.$select?.close())
+        this.on('click', e => Utils.isNull(this.$select?.attr('opened')) ? this.$select.open() : this.$select?.close())
         this.on('keydown', e => {
             switch (e.key) {
                 case ' ': {
@@ -63,7 +63,7 @@ export class SelectTrigger extends ElementProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.$select = this.findAbove<Select>(proto => _instanceof(proto, Select));
+        this.$select = this.findAbove<Select>(proto => Utils.isInstanceof(proto, Select));
         if (this.$select) this.$select.$trigger = this;
         return this;
     }

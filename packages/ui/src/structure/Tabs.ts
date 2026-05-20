@@ -1,16 +1,16 @@
 import { ElementProto } from "@amateras/core";
-import { _null, is } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export interface TabsOptions {
     targetId?: string;
 }
 export class Tabs extends ElementProto {
     targetId: string | null;
-    $container: TabsContainer | null = _null;
+    $container: TabsContainer | null = Utils.Null;
     triggers = new Map<string, TabTrigger>();
     constructor({targetId, ...props}: $.Props<TabsOptions>, layout?: $.Layout<Tabs>) {
         super('tabs', props, layout);
-        this.targetId = targetId ?? _null;
+        this.targetId = targetId ?? Utils.Null;
     }
 
     static {
@@ -29,7 +29,7 @@ export interface TabTriggerOptions {
 }
 export class TabTrigger extends ElementProto {
     tabId: string;
-    tabs: Tabs | null = _null;
+    tabs: Tabs | null = Utils.Null;
     constructor({tabId, ...props}: $.Props<TabTriggerOptions>, layout?: $.Layout<TabTrigger>) {
         super('tab-trigger', props, layout);
         this.tabId = tabId;
@@ -42,7 +42,7 @@ export class TabTrigger extends ElementProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.tabs = this.findAbove<Tabs>(proto => is(proto, Tabs));
+        this.tabs = this.findAbove<Tabs>(proto => Utils.is(proto, Tabs));
         this.tabs?.triggers.set(this.tabId, this);
         return this;
     }
@@ -61,7 +61,7 @@ export class TabsContainer extends ElementProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.tabs = this.findAbove<Tabs>(proto => is(proto, Tabs));
+        this.tabs = this.findAbove<Tabs>(proto => Utils.is(proto, Tabs));
         if (this.tabs) this.tabs.$container = this;
         return this;
     }
@@ -90,7 +90,7 @@ export class TabsContainer extends ElementProto {
         if (children && $targetTabContent) {
             this.node?.replaceChildren(...$targetTabContent.toDOM());
             this.tabs?.triggers.forEach($trigger => {
-                $trigger.attr('active', $trigger.tabId === $targetTabContent.tabId ? '' : _null);
+                $trigger.attr('active', $trigger.tabId === $targetTabContent.tabId ? '' : Utils.Null);
             })
         }
         return $targetTabContent;
@@ -114,7 +114,7 @@ export class TabContent extends ElementProto {
 
     override build(cascading?: boolean): this {
         super.build(cascading);
-        this.tabs = this.findAbove<Tabs>(proto => is(proto, Tabs));
+        this.tabs = this.findAbove<Tabs>(proto => Utils.is(proto, Tabs));
         return this;
     }
 }

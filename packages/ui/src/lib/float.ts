@@ -1,4 +1,4 @@
-import { _Object_assign, isEqual } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export interface FloatOptions {
     
@@ -35,9 +35,9 @@ const update = (reference: Element, element: HTMLElement, record: FloatRectRecor
     let atTopY = elementBox.top - refBox.height - elementBox.height; 
     if (atBottomY > scrollY + innerHeight && atTopY > scrollY) elementBox.top = atTopY;
     let {top, left, width, height} = elementBox;
-    if (isEqual(record, elementBox, ['top', 'left', 'height', 'width'])) return;
+    if (Utils.isEqual(record, elementBox, ['top', 'left', 'height', 'width'])) return;
 
-    _Object_assign(record, {top, left, width, height})
+    Utils.assign(record, {top, left, width, height})
     element.style.top = `${top}px`;
     element.style.left = `${left}px`
     element.style.width = `${width}px`

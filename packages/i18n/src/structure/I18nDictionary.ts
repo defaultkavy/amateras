@@ -1,18 +1,18 @@
 import { onclient } from "@amateras/core";
-import { isAsyncFunction, isFunction, isObject } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export class I18nDictionary {
     #context: I18nDictionaryContext | Promise<I18nDictionaryContext> | null = null;
     #fetch: I18nDictionaryContextImporter | null = null;
     constructor(resolver: I18nDictionaryContext | I18nDictionaryContextImporter) {
-        if (isFunction(resolver)) this.#fetch = resolver;
+        if (Utils.isFunction(resolver)) this.#fetch = resolver;
         else this.#context = resolver;
     }
 
     async context(): Promise<I18nDictionaryContext> {
         let dispatchEvent = () => onclient() && window.dispatchEvent(new Event('i18ncontext'));
         if (this.#context) {
-            if (isAsyncFunction(this.#context))
+            if (Utils.isAsyncFunction(this.#context))
                 return await (this.#context as Promise<I18nDictionaryContext>)
                     .finally(dispatchEvent);
             else return this.#context;
@@ -27,7 +27,7 @@ export class I18nDictionary {
         if (!context) context = await this.context();
         const [snippet, ...rest] = path.split('.') as [string, ...string[]];
         const target = context[snippet];
-        if (isObject(target)) {
+        if (Utils.isObject(target)) {
             if (rest.length) return this.find(rest.join('.'), target);
             else return target['_'] as string;
         } 

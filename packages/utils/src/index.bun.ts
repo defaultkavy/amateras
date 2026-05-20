@@ -1,3 +1,3 @@
 import "#lib/debugger";
-export * from "#lib/utils";
 export * from "#structure/UID";
+export * as Utils from "#lib/utils";

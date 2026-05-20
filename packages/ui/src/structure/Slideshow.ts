@@ -1,5 +1,5 @@
 import { ElementProto } from "@amateras/core";
-import { _null } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { Slide } from "./Slide";
 
 export interface SlideshowOptions {
@@ -17,15 +17,15 @@ export interface SlideshowOptions {
 
 export class Slideshow extends ElementProto {
     declare __child__: Slide;
-    slide: Slide | null = _null;
+    slide: Slide | null = Utils.Null;
     index: number;
-    timer: NodeJS.Timeout | null = _null;
+    timer: NodeJS.Timeout | null = Utils.Null;
     interval: number;
     autoplay: boolean;
     autopause: boolean;
     animation: SlideshowAnimationHandle | null;
     #passed = 0;
-    #observer: ResizeObserver | null = _null;
+    #observer: ResizeObserver | null = Utils.Null;
     playing = false;
     constructor({index, interval, autoplay, autopause, animation, ...props}: $.Props<SlideshowOptions>, layout?: $.Layout<Slideshow>) {
         super('slideshow', props, layout);
@@ -33,7 +33,7 @@ export class Slideshow extends ElementProto {
         this.interval = interval ?? 5;
         this.autoplay = autoplay ?? false;
         this.autopause = autopause ?? true;
-        this.animation = animation ?? _null;
+        this.animation = animation ?? Utils.Null;
         this.listen('dispose', () => this.pause());
         this.listen('dom', () => {
             if (this.autoplay) this.play();

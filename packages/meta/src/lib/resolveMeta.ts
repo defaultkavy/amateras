@@ -1,4 +1,4 @@
-import { _Object_entries, forEach, isArray, isString } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { MetaConfig, MetaOutput } from "../types";
 
 export function resolveMeta(config: MetaConfig) {
@@ -14,11 +14,11 @@ export function resolveMeta(config: MetaConfig) {
 const determine = (obj: MetaConfig, metaList: MetaOutput[], context: string, propName: 'name' | 'property') => {
     let getProperty = (property: string) => context ? `${context}:${property}` : property;
     let push = (property: string, content: string) => metaList.push({[propName]: getProperty(property), content} as MetaOutput);
-    for (const [property, content] of _Object_entries(obj)) {
-        if (isString(content)) push(property, content);
+    for (const [property, content] of Utils.entries(obj)) {
+        if (Utils.isString(content)) push(property, content);
         else {
-            if (isArray(content)) forEach(content as [], c => {
-                if (isString(c)) push(property, c);
+            if (Utils.isArray(content)) Utils.forEach(content as [], c => {
+                if (Utils.isString(c)) push(property, c);
                 else determine(c, metaList, getProperty(property), propName)
             });
             else determine(content as any, metaList, getProperty(property), propName);

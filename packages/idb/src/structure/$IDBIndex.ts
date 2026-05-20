@@ -1,4 +1,4 @@
-import { _Object_assign } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import type { $IDBStore, $IDBStoreConfig, QueryMultipleKeyPath } from "./$IDBStore";
 import { $IDBStoreBase } from "./$IDBStoreBase";
 import type { $IDBCursor } from "./$IDBCursor";
@@ -8,7 +8,7 @@ export class $IDBIndex<StoreConfig extends $IDBStoreConfig = any, Config extends
     constructor(store: $IDBStore, index: IDBIndex, config: Config) {
         super(index);
         this.store = store;
-        _Object_assign(this, config);
+        Utils.assign(this, config);
     }
 }
 

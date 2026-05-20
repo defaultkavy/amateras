@@ -1,6 +1,6 @@
 import { WidgetConstructor } from '#structure/Widget';
 import { symbol_ProtoType, type Proto } from '@amateras/core';
-import { _Object_assign, isFunction } from '@amateras/utils';
+import { Utils } from '@amateras/utils';
 
 declare global {
     export namespace $ {
@@ -27,7 +27,7 @@ type WidgetConstructorArguments<Props, Parent extends Proto> =
     ? [props?: $.Props<Props>, children?: $.Layout<Parent>] | [children?: $.Layout<Parent>]
     : [props: $.Props<Props>, children?: $.Layout<Parent>];
 
-_Object_assign($, {
+Utils.assign($, {
     widget(builder: WidgetBuilder) {
         return WidgetConstructor(builder);
     }
@@ -36,7 +36,7 @@ _Object_assign($, {
 $.process.craft.add((widget, ...args) => {
     if (widget[symbol_ProtoType] === 'Widget') {
         let [arg1] = args;
-        args = isFunction(arg1) ? [{}, arg1] : args;
+        args = Utils.isFunction(arg1) ? [{}, arg1] : args;
         return new widget(...args)
     }
 })

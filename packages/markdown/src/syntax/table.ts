@@ -2,7 +2,7 @@ import { BLOCK, TABLE, TABLE_COLUMN, TABLE_ROW } from "#lib/type";
 import { htmltag, setBlockTokenizer, setProcessor } from "#lib/util";
 import type { BlockToken, MarkdownLexer } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
-import { _Array_from } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export const tableProcessor = (parser: MarkdownParser) => setProcessor(parser, TABLE, (token) => {
         let thead = '';
@@ -36,7 +36,7 @@ export const tableTokenizer = (lexer: MarkdownLexer) => setBlockTokenizer(lexer,
                     content: []
                 }
                 const line = lines[position]!;
-                const matches = _Array_from(line.matchAll(/\| ([^|]+)/g));
+                const matches = Utils.arrayFrom(line.matchAll(/\| ([^|]+)/g));
                 if (!matches.length) break;
                 for (const match of matches) {
                     const text = match[1]!;

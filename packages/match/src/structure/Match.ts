@@ -1,7 +1,7 @@
 import { symbol_Statement } from "@amateras/core";
 import { ProxyProto } from "@amateras/core";
 import type { Signal } from "@amateras/signal";
-import { _null, forEach } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 import { Case, type CaseLayout } from "./Case";
 import { Default, type DefaultLayout } from "./Default";
 
@@ -16,8 +16,8 @@ export class Match<T = any> extends ProxyProto {
     declare statementType: 'Match';
     exp$: Signal<T>
     cases = new Set<Case>();
-    matched: Case | Default | null = _null;
-    #default: Default | null = _null;
+    matched: Case | Default | null = Utils.Null;
+    #default: Default | null = Utils.Null;
     constructor(expression: Signal<T>, layout: MatchLayout<T>) {
         super(() => {
             layout((constructor, arg1, arg2?) => {
@@ -28,10 +28,10 @@ export class Match<T = any> extends ProxyProto {
     }
 
     override dispose(): void {
-        forEach(this.cases, proto => proto.dispose())
+        Utils.forEach(this.cases, proto => proto.dispose())
         this.#default?.dispose();
-        this.matched = _null;
-        this.#default = _null;
+        this.matched = Utils.Null;
+        this.#default = Utils.Null;
         this.cases.clear();
     }
 
@@ -43,14 +43,14 @@ export class Match<T = any> extends ProxyProto {
             let prevMatchedProto = this.matched;
             let matchProto = this.validate();
             if (prevMatchedProto === matchProto) return;
-            forEach(this.cases, proto => proto !== matchProto && proto.removeNode())
+            Utils.forEach(this.cases, proto => proto !== matchProto && proto.removeNode())
             if (matchProto !== this.#default) this.#default?.removeNode();
             this.node?.replaceWith(...this.toDOM());
             this.parent?.mutate();
             this.parent?.dispatch('mutate', [], {bubbles: true});
         }
         // build cases proto and subscribe expression signal
-        forEach(this.cases, proto => {
+        Utils.forEach(this.cases, proto => {
             this.exp$.subscribe(update);
             proto.listen('dispose', () => this.exp$.unsubscribe(update));
         })

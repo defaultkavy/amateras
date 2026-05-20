@@ -3,7 +3,7 @@ import { I18nTranslation, type I18nTranslationOptions } from "./I18nTranslation"
 import { I18nSession } from "./I18nSession";
 import { onclient, Proto } from "@amateras/core";
 import type { I18nTranslationKey, I18nTranslationParams, Mixin, ResolvedAsyncDictionary, I18nTranslationDirKey, GetDictionaryContextByKey } from "../types";
-import { map } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 export class I18n<D extends I18nDictionaryContext = {}> {
     #locale: string;
@@ -63,7 +63,7 @@ export class I18n<D extends I18nDictionaryContext = {}> {
         }
         this.#locale = locale;
         this.writeStoreLocale(locale);
-        return Promise.all(map(this.sessions, session => session.locale(locale)));
+        return Promise.all(Utils.map(this.sessions, session => session.locale(locale)));
     }
 
     private getFullPath(key: string) {

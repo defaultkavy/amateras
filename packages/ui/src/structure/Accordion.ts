@@ -1,11 +1,11 @@
 import { ElementProto } from "@amateras/core";
-import { _null, is } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 const [ACCORDION, ACCORDION_ITEM, ACCORDION_TRIGGER, ACCORDION_CONTENT, ACCORDION_CONTAINER] = ['accordion', 'accordion-item', 'accordion-trigger', 'accordion-content', 'accordion-container'] as const;
 
 export class Accordion extends ElementProto {
-    $trigger: null | AccordionTrigger = _null;
-    $container: null | AccordionContainer = _null;
+    $trigger: null | AccordionTrigger = Utils.Null;
+    $container: null | AccordionContainer = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<Accordion>) {
         super(ACCORDION, props, layout);
     }
@@ -39,7 +39,7 @@ export class AccordionContainer extends ElementProto {
     }
 
     override build(cascading?: boolean): this {
-        let accordian = this.findAbove<Accordion>(proto => is(proto, Accordion));
+        let accordian = this.findAbove<Accordion>(proto => Utils.is(proto, Accordion));
         if (accordian) accordian.$container = this;
         return super.build(cascading)
     }
@@ -57,7 +57,7 @@ export class AccordionTrigger extends ElementProto {
     }
 
     override build(cascading?: boolean): this {
-        let accordian = this.findAbove<Accordion>(proto => is(proto, Accordion));
+        let accordian = this.findAbove<Accordion>(proto => Utils.is(proto, Accordion));
         if (accordian) {
             accordian.$trigger = this;
             this.on('click', () => accordian.switch())

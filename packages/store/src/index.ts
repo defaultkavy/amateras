@@ -1,5 +1,5 @@
 import { Store, type StoreInit } from "#structure/Store";
-import { _Object_assign } from "@amateras/utils";
+import { Utils } from '@amateras/utils';
 
 declare global {
     export namespace $ {
@@ -7,7 +7,7 @@ declare global {
     }
 }
 
-_Object_assign($, {
+Utils.assign($, {
     store: <T>(init: StoreInit<T>) => new Store(init)
 })
 

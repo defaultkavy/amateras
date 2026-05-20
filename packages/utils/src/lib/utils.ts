@@ -114,17 +114,17 @@ export const sleep = async (ms: number) => new _Promise(resolve => setTimeout(re
 export const toArray = <T>(item: OrArray<T>): T[] => _instanceof(item, Array) ? item : [item];
 
 export interface trycatch {
-    <D>(callback: () => D): D extends Promise<infer T> ? Promise<Result<T, Error>> : Result<D, Error>
+    <D, E = any>(callback: () => D): D extends Promise<infer T> ? Promise<Result<T, Error & {cause: E}>> : Result<D, Error & {cause: E}>
 }
 
 //@ts-ignore
 export const trycatch: trycatch = (callback: any) => {
     try {
         const result = callback();
-        if (_instanceof(result, Promise)) return result.then(res => [res, _null]).catch(err => [_null, new Error(err)]);
+        if (_instanceof(result, _Promise)) return result.then(res => [res, _null]).catch(err => [_null, new Error(err?.message ?? '', {cause: err})]);
         return [result, _null];
-    } catch (err) {
-        return [_null, _instanceof(err, Error) ? err : new Error(_JSON_stringify(err))];
+    } catch (err: any) {
+        return [_null, new Error(err?.message ?? '', {cause: err})];
     }
 }
 

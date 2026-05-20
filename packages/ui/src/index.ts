@@ -28,3 +28,4 @@ export * from "#structure/Combobox/ComboboxChips";
 export * from "#structure/Toast";
 export * from "#structure/Searchbar";
 export * from "#structure/TextArea";
+export * from "#structure/TextBlock";

@@ -17,6 +17,7 @@ export const float = (reference: Element, self: HTMLElement, options?: FloatOpti
     let listener = () => update(reference, self, record);
     resizeObserver.observe(reference);
     addEventListener('resize', listener);
+    update(reference, self, record)
     return () => {
         resizeObserver.disconnect();
         removeEventListener('resize', listener);

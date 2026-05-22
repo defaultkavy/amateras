@@ -93,12 +93,11 @@ export class ComboboxItem extends ElementProto {
     #selected = false;
     constructor(props: $.Props<ComboboxItemProps>, layout?: $.Layout<ComboboxItem>) {
         super('combobox-item', props, () => {
-            if (layout) layout(this);
+            layout?.(this);
             $(Icon, {ui: 'combobox-item-check', svg: check_svg})
         });
 
         this.on('mousedown', e => e.preventDefault())
-
         this.on('click', () => {
             this.$combobox?.select(this.#value, !this.selected())
         })

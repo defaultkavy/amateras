@@ -16,12 +16,12 @@ export class Select extends ElementProto {
     static tagname = 'select-proto';
     $trigger: SelectTrigger | null = Utils.Null;
     $content: SelectContent | null = Utils.Null;
-    private clickListener: ((e: MouseEvent) => void) | null = Utils.Null;
     #value: any = Utils.Null;
     selected: SelectItem | null = Utils.Null;
     itemMap = new Map<any, SelectItem>();
     $value: SelectValue | null = Utils.Null;
     private disconnect: FloatDisconnect | null = Utils.Null;
+    #initialized = false;
     constructor(props: $.Props<SelectProps>, layout?: $.Layout<Select>) {
         super(Select.tagname, props, layout);
         this.listen('i18nupdate', () => this.$value?.render());
@@ -71,14 +71,7 @@ export class Select extends ElementProto {
         if (onclient() && this.$content) {
             this.disconnect = float(this.$trigger?.node!, this.$content.node!);
             document.body.append(...this.$content.toDOM());
-            this.clickListener = (e) => {
-                if (e.target === this.$trigger?.node) return;
-                if (e.target && this.$content?.node?.contains(e.target as Node)) return;
-                this.close();
-            }
-            if (this.selected?.node) this.selected.node.focus();
-            else this.$content?.findBelow<SelectItem>(proto => Utils.isInstanceof(proto, SelectItem))?.node?.focus();
-            window.addEventListener('click', this.clickListener)
+            this.selected?.focus();
         }
     }
 
@@ -86,19 +79,19 @@ export class Select extends ElementProto {
         this.attr('opened', Utils.Null);
         if (!onclient()) return;
         this.$content?.removeNode();
-        if (this.clickListener) window.removeEventListener('click', this.clickListener);
         this.disconnect?.();
         this.disconnect = Utils.Null;
     }
 
     override toDOM(children = true): HTMLElement[] {
-        super.toDOM(false);
-        if (children && this.$trigger) {
+        const nodes = super.toDOM(false);
+        if (!this.#initialized && children && this.$trigger) {
+            this.#initialized = true;
             this.node?.append(...this.$trigger.toDOM());
             this.$content?.toDOM();
             this.$value?.render();
         }
-        return [this.node!]
+        return nodes;
     }
 
     override toString(): string {

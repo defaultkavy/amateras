@@ -13,8 +13,21 @@ export class SelectTrigger extends ElementProto {
     constructor(props: $.Props<SelectTriggerProps>, layout?: $.Layout<SelectTrigger>) {
         super(SelectTrigger.tagname, {tabindex: 0, ...props}, layout);
         this.on('click', e => Utils.isNull(this.$select?.attr('opened')) ? this.$select.open() : this.$select?.close())
+        this.on('blur', e => this.$select?.close())
         this.on('keydown', e => {
             switch (e.key) {
+                case 'ArrowDown': {
+                    e.preventDefault();
+                    if (!this.$select?.hasAttr('opened')) return this.$select?.open();
+                    this.$select?.$content?.switch('down');
+                    break;
+                }
+                case 'ArrowUp': {
+                    e.preventDefault();
+                    if (!this.$select?.hasAttr('opened')) return this.$select?.open();
+                    this.$select?.$content?.switch('up');
+                    break;
+                }
                 case ' ': {
                     e.preventDefault();
                     break;
@@ -23,10 +36,17 @@ export class SelectTrigger extends ElementProto {
         })
         this.on('keyup', e => {
             switch (e.key) {
+                case 'Escape': {
+                    e.preventDefault();
+                    this.$select?.close();
+                    break;
+                }
                 case ' ':
                 case 'Enter': {
                     e.preventDefault();
-                    this.$select?.open();
+                    if (!this.$select?.hasAttr('opened')) return this.$select?.open();
+                    this.$select?.$content?.$focusedItem?.select();
+                    this.$select?.close();
                     break;
                 }
             }

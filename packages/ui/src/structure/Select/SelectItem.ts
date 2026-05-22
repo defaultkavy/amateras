@@ -16,59 +16,29 @@ export class SelectItem extends ElementProto {
     #value: any = Utils.Null;
     constructor(props: $.Props<SelectItemProps>, layout?: $.Layout<Select>) {
         super(SelectItem.tagname, {tabindex: 0, ...props}, layout);
+        this.on('mousedown', e => e.preventDefault())
         this.on('click', () => {
             this.$select?.close();
             this.select();
-        })
-        this.on('keydown', e => {
-            let focus = (dir: 'up' | 'down') => {
-                e.preventDefault();
-                if (!this.$content) return;
-                let items = this.$content?.findBelowAll<SelectItem>(proto => Utils.isInstanceof(proto, SelectItem))
-                let currentPosition = items.indexOf(this);
-                let targetIndex = dir === 'up' ? currentPosition - 1 : currentPosition + 1;
-                if (targetIndex < 0 || targetIndex >= items.length) targetIndex = dir === 'up' ? -1 : 0;
-                let target = items.at(targetIndex);
-                target?.node?.focus();
-            }
-            switch (e.key) {
-                case 'ArrowDown': {
-                    focus('down');
-                    break;
-                }
-                case 'ArrowUp': {
-                    focus('up')
-                    break;
-                }
-                case ' ': {
-                    e.preventDefault();
-                    break;
-                }
-            }
-        })
-
-        this.on('keyup', e => {
-            switch (e.key) {
-                case 'Escape': {
-                    e.preventDefault();
-                    this.$select?.close();
-                    this.$select?.$trigger?.node?.focus()
-                    break;
-                }
-                case ' ':
-                case 'Enter': {
-                    e.preventDefault();
-                    this.select();
-                    this.$select?.close();
-                    this.$select?.$trigger?.node?.focus()
-                    break;
-                }
-            }
         })
     }
 
     static {
         $.style(this, toUICSS(this.tagname, item_css))
+    }
+
+    override props({ value, ...props }: $.Props): void {
+        super.props(props);
+        this.value(value);
+    }
+
+    override build(cascading?: boolean): this {
+        super.build(cascading);
+        this.$select = this.findAbove<Select>(proto => Utils.isInstanceof(proto, Select));
+        this.$content = this.findAbove<SelectContent>(proto => Utils.isInstanceof(proto, SelectContent));
+        if (this.$select && this.$select.value() === this.#value) this.$select.selected = this;
+        this.$select?.itemMap.set(this.#value, this);
+        return this;
     }
 
     value(): any;
@@ -86,17 +56,18 @@ export class SelectItem extends ElementProto {
         this.$select.value(this.value())
     }
 
-    override props({ value, ...props }: $.Props): void {
-        super.props(props);
-        this.value(value);
+    focus(scroll = true) {
+        this.$content?.$focusedItem?.blur();
+        this.attr('focus', '');
+        const parentNode = this.$content?.node;
+        if (parentNode && parentNode.scrollHeight > parentNode.clientHeight) {
+            this.node?.scrollIntoView({block: 'nearest'});
+        }
+        if (this.$content) this.$content.$focusedItem = this;
     }
 
-    override build(cascading?: boolean): this {
-        super.build(cascading);
-        this.$select = this.findAbove<Select>(proto => Utils.isInstanceof(proto, Select));
-        this.$content = this.findAbove<SelectContent>(proto => Utils.isInstanceof(proto, SelectContent));
-        if (this.$select && this.$select.value() === this.#value) this.$select.selected = this;
-        this.$select?.itemMap.set(this.#value, this);
-        return this;
+    blur() {
+        this.attr('focus', Utils.Null)
+        if (this.$content) this.$content.$focusedItem = null;
     }
 }

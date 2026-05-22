@@ -20,6 +20,7 @@ export class Switch extends ElementProto {
             transition: 'all .3s ease',
             padding: '0',
             flexShrink: '0',
+            margin: '0',
 
             '&::after': {
                 content: '""',

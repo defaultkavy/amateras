@@ -11,6 +11,7 @@ export abstract class Proto {
     static proto: Proto | null = Utils.Null; 
     static readonly [symbol_ProtoType] = 'Proto';
     static [symbol_Statement] = false;
+    static eventMap = new WeakMap<Proto, { [key: string]: Set<(...args: any[]) => void> }>();
     layout: $.Layout | null;
     readonly parent: Proto | null = Utils.Null;
     global: GlobalState = Proto.proto?.global ?? new GlobalState(this);
@@ -20,7 +21,6 @@ export abstract class Proto {
     builded = false;
     visible = true;
     virtual = false;
-    listeners: { [key: string]: Set<(...args: any[]) => void> } | null = Utils.Null;
     /**
      * @virtual This property is phantom types, declare the return type of {@link Proto.children}
      * @deprecated
@@ -34,6 +34,7 @@ export abstract class Proto {
     dispose() {
         this.dispatch('dispose', [this])
         Utils.forEach(this.protos, proto => proto.dispose());
+        Proto.eventMap.delete(this);
         this.global = Utils.Null as any;
         this.sibling = Utils.Null;
         this.firstProto = Utils.Null;
@@ -207,6 +208,10 @@ export abstract class Proto {
     get text(): string {
         return this.children.map(proto => proto.text).join('')
     }
+
+    get listeners() {
+        return Proto.eventMap.get(this);
+    }
     
     dispatch<K extends keyof $.ProtoEventMap<this>>(type: K, args: $.ProtoEventMap<this>[K], options?: {bubbles?: boolean}): boolean
     dispatch(type: string, args: any[], options?: {bubbles?: boolean}): boolean
@@ -228,9 +233,9 @@ export abstract class Proto {
     listen(type: string, handle: (src: Proto) => void): void;
     listen(type: string, handle: (...args: any) => void) {
         let listeners = this.listeners ?? {};
-        this.listeners = listeners;
+        Proto.eventMap.set(this, listeners);
         let handleSet = listeners[type] ?? new Set();
-        this.listeners[type] = handleSet;
+        listeners[type] = handleSet;
         handleSet.add(handle)
     }
 }

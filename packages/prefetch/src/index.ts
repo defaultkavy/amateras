@@ -10,7 +10,7 @@ declare global {
         export namespace fetch {
             export let origin: string;
             export let server: Bun.Server<undefined> | null
-        }
+    }
     }
     export var prefetch: {[key: string]: { expired: number, data: any }}
 }
@@ -40,6 +40,12 @@ GlobalState.assign(() => ({
         req: null
     }
 }))
+
+GlobalState.disposers.add(global => {
+    global.prefetch.caches = Utils.Null as any;
+    global.prefetch.req = Utils.Null;
+    global.prefetch = Utils.Null as any;
+})
 
 if (!globalThis.prefetch) globalThis.prefetch = {}
 

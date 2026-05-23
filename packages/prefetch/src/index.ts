@@ -12,16 +12,26 @@ declare global {
             export let server: Bun.Server<undefined> | null
     }
     }
-    export var prefetch: {[key: string]: { expired: number, data: any }}
+    export var prefetch: { 
+        caches: { [key: string]: FetchCache[] }
+        expired: number
+    }
 }
 
 declare module "@amateras/core" {
     export interface GlobalState {
         prefetch: {
-            caches: {[key: string]: { expired: number, data: any }};
+            caches: {[key: string]: FetchCache[]};
+            expired: number;
             req: null | Request
         }
     }
+}
+
+export type FetchCache = {
+    data: any;
+    method: string;
+    body: string;
 }
 
 export type FetchOptions<T, R> = {
@@ -37,7 +47,8 @@ export type FetchResult<T, R> = {
 GlobalState.assign(() => ({
     prefetch: {
         caches: {},
-        req: null
+        req: null,
+        expired: Date.now() + 30_000
     }
 }))
 
@@ -47,7 +58,10 @@ GlobalState.disposers.add(global => {
     global.prefetch = Utils.Null as any;
 })
 
-if (!globalThis.prefetch) globalThis.prefetch = {}
+if (onclient() && !globalThis.prefetch) globalThis.prefetch = {
+    caches: {},
+    expired: Date.now()
+}
 
 Utils.assign($, {
     // 将资料注册到原型全局变量中：global.prefetch
@@ -56,10 +70,10 @@ Utils.assign($, {
     // 客户端不会用到过时的资料：每个发送到客户端的资料缓存都附上了过期时间
     async fetch<T, R>(url: string | URL, options?: RequestInit & FetchOptions<T, R>, proto = Proto.proto) {
         url = Utils.toURL(url, $.fetch.origin);
-        let cache = onclient() ? prefetch[url.href] : Utils.Null;
+        let cache = onclient() && Date.now() < prefetch.expired ? getCache(url, options) : Utils.Null;
         let then = options?.then;
         let request = new Promise(async (resolve) => {
-            if (cache && Date.now() < cache.expired) {
+            if (cache) {
                 let result = then?.(cache.data);
                 resolve({record: cache.data, result});
                 return ;
@@ -78,18 +92,43 @@ Utils.assign($, {
             let recordFn = options?.record;
             if (recordFn) {
                 let record = Utils.isAsyncFunction(recordFn) ? await recordFn(response) : recordFn(response);
-                let result
-                if (onserver() && proto) proto.global.prefetch.caches[url.href] = { data: record, expired: Date.now() + 30_000 };
+                let result;
+                // set cache on html
+                if (onserver() && proto) setCache(proto, url, record, options);
                 $.context(Proto, proto, () => {
                     result = then?.(record);
                 })
                 resolve({record, result});
             }
         })
-        if (onserver()) proto?.global.asyncTask(request)
+        if (onserver()) proto?.global.asyncTask(request);
         return request
     }
 })
+
+const setCache = (proto: Proto, url: URL, data: any, options?: RequestInit & FetchOptions<any, any>) => {
+    const caches = proto.global.prefetch.caches[url.href] ?? [];
+    const body = Utils.isUndefined(options?.body) ? '' : Utils.isString(options.body) ? options.body : Utils.Null;
+    // non-string body request will not be cached
+    if (Utils.isNull(body)) return;
+    caches.push({ 
+        data,
+        method: options?.method ?? 'GET',
+        body
+    })
+    proto.global.prefetch.caches[url.href] = caches;
+}
+
+const getCache = (url: URL, options?: RequestInit & FetchOptions<any, any>) => {
+    const caches = prefetch.caches[url.href];
+    const body = Utils.isUndefined(options?.body) ? '' : Utils.isString(options.body) ? options.body : Utils.Null;
+    if (Utils.isNull(body)) return;
+    if (!caches) return;
+    return caches.find(cache => {
+        if (cache.method !== (options?.method ?? 'GET')) return;
+        if (cache.body === body) return true;
+    })
+}
 
 Utils.assign($.fetch, {
     origin: onclient() ? location.origin : 'http://localhost',

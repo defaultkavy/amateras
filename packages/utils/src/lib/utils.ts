@@ -1,4 +1,5 @@
 export * from './array';
+export * from './call';
 export * from './debounce';
 export * from './remove';
 export * from './forEach';

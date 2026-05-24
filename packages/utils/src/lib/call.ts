@@ -1,0 +1,1 @@
+export const call = <T>(callback: () => T) => callback();

@@ -210,8 +210,6 @@ export namespace $ {
         object.proto = cacheProtoParent;
     }
 
-    export const call = <T>(callback: () => T) => callback();
-
     interface MatchCase<T, Rec extends T = never, Res = never, Def = never> {
         case<C extends Exclude<T, Rec>, V>(condition: C, callback: () => V): MatchCase<T, Rec | C, Res | V, Def>
         default<V>(callback: () => V): MatchCase<T, Rec, Res, V>

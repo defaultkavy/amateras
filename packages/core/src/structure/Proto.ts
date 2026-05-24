@@ -31,9 +31,9 @@ export abstract class Proto {
         this.layout = layout ?? Utils.Null;
     }
 
-    dispose() {
+    dispose(cascading = true) {
         this.dispatch('dispose', [this])
-        Utils.forEach(this.protos, proto => proto.dispose());
+        if (cascading) Utils.forEach(this.protos, proto => proto.dispose());
         Proto.eventMap.delete(this);
         this.global = Utils.Null as any;
         this.sibling = Utils.Null;

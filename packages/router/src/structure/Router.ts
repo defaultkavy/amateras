@@ -18,6 +18,14 @@ const _addEventListener = onclient() ? window.addEventListener : Utils.Null;
 const _removeEventListener = onclient() ? window.removeEventListener : Utils.Null;
 if (onclient()) history.scrollRestoration = 'manual';
 
+if (import.meta.hot) {
+    import.meta.hot.dispose(data => {
+        data.routerIndex = index;
+    })
+
+    index = import.meta.hot.data.routerIndex ?? index;
+}
+
 type ScrollData = {[key: number]: { [id: string]: { x: number, y: number }}};
 
 const scrollRecord = (e?: Event) => {
@@ -75,6 +83,11 @@ export class Router extends Proto {
             })
         }
         return super.build();
+    }
+
+    override dispose(cascading?: boolean): void {
+        super.dispose(cascading);
+        Router.routers.delete(this);
     }
 
     async resolve(path: string | URL) {

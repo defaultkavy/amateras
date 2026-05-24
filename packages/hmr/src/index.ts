@@ -17,9 +17,26 @@ export const viteHMR = {
             code: `${content}\nif (import.meta.hot) import.meta.hot.decline();`,
             map: null
         }
-        if (!content.includes('import.meta.hot.accept')) return {
-            code: `${content}\nif (import.meta.hot) import.meta.hot.accept();`,
-            map: null 
+        if (!content.includes('import.meta.hot.accept')) {
+            const match = content.match(/export (?:const|let|var) (.+?) ?= ?\$.widget\(/);
+            if (match) {
+                return {
+                    code: `${content}
+                    if (import.meta.hot) {
+                        window.__registry__(${match[1]}, import.meta.url);
+                        import.meta.hot.accept(() => {
+                            window.__reload_module__();
+                        });
+                    }`,
+                    map: null 
+                }
+            }
+            else {
+                return {
+                    code: `${content}\nif (import.meta.hot) import.meta.hot.decline();`,
+                    map: null
+                }
+            }
         };
     }
 } as const

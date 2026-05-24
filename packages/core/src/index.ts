@@ -6,6 +6,7 @@ import { Proto, type ProtoConstructor } from './structure/Proto';
 import { TextProto } from './structure/TextProto';
 import type { ProxyProto } from '#structure/ProxyProto';
 import type { NodeProto } from '#structure/NodeProto';
+import { hmr } from '#lib/hmr';
 
 function createProto(insert: boolean, ...args: any) {
     const prevProtoParent = Proto.proto;
@@ -191,16 +192,17 @@ export namespace $ {
 
     export const craft: Craft = (...args: any) => createProto(false, ...args);
 
-    export const render = (proto: Proto | Constructor<Proto>, query: string) => {
+    export const render = async (proto: Proto | Constructor<Proto>, query: string) => {
         // Disable render on server side
         if (onserver()) return;
 
-        let nodes = $(proto as Proto).build().toDOM()
-        document.querySelector(query)?.replaceChildren(...nodes);
-        // if (!hmr(element, proto)) {
-        //     let nodes = proto.build().toDOM()
-        //     element.replaceChildren(...nodes);
-        // };
+        let $proto = $(proto as Proto)
+        let nodes = $proto.build().toDOM()
+        let element = document.querySelector(query);
+        if (!element) return;
+        await Promise.all($proto.global.promises);
+        if (hmr(element, $proto)) {
+        } else element?.replaceChildren(...nodes);
     }
 
     export const context = (object: {proto: Proto | null}, parent: Proto | null, callback: () => void) => {

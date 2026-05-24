@@ -97,6 +97,12 @@ export abstract class Proto {
         this.processProtos(...protos);
     }
 
+    replace(child: Proto, ...protos: Proto[]) {
+        const protoArr = this.protos;
+        protoArr.splice(protoArr.indexOf(child), 1, ...protos)
+        this.processProtos(...protoArr);
+    }
+
     insert(proto: Proto, position = -1) {
         if (position === 0) {
             if (this.firstProto) proto.sibling = this.firstProto;

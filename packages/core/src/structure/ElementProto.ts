@@ -20,6 +20,16 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         this.__props__ = props;
     }
 
+    static attrProcess(proto: ElementProto, attrObj: $.Props) {
+        Utils.forEach(Utils.entries(attrObj), ([key, value]) => {
+            for (let process of $.process.attr) {
+                let result = process(key, value, proto);
+                if (!Utils.isUndefined(result)) return;
+            }
+            proto.attr(key, value);
+        })
+    }
+
     override dispose(): void {
         super.dispose();
         this.layout = null;
@@ -44,7 +54,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
                 delete propsFiltered[name];
             }
         })
-        this.attrProcess(propsFiltered);
+        ElementProto.attrProcess(this, propsFiltered);
     }
 
     on<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions): void
@@ -55,7 +65,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
             this.listen('dispose', () => this.node?.removeEventListener(type, listener as any))
         }
         if (this.node) setListener(this.node);
-        else this.listen('dom', setListener);
+        this.listen('dom', setListener);
     }
 
     override toString(): string {
@@ -83,16 +93,6 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         if (!initialized) Utils.forEach(Utils.entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
         if (!initialized) this.dispatch('dom', [this.node])
         return [element];
-    }
-
-    private attrProcess(attrObj: $.Props) {
-        Utils.forEach(Utils.entries(attrObj), ([key, value]) => {
-            for (let process of $.process.attr) {
-                let result = process(key, value, this as any);
-                if (!Utils.isUndefined(result)) return;
-            }
-            this.attr(key, value);
-        })
     }
 
     innerHTML(html: string) {

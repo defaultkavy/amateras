@@ -18,12 +18,20 @@ export const viteHMR = {
             map: null
         }
         if (!content.includes('import.meta.hot.accept')) {
-            const match = content.match(/export (?:const|let|var) (.+?) ?= ?\$.widget\(/);
-            if (match) {
+            const matches = content.matchAll(/export (?:const|let|var) (.+?) ?= ?\$.widget\(/g);
+            const matchDefault = content.match(/export default \$.widget\(/)
+            if (matchDefault) {
+                content = content.replace('export default', 'const $__WIDGET__$ =');
+                content += `\nexport default $__WIDGET__$;\nwindow.__registry__($__WIDGET__$, import.meta.url);`
+            }
+
+            matches.forEach(match => {
+                content += `\nwindow.__registry__(${match[1]}, import.meta.url);`
+            })
+            if (matches || matchDefault) {
                 return {
                     code: `${content}
                     if (import.meta.hot) {
-                        window.__registry__(${match[1]}, import.meta.url);
                         import.meta.hot.accept(() => {
                             window.__reload_module__();
                         });

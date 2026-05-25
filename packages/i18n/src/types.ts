@@ -7,15 +7,14 @@ export type ResolvedAsyncDictionary<F extends I18nDictionaryContextImporter> = A
 export type I18nTranslationKey<T> = 
     T extends I18nDictionaryContext
     ?   {
-            [K in keyof T]: K extends string
-            ?   K extends '_' 
-                ?   never 
-                :   T[K] extends string
+            [K in keyof T]: 
+            K extends string
+                ?   T[K] extends string
                     ?   `${K}`
                     :   '_' extends keyof T[K]
                         ?   `${K}` | `${K}.${I18nTranslationKey<T[K]>}`
                         :   `${K}.${I18nTranslationKey<T[K]>}`
-            :   never;
+                :   never;
         }[keyof T]
     :   never;
 

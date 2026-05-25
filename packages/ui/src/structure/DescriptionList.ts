@@ -11,6 +11,7 @@ export class DescriptionList extends ElementProto {
         $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             flexDirection: 'column',
+            margin: '0'
         }))
     }
 }

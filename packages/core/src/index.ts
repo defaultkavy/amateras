@@ -203,6 +203,8 @@ export namespace $ {
         await Promise.all($proto.global.promises);
         if (hmr(element, $proto)) {
         } else element?.replaceChildren(...nodes);
+
+        if (onclient()) document.querySelector('style#__ssr__')?.remove();
     }
 
     export const context = (object: {proto: Proto | null}, parent: Proto | null, callback: () => void) => {
@@ -258,8 +260,6 @@ export namespace $ {
     }
     
     if (stylesheet) document.adoptedStyleSheets.push(stylesheet);
-
-    if (onclient()) document.querySelector('style#__ssr__')?.remove();
 
     stylesheet?.insertRule(`@layer base, ui`)
 }

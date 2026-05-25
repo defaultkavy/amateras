@@ -173,15 +173,13 @@ export class Router extends Proto {
         if (target && target !== '_self') return open(url, target);
         if (mode === PUSH) index++;
         if (onclient()) scrollRecord();
+        Router.direction = FORWARD;
         Utils.forEach(this.routers, router => {
-            Router.direction = FORWARD;
-            if (onclient()) {
-                router.prev = Utils.toURL(location.href);
-                history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
-            }
+            if (onclient()) router.prev = Utils.toURL(location.href);
             router.href = url;
-            router.resolve(path)
         })
+        if (onclient()) history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
+        Utils.forEach(this.routers, router => router.resolve(path))
         Router.dispatchEvent();
     }
 

@@ -45,7 +45,7 @@ await Bun.$`bun run build`.quiet();
 step(3, `Publishing Amateras in v${targetVersion}...`)
 
 try {
-    Bun.spawnSync(['npm', 'publish'], {
+    Bun.spawnSync(['npm', 'publish', '--ignore-scripts'], {
         stdin: 'inherit',
         stdout: 'inherit'
     })
@@ -58,7 +58,7 @@ console.log(color(`Amateras v${targetVersion} Published.\n`, 'cyan'))
 
 comfirm('Sync these changes and tags to GitHub repository? (y/n)');
 
-await Bun.$`git push --tags`
+await Bun.$`git push origin --follow-tags`
 
 console.log('\nCompleted.')
 

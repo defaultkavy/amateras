@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.15.1] - 2026-05-26
+
+### Fixes
+- Fix `float` compute on `Searchbar`, `Combobox` and `Select` components.
+
 ## [0.15.0] - 2026-05-26
 
 ### Features

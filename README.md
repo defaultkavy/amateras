@@ -64,19 +64,19 @@ $.render(Counter, 'body');
 
 | Modules | Size | Gziped | Description |
 | --- | --- | --- | --- |
-| core | 7.94 kB | 3.14 kB | Core module |
-| widget | 0.23 kB | 0.10 kB | Component module |
-| signal | 3.03 kB | 1.13 kB | Reactive data module |
+| core | 8.33 kB | 3.31 kB | Core module |
+| widget | 0.45 kB | 0.14 kB | Component module |
+| signal | 3.02 kB | 1.10 kB | Reactive data module |
 | store | 0.51 kB | 0.19 kB | Access data between widgets |
-| css | 1.63 kB | 0.72 kB | CSS-in-JS module |
-| for | 1.21 kB | 0.39 kB | For loop control-flow |
-| if | 4.18 kB | 1.50 kB | If/Else/ElseIf control-flow |
-| match | 1.42 kB | 0.42 kB | Match/Case/Default control-flow |
-| router | 6.52 kB | 2.40 kB | Router module |
-| i18n | 3.38 kB | 1.16 kB | Translation module |
-| idb | 5.31 kB | 2.01 kB | IndexedDB module |
-| markdown | 7.48 kB | 2.93 kB | Markdown to HTML module |
-| prefetch | 0.72 kB | 0.34 kB | SSR data prefetch |
+| css | 1.64 kB | 0.72 kB | CSS-in-JS module |
+| for | 1.25 kB | 0.41 kB | For loop control-flow |
+| if | 4.32 kB | 1.50 kB | If/Else/ElseIf control-flow |
+| match | 1.51 kB | 0.45 kB | Match/Case/Default control-flow |
+| router | 6.70 kB | 2.42 kB | Router module |
+| i18n | 3.38 kB | 1.14 kB | Translation module |
+| idb | 5.37 kB | 2.01 kB | IndexedDB module |
+| markdown | 7.48 kB | 2.91 kB | Markdown to HTML module |
+| prefetch | 1.01 kB | 0.46 kB | SSR data prefetch |
 | meta | 0.17 kB | 0.08 kB | SSR `meta` tag manager |
 | ui | 0.00 kB | 0.00 kB | UI components |
 | utils | 0.00 kB | 0.00 kB | Utilities module |

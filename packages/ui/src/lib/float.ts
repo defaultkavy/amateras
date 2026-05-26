@@ -11,7 +11,8 @@ export const float = (reference: Element, self: HTMLElement, options?: FloatOpti
         top: 0,
         left: 0,
         height: 0,
-        width: 0
+        width: 0,
+        bottom: 0
     }
     let resizeObserver = new ResizeObserver(() => update(reference, self, record));
     let listener = () => update(reference, self, record);
@@ -30,16 +31,21 @@ const update = (reference: Element, element: HTMLElement, record: FloatRectRecor
         top: refBox.top + refBox.height + scrollY,
         left: refBox.left,
         width: refBox.width,
-        height: element.offsetHeight
+        height: element.offsetHeight,
+        bottom: innerHeight - refBox.top - scrollY
     }
-    let atBottomY = elementBox.top + elementBox.height;
-    let atTopY = elementBox.top - refBox.height - elementBox.height; 
-    if (atBottomY > scrollY + innerHeight && atTopY > scrollY) elementBox.top = atTopY;
-    let {top, left, width, height} = elementBox;
-    if (Utils.isEqual(record, elementBox, ['top', 'left', 'height', 'width'])) return;
+    let onBottom = elementBox.top + elementBox.height > scrollY + innerHeight && elementBox.top - refBox.height - elementBox.height > scrollY
+    let {top, left, width, height, bottom} = elementBox;
+    if (Utils.isEqual(record, elementBox, ['top', 'left', 'height', 'width', 'bottom'])) return;
 
-    Utils.assign(record, {top, left, width, height})
-    element.style.top = `${top}px`;
+    Utils.assign(record, {top, left, width, height, bottom})
+    if (onBottom) {
+        element.style.bottom = `${bottom}px`;
+        element.style.top = '';
+    } else {
+        element.style.top = `${top}px`;
+        element.style.bottom = '';
+    }
     element.style.left = `${left}px`
     element.style.width = `${width}px`
 }
@@ -49,4 +55,5 @@ type FloatRectRecord = {
     left: number;
     height: number;
     width: number;
+    bottom: number;
 }

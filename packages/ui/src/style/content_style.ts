@@ -2,7 +2,6 @@ import type { CSSMap } from "#lib/toCSS";
 
 export const content_css: CSSMap = {
     position: 'absolute',
-    top: '0',
     left: '0',
     maxHeight: '50dvh',
     overflowY: 'auto',

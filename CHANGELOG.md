@@ -1,5 +1,68 @@
 # Changelog
 
+## [0.15.0] - 2026-05-26
+
+### Features
+- **HMR Supported**: Now you can make changes to widget code without refresh whole page, import `viteHMR` vite plugin from `amateras/hmr` and set in `vite.config.ts` (make sure you run vite dev server with `bun --bun vite`).
+- **CSS Fluent**: Write CSS property in one line.
+  ```ts
+  import 'amateras/css/fluent';
+  // setup flex css fluent
+  const flex = $.css.fluent({ display: 'flex' })
+      .group('flexDirection', {
+          row: 'row',
+          column: 'column'
+      })
+      .group('gap', {
+          gap_sm: '0.8rem',
+          gap: '1rem',
+          gap_lg: '1.2rem'
+      })
+      .proxy()
+  // use this in css property
+  $('div', { css: flex.row.gap_lg.$ }, $$ => {
+      ...
+  })
+  ```
+- **Virtual Scoll**: Render over thousand elements without DOM freeze, this feature only work properly in layout compute component (like `Waterfall`).
+- **New Element API**: Use `Element.hasAttr` to check attribute name is exist.
+- **New Proto API**: 
+  - `Proto.visibleChildren` return the children with `visible = true`.
+  - `Proto.replace` method replace child proto with target.
+  - `Proto.dispose` method now support cascadding option argument.
+- **Support Map in Control-flow component `For`**: Now you can set `SignalTypes<Map>` as iterator of `For` component.
+- **Combobox UI Component Updates**: 
+  - You can drag and drop `ComboboxChip` to rearrange order of values.
+  - Set `ComboboxChip` component manually in layout.
+- **Waterfall UI Component Updates**:
+  - New proto event `waterfall_resize`, you can manually dispatch this event to make `Waterfall` resize compute.
+- **New `Searchbar` UI Component**: Create searchbar with styled and autocomplete features.
+- **New `TextArea` UI Component**: Styled `textarea` element.
+- **New `Toast` UI Component**: Create styled toast component.
+- **Float at Opposite When No Spaces**: The options list will flip to opposite when there is no spaces to show content, this feature is applied to `Select`, `Searchbar` and `Combobox` components.
+- **New UI CSS Layer**: All UI component style rule is under `@layer ui`, so developers can easily override this with custom style rule.
+- **New `FieldError` UI Componenet**: A styled component to show error message in `Field`.
+- **New `TextBlock` UI Component**: This component show text like `pre` element but using inherit font family and font size.
+- **New Utils Module Namespace**: Use `Utils` instead of import every single utility functions without worry about the bundle size.
+
+### Changes
+- Remove `NodeProto.ondom`, use `NodeProto.listen('dom')` instead.
+- Remove `NodeProto.ondispose`, use `NodeProto.listen('dispose')` instead.
+- Improve `debounce`, `isEqual`, `map` utility function.
+- Remove `label` props from `ComboboxItem` and `ComboboxChip`.
+- Remove proto event `combobox_input` arguments.
+- Component `Waterfall` set style in different way in SSR, since there is no style compute on server side, this make the result of SSR looks better.
+- `Waterfall` compute item size with `offsetHeight`, this is still under experiment and may changes in future.
+- Improve `$.fetch` cache data with different HTTP method.
+- `ElementProto.attrProcess` is now static method.
+- Remove `$.call` from `$` namespace and move it to `Utils.call`.
+- Remove margin in `DescriptionList` and `Switch` components.
+
+### Fixes
+- Fix `Utils.trycatch` always be async process.
+- Fix event map registration error that cause memory leak (`dispose` event didn't registered).
+- Fix obiviously flickering when render DOM and replace the SSR content.
+
 ## [0.14.1] - 2026-05-13
 
 ### Features

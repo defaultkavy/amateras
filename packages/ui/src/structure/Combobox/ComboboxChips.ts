@@ -142,6 +142,7 @@ export class ComboboxChip extends ElementProto {
             height: 'calc(var(--spacing) * 5.25)',
             marginBlock: 'calc(var(--spacing))',
             cursor: 'grab',
+            gap: 'var(--spacing)',
 
             '&:active': {
                 cursor: 'grabbing'
@@ -154,18 +155,6 @@ export class ComboboxChip extends ElementProto {
             '&.dragging': {
                 background: 'var(--input)'
             },
-
-            'button[ui="combobox-chip-remove"]': {
-                background: 'unset',
-                border: 'unset',
-                color: 'oklch(from var(--fg) l c h / .9)',
-                paddingInlineStart: 'calc(var(--spacing) * 1.5)',
-
-                'icon': {
-                    height: 'calc(var(--spacing) * 3.25)',
-                    width: 'calc(var(--spacing) * 3.25)'
-                }
-            }
         }))
     }
 
@@ -220,6 +209,20 @@ export class ComboboxChipRemoveButton extends ElementProto<HTMLButtonElement> {
         this.on('click', () => {
             this.$chip?.$chips?.$combobox?.select(this.$chip.value(), false)
         })
+    }
+
+    static {
+        $.style(this, toUICSS('button[ui="combobox-chip-remove"]', {
+            background: 'unset',
+            border: 'unset',
+            color: 'oklch(from var(--fg) l c h / .9)',
+            padding: '0',
+
+            'icon': {
+                height: 'calc(var(--spacing) * 3.25)',
+                width: 'calc(var(--spacing) * 3.25)'
+            }
+        }))
     }
 
     override build(cascading?: boolean): this {

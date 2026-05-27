@@ -12,9 +12,7 @@ export class ContextMenu extends ElementProto {
     static {
         $.style(this, toUICSS(this.tagname, {
             display: 'block',
-            position: 'fixed',
-            top: '0',
-            left: '0',
+            position: 'absolute',
             maxHeight: '50dvh',
             overflowY: 'auto',
             boxSizing: 'border-box',
@@ -32,10 +30,6 @@ export class ContextMenu extends ElementProto {
     open(e: MouseEvent) {
         if (onclient()) {
             this.build();
-            this.style({
-                top: `${e.y}px`,
-                left: `${e.x}px`
-            })
             this.clickListener = (e) => {
                 if (e.target === this.node) return;
                 if (e.target && this.node?.contains(e.target as Node)) return;
@@ -43,6 +37,15 @@ export class ContextMenu extends ElementProto {
             }
             setTimeout(() => window.addEventListener('click', this.clickListener!), 1)
             document.body.append(...this.toDOM());
+            if (!this.node) return;
+            const overX = e.x + this.node.offsetWidth > innerWidth;
+            const overY = e.y + this.node.offsetHeight > innerHeight;
+            this.style({
+                top: overY ? '' : `${scrollY + e.y}px`,
+                bottom: overY ? `calc(${-scrollY}px + 1rem)` : '',
+                left: overX ? '' : `${scrollX + e.x}px`,
+                right: overX ? `calc(1rem)` : ''
+            })
         }
     }
 

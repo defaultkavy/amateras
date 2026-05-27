@@ -2,7 +2,8 @@ import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export interface IconProps {
-    svg: OrSignal<string>
+    svg: OrSignal<string>,
+    size?: OrSignal<string>
 }
 
 export class Icon extends ElementProto {
@@ -15,8 +16,8 @@ export class Icon extends ElementProto {
         $.style(this, toUICSS(this.tagname, {
             display: 'inline-block',
             verticalAlign: 'middle',
-            height: '1rem',
-            width: '1rem',
+            height: 'attr(size, 1rem)',
+            width: 'attr(size, 1rem)',
 
             'svg': {
                 display: 'block',

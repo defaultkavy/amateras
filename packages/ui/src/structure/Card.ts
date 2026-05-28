@@ -66,7 +66,7 @@ export class CardTitle extends ElementProto<HTMLHeadingElement> {
         $.style(this, toUICSS(`card ${this.tagname}`, {
             fontWeight: 'var(--font-weight-medium)',
             lineHeight: '1.375',
-            fontSize: 'var(--text-base)',
+            fontSize: 'var(--text-md)',
             color: 'var(--fg)'
         }))
     }

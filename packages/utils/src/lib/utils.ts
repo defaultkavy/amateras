@@ -15,3 +15,4 @@ export * from './trycatch';
 export * from './type';
 export * from './uppercase';
 export * from './url';
+export * from './merge';

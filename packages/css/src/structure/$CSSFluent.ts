@@ -1,8 +1,9 @@
 import { Utils } from "@amateras/utils";
+import type { $CSSDeclarationMap } from "../types";
 
 declare const map: unique symbol;
 
-export class $CSSFluent<M extends Record<string, CSSFluentGroupMap> = {}> {
+export class $CSSFluent<M extends Record<string, CSSFluentPropMap> = {}> {
     declare [map]: M;
     initRule: $.CSSDeclarationMap;
     optionMap = new Map<string, CSSFluentOption>();
@@ -11,18 +12,31 @@ export class $CSSFluent<M extends Record<string, CSSFluentGroupMap> = {}> {
         this.initRule = initRule ?? {};
     }
 
-    option<N extends string, R extends $.CSSDeclarationMap | ((...args: any) => $.CSSDeclarationMap)>(name: N, resolve: R) {
+    init(initRule: $.CSSDeclarationMap) {
+        this.initRule = initRule;
+        return this;
+    }
+
+    option<N extends string, R extends $.CSSDeclarationMap | CSSFluentFunction>(name: N, resolve: R) {
         if (Utils.isFunction(resolve)) this.optionMap.set(name, {type: 3, name, value: resolve});
         else this.optionMap.set(name, {type: 0, name, value: resolve});
         return this as unknown as $CSSFluent<Prettify<M & Record<N, {[key in N]: R}>>>;
     }
 
-    group<P extends keyof $.CSSDeclarationMap | string & {}, O extends CSSFluentGroupMap<P extends keyof $.CSSDeclarationMap ? Required<$.CSSDeclarationMap>[P] : $.CSSValue>>(prop: P, options: O) {
+    prop<P extends keyof $.CSSDeclarationMap | string & {}, O extends CSSFluentPropMap<P extends keyof $.CSSDeclarationMap ? Required<$.CSSDeclarationMap>[P] : $.CSSValue>>(prop: P, options: O) {
         Utils.forEach(Utils.entries(options), ([name, value]) => {
-            if (value instanceof Function) this.optionMap.set(name, {type: 2, name, value, prop})
+            if (Utils.isFunction(value)) this.optionMap.set(name, {type: 2, name, value, prop})
             else this.optionMap.set(name, {type: 1, name, value, prop})
         });
         return this as unknown as $CSSFluent<Prettify<M & Record<P, O>>>
+    }
+
+    group<N extends string, O extends CSSFluentGroupMap>(groupName: N, options: O) {
+        Utils.forEach(Utils.entries(options), ([name, value]) => {
+            if (Utils.isFunction(value)) this.optionMap.set(name, {type: 3, name, value})
+            else this.optionMap.set(name, {type: 0, name, value})
+        })
+        return this as unknown as $CSSFluent<Prettify<M & Record<N, O>>>
     }
 
     proxy() {
@@ -72,6 +86,8 @@ export class $CSSFluent<M extends Record<string, CSSFluentGroupMap> = {}> {
     }
 }
 
+type CSSFluentFunction = (...args: any) => $.CSSDeclarationMap;
+
 type CSSFluentOption = {
     name: string;
 } & ({
@@ -90,9 +106,10 @@ type CSSFluentOption = {
     value: Function;
 }))
 
-type CSSFluentGroupMap<V extends $.CSSValue = $.CSSValue> = Record<string, V>;
+type CSSFluentPropMap<V extends $.CSSValue = $.CSSValue> = Record<string, V>;
+type CSSFluentGroupMap = Record<string, $.CSSDeclarationMap | CSSFluentFunction>;
 
-export type CSSFluentProxy<M extends Record<string, CSSFluentGroupMap>, UM = UnionMap<M[keyof M]>> = {
+export type CSSFluentProxy<M extends Record<string, CSSFluentPropMap>, UM = UnionMap<M[keyof M]>> = {
     [key in keyof UM]:
         key extends string ?
             UM[key] extends (...args: any) => any
@@ -100,21 +117,8 @@ export type CSSFluentProxy<M extends Record<string, CSSFluentGroupMap>, UM = Uni
                 :   CSSFluentProxy<Omit<M, GetMapKeyWithKey<key, M>>>
         :   never
 } & {
-    $: $.CSSMap
+    $: $CSSDeclarationMap
 }
-
-// type FluentKey<M extends CSSFluentGroupMap> = M extends any 
-//     ?   {
-//         [key in keyof M]: 
-//             M[key] extends Function
-//                 ? key extends string 
-//                     ?   `${key}${number}` | key
-//                     :   never
-//                 : key
-//     }[keyof M]
-//     :   never;
-
-type KeyofUnion<T> = T extends any ? keyof T : never;
 
 type UnionMap<T> = {
     [key in (T extends any ? keyof T : never)]: T extends any ? (key extends keyof T ? T[key] : never) : never

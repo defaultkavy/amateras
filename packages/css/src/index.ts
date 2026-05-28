@@ -60,12 +60,21 @@ Utils.assign($, {
 
 Utils.assign(ElementProto.prototype, {
     css(this: ElementProto, ...cssMap: ($.CSSMap | $CSSRule)[]) {
-        Utils.forEach(cssMap, cmap => assignCSS(this, cmap));
+        mergeMaps(cssMap, this)
         return this;
     }
 })
 
-export const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
+const mergeMaps = (maps: OrArray<($.CSSMap | $CSSRule)[]>, proto: ElementProto) => {
+    let merge: null | {} = Utils.Null;
+    Utils.forEach(Utils.toArray(maps), map => {
+        if (Utils.isInstanceof(map, $CSSRule)) assignCSS(proto, map);
+        else merge = Utils.assign(merge ?? {}, map)
+    })
+    if (!Utils.isNull(merge)) assignCSS(proto, merge);
+}
+
+const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
     let rule = $.css(cssMap);
     let selector = rule.selector.slice(1);
     proto.addClass(selector);
@@ -99,7 +108,7 @@ if (onserver()) {
 // Add processor of css attribute
 $.process.attr.add((key, value, proto) => {
     if (key === 'css') {
-        Utils.forEach(Utils.toArray(value), value => assignCSS(proto, value))
+        mergeMaps(value, proto);
         return true;
     }
 })

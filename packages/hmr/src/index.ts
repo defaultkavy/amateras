@@ -28,7 +28,7 @@ export const viteHMR = {
             matches.forEach(match => {
                 content += `\nwindow.__registry__(${match[1]}, import.meta.url);`
             })
-            if (matches || matchDefault) {
+            if (matches.toArray().length || matchDefault) {
                 return {
                     code: `${content}
                     if (import.meta.hot) {

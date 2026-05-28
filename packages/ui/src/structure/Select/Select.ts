@@ -61,9 +61,8 @@ export class Select extends ElementProto {
             let $item = this.itemMap.get(val);
             this.selected = $item ?? Utils.Null;
             this.$value?.render();
-            this.dispatch('selectvalue', [this, val], {bubbles: true})
+            this.dispatch('selectvalue', [this, val], {bubbles: true});
         })
-        this.node?.dispatchEvent(new Event('select-value'));
     }
 
     open() {

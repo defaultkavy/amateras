@@ -7,7 +7,7 @@ declare global {
     export namespace $ {
         export function signal<T>(value: T): SignalTypes<T>;
         export function effect(callback: (untrack: UntrackFunction) => void, signals?: Signal[]): void;
-        export function compute<T>(callback: (untrack: UntrackFunction) => T): SignalTypes<T>;
+        export function compute<T>(callback: (untrack: UntrackFunction) => T, signals?: Signal[]): SignalTypes<T>;
         export function optional<T>(signal: Signal<T | undefined | null> | Signal<T | null> | Signal<T | undefined>): Signal<NonNullable<T>> | null
         export function resolve<T>(value: T, handle?: (value: T extends Signal<infer K> | SignalObject<infer K> ? K : T) => void): T;
 
@@ -69,7 +69,8 @@ Utils.assign($, {
     compute<T>(
         callback: (
             untrack: UntrackFunction
-        ) => T
+        ) => T,
+        signals: Signal[] = []
     ) {
         let result = track(callback);
         let compute = $.signal(result);
@@ -79,6 +80,7 @@ Utils.assign($, {
                 compute.set(callback(untrack));
             })
         }
+        Utils.forEach(signals, signal => trackSet.add(signal));
         Utils.forEach(trackSet, signal => {
             signal.computes = signal.computes ?? new Set();
             let ref = new WeakRef(compute);

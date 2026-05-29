@@ -16,8 +16,8 @@ export class Icon extends ElementProto {
         $.style(this, toUICSS(this.tagname, {
             display: 'inline-block',
             verticalAlign: 'middle',
-            height: 'attr(size, 1rem)',
-            width: 'attr(size, 1rem)',
+            height: 'attr(size type(<length>), 1rem)',
+            width: 'attr(size type(<length>), 1rem)',
 
             'svg': {
                 display: 'block',

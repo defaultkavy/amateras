@@ -30,3 +30,4 @@ export * from "#structure/Searchbar";
 export * from "#structure/TextArea";
 export * from "#structure/TextBlock";
 export * from "#structure/Container";
+export * from "#structure/Carousel";

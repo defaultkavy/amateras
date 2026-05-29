@@ -68,6 +68,12 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         this.listen('dom', setListener);
     }
 
+    off<K extends keyof HTMLElementEventMap>(type: K, listener: (event: HTMLElementEventMap[K] & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions): void
+    off(type: string, listener: (event: Event & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions): void;
+    off(type: string, listener: (event: Event & { currentTarget: H }) => void, options?: boolean | AddEventListenerOptions) {
+        this.node?.removeEventListener(type, listener as any, options)
+    }
+
     override toString(): string {
         return this.parseHTML();
     }

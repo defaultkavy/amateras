@@ -24,7 +24,7 @@ type ResolveArray<T> = T extends [infer A, ...infer Rest]
 type ResolveSignal<T> = [T] extends [Signal<infer V>]
     ?   V extends object
         ?   SignalObject<V> 
-        :   V extends null
+        :   V extends Nullish
             ?   never
             :   Signal<V>
     :   T;

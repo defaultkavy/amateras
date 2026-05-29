@@ -1,3 +1,4 @@
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 
 export class Slide extends ElementProto {
@@ -6,7 +7,12 @@ export class Slide extends ElementProto {
     }
     
     static {
-        $.style(Slide, 'slide{display:block;height:100%;width:100%;position:absolute}')
+        $.style(Slide, toUICSS('slide', {
+            display: 'block',
+            height: '100%',
+            width: '100%',
+            position: 'relative'
+        }))
     }
 }
 

@@ -1,6 +1,7 @@
 import { ElementProto } from "@amateras/core";
 import { Utils } from '@amateras/utils';
 import { Slide } from "./Slide";
+import { toUICSS } from "#lib/toCSS";
 
 export interface SlideshowOptions {
     /**第一个播放的位置 */
@@ -42,7 +43,11 @@ export class Slideshow extends ElementProto {
     }
 
     static {
-        $.style(Slideshow, 'slideshow{display:block;position:relative;overflow:clip}')
+        $.style(Slideshow, toUICSS('slideshow', {
+            display: 'block',
+            position: 'relative',
+            overflow: 'clip'
+        }))
     }
 
     override build(): this {

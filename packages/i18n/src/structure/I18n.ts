@@ -29,12 +29,12 @@ export class I18n<D extends I18nDictionaryContext = {}> {
 
     t<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): I18nTranslation;
     t(key: string, options?: I18nTranslationOptions) {
-        return new I18nTranslation(this.getSession(), this.getFullPath(key), options);
+        return new I18nTranslation(this.session, this.getFullPath(key), options);
     }
 
     text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [] : [P]): Promise<string>;
     async text(key: string, options?: I18nTranslationOptions) {
-        let content = await this.getSession().fetch(this.getFullPath(key), options)
+        let content = await this.session.fetch(this.getFullPath(key), options)
         return content.text.reduce((acc, str, i) => acc + str + (content.args[i] || ''), '')
     }
 
@@ -70,7 +70,7 @@ export class I18n<D extends I18nDictionaryContext = {}> {
         return this.path ? `${this.path}.${key}` : key;
     }
 
-    private getSession() {
+    get session() {
         let parentProto = Proto.proto;
         if (parentProto) {
             let session = parentProto.global.i18n.session ?? new I18nSession(this, parentProto.global);

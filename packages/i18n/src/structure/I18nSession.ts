@@ -9,6 +9,7 @@ export class I18nSession {
     i18n: I18n;
     #locale: string;
     global: GlobalState;
+    listeners = new Set<I18nSessionListener>();
     constructor(i18n: I18n, global: GlobalState) {
         this.i18n = i18n;
         this.global = global;
@@ -45,7 +46,10 @@ export class I18nSession {
                 await Promise.all(Utils.map(this.translations, translation => translation.update()));
                 resolve();
                 if (onclient()) dispatchEvent(new Event('localeupdate'));
+                Utils.forEach(this.listeners, listener => listener(this));
             })
         }
     }
 }
+
+export type I18nSessionListener = (session: I18nSession) => void;

@@ -1,0 +1,1 @@
+export const valueFn = (val: string | number) => val;

@@ -7,9 +7,11 @@
     "imports": {
       "#structure/*": "./src/structure/*.ts",
       "#lib/*": "./src/lib/*.ts",
-      "#node/*": "./src/node/*.ts"
+      "#node/*": "./src/node/*.ts",
+      "#ext/*": "./src/ext/*.ts"
     },
     "exports": {
-      ".": "./src/index.ts"
+      ".": "./src/index.ts",
+      "./*": "./src/ext/*.ts"
     }
 }

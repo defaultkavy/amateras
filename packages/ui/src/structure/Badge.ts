@@ -37,7 +37,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                 outline: '0.1rem solid var(--border)'
             },
 
-            'a:not([disabled]) &:hover': {
+            'a:not([disabled]) > &:hover': {
                 background: 'oklch(from var(--input) l c h / .1)',
                 color: 'oklch(from var(--fg) l c h / 1)',
             },
@@ -92,7 +92,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                 height: 'calc(var(--spacing) * 4)'
             },
 
-            'a[disabled] &': {
+            'a[disabled] > &': {
                 opacity: '.5'
             }
         }))

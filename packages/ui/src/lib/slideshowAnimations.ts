@@ -1,5 +1,6 @@
 import type { SlideshowAnimationHandle } from "#structure/Slideshow";
 import { onclient } from "@amateras/core";
+import { Utils } from "@amateras/utils";
 
 export const slideInOut = (
     options?: {
@@ -19,7 +20,7 @@ export const slideInOut = (
             easing: options?.easing ?? 'ease'
         }
 
-        let translate = $.match(options?.direction, $$ => $$
+        let translate = Utils.match(options?.direction, $$ => $$
             .case('up', () => [['0 100%', '0 0'], ['0 0', '0 -100%']])
             .case('down', () => [['0 -100%', '0 0'], ['0 0', '0 100%']])
             .case('left', () => [['100% 0', '0 0'], ['0 0', '-100% 0']])

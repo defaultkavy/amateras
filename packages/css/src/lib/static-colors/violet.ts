@@ -1,0 +1,11 @@
+export const c050 = '#f5f3ff';
+export const c100 = '#ede9fe';
+export const c200 = '#ddd6fe';
+export const c300 = '#c4b5fd';
+export const c400 = '#a78bfa';
+export const c500 = '#8b5cf6';
+export const c600 = '#7c3aed';
+export const c700 = '#6d28d9';
+export const c800 = '#5b21b6';
+export const c900 = '#4c1d95';
+export const c950 = '#2e1065';

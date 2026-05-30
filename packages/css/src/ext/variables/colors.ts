@@ -1,30 +1,28 @@
-import '#ext/colors/zinc';
-import '#ext/colors/cyan';
-import '#ext/colors/red';
+import {
+    zinc as mainColor,
+    cyan as accentColor,
+    red as destructiveColor
+} from "#ext/static-colors";
 
 const lightDark = (light: $.CSSValue, dark: $.CSSValue) => `light-dark(${light}, ${dark})`;
 
-const mainColor = $.color.zinc;
-const accentColor = $.color.cyan;
-const destructiveColor = $.color.red;
-
 export const colors = $.css.variable({
-    fg: lightDark(mainColor[600], mainColor[300]),
-    bg: lightDark(mainColor[200], mainColor[800]),
+    fg: lightDark(mainColor.c600, mainColor.c300),
+    bg: lightDark(mainColor.c200, mainColor.c800),
 
-    primaryFg: lightDark(mainColor[100], mainColor[900]),
-    primaryBg: lightDark(mainColor[700], mainColor[100]),
+    primaryFg: lightDark(mainColor.c100, mainColor.c900),
+    primaryBg: lightDark(mainColor.c700, mainColor.c100),
 
-    secondaryFg: lightDark(mainColor[900], mainColor[100]),
-    secondaryBg: lightDark(mainColor[100], mainColor[900]),
+    secondaryFg: lightDark(mainColor.c900, mainColor.c100),
+    secondaryBg: lightDark(mainColor.c100, mainColor.c900),
 
-    accentFg: lightDark(accentColor[500], accentColor[200]),
-    accentBg: lightDark(accentColor[200], accentColor[700]),
+    accentFg: lightDark(accentColor.c500, accentColor.c200),
+    accentBg: lightDark(accentColor.c200, accentColor.c700),
 
-    destructiveBg: lightDark(destructiveColor[300], destructiveColor[900]),
-    destructiveFg: lightDark(destructiveColor[600], destructiveColor[400]),
+    destructiveBg: lightDark(destructiveColor.c300, destructiveColor.c900),
+    destructiveFg: lightDark(destructiveColor.c600, destructiveColor.c400),
 
-    muted: lightDark(mainColor[500], mainColor[400]),
-    border: lightDark(mainColor[400], mainColor[600]),
-    input: lightDark(`oklch(from ${mainColor[900]} l c h / .15)`, `oklch(from ${mainColor[100]} l c h / .15)`),
+    muted: lightDark(mainColor.c500, mainColor.c400),
+    border: lightDark(mainColor.c400, mainColor.c600),
+    input: lightDark(`oklch(from ${mainColor.c900} l c h / .15)`, `oklch(from ${mainColor.c100} l c h / .15)`),
 })

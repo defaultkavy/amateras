@@ -1,1 +1,0 @@
-export * as amber from './amber-colors';

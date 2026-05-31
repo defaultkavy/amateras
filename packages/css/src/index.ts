@@ -1,7 +1,7 @@
 import { cssGlobalRuleSet, cssRuleByProtoMap } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { $CSSRule } from "#structure/$CSSRule";
-import { ElementProto, type Proto, onserver } from "@amateras/core";
+import { ElementProto, type Proto, onclient, onserver } from "@amateras/core";
 import { UID, Utils } from '@amateras/utils';
 import type { $CSSDeclarationMap } from "./types";
 
@@ -103,6 +103,12 @@ if (onserver()) {
             return [...cssGlobalRuleSet, ...this.rules(proto)].join('\n');
         }
     })
+}
+
+if (onclient()) {
+    // detect touch and set html[touch] attribute
+    addEventListener('touchstart', () => document.documentElement.setAttribute('touch', ''), { passive: true })
+    addEventListener('mousemove', () => document.documentElement.removeAttribute('touch'), { passive: true })
 }
 
 // Add processor of css attribute

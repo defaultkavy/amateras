@@ -1,11 +1,11 @@
 import type { CSSMap } from "#lib/toCSS";
 
-export const content_css: CSSMap = {
+export const content_css = {
     position: 'absolute',
-    left: '0',
     maxHeight: '50dvh',
     overflowY: 'auto',
-    display: 'block',
+    display: 'flex',
+    flexDirection: 'column',
     boxSizing: 'border-box',
     border: '1px solid var(--input)',
     background: 'oklch(from var(--bg) l c h)',

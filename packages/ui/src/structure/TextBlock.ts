@@ -11,7 +11,8 @@ export class TextBlock extends ElementProto<HTMLPreElement> {
         $.style(this, toUICSS(this.tagname, {
             display: 'block',
             whiteSpace: 'pre',
-            fontSize: 'var(--text-sm)'
+            fontSize: 'var(--text-sm)',
+            textWrap: 'auto',
         }))
     }
 }

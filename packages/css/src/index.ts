@@ -106,10 +106,15 @@ if (onserver()) {
 }
 
 if (onclient()) {
-    // detect pointer type and set html[<pointer-type>] attribute
-    addEventListener('pointermove', (e: PointerEvent) => {
-        if (e.pointerType) document.documentElement.setAttribute(e.pointerType, '')
-    })
+    // detect touch and set html[<pointer-type>] attribute
+    const listen = (type: 'pointermove' | 'pointerdown') => {
+        addEventListener(type, (e: PointerEvent) => {
+            if (e.pointerType === 'touch') document.documentElement.setAttribute('touch', '');
+            else document.documentElement.removeAttribute('touch');
+        })
+    }
+    listen('pointerdown');
+    listen('pointermove');
 }
 
 // Add processor of css attribute

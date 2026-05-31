@@ -103,6 +103,11 @@ export class Carousel extends ElementProto {
         if (this.timer) clearTimeout(this.timer);
     }
 
+    stop() {
+        this.pause();
+        this.#passed = 0;
+    }
+
     private targetItems(index: number) {
         const itemArr = Utils.arrayFrom(this.itemList);
         const $targetItem = itemArr.at(index);
@@ -114,9 +119,10 @@ export class Carousel extends ElementProto {
     private setItemsStyle(index: number) {
         const [$prevItem, $targetItem, $nextItem] = this.targetItems(index);
         const gap = this.attr('gap') ?? '0';
-        $targetItem?.style({ transform: `translate(calc((100% + ${gap}) * ${this.transformIndex}))` });
-        $prevItem?.style({ transform: `translate(calc((100% + ${gap}) * ${this.transformIndex - 1}))` });
-        $nextItem?.style({ transform: `translate(calc((100% + ${gap}) * ${this.transformIndex + 1}))` });
+        const setStyle = (proto: CarouselItem | undefined, offset: number) => proto?.style({ transform: `translate(calc((100% + ${gap}) * ${this.transformIndex + offset}))` });
+        setStyle($targetItem, 0);
+        if (index !== 0 || (this.itemList.size > 2 && this.loop())) setStyle($prevItem, -1);
+        if (index !== this.itemList.size - 1 || (this.itemList.size > 2 && this.loop())) setStyle($nextItem, 1);
     }
 
     switch(direction: 'next' | 'prev') {
@@ -127,7 +133,7 @@ export class Carousel extends ElementProto {
         if (itemArr.length <= 1) return;
         if (direction === 'next') {
             if (this.index + 1 >= itemArr.length) {
-                if (this.hasAttr('loop')) this.index = 0;
+                if (this.loop()) this.index = 0;
                 else return;
             }
             else this.index++;
@@ -135,7 +141,7 @@ export class Carousel extends ElementProto {
         }
         else {
             if (this.index - 1 < 0) {
-                if (this.hasAttr('loop')) this.index = itemArr.length - 1;
+                if (this.loop()) this.index = itemArr.length - 1;
                 else return;
             }
             else this.index--;
@@ -146,7 +152,8 @@ export class Carousel extends ElementProto {
         contentNode.replaceChildren(...Utils.remove(targetItems, Utils.Undefined).map($item => $item.toDOM()).flat());
         this.animateTo(this.transformIndex)
         this.dispatch('carousel_switch', [this], {bubbles: true})
-        this.#passed = 0;
+        this.stop();
+        this.play();
     }
 
     jumpTo(index: number) {
@@ -159,7 +166,8 @@ export class Carousel extends ElementProto {
         const targetItems = this.targetItems(index);
         contentNode.replaceChildren(...Utils.remove(targetItems, Utils.Undefined).map($item => $item.toDOM()).flat());
         this.dispatch('carousel_switch', [this], {bubbles: true})
-        this.#passed = 0;
+        this.stop();
+        this.play();
     }
 
     animateTo(index: number) {
@@ -209,9 +217,18 @@ export class Carousel extends ElementProto {
 
             const cancel = (e: PointerEvent) => {
                 removeListeners();
-                if (this.hasAttr('autoplay')) this.play();
-                if (moved.x < -100 || movement.x < -10) this.switch('next');
-                else if (moved.x > 100 || movement.x > 10) this.switch('prev');
+                if (this.autoplay()) this.play();
+
+                const movenext = moved.x < -100 || movement.x < -10;
+                const moveprev = moved.x > 100 || movement.x > 10;
+
+                if (!this.loop()) {
+                    if (this.index === 0 && moveprev) return this.animateTo(this.transformIndex);
+                    if (this.index === this.itemList.size - 1 && movenext) return this.animateTo(this.transformIndex);
+                }
+
+                if (movenext) this.switch('next');
+                else if (moveprev) this.switch('prev');
                 else this.animateTo(this.transformIndex);
             }
 
@@ -338,12 +355,12 @@ export class CarouselNext extends Button {
         super.build(cascading);
         this.$carousel = this.findAbove<Carousel>(proto => Utils.isInstanceof(proto, Carousel));
         this.checkDisabled();
-        this.$carousel?.listen('carousel-switch', () => this.checkDisabled())
+        this.$carousel?.listen('carousel_switch', () => this.checkDisabled())
         return this;
     }
 
     private checkDisabled() {
-        if (!this.$carousel?.hasAttr('loop') && this.$carousel!.index >= this.$carousel!.itemList.size - 1) this.attr('disabled', '');
+        if (!this.$carousel?.loop() && this.$carousel!.index >= this.$carousel!.itemList.size - 1) this.attr('disabled', '');
         else this.attr('disabled', Utils.Null)
     }
 }
@@ -371,12 +388,12 @@ export class CarouselPrev extends Button {
         super.build(cascading);
         this.$carousel = this.findAbove<Carousel>(proto => Utils.isInstanceof(proto, Carousel));
         this.checkDisabled();
-        this.$carousel?.listen('carousel-switch', () => this.checkDisabled())
+        this.$carousel?.listen('carousel_switch', () => this.checkDisabled())
         return this;
     }
 
     private checkDisabled() {
-        if (!this.$carousel?.hasAttr('loop') && this.$carousel?.index === 0) this.attr('disabled', '');
+        if (!this.$carousel?.loop() && this.$carousel?.index === 0) this.attr('disabled', '');
         else this.attr('disabled', Utils.Null)
     }
 }

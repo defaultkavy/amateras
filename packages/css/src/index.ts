@@ -106,9 +106,10 @@ if (onserver()) {
 }
 
 if (onclient()) {
-    // detect touch and set html[touch] attribute
-    addEventListener('touchstart', () => document.documentElement.setAttribute('touch', ''), { passive: true })
-    addEventListener('mousemove', () => document.documentElement.removeAttribute('touch'), { passive: true })
+    // detect pointer type and set html[<pointer-type>] attribute
+    addEventListener('pointermove', (e: PointerEvent) => {
+        if (e.pointerType) document.documentElement.setAttribute(e.pointerType, '')
+    })
 }
 
 // Add processor of css attribute

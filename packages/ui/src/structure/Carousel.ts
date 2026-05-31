@@ -49,7 +49,7 @@ export class Carousel extends ElementProto {
             position: 'relative',
             touchAction: 'pan-y',
 
-            '@media (hover: hover)': {
+            '@media (hover: hover) and (pointer: fine)': {
                 '&:hover': {
                     'button.carousel-prev, button.carousel-next': {
                         visibility: 'visible'

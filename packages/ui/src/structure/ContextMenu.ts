@@ -22,6 +22,7 @@ export class ContextMenu extends ElementProto {
         }))
 
         $.style(this, toCSS('html:has(context-menu)', {
+            scrollbarGutter: 'stable', 
             overflowY: 'hidden',
             overflowX: 'hidden',
             height: '100dvh'

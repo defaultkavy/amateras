@@ -26,11 +26,13 @@ export class Field extends ElementProto<HTMLElement> {
                 width: 'unset'
             },
 
-            '&:has(field-error) input[ui="input"]': {
-                borderColor: 'var(--destructive-fg)',
+            '&:has(field-error)': {
+                'input[ui="input"], textarea[ui="textarea"]': {
+                    borderColor: 'var(--destructive-fg)',
 
-                '&:focus-visible': {
-                    outlineColor: 'color-mix(in oklch, var(--destructive-fg) 30%, transparent)'
+                    '&:focus-visible': {
+                        outlineColor: 'color-mix(in oklch, var(--destructive-fg) 30%, transparent)'
+                    }
                 }
             }
         }))

@@ -48,6 +48,11 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
                     skip();
                     continue skipPath;
                 }
+
+                if (selfSeg === '*') {
+                    pass();
+                    continue skipSeg;
+                }
                 
                 if (selfSeg?.includes(':')) {
                     let [prefix, name] = selfSeg.split(':') as [string, string];

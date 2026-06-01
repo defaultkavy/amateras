@@ -215,7 +215,4 @@ export interface Router {
     group<
         Path extends RoutePath
     >(path: Path, handle: (route: Route<'', Path, PathToParamsMap<Path>>) => void): this;
-
-    notFound(layout: Widget): void;
-    notFound(layout: PageLayout): void;
 }

@@ -15,6 +15,7 @@ export class ContextMenu extends ElementProto {
             position: 'fixed',
             inset: '0',
             transition: 'all .3s ease',
+            zIndex: '999',
 
             '&[touch]': {
                 background: 'oklch(from var(--bg) calc(l - 0.1) c h / .5)'
@@ -29,10 +30,10 @@ export class ContextMenu extends ElementProto {
         }))
     }
 
-    open(e: MouseEvent) {
+    open(coordinate: {x: number, y: number}) {
         if (onclient()) {
             this.build();
-            this.on('click', (e) => {
+            this.on('pointerdown', (e) => {
                 if (e.target === this.$content?.node) return;
                 if (e.target && this.$content?.node?.contains(e.target as Node)) return;
                 this.close();
@@ -55,12 +56,12 @@ export class ContextMenu extends ElementProto {
                 })
             }
             else {
-                const overX = e.x + contentNode.offsetWidth > innerWidth;
-                const overY = e.y + contentNode.offsetHeight > innerHeight;
+                const overX = coordinate.x + contentNode.offsetWidth > innerWidth;
+                const overY = coordinate.y + contentNode.offsetHeight > innerHeight;
                 this.$content?.style({
-                    top: overY ? '' : `${e.y}px`,
+                    top: overY ? '' : `${coordinate.y}px`,
                     bottom: overY ? `calc(var(--spacing) * 4)` : '',
-                    left: overX ? '' : `${e.x}px`,
+                    left: overX ? '' : `${coordinate.x}px`,
                     right: overX ? `calc(var(--spacing) * 4)` : ''
                 })
             }
@@ -106,14 +107,17 @@ export class ContextMenuContent extends ElementProto {
                 borderRadius: 'calc(var(--radius) * 2)',
                 padding: 'calc(var(--spacing) * 4)',
                 gap: '0.1rem',
+                border: 'none',
+                borderBottomLeftRadius: '0',
+                borderBottomRightRadius: '0',
 
                 '& > context-menu-item:first-child, & > :first-child context-menu-item': {
-                    borderBottomLeftRadius: '0',
-                    borderBottomRightRadius: '0',
+                    borderTopLeftRadius: 'calc(var(--radius) * 2)',
+                    borderTopRightRadius: 'calc(var(--radius) * 2)',
                 },
                 '& > context-menu-item:last-child, & > :last-child context-menu-item': {
-                    borderTopLeftRadius: '0',
-                    borderTopRightRadius: '0',
+                    borderBottomLeftRadius: 'calc(var(--radius) * 2)',
+                    borderBottomRightRadius: 'calc(var(--radius) * 2)',
                 }
             },
         }))
@@ -148,16 +152,17 @@ export class ContextMenuItem extends ElementProto {
             'context-menu[touch] &': {
                 fontSize: 'var(--text-md)',
                 padding: 'calc(var(--spacing) * 4)',
-                background: 'oklch(from var(--secondary-bg) calc(l + .05) c h)',
+                background: 'color-mix(in oklch, var(--secondary-bg), var(--input) 40%)',
                 transition: 'all .3s ease',
+                borderRadius: '0',
 
                 'html:not([touch]) &:hover': {
-                    background: 'oklch(from var(--secondary-bg) calc(l + .1) c h)',
+                    background: 'color-mix(in oklch, var(--secondary-bg), var(--input) 20%)',
                 },
 
                 '&:active': {
                     scale: '.99 .99',
-                    background: 'oklch(from var(--secondary-bg) calc(l + .1) c h)',
+                    background: 'color-mix(in oklch, var(--secondary-bg), var(--input) 20%)',
                 }
             },
 

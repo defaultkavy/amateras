@@ -18,6 +18,8 @@ export class Icon extends ElementProto {
             verticalAlign: 'middle',
             // height: 'attr(size type(<length>), 1rem)',
             // width: 'attr(size type(<length>), 1rem)',
+            height: '1rem',
+            width: '1rem',
 
             'svg': {
                 display: 'block',

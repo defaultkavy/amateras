@@ -16,8 +16,8 @@ export class Icon extends ElementProto {
         $.style(this, toUICSS(this.tagname, {
             display: 'inline-block',
             verticalAlign: 'middle',
-            height: 'attr(size type(<length>), 1rem)',
-            width: 'attr(size type(<length>), 1rem)',
+            // height: 'attr(size type(<length>), 1rem)',
+            // width: 'attr(size type(<length>), 1rem)',
 
             'svg': {
                 display: 'block',
@@ -35,6 +35,15 @@ export class Icon extends ElementProto {
     svg(svg: OrSignal<string>) {
         $.resolve(svg, svg => {
             this.innerHTML(svg);
+        })
+    }
+
+    size(size: OrSignal<string>) {
+        $.resolve(size, size => {
+            this.style({
+                height: size,
+                width: size
+            })
         })
     }
 }

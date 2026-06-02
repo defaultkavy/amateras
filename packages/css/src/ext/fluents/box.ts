@@ -84,6 +84,13 @@ export const box = $.css.fluent(f => f
         contents: 'contents',
         inline_block: 'inline-block',
     })
+    .prop('position', {
+        absolute: 'absolute',
+        static: 'static',
+        sticky: 'sticky',
+        relative: 'relative',
+        fixed: 'fixed',
+    })
     .prop('overflow', {
         overflow_hidden: 'hidden',
         overflow_visible: 'visible',

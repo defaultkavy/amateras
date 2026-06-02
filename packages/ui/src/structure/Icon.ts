@@ -29,9 +29,10 @@ export class Icon extends ElementProto {
         }))
     }
 
-    override props({ svg, ...props }: $.Props<IconProps>): void {
+    override props({ size, svg, ...props }: $.Props<IconProps>): void {
         super.props(props);
         this.svg(svg);
+        this.size(size);
     }
 
     svg(svg: OrSignal<string>) {
@@ -40,7 +41,7 @@ export class Icon extends ElementProto {
         })
     }
 
-    size(size: OrSignal<string>) {
+    size(size: OrSignal<string> | undefined) {
         $.resolve(size, size => {
             this.style({
                 height: size,

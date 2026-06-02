@@ -138,9 +138,16 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
     }
 
     style(declarations: Partial<CSSStyleDeclaration>) {
-        let setStyle = () => this.node && Utils.assign(this.node.style, declarations);
-        setStyle();
-        if (!this.node) this.listen('dom', setStyle);
+        if (this.node) Utils.assign(this.node.style, declarations);
+        else {
+            const oldStyleText = this.attr('style');
+            if (oldStyleText) {
+                const oldStyle = Utils.fromEntries(oldStyleText.split(';').map(declaration => declaration.split(':') as [string, string]));
+                declarations = { ...oldStyle, ...declarations };
+            }
+            
+            this.attr('style', Utils.entries(declarations).map(([name, value]) => `${name}: ${value}`).join('; '));
+        }
     }
 
     private token(method: 'add' | 'delete', name: string, ...tokens: string[]) {

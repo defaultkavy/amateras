@@ -220,10 +220,14 @@ export class Carousel extends ElementProto {
                 const movenext = moved.x < -100 || movement.x < -10;
                 const moveprev = moved.x > 100 || movement.x > 10;
 
+                // not allow loop
                 if (!this.loop()) {
                     if (this.index === 0 && moveprev) return this.animateTo(this.transformIndex);
                     if (this.index === this.itemList.size - 1 && movenext) return this.animateTo(this.transformIndex);
                 }
+
+                // no items to switch
+                if (this.itemList.size === 1) return this.animateTo(this.transformIndex)
 
                 if (movenext) this.switch('next');
                 else if (moveprev) this.switch('prev');

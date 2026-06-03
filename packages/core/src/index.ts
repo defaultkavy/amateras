@@ -7,6 +7,7 @@ import { TextProto } from './structure/TextProto';
 import type { ProxyProto } from '#structure/ProxyProto';
 import type { NodeProto } from '#structure/NodeProto';
 import { hmr } from '#lib/hmr';
+import { ProtoProcess } from '#structure/ProtoProcess';
 
 function createProto(insert: boolean, ...args: any) {
     const prevProtoParent = Proto.proto;
@@ -54,7 +55,7 @@ function createProto(insert: boolean, ...args: any) {
 
     if (Utils.isArray(arg1)) {
         let valueBuilder = (value: any) => {
-            for (let process of $.process.text) {
+            for (let process of $.middleware.text) {
                 let proto = process(value);
                 if (!Utils.isUndefined(proto)) return addProtoToParent(proto);
             }
@@ -216,6 +217,8 @@ export namespace $ {
     }
 
     export const async = <T>(fn: (parent: Proto | null) => Promise<T>): Promise<T> => Proto.proto?.global.asyncTask(fn(Proto.proto)) ?? fn(Proto.proto);
+
+    export const process = (handle: (proc: ProtoProcess) => ProtoProcess) => handle(new ProtoProcess()).run()
 
     export const stylesheet = onclient() ? new CSSStyleSheet() : Utils.Null;
     export const styleMap = new Map<Constructor<ElementProto>, Set<string>>();

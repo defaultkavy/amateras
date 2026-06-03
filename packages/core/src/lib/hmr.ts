@@ -38,7 +38,7 @@ if (import.meta.hot) {
                 proto.constructor.builder = constructor.builder;
                 const [_, ...oldNodes] = proto.toDOM();
                 const oldNode = proto.node;
-                $.context(Proto, proto.parent, () => {
+                $.context(proto.parent, () => {
                     const nodes = proto.build().toDOM();
                     oldNode?.replaceWith(...nodes);
                 })

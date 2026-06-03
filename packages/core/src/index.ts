@@ -207,11 +207,12 @@ export namespace $ {
         if (onclient()) document.querySelector('style#__ssr__')?.remove();
     }
 
-    export const context = (object: {proto: Proto | null}, parent: Proto | null, callback: () => void) => {
-        let cacheProtoParent = object.proto;
-        object.proto = parent;
-        callback();
-        object.proto = cacheProtoParent;
+    export const context = <T>(parent: Proto | null, callback: () => T): T => {
+        let cacheProtoParent = Proto.proto;
+        Proto.proto = parent;
+        let result = callback();
+        Proto.proto = cacheProtoParent;
+        return result;
     }
 
     export const async = <T>(fn: (parent: Proto | null) => Promise<T>): Promise<T> => Proto.proto?.global.asyncTask(fn(Proto.proto)) ?? fn(Proto.proto);

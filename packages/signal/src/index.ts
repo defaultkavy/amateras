@@ -76,7 +76,7 @@ Utils.assign($, {
         let compute = $.signal(result);
         let proto = Proto.proto;
         compute.exec = () => {
-            $.context(Proto, proto, () => {
+            $.context(proto, () => {
                 compute.set(callback(untrack));
             })
         }

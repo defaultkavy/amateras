@@ -59,7 +59,7 @@ export class For<T extends [K: any, V: any] = [any, any]> extends ProxyProto {
         let deleted = new Set(this.protos);
         let added = new Set<ForItem>();
         Utils.forEach(Utils.arrayFrom(this.list$.value), (item, i) => {
-            $.context(Proto, this, () => {
+            $.context(this, () => {
                 let layout = this.#layout;
                 let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => layout(item as any, i));
                 this.#itemProtoMap.set(item, itemProto);

@@ -1,4 +1,4 @@
-import { onclient, Proto, symbol_ProtoType } from "@amateras/core";
+import { onclient, symbol_ProtoType } from "@amateras/core";
 import { Utils } from '@amateras/utils';
 import type { WidgetConstructor } from "@amateras/widget";
 import type { AsyncWidget, PageLayout } from "../types";
@@ -46,7 +46,7 @@ export class RouteNode extends Route {
                 ?   () => $(this.#layout as WidgetConstructor, params, () => $(page!.slot)) 
                 :   this.#layout as PageLayout;
             }
-            $.context(Proto, slot, () => {
+            $.context(slot, () => {
                 page = new Page(this, _layout, params);
             })
             this.pages.set(path, page);

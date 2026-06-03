@@ -95,7 +95,7 @@ Utils.assign($, {
                 let result;
                 // set cache on html
                 if (onserver() && proto) setCache(proto, url, record, options);
-                $.context(Proto, proto, () => {
+                $.context(proto, () => {
                     result = then?.(record);
                 })
                 resolve({record, result});

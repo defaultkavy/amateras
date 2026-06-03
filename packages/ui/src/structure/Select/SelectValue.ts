@@ -29,7 +29,7 @@ export class SelectValue extends ElementProto {
 
     placeholder(text: OrSignal<string | null> | Proto) {
         $.resolve(text, text => {
-            if (Utils.isString(text)) $.context(Proto, this, () => this.$placeholder = new TextProto(text));
+            if (Utils.isString(text)) $.context(this, () => this.$placeholder = new TextProto(text));
             else this.$placeholder = text;
             this.render();
         });

@@ -1,3 +1,4 @@
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 import { Utils } from '@amateras/utils';
 
@@ -14,7 +15,9 @@ export class Tabs extends ElementProto {
     }
 
     static {
-        $.style(Tabs, 'tabs{display:block;}')
+        $.style(this, toUICSS('tabs', {
+            display: 'block'
+        }))
     }
 
     switch(tabId: string) {
@@ -37,7 +40,9 @@ export class TabTrigger extends ElementProto {
     }
 
     static {
-        $.style(Tabs, 'tab-trigger{cursor:pointer;}')
+        $.style(this, toUICSS('tab-trigger', {
+            cursor: 'pointer'
+        }))
     }
 
     override build(cascading?: boolean): this {
@@ -56,20 +61,17 @@ export class TabsContainer extends ElementProto {
     }
 
     static {
-        $.style(Tabs, 'tab-container{display:block;}')
+        $.style(this, toUICSS('tab-container', {
+            display: 'block'
+        }))
     }
 
     override build(cascading?: boolean): this {
-        super.build(cascading);
+        super.build(false);
         this.tabs = this.findAbove<Tabs>(proto => Utils.is(proto, Tabs));
         if (this.tabs) this.tabs.$container = this;
+        this.renderContent();
         return this;
-    }
-
-    override toDOM(children = true): HTMLElement[] {
-        super.toDOM(false);
-        this.renderContent(children);
-        return [this.node!]
     }
 
     override toString(): string {
@@ -84,10 +86,11 @@ export class TabsContainer extends ElementProto {
         return this.children.find(tabContent => tabContent.tabId === tabId);
     }
 
-    renderContent(children = true) {
+    renderContent() {
         const targetId = this.tabs?.targetId;
         const $targetTabContent = targetId ? this.getContent(targetId) : this.children.at(0);
-        if (children && $targetTabContent) {
+        if ($targetTabContent) {
+            if (!$targetTabContent.builded) $targetTabContent.build();
             this.node?.replaceChildren(...$targetTabContent.toDOM());
             this.tabs?.triggers.forEach($trigger => {
                 $trigger.attr('active', $trigger.tabId === $targetTabContent.tabId ? '' : Utils.Null);
@@ -103,18 +106,15 @@ export interface TabContentOptions {
 export class TabContent extends ElementProto {
     tabId: string;
     tabs: Tabs | null = null;
+    override virtual = true;
     constructor({tabId, ...props}: $.Props<TabContentOptions>, layout?: $.Layout<TabContent>) {
         super('tab-content', props, layout);
         this.tabId = tabId;
     }
 
     static {
-        $.style(Tabs, 'tab-content{display:block;}')
-    }
-
-    override build(cascading?: boolean): this {
-        super.build(cascading);
-        this.tabs = this.findAbove<Tabs>(proto => Utils.is(proto, Tabs));
-        return this;
+        $.style(this, toUICSS('tab-content', {
+            display: 'block'
+        }))
     }
 }

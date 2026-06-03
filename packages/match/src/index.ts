@@ -9,7 +9,7 @@ globalThis.Match = Match;
 globalThis.Case = Case;
 globalThis.Default = Default;
 
-$.process.craft.add((value, arg1, arg2) => {
+$.middleware.craft.add((value, arg1, arg2) => {
     if (import.meta.hot) {
         if (Utils.isInstanceof(Proto.proto, Match)) {
             if (!Utils.isIncluded(value, [Case, Default])) throw 'Match layout only includes Case and Default';

@@ -3,7 +3,7 @@ import './global';
 
 globalThis.For = For;
 
-$.process.craft.add((value, list, layout) => {
+$.middleware.craft.add((value, list, layout) => {
     if (value === For) {
         return new For(list, layout);
     }

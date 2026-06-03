@@ -118,7 +118,7 @@ if (onclient()) {
 }
 
 // Add processor of css attribute
-$.process.attr.add((key, value, proto) => {
+$.middleware.attr.add((key, value, proto) => {
     if (key === 'css') {
         mergeMaps(value, proto);
         return true;

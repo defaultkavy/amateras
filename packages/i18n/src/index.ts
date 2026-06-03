@@ -47,7 +47,7 @@ Utils.assign($, {
     }
 })
 
-$.process.text.add(value => {
+$.middleware.text.add(value => {
     if (Utils.isInstanceof(value, I18nTranslation)) {
         const $proxy = new ProxyProto();
         value.onupdate(result => {
@@ -61,7 +61,7 @@ $.process.text.add(value => {
         return $proxy;
     }
 })
-$.process.attr.add((name, value, proto) => {
+$.middleware.attr.add((name, value, proto) => {
     if (Utils.isInstanceof(value, I18nTranslation)) {
         value.onupdate((result) => {
             proto.attr(name, result.join(''))

@@ -136,9 +136,9 @@ let toProxyProto = (signal: Signal) => {
     }
 }
 
-$.process.text.add(toProxyProto)
-$.process.craft.add(toProxyProto)
-$.process.attr.add((name, signal, proto) => {
+$.middleware.text.add(toProxyProto)
+$.middleware.craft.add(toProxyProto)
+$.middleware.attr.add((name, signal, proto) => {
     if (Utils.isInstanceof(signal, Signal)) {
         let setNodeAttr = () => proto.attr(name, signal.value as any);
         signal.subscribe(setNodeAttr);

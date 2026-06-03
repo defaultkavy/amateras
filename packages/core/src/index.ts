@@ -15,7 +15,7 @@ function createProto(insert: boolean, ...args: any) {
         if (insert) prevProtoParent?.append(proto);
         protos.push(proto);
     }
-    for (let process of $.process.craft) {
+    for (let process of $.middleware.craft) {
         let result = process(...args);
         if (!Utils.isUndefined(result)) {
             addProtoToParent(result);
@@ -184,7 +184,7 @@ export namespace $ {
         mutate: [];
     }
 
-    export const process = {
+    export const middleware = {
         craft: new Set<CraftMiddleware>(),
         text: new Set<TextMiddleware>(),
         attr: new Set<AttrMiddleware>()

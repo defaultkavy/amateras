@@ -33,7 +33,7 @@ Utils.assign($, {
     }
 })
 
-$.process.craft.add((widget, ...args) => {
+$.middleware.craft.add((widget, ...args) => {
     if (widget[symbol_ProtoType] === 'Widget') {
         let [arg1] = args;
         args = Utils.isFunction(arg1) ? [{}, arg1] : args;

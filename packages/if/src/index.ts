@@ -34,7 +34,7 @@ type ResolveSignal<T> = [T] extends [Signal<infer V>]
  */
 let condition: Condition | null = null;
 // add condition statement craft function
-$.process.craft.add((value, arg1, arg2) => {
+$.middleware.craft.add((value, arg1, arg2) => {
     // when value equal If, mean this is a new start of condition statement
     if (value === If) {
         condition = new Condition();

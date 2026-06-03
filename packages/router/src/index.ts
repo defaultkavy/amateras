@@ -96,7 +96,7 @@ Utils.assign($, {
 globalThis.Link = Link;
 globalThis.NavLink = NavLink;
 
-$.process.craft.add((value) => {
+$.middleware.craft.add((value) => {
     if (Utils.isFunction(value) && value[symbol_ProtoType] === 'Router') {
         let proto = Proto.proto;
         let router = new value() as Router;

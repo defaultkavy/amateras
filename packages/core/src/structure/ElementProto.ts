@@ -22,7 +22,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
 
     static attrProcess(proto: ElementProto, attrObj: $.Props) {
         Utils.forEach(Utils.entries(attrObj), ([key, value]) => {
-            for (let process of $.process.attr) {
+            for (let process of $.middleware.attr) {
                 let result = process(key, value, proto);
                 if (!Utils.isUndefined(result)) return;
             }

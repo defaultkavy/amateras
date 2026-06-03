@@ -45,12 +45,26 @@ export const box = $.css.fluent(f => f
         maxw_fit: 'fit-content',
         maxw: spacingFn
     })
-    .prop('height', {
+    .prop('maxHeight', {
         maxh_full: '100%',
         maxh_min: 'min-content',
         maxh_max: 'max-content',
         maxh_fit: 'fit-content',
         maxh: spacingFn
+    })
+    .prop('minWidth', {
+        minw_full: '100%',
+        minw_min: 'min-content',
+        minw_max: 'max-content',
+        minw_fit: 'fit-content',
+        minw: spacingFn
+    })
+    .prop('minHeight', {
+        minh_full: '100%',
+        minh_min: 'min-content',
+        maxh_max: 'max-content',
+        minh_fit: 'fit-content',
+        minh: spacingFn
     })
     .prop('marginInline', {
         mx: spacingFn

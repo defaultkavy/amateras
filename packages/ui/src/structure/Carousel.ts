@@ -135,7 +135,9 @@ export class Carousel extends ElementProto {
                 else return;
             }
             else this.index++;
-            this.transformIndex++;
+
+            if (itemArr.length <= 2 && this.index === 0) this.transformIndex = 0;
+            else this.transformIndex++;
         }
         else {
             if (this.index - 1 < 0) {
@@ -227,10 +229,10 @@ export class Carousel extends ElementProto {
                 }
 
                 // no items to switch
-                if (this.itemList.size === 1) return this.animateTo(this.transformIndex)
+                if (this.itemList.size === 1) return this.animateTo(this.transformIndex);
 
-                if (movenext) this.switch('next');
-                else if (moveprev) this.switch('prev');
+                if (movenext && !(this.itemList.size === 2 && this.index === 1)) this.switch('next');
+                else if (moveprev && !(this.itemList.size === 2 && this.index === 0)) this.switch('prev');
                 else this.animateTo(this.transformIndex);
             }
 

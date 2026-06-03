@@ -1,4 +1,4 @@
-export function parseMatrix2D(matrixString: string) {
+export function parseMatrix2D(matrixString: string): Matrix2D {
     const fallback = { x: 0, y: 0, scaleX: 1, scaleY: 1, angle: 0 };
     if (!matrixString || matrixString === 'none') return fallback;
 
@@ -16,4 +16,12 @@ export function parseMatrix2D(matrixString: string) {
     const angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
 
     return { x, y, scaleX, scaleY, angle };
+}
+
+export type Matrix2D = {
+    x: number;
+    y: number;
+    scaleX: number;
+    scaleY: number;
+    angle: number
 }

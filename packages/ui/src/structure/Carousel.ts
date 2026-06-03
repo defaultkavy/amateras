@@ -49,7 +49,7 @@ export class Carousel extends ElementProto {
             position: 'relative',
             touchAction: 'pan-y',
 
-            'html:not([touch]) &:hover': {
+            'html:not([touch]) &:not([nopage]):hover': {
                 'button.carousel-prev, button.carousel-next': {
                     visibility: 'visible'
                 }
@@ -250,6 +250,7 @@ export class Carousel extends ElementProto {
         this.on('pointerdown', pointerdown)
     }
 }
+
 export class CarouselContainer extends ElementProto {
     static tagname = 'carousel-container';
     $carousel: Carousel | null = Utils.Null;
@@ -297,6 +298,7 @@ export class CarouselContent extends ElementProto {
         super.build(cascading);
         this.$carousel = this.findAbove<Carousel>(proto => Utils.isInstanceof(proto, Carousel));
         if (this.$carousel) this.$carousel.$content = this;
+        this.nopage();
         return this;
     }
 
@@ -308,6 +310,12 @@ export class CarouselContent extends ElementProto {
         super.mutate();
         this.$carousel?.itemList.clear();
         Utils.forEach(this.children, $child => this.$carousel?.itemList.add($child));
+        this.nopage();
+    }
+
+    private nopage() {
+        if (!this.$carousel) return;
+        this.$carousel.attr('nopage', this.$carousel.itemList.size <= 1 ? '' : Utils.Null);
     }
 }
 

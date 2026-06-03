@@ -17,8 +17,8 @@ export class I18nSession {
         i18n.sessions.add(this);
     }
     
-    async fetch(key: string, options?: I18nTranslationOptions): Promise<I18nTranslationResult> {
-        const dictionary = this.i18n.dictionaries.get(this.#locale);
+    async fetch(key: string, options?: I18nTranslationOptions, locale = this.#locale): Promise<I18nTranslationResult> {
+        const dictionary = this.i18n.dictionaries.get(locale);
         if (!dictionary) return {text: [key], args: []};
         const translate = await dictionary.find(key);
         if (Utils.isUndefined(translate)) return {text: [key], args: []};

@@ -5,19 +5,21 @@ export class I18nTranslation {
     session: I18nSession;
     key: string;
     options: I18nTranslationOptions | undefined;
+    locale: string;
     private updating = false;
     private updaters: ((result: any[]) => void)[] = [];
-    constructor(session: I18nSession, key: string, options?: I18nTranslationOptions) {
+    constructor(session: I18nSession, key: string, options?: I18nTranslationOptions, locale = session.locale()) {
         this.session = session;
         this.key = key;
         this.options = options;
         this.session.translations.add(this);
+        this.locale = locale;
     }
     
     async update() {
         if (this.updating) return;
         this.updating = true;
-        const request = this.session.fetch(this.key, this.options);
+        const request = this.session.fetch(this.key, this.options, this.locale);
         this.session.global.asyncTask(request);
         const {text, args} = await request;
         const arr = Utils.map(text, (str, index) => index < args.length ? [str, args[index]] : [str]).flat();

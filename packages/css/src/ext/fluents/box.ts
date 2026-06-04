@@ -90,7 +90,7 @@ export const box = $.css.fluent(f => f
         muted: colors.muted,
         accent: colors.accentBg,
         destructive: colors.destructiveBg,
-        bg: (val: string) => val
+        bg: (val: $.CSSValue) => val
     })
     .prop('display', {
         block: 'block',
@@ -131,5 +131,5 @@ export const box = $.css.fluent(f => f
         left: 'left',
         right: 'right'
     })
-    .option('size', (val: number | string) => ({ height: spacingFn(val), width: spacingFn(val) }))
+    .option('size', (val: $.CSSValue) => ({ height: spacingFn(val), width: spacingFn(val) }))
 )

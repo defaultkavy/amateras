@@ -1,3 +1,3 @@
 import { Utils } from "@amateras/utils";
 
-export const spacingFn = (val: number | string) => Utils.isString(val) ? val : `calc(var(--spacing) * ${val})`;
+export const spacingFn = (val: $.CSSValue) => Utils.isString(val) ? val : `calc(var(--spacing) * ${val})`;

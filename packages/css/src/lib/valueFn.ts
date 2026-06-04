@@ -1,1 +1,1 @@
-export const valueFn = (val: string | number) => val;
+export const valueFn = (val: $.CSSValue) => val;

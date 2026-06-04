@@ -73,3 +73,4 @@ $.middleware.attr.add((name, value, proto) => {
 export * from "#structure/I18n";
 export * from "#structure/I18nDictionary";
 export * from "#structure/I18nTranslation";
+export * from "#structure/I18nSession";

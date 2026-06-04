@@ -3,7 +3,8 @@ import { ElementProto } from "@amateras/core";
 
 export interface BadgeProps {
     variant?: 'primary' | 'outline' | 'secondary' | 'ghost' | 'destructive' | 'link' | string & {};
-    size?: 'base' | 'icon' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg' | string & {}
+    size?: 'base' | 'icon' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg' | string & {};
+    hover?: '' | null;
 }
 
 export class Badge extends ElementProto<HTMLButtonElement> {
@@ -37,7 +38,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                 outline: '0.1rem solid var(--border)'
             },
 
-            'a:not([disabled]) > &:hover': {
+            '&[hover]:hover': {
                 background: 'oklch(from var(--input) l c h / .1)',
                 color: 'oklch(from var(--fg) l c h / 1)',
             },
@@ -52,7 +53,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                 border: 'none',
                 color: 'oklch(from var(--secondary-fg) l c h)',
                 background: 'var(--secondary-bg)',
-                'a:not([disabled]) &:hover': {
+                '&[hover]:hover': {
                     background: 'oklch(from var(--secondary-bg) l c h / .8)'
                 }
             },
@@ -61,7 +62,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                 border: 'none',
                 color: 'oklch(from var(--destructive-fg) l c h)',
                 background: 'oklch(from var(--destructive-bg) l c h / .3)',
-                'a:not([disabled]) &:hover': {
+                '&[hover]:hover': {
                     background: 'oklch(from var(--destructive-bg) l c h / .5)'
                 }
             },
@@ -70,7 +71,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                 border: 'none',
                 color: 'oklch(from var(--fg) l c h)',
                 background: 'oklch(from var(--input) l c h / 0)',
-                'a:not([disabled]) &:hover': {
+                '&[hover]:hover': {
                     background: 'oklch(from var(--input) l c h / .1)'
                 }
             },
@@ -79,7 +80,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                 border: 'none',
                 color: 'oklch(from var(--fg) l c h)',
                 background: 'oklch(from var(--input) l c h / 0)',
-                'a:not([disabled]) &:hover': {
+                '&[hover]:hover': {
                     textDecoration: 'underline',
                     textUnderlineOffset: '0.2rem'
                 }
@@ -91,10 +92,6 @@ export class Badge extends ElementProto<HTMLButtonElement> {
                 lineHeight: 'var(--text-xs2)',
                 height: 'calc(var(--spacing) * 4)'
             },
-
-            'a[disabled] > &': {
-                opacity: '.5'
-            }
         }))
     }
 }

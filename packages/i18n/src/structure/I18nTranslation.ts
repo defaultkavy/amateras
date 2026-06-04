@@ -5,10 +5,10 @@ export class I18nTranslation {
     session: I18nSession;
     key: string;
     options: I18nTranslationOptions | undefined;
-    locale: string;
+    locale: string | undefined;
     private updating = false;
     private updaters: ((result: any[]) => void)[] = [];
-    constructor(session: I18nSession, key: string, options?: I18nTranslationOptions, locale = session.locale()) {
+    constructor(session: I18nSession, key: string, options?: I18nTranslationOptions, locale?: string) {
         this.session = session;
         this.key = key;
         this.options = options;

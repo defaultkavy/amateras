@@ -117,7 +117,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
             this.node?.removeAttribute(attrName!);
         }
         else {
-            this.#attr[attrName!] = attrValue;
+            this.#attr[attrName!] = `${attrValue}`;
             this.node?.setAttribute(attrName!, attrValue);
         }
         return this;

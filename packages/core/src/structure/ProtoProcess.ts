@@ -5,7 +5,7 @@ export class ProtoProcess {
     proto: Proto | null;
     tasks = new Set<Task>();
     constructor(proto = Proto.proto) {
-        if (!proto) throw 'ProtoProcess error: proto is missing';
+        if (!proto) throw 'ProtoProcess error: proto context is missing';
         this.proto = proto;
     }
 

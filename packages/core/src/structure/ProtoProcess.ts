@@ -21,8 +21,12 @@ export class ProtoProcess {
     
     async run() {
         for (const task of this.tasks) {
-            if (task.await) await this.proto?.global.asyncTask($.context(this.proto, task.fn));
-            else this.proto?.global.asyncTask($.context(this.proto, task.fn));
+            const run = () => {
+                const resolver = $.context(this.proto, task.fn);
+                if (Utils.isInstanceof(resolver, Promise)) return this.proto?.global.asyncTask(resolver);
+            }
+            if (task.await) await run();
+            else run();
         }
         this.dispose();
         return this;

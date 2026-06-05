@@ -117,7 +117,7 @@ export class Router extends Proto {
         // NavLink 检测匹配
         Utils.forEach(this.global.router.navlinks, navlink => navlink.checkActive())
         // location 变更事件触发
-        Router.dispatchEvent();
+        if (onclient()) window.dispatchEvent(new RouterEvent('pathchange', this.constructor as any));
         // restore scroll position
         Promise.all(this.global.router.scrollQueue).then(() => {
             // make sure after scroll queue promises resolved is still the same page
@@ -152,6 +152,7 @@ export class Router extends Proto {
 
     static scrollRestoration() {
         if (onclient()) {
+            if (!window.dispatchEvent(new RouterEvent('scrollrestoration', this, {cancelable: true}))) return;
             let scrollData = Router.scrollData ?? {x: 0, y: 0};
             let scrollDataElements = Utils.entries(scrollData);
             if (scrollDataElements.length)
@@ -180,17 +181,22 @@ export class Router extends Proto {
         })
         if (onclient()) history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
         Utils.forEach(this.routers, router => router.resolve(path))
-        Router.dispatchEvent();
+        if (onclient()) window.dispatchEvent(new RouterEvent('pathchange', this));
     }
+}
 
-    private static dispatchEvent() {
-        if (onclient()) window.dispatchEvent(new Event('pathchange'));
+export class RouterEvent extends Event {
+    Router: typeof Router;
+    constructor(type: string, router: typeof Router, eventInit?: EventInit) {
+        super(type, eventInit);
+        this.Router = router;
     }
 }
 
 declare global {
     export interface GlobalEventHandlersEventMap {
-        pathchange: Event
+        scrollrestoration: RouterEvent
+        pathchange: RouterEvent
     }
 }
 

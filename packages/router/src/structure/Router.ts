@@ -44,8 +44,8 @@ const scrollRecord = (e?: Event) => {
 
 export class Router extends Proto {
     static direction: RouterDicrection = FORWARD;
-    prev: URL | null = Utils.Null;
-    url: URL | null = Utils.Null;
+    static prev: URL | null = Utils.Null;
+    static url: URL | null = Utils.Null;
     routes = new Map<string, Route>();
     slot = new RouteSlot();
     static routers = new Set<Router>();
@@ -65,7 +65,7 @@ export class Router extends Proto {
                 if (index > stateIndex) Router.direction = BACK;
                 if (index < stateIndex) Router.direction = FORWARD;
                 index = stateIndex;
-                this.prev = this.href;
+                Router.prev = this.href;
                 this.href = Utils.toURL(location.href);
                 this.resolve(location.href);
             }
@@ -113,7 +113,7 @@ export class Router extends Proto {
                 break;
             };
         }
-        this.url = url;
+        Router.url = url;
         // NavLink 检测匹配
         Utils.forEach(this.global.router.navlinks, navlink => navlink.checkActive())
         // location 变更事件触发
@@ -121,7 +121,7 @@ export class Router extends Proto {
         // restore scroll position
         Promise.all(this.global.router.scrollQueue).then(() => {
             // make sure after scroll queue promises resolved is still the same page
-            if (url === this.url) Router.scrollRestoration()
+            if (url === Router.url) Router.scrollRestoration()
         });
     }
 
@@ -174,8 +174,8 @@ export class Router extends Proto {
         if (mode === PUSH) index++;
         if (onclient()) scrollRecord();
         Router.direction = FORWARD;
+        if (onclient()) Router.prev = Utils.toURL(location.href);
         Utils.forEach(this.routers, router => {
-            if (onclient()) router.prev = Utils.toURL(location.href);
             router.href = url;
         })
         if (onclient()) history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);

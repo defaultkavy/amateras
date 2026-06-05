@@ -1,5 +1,6 @@
 import { onclient } from "@amateras/core";
 import { Utils } from '@amateras/utils';
+import type { I18nDictionaryContext, I18nDictionaryContextImporter } from "../types";
 
 export class I18nDictionary {
     #context: I18nDictionaryContext | Promise<I18nDictionaryContext> | null = null;
@@ -27,14 +28,16 @@ export class I18nDictionary {
         if (!context) context = await this.context();
         const [snippet, ...rest] = path.split('.') as [string, ...string[]];
         const target = context[snippet];
+        if (Utils.isFunction(target)) {
+            const context = await target().then(mod => mod.default);
+            if (rest.length) return this.find(rest.join('.'), context);
+            return context['_'] as string;
+        }
         if (Utils.isObject(target)) {
             if (rest.length) return this.find(rest.join('.'), target);
-            else return target['_'] as string;
+            return target['_'] as string;
         } 
         if (rest.length) return path;
-        else return target;
+        return target;
     }
 }
-
-export type I18nDictionaryContext = {[key: string]: string | I18nDictionaryContext}
-export type I18nDictionaryContextImporter = () => Promise<{default: I18nDictionaryContext}>

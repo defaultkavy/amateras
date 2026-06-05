@@ -1,9 +1,9 @@
-import { I18nDictionary, type I18nDictionaryContext, type I18nDictionaryContextImporter } from "#structure/I18nDictionary";
 import { I18nTranslation } from "./I18nTranslation";
 import { I18nSession } from "./I18nSession";
 import { onclient, Proto } from "@amateras/core";
-import type { I18nTranslationKey, I18nTranslationParams, Mixin, ResolvedAsyncDictionary, I18nTranslationDirKey, GetDictionaryContextByKey } from "../types";
+import type { I18nTranslationKey, I18nTranslationParams, MixinDictionaryContext, ResolvedAsyncDictionary, I18nTranslationDirKey, GetDictionaryContextByKey, I18nDictionaryContext, I18nDictionaryContextImporter } from "../types";
 import { Utils } from '@amateras/utils';
+import { I18nDictionary } from "./I18nDictionary";
 
 export class I18n<D extends I18nDictionaryContext = {}, L extends string[] = []> {
     #locale: string;
@@ -27,12 +27,12 @@ export class I18n<D extends I18nDictionaryContext = {}, L extends string[] = []>
         return this;
     }
 
-    t<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [locale?: L[number]] : [options: P, locale?: L[number]]): I18nTranslation;
+    t<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D, L>>(path: K, ...params: P): I18nTranslation;
     t(key: string, ...args: any[]) {
         return new I18nTranslation(this.session, this.getFullPath(key), ...args);
     }
 
-    text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [locale?: L[number]] : [options: P, locale?: L[number]]): Promise<string>;
+    text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D, L>>(path: K, ...params: P): Promise<string>;
     async text(key: string, ...args: any[]) {
         let content = await this.session.fetch(this.getFullPath(key), ...args)
         return content.text.reduce((acc, str, i) => acc + str + (content.args[i] || ''), '')
@@ -41,8 +41,10 @@ export class I18n<D extends I18nDictionaryContext = {}, L extends string[] = []>
     dir(path: string) {
         let i18n = this;
         return {
-            t: (key: string, options: any, locale: string) => i18n.t(`${path}.${key}` as any, options, locale),
-            text: (key: string, options: any) => i18n.text(`${path}.${key}` as any, options),
+            //@ts-ignore
+            t: (key: string, options?: any, locale?: string) => i18n.t(`${path}.${key}`, options, locale),
+            //@ts-ignore
+            text: (key: string, options?: any, locale?: string) => i18n.text(`${path}.${key}`, options, locale),
             dir: (postPath: string) => i18n.dir(`${path}.${postPath}`)
         } as unknown as I18nDir;
     }
@@ -90,15 +92,15 @@ export class I18n<D extends I18nDictionaryContext = {}, L extends string[] = []>
 }
 
 export interface I18n<D extends I18nDictionaryContext = {}, L extends string[] = []> {
-    add<F extends I18nDictionaryContext | I18nDictionaryContextImporter, T extends string>(lang: T, dictionary: F): I18n<Mixin<D, (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>, [...L, T]>;
+    add<F extends I18nDictionaryContext | I18nDictionaryContextImporter, T extends string>(lang: T, dictionary: F): I18n<Prettify<MixinDictionaryContext<D, (F extends I18nDictionaryContextImporter ? ResolvedAsyncDictionary<F> : F)>>, [...L, T]>;
     delete(lang: string): this;
-    t<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [locale?: L[number]] : [options: P, locale?: L[number]]): I18nTranslation;
-    text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [locale?: L[number]] : [options: P, locale?: L[number]]): Promise<string>;
+    t<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D, L>>(path: K, ...params: P): I18nTranslation;
+    text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D, L>>(path: K, ...params: P): Promise<string>;
     dir<K extends I18nTranslationDirKey<D>>(path: K): I18nDir<GetDictionaryContextByKey<K, D>, L>
 }
 
 export interface I18nDir<D extends I18nDictionaryContext = {}, L extends string[] = []> {
-    t<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [locale?: L[number]] : [options: P, locale?: L[number]]): I18nTranslation;
-    text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D>>(path: K, ...params: P extends Record<string, never> ? [locale?: L[number]] : [options: P, locale?: L[number]]): Promise<string>;
+    t<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D, L>>(path: K, ...params: P): I18nTranslation;
+    text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D, L>>(path: K, ...params: P): Promise<string>;
     dir<K extends I18nTranslationDirKey<D>>(path: K): I18n<GetDictionaryContextByKey<K, D>>
 }

@@ -38,6 +38,7 @@ GlobalState.assign(() => ({
 }))
 
 GlobalState.disposers.add(global => {
+    global.i18n.session?.dispose();
     global.i18n.session = Utils.Null;
 })
 

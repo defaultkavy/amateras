@@ -158,6 +158,7 @@ export class ContextMenuItem extends ElementProto {
             fontSize: 'var(--text-md)',
             fontWeight: '500',
             lineHeight: '1',
+            cursor: 'pointer',
 
             'context-menu[touch] &': {
                 fontSize: 'var(--text-md)',
@@ -182,6 +183,14 @@ export class ContextMenuItem extends ElementProto {
 
             '&:focus': {
                 outline: 'none'
+            },
+
+            '&:has(> a)': {
+                padding: '0',
+
+                'a': {
+                    padding: 'calc(var(--spacing) * 2) calc(var(--spacing) * 1.25)',
+                }
             }
         }))
     }

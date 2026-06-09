@@ -30,7 +30,7 @@ export class ContextMenu extends ElementProto {
         }))
     }
 
-    open(coordinate: {x: number, y: number}) {
+    open({x, y, position, size}: {x: number, y: number, position?: 'top' | 'bottom', size?: number}) {
         if (onclient()) {
             this.build();
             this.on('pointerdown', (e) => {
@@ -41,6 +41,8 @@ export class ContextMenu extends ElementProto {
             document.body.append(...this.toDOM());
             const contentNode = this.$content?.node;
             if (!contentNode) return;
+            const overX = x + contentNode.offsetWidth > innerWidth;
+            const overY = y + contentNode.offsetHeight > innerHeight;
             if (innerWidth < 800 && document.documentElement.hasAttribute('touch')) {
                 this.attr('touch', '');
                 this.$content?.style({
@@ -55,14 +57,22 @@ export class ContextMenu extends ElementProto {
                     fill: 'both'
                 })
             }
-            else {
-                const overX = coordinate.x + contentNode.offsetWidth > innerWidth;
-                const overY = coordinate.y + contentNode.offsetHeight > innerHeight;
+            else if (position) {
                 this.$content?.style({
-                    top: overY ? '' : `${coordinate.y}px`,
-                    bottom: overY ? `calc(var(--spacing) * 4)` : '',
-                    left: overX ? '' : `${coordinate.x}px`,
-                    right: overX ? `calc(var(--spacing) * 4)` : ''
+                    top: position === 'top' ? '' : `${y}px`,
+                    bottom: position === 'top' ? `${innerHeight - y}px` : ``,
+                    left: overX ? '' : `${x}px`,
+                    right: overX ? `calc(var(--spacing) * 4)` : '',
+                    width: size ? `${size}px` : ``
+                })
+            }
+            else {
+                this.$content?.style({
+                    top: overY ? '' : `${y}px`,
+                    bottom: overY? `calc(var(--spacing) * 4)` : '',
+                    left: overX ? '' : `${x}px`,
+                    right: overX ? `calc(var(--spacing) * 4)` : '',
+                    width: size ? `${size}px` : ``
                 })
             }
         }

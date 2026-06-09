@@ -146,7 +146,7 @@ export class ContextMenuItem extends ElementProto {
     private $menu: null | ContextMenu = Utils.Null;
     constructor(props: $.Props, layout?: $.Layout<ContextMenuItem>) {
         super(ContextMenuItem.tagname, props, layout);
-        this.on('click', () => this.$menu?.close())
+        this.on('click', () => requestAnimationFrame(() => this.$menu?.close()))
     }
 
     static {

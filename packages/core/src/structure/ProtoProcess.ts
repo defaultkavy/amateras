@@ -14,8 +14,9 @@ export class ProtoProcess {
         return this;
     }
 
-    await(resolver: Promise<any> | (() => any)) {
-        this.tasks.add({fn : Utils.isFunction(resolver) ? resolver : async () => await resolver, await: true});
+    await(resolver: OrArray<Promise<any> | (() => any)>) {
+        resolver = Utils.toArray(resolver);
+        this.tasks.add({fn: () => Promise.all(resolver.map(resolver => Utils.isFunction(resolver) ? resolver() : resolver)), await: true});
         return this;
     }
     

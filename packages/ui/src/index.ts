@@ -31,3 +31,4 @@ export * from "#structure/TextArea";
 export * from "#structure/TextBlock";
 export * from "#structure/Container";
 export * from "#structure/Carousel";
+export * from "#structure/Progress";

@@ -146,7 +146,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
                 declarations = { ...oldStyle, ...declarations };
             }
             
-            this.attr('style', Utils.entries(declarations).map(([name, value]) => `${name}: ${value}`).join('; '));
+            this.attr('style', Utils.entries(declarations).map(([name, value]) => `${Utils.camelToDashedStyle(name)}: ${value}`).join('; '));
         }
     }
 

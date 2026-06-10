@@ -10,6 +10,10 @@ export class Container extends ElementProto {
     static tagname = 'container';
     constructor(props: $.Props<ContainerProps>, layout?: $.Layout<Container>) {
         super('container', {type: 'inline-size', ...props}, layout);
+        this.style({
+            containerName: props.name,
+            containerType: props.type ?? 'inline-size'
+        })
     }
 
     static {

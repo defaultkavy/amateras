@@ -107,6 +107,13 @@ Utils.assign($, {
 })
 
 const setCache = (proto: Proto, url: URL, data: any, options?: RequestInit & FetchOptions<any, any>) => {
+    const req = proto.global.prefetch.req;
+    if (req && url.origin === $.fetch.origin) {
+        const reqURL = new URL(req.url);
+        const protocol = req.headers.get('x-forwarded-proto') || reqURL.protocol.replace(':', '');
+        const host = req.headers.get('x-forwarded-host') || req.headers.get("host") || url.host;
+        url = new URL(url.href.replace(url.origin, ''), `${protocol}://${host}`)
+    }
     const caches = proto.global.prefetch.caches[url.href] ?? [];
     const body = Utils.isUndefined(options?.body) ? '' : Utils.isString(options.body) ? options.body : Utils.Null;
     // non-string body request will not be cached

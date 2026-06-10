@@ -54,8 +54,8 @@ export class Router extends Proto {
         if (onclient()) Router.routers.add(this);
     }
 
-    set href(url: URL) {
-        this.global.router.href = url;
+    set url(url: URL) {
+        this.global.router.url = url;
     }
 
     override build() {
@@ -65,8 +65,8 @@ export class Router extends Proto {
                 if (index > stateIndex) Router.direction = BACK;
                 if (index < stateIndex) Router.direction = FORWARD;
                 index = stateIndex;
-                Router.prev = this.href;
-                this.href = Utils.toURL(location.href);
+                Router.prev = this.url;
+                this.url = Utils.toURL(location.href);
                 this.resolve(location.href);
             }
             resolve();
@@ -177,7 +177,7 @@ export class Router extends Proto {
         Router.direction = FORWARD;
         if (onclient()) Router.prev = Utils.toURL(location.href);
         Utils.forEach(this.routers, router => {
-            router.href = url;
+            router.url = url;
         })
         if (onclient()) history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
         Utils.forEach(this.routers, router => router.resolve(path))

@@ -19,7 +19,7 @@ declare module "@amateras/core" {
         router: {
             routers: Set<Router>;
             resolve: (path: string) => Promise<void>[];
-            href: URL;
+            url: URL;
             routes: Route[];
             matchPaths: string[];
             navlinks: Set<NavLink>;

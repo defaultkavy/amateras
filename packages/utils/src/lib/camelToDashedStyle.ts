@@ -1,0 +1,1 @@
+export const camelToDashedStyle = (str: string) => str.replaceAll(/[A-Z]/g, $1 => `-${$1.toLowerCase()}`)

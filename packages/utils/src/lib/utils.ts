@@ -18,3 +18,4 @@ export * from './url';
 export * from './merge';
 export * from './tuple';
 export * from './match';
+export * from './camelToDashedStyle';

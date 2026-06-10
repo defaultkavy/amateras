@@ -10,7 +10,7 @@ export const toCSS = (selector: string, map: CSSMap): string => {
     let text = [];
     for (let [key, value] of Utils.entries(map)) {
         if (Utils.isObject(value)) text.push(toCSS(key, value as any));
-        else text.push(`${key.replaceAll(/[A-Z]/g, $1 => `-${$1.toLowerCase()}`)}: ${value};`);
+        else text.push(`${Utils.camelToDashedStyle(key)}: ${value};`);
     }
     return `${selector} { ${text.join(' ')} }`
 }

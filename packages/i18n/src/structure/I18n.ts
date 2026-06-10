@@ -32,7 +32,7 @@ export class I18n<D extends I18nDictionaryContext = {}, L extends string[] = []>
         return new I18nTranslation(this.session, this.getFullPath(key), ...args);
     }
 
-    text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D, L>>(path: K, ...params: P): Promise<string>;
+    async text<K extends I18nTranslationKey<D>, P extends I18nTranslationParams<K, D, L>>(path: K, ...params: P): Promise<string>;
     async text(key: string, ...args: any[]) {
         const [arg1, arg2] = args;
         let content = await this.session.fetch(this.getFullPath(key), ...(Utils.isString(arg1) ? [Utils.Undefined, arg1] : [arg1, arg2]))

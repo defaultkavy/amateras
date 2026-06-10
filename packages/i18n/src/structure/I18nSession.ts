@@ -54,6 +54,7 @@ export class I18nSession {
     dispose() {
         this.global = Utils.Null as any;
         this.listeners = Utils.Null as any;
+        this.i18n.sessions.delete(this);
         this.i18n = Utils.Null as any;
         this.translations = Utils.Null as any;
     }

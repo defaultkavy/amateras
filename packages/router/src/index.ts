@@ -6,7 +6,7 @@ import { RouteGroup } from '#structure/RouteGroup';
 import { RouteNode } from '#structure/RouteNode';
 import { Router } from '#structure/Router';
 import { RouterConstructor } from '#structure/RouterConstructor';
-import { symbol_ProtoType } from '@amateras/core';
+import { onclient, symbol_ProtoType } from '@amateras/core';
 import { GlobalState } from '@amateras/core';
 import { Proto } from '@amateras/core';
 import { Utils } from '@amateras/utils';
@@ -42,10 +42,6 @@ let routePlannerPrototype = {
         this.routes.set(path, group);
         handle?.(group);
         return this;
-    },
-
-    notfound() {
-
     }
 }
 
@@ -57,7 +53,7 @@ GlobalState.assign(() => ({
         resolve(this, path: string) {
             return Utils.map(this.routers, router => router.resolve(path));
         },
-        href: new URL('http://localhost'),
+        url: onclient() ? new URL(location.href) : new URL('http://localhost'),
         routes: [],
         matchPaths: [],
         navlinks: new Set(),

@@ -1,4 +1,4 @@
-import { onclient } from "@amateras/core";
+import { onclient, onserver } from "@amateras/core";
 import { Proto } from "@amateras/core";
 import { Utils } from '@amateras/utils';
 import type { Widget } from "@amateras/widget";
@@ -93,6 +93,7 @@ export class Router extends Proto {
     async resolve(path: string | URL) {
         if (!path) return;
         let url = Utils.toURL(path);
+        this.url = url;
         this.global.router.scrollQueue.clear();
         for (let [,route] of this.routes) {
             let routes = await route.resolve(url.pathname, this.slot, {});
@@ -126,19 +127,23 @@ export class Router extends Proto {
     }
 
     static open(path: string, target: string = '_self') {
+        if (onserver()) return;
         if (Utils.toURL(path).origin !== origin) open(path, target);
         else Router.writeState(path, PUSH, target);
     }
 
     static forward() {
+        if (onserver()) return;
         history.forward();
     }
 
     static back() {
+        if (onserver()) return;
         history.back();
     }
 
     static replace(path: string) {
+        if (onserver()) return;
         Router.writeState(path, REPLACE);
     }
 
@@ -168,20 +173,18 @@ export class Router extends Proto {
     }
 
     private static writeState(path: string | URL | Nullish, mode: Mode, target?: string | null) {
+        if (onserver()) return;
         if (!path) return;
         let url = Utils.toURL(path);
-        if (onclient() && url.href === location.href) return;
+        if (url.href === location.href) return;
         if (target && target !== '_self') return open(url, target);
         if (mode === PUSH) index++;
-        if (onclient()) scrollRecord();
+        scrollRecord();
         Router.direction = FORWARD;
-        if (onclient()) Router.prev = Utils.toURL(location.href);
-        Utils.forEach(this.routers, router => {
-            router.url = url;
-        })
-        if (onclient()) history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
+        Router.prev = Utils.toURL(location.href);
+        history[mode === PUSH ? 'pushState' : 'replaceState']({index}, '', url);
         Utils.forEach(this.routers, router => router.resolve(path))
-        if (onclient()) window.dispatchEvent(new RouterEvent('pathchange', this));
+        window.dispatchEvent(new RouterEvent('pathchange', this));
     }
 }
 

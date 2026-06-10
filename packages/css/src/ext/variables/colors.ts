@@ -1,7 +1,8 @@
 import {
     zinc as mainColor,
     cyan as accentColor,
-    red as destructiveColor
+    red as destructiveColor,
+    green as complementaryColor
 } from "#ext/static-colors";
 
 const lightDark = (light: $.CSSValue, dark: $.CSSValue) => `light-dark(${light}, ${dark})`;
@@ -21,6 +22,9 @@ export const colors = $.css.variable({
 
     destructiveBg: lightDark(destructiveColor.c300, destructiveColor.c900),
     destructiveFg: lightDark(destructiveColor.c600, destructiveColor.c400),
+
+    complementaryBg: lightDark(complementaryColor.c300, complementaryColor.c900),
+    complementaryFg: lightDark(complementaryColor.c600, complementaryColor.c400),
 
     muted: lightDark(mainColor.c500, mainColor.c400),
     border: lightDark(mainColor.c400, mainColor.c600),

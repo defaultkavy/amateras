@@ -80,12 +80,13 @@ export class FieldLabel extends ElementProto<HTMLElement> {
     static {
         $.style(this, toUICSS(this.tagname, {
             'field &': {
-                display: 'block',
+                display: 'flex',
+                gap: 'var(--spacing)',
+                placeItems: 'center',
                 userSelect: 'none',
                 color: 'var(--fg)',
                 fontWeight: 'var(--font-weight-medium)',
                 fontSize: 'var(--text-sm)',
-                lineHeight: 'var(--text-sm)',
                 flexShrink: '0'
             },
 

@@ -15,11 +15,17 @@ export class Card extends ElementProto {
         $.style(this, toUICSS(this.tagname, {
             display: 'flex',
             flexDirection: 'column',
-            gap: 'calc(var(--spacing))',
+            gap: 'calc(var(--spacing) * 4)',
 
             paddingBlock: 'calc(var(--spacing) * 4)',
             background: 'var(--secondary-bg)',
-            borderRadius: 'calc(var(--radius) * 1.4)'
+            borderRadius: 'calc(var(--radius) * 1.4)',
+            overflow: 'hidden',
+            // boxShadow: '0 0 0 1px color-mix(in oklab, var(--fg) 10%, transparent)',
+
+            '&:has(> card-footer)': {
+                paddingBottom: '0'
+            }
         }))
     }
 }
@@ -44,7 +50,7 @@ export class CardHeader extends ElementProto {
 
 export class CardContent extends ElementProto {
     static tagname = 'card-content';
-    constructor(props: $.Props, layout?: $.Layout<Card>) {
+    constructor(props: $.Props, layout?: $.Layout<CardContent>) {
         super(CardContent.tagname, props, layout);
     }
 
@@ -52,6 +58,22 @@ export class CardContent extends ElementProto {
         $.style(this, toUICSS(this.tagname, {
             display: 'block',
             paddingInline: 'calc(var(--spacing) * 4)',
+        }))
+    }
+}
+
+export class CardFooter extends ElementProto {
+    static tagname = 'card-footer';
+    constructor(props: $.Props, layout?: $.Layout<CardFooter>) {
+        super(CardFooter.tagname, props, layout);
+    }
+
+    static {
+        $.style(this, toUICSS(this.tagname, {
+            display: 'block',
+            paddingInline: 'calc(var(--spacing) * 4)',
+            paddingBlock: 'calc(var(--spacing) * 4)',
+            background: 'color-mix(in oklab, var(--muted) 5%, transparent)'
         }))
     }
 }
@@ -73,7 +95,7 @@ export class CardTitle extends ElementProto<HTMLHeadingElement> {
 }
 
 export class CardDescription extends ElementProto<HTMLParagraphElement> {
-    static tagname = 'p';
+    static tagname = 'card-description';
     constructor(props: $.Props, layout?: $.Layout<Card>) {
         super(CardDescription.tagname, props, layout);
     }

@@ -16,4 +16,18 @@ export const input_css = {
     '&:focus-visible': {
         outlineColor: 'var(--border)'
     },
+
+    '&:disabled': {
+        opacity: '.5'
+    },
+
+    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+        '-webkit-appearance': 'none',
+        'margin': '0'
+    },
+
+    '&[type=number]': {
+        '-moz-appearance': 'textfield',
+        appearance: 'textfield'
+    }
 } satisfies CSSMap

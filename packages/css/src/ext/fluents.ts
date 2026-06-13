@@ -6,3 +6,4 @@ export * from '#ext/fluents/font';
 export * from '#ext/fluents/hover';
 export * from '#ext/fluents/media';
 export * from '#ext/fluents/grid';
+export * from '#ext/fluents/container';

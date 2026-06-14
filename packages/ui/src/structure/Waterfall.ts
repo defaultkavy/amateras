@@ -95,7 +95,7 @@ export class WaterfallItem extends ElementProto {
     override toDOM(children = true): HTMLElement[] {
         let nodes = super.toDOM(children);
         const $waterfall = this.findAbove<Waterfall>(proto => Utils.is(proto, Waterfall));
-        this.node?.querySelectorAll('[observe]').forEach(img => $waterfall?.observer?.observe(img));
+        this.node?.querySelectorAll('img').forEach(img => $waterfall?.observer?.observe(img));
         return nodes;
     }
 }

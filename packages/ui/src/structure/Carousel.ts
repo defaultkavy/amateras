@@ -8,6 +8,8 @@ export interface CarouselProps {
     autoplay?: OrSignal<boolean>;
     loop?: OrSignal<boolean>;
     gap?: OrSignal<string>;
+    hoverpause?: OrSignal<boolean>;
+    interval?: OrSignal<number>;
 }
 
 export class Carousel extends ElementProto {
@@ -17,28 +19,29 @@ export class Carousel extends ElementProto {
     index = 0;
     itemList = new Set<CarouselItem>();
     timer: NodeJS.Timeout | null = Utils.Null;
-    interval = 3;
+    #interval = 3;
     #passed = 0;
     playing = false;
     transformIndex = 0;
     private animation: Animation | null = Utils.Null;
     #observer: ResizeObserver | null = Utils.Null;
+    $targetItem: CarouselItem | null = Utils.Null;
     constructor(props: $.Props<CarouselProps>, layout?: $.Layout<Carousel>) {
         super(Carousel.tagname, props, layout);
-        this.on('mouseenter', e => this.pause());
-        this.on('mouseleave', e => this.play());
+        this.on('mouseenter', e => this.hasAttr('hoverpause') && this.pause());
+        this.on('mouseleave', e => this.autoplay() && this.play());
         this.listen('dom', () => {
             this.jumpTo(this.index);
             // handle autopause
             if (this.node && !this.#observer) {
                 this.#observer = new ResizeObserver(() => {
-                    if (this.inDOM()) this.play();
+                    if (this.inDOM() && this.autoplay()) this.play();
                     else this.pause();
                 })
                 this.#observer.observe(this.node)
             }
 
-            if (this.hasAttr('autoplay')) this.play();
+            if (this.autoplay()) this.play();
         })
         this.touchHandler();
     }
@@ -57,10 +60,12 @@ export class Carousel extends ElementProto {
         }))
     }
 
-    override props({ autoplay, loop, ...props }: $.Props<CarouselProps>): void {
+    override props({ interval, hoverpause, autoplay, loop, ...props }: $.Props<CarouselProps>): void {
         super.props(props);
         this.autoplay(autoplay);
         this.loop(loop);
+        this.interval(interval);
+        this.hoverpause(hoverpause);
     }
 
     autoplay(): boolean;
@@ -83,13 +88,33 @@ export class Carousel extends ElementProto {
         });
     }
 
+    hoverpause(): boolean;
+    hoverpause(boolean?: OrSignal<boolean>): void
+    hoverpause(boolean?: OrSignal<boolean>) {
+        if (!arguments.length) return this.hasAttr('hoverpause');
+        if (Utils.isUndefined(boolean)) return;
+        $.resolve(boolean, boolean => {
+            this.attr('hoverpause', boolean ? '' : Utils.Null);
+        });
+    }
+
+    interval(): number;
+    interval(number?: OrSignal<number>): void;
+    interval(number?: OrSignal<number>) {
+        if (!arguments.length) return this.#interval;
+        if (Utils.isUndefined(number)) return;
+        $.resolve(number, number => {
+            this.#interval = number;
+        });
+    }
+
     play() {
         if (this.playing) return;
         this.playing = true;
         this.timer = setInterval(() => {
             if (!this.inDOM()) this.pause();
             this.#passed++;
-            if (this.#passed >= this.interval * 100) {
+            if (this.#passed >= this.#interval * 100) {
                 this.switch('next');
                 this.#passed = 0;
             }
@@ -116,7 +141,7 @@ export class Carousel extends ElementProto {
 
     private setItemsStyle(index: number) {
         const [$prevItem, $targetItem, $nextItem] = this.targetItems(index);
-        const gap = this.attr('gap') ?? '0';
+        const gap = this.attr('gap') ?? '0px';
         const setStyle = (proto: CarouselItem | undefined, offset: number) => proto?.style({ transform: `translate(calc((100% + ${gap}) * ${this.transformIndex + offset}))` });
         setStyle($targetItem, 0);
         if (index !== 0 || (this.itemList.size > 2 && this.loop())) setStyle($prevItem, -1);
@@ -149,11 +174,15 @@ export class Carousel extends ElementProto {
         }
         this.setItemsStyle(this.index);
         const targetItems = this.targetItems(this.index);
-        contentNode.replaceChildren(...Utils.remove(targetItems, Utils.Undefined).map($item => $item.toDOM()).flat());
-        this.animateTo(this.transformIndex)
+        Utils.forEach(this.itemList, $item => $item.visible = false);
+        Utils.forEach(targetItems, $item => $item && ($item.visible = true))
+        this.toDOM();
+        this.animateTo(this.transformIndex);
+        this.$targetItem = targetItems[1] ?? Utils.Null;
         this.dispatch('carousel_switch', [this], {bubbles: true})
+        this.$targetItem?.dispatch('carousel_target', [], {bubbles: true})
         this.stop();
-        this.play();
+        if (this.autoplay()) this.play();
     }
 
     jumpTo(index: number) {
@@ -165,9 +194,11 @@ export class Carousel extends ElementProto {
         this.setItemsStyle(index);
         const targetItems = this.targetItems(index);
         contentNode.replaceChildren(...Utils.remove(targetItems, Utils.Undefined).map($item => $item.toDOM()).flat());
+        this.$targetItem = targetItems[1] ?? Utils.Null;
         this.dispatch('carousel_switch', [this], {bubbles: true})
+        this.$targetItem?.dispatch('carousel_target', [], {bubbles: true})
         this.stop();
-        this.play();
+        if (this.autoplay()) this.play();
     }
 
     animateTo(index: number) {
@@ -178,10 +209,10 @@ export class Carousel extends ElementProto {
             this.animation?.cancel();
         }
         const currentTransform = contentNode.computedStyleMap().get('transform')?.toString();
-        const gap = this.attr('gap') ?? '0';
+        const gap = this.attr('gap') ?? '0px';
 
         this.animation = contentNode.animate({
-            transform: [currentTransform ?? '', `translate( calc((-100% - ${gap ?? 0}) * ${index}) )`]
+            transform: [currentTransform ?? '', `translateX( calc((-100% - ${gap}) * ${index}) )`]
         }, {
             duration: 500,
             easing: 'ease',
@@ -281,6 +312,7 @@ export class CarouselContent extends ElementProto {
     static tagname = 'carousel-content';
     $carousel: Carousel | null = Utils.Null;
     declare __child__: CarouselItem;
+    override virtual: boolean = true;
     constructor(props: $.Props, layout?: $.Layout<CarouselContent>) {
         super(CarouselContent.tagname, props, layout);
     }
@@ -291,6 +323,7 @@ export class CarouselContent extends ElementProto {
             height: '100%',
             gridTemplateColumns: '1fr',
             gridTemplateRows: '1fr',
+            willChange: 'transfrom'
         }))
     }
         
@@ -300,10 +333,6 @@ export class CarouselContent extends ElementProto {
         if (this.$carousel) this.$carousel.$content = this;
         this.nopage();
         return this;
-    }
-
-    override toDOM(children?: boolean): HTMLElement[] {
-        return super.toDOM(false);
     }
 
     override mutate(): void {
@@ -339,7 +368,9 @@ export class CarouselItem extends ElementProto {
             height: '100%',
             width: '100%',
             flexShrink: '0',
-            gridArea: '1 / 1 / 2 / 2'
+            gridArea: '1 / 1 / 2 / 2',
+            willChange: 'transfrom',
+            overflow: 'hidden'
         }))
     }
 }
@@ -413,7 +444,8 @@ export class CarouselPrev extends Button {
 declare global {
     export namespace $ {
         export interface ProtoEventMap<P> {
-            carousel_switch: [Carousel]
+            carousel_switch: [Carousel];
+            carousel_target: [];
         }
     }
 }

@@ -172,17 +172,7 @@ export class Carousel extends ElementProto {
             else this.index--;
             this.transformIndex--;
         }
-        this.setItemsStyle(this.index);
-        const targetItems = this.targetItems(this.index);
-        Utils.forEach(this.itemList, $item => $item.visible = false);
-        Utils.forEach(targetItems, $item => $item && ($item.visible = true))
-        this.toDOM();
-        this.animateTo(this.transformIndex);
-        this.$targetItem = targetItems[1] ?? Utils.Null;
-        this.dispatch('carousel_switch', [this], {bubbles: true})
-        this.$targetItem?.dispatch('carousel_target', [], {bubbles: true})
-        this.stop();
-        if (this.autoplay()) this.play();
+        this.jump(true);
     }
 
     jumpTo(index: number) {
@@ -191,9 +181,16 @@ export class Carousel extends ElementProto {
         const itemArr = Utils.arrayFrom(this.itemList);
         if (index >= itemArr.length) return;
         this.index = index < 0 ? itemArr.length + index : index;
-        this.setItemsStyle(index);
-        const targetItems = this.targetItems(index);
-        contentNode.replaceChildren(...Utils.remove(targetItems, Utils.Undefined).map($item => $item.toDOM()).flat());
+        this.jump();
+    }
+
+    private jump(animation = false) {
+        this.setItemsStyle(this.index);
+        const targetItems = this.targetItems(this.index);
+        Utils.forEach(this.itemList, $item => $item.visible = false);
+        Utils.forEach(targetItems, $item => $item && ($item.visible = true))
+        this.toDOM();
+        if (animation) this.animateTo(this.transformIndex);
         this.$targetItem = targetItems[1] ?? Utils.Null;
         this.dispatch('carousel_switch', [this], {bubbles: true})
         this.$targetItem?.dispatch('carousel_target', [], {bubbles: true})
@@ -330,7 +327,14 @@ export class CarouselContent extends ElementProto {
     override build(cascading?: boolean): this {
         super.build(cascading);
         this.$carousel = this.findAbove<Carousel>(proto => Utils.isInstanceof(proto, Carousel));
-        if (this.$carousel) this.$carousel.$content = this;
+        if (this.$carousel) {
+            this.$carousel.$content = this;
+            const $item = Utils.arrayFrom(this.$carousel.itemList).at(this.$carousel.index);
+            if ($item) {
+                this.$carousel.$targetItem = $item;
+                $item.visible = true;
+            }
+        }
         this.nopage();
         return this;
     }
@@ -338,7 +342,13 @@ export class CarouselContent extends ElementProto {
     override mutate(): void {
         super.mutate();
         this.$carousel?.itemList.clear();
-        Utils.forEach(this.children, $child => this.$carousel?.itemList.add($child));
+        Utils.forEach(this.children, ($item, i) => {
+            if (i === this.$carousel?.index) {
+                this.$carousel.$targetItem = $item;
+                $item.visible = true;
+            }
+            this.$carousel?.itemList.add($item)
+        });
         this.nopage();
     }
 
@@ -351,6 +361,7 @@ export class CarouselContent extends ElementProto {
 export class CarouselItem extends ElementProto {
     static tagname = 'carousel-item';
     $carousel: Carousel | null = Utils.Null;
+    override visible: boolean = false;
     constructor(props: $.Props, layout?: $.Layout<CarouselItem>) {
         super(CarouselItem.tagname, props, layout);
     }

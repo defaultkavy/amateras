@@ -4,7 +4,7 @@ import { Utils } from '@amateras/utils';
 
 export const VirtualScroll = ($parent: ElementProto) => {
     if (!onclient()) return;
-    document.addEventListener('scroll', () => render($parent), true);
+    document.addEventListener('scroll', () => requestAnimationFrame(() => render($parent)), true);
     $parent.listen('dom', node => new ResizeObserver(() => render($parent)).observe(node)) 
     $parent.listen('mutate', () => render($parent))
     $parent.virtual = true;

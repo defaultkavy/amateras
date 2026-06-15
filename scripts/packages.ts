@@ -57,6 +57,36 @@ export const packages: Package[] = [
         mapped: true,
         listed: false
     }, {
+        name: "css-colors",
+        description: "CSS Colors module",
+        entry: 'css/src/ext/colors.ts',
+        mapped: true,
+        listed: false
+    }, {
+        name: "css-fluent",
+        description: "CSS Fluent module",
+        entry: 'css/src/ext/fluent.ts',
+        mapped: true,
+        listed: false
+    }, {
+        name: "css-fluents",
+        description: "CSS Fluent Templates module",
+        entry: 'css/src/ext/fluents.ts',
+        mapped: true,
+        listed: false
+    }, {
+        name: "css-static-colors",
+        description: "CSS Static Colors module",
+        entry: 'css/src/ext/static-colors.ts',
+        mapped: true,
+        listed: false
+    }, {
+        name: "css-variables",
+        description: "CSS Preset Variables module",
+        entry: 'css/src/ext/variables.ts',
+        mapped: true,
+        listed: false
+    }, {
         name: "for",
         description: "For loop control-flow",
         entry: 'for/src/index.ts',

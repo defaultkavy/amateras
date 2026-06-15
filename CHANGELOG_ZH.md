@@ -3,7 +3,7 @@
 ## [0.16.0] - 2026-06-15
 
 ### Features
-- **CSS Fluent Provides Preset Templates**: By importing `amateras/css/fluents`, you can directly use CSS Fluent, which comes with pre-configured basic style combinations.
+- **CSS Fluent 提供预设模板**: 透过导入 `amateras/css/fluents`，你可以直接使用已经设定好基本样式组合的 CSS Fluent。
   ```ts
   import { box, flex, grid, font, flexItem, media, hover, container } from 'amateras/css/fluents'
 
@@ -14,8 +14,8 @@
   container('page (width < 800px)', [ box.absolute.$ ])
   hover([ font.destructiveFg.$ ])
   ```
-- **CSS Fluent Supports Grouping by Group Name or Property Name**: In the CSS Fluent configuration, using `.group` allows you to group options by custom key names. If an option from a group is already used, other options under the same group will no longer appear in the code completions. Using `.prop` groups options by property names instead.
-- **CSS Fluent Supports Function Input**: You can use functions within CSS Fluent to customize the values of CSS properties.
+- **CSS Fluent 支持以组名或属性名分类**：在 CSS Fluent 配置中，使用 `.group` 能以自定义键名对选项进行分组，该分组的选项若已被使用，代码提示就不会再出现同一组别下的其它选项。使用 `.prop` 则是以属性名进行分组。
+- **CSS Fluent 支持函数输入**: 你可以在 CSS Fluent 中使用函数来自定义 CSS 属性的值。
   ```ts
   const flex = $.css.fluent(f => f
     .init({ display: 'flex' })
@@ -26,24 +26,24 @@
 
   flex.gap('1rem').$;
   ```
-- **Preset CSS Variables**: `amateras/css/variables` provides a series of preset variables that you can import directly and use alongside `amateras/ui` to obtain basic CSS styles. Alternatively, you can choose not to import them and set custom variables using the same variable names.
-- **CSS Color ESModule Namespace**: CSS Color fully supports the ESModule Namespace mode. By importing `amateras/css/static-colors`, you can use template colors in the format of `Colors.zinc.c100`. After bundling with a bundler, only the used color codes will be included in the production build.
-- **Signal Compute Supports Manual Dependency Input**: By passing a Signal array as the second argument to `$.compute`, the Compute function will bind all Signals in the array as dependencies.
-- **Automatic Touch Device Detection**: The `amateras/css` module automatically adds `pointerdown` and `pointermove` listeners, adding a `touch` attribute to the `html` element upon detecting touch interactions. This allows CSS styles to more accurately apply special styles (e.g., hover) for touch devices.
-- **Touch-Friendly ContextMenu Design**: When touch interaction is detected, the ContextMenu will pop up from the bottom in a touch-friendly manner.
-- **Router Supports Wildcard Path Characters**: Using `/*` allows the current path group to accept paths with any segments. Since path parsing is executed in the order of configuration, any other matching paths configured before `/*` will be skipped automatically. You can use this wildcard path character to implement a "not found" page.
-- **NavLink Match Pathname Exactly**: When the `exact` attribute is set on a NavLink, the path must match exactly for the NavLink component to be activated.
-- **I18n Supports Lexicon Splitting**: When configuring lexicons, using `import()` to import sub-lexicons achieves lexicon splitting. The sub-lexicon will only be loaded when it is invoked.
+- **预设 CSS 变量**：`amateras/css/variables` 提供了一系列预设变量，你可以直接导入它们并配合 `amateras/ui` 来获取最基本的 CSS 样式。当然，你可以不导入它们，自行使用同样的变量名来设定自定义变量。
+- **CSS Color ESModule Namespace**: CSS Color 全面支持 ESModule Namespace 模式，透过导入 `amateras/css/static-colors` 就能以 `Colors.zinc.c100` 的方式使用模板颜色。透过打包器打包后，仅会将被使用的颜色代码打包进生产环境代码中。
+- **Signal Compute 支持手动输入依赖**：在 `$.compute` 的第二个参数输入 Signal 数组，该 Compute 函数就会绑定数组中的所有 Signal 作为依赖。
+- **自动检测触控装置**：`amateras/css` 模块会自动添加一个 `pointerdown` 和 `pointermove` 监听器，当检测到触控时会自动在 `html` 元素中添加一个 `touch` 属性。这能够让 CSS 样式能更准确地为触控装置设置特殊样式（如：hover）。
+- **ContextMenu 触控装置友好设计**：检测到当下正在使用触控方式操作时，ContextMenu 会以触控友好的方式从下方弹出。
+- **Router 支持全路径字符**：使用 `/*` 就能在当前路径组别下接受所有字段的路径，由于路径解析是按配置顺序进行解析的，因此在 `/*` 解析之前若有其它匹配的路径则会自动跳过。你可以使用这个全路径字符来实现 not found 页面。
+- **NavLink Match Pathname Exactly**：当 NavLink 设置 `exact` 属性时，路径必须完全匹配才会激活该 NavLink 组件。
+- **I18n 支持词库分割**：在配置词库时，使用 `import()` 导入子词库就能完成词库分割，只有在被调用时才会加载该词库。
   ```ts
   export default {
     title: 'Hello, World!',
     home: () => import('./home/en.ts')
   } as const
   ```
-- **I18n Supports Retrieving Text of a Specific Language**: When using `i18n.t` or `i18n.text`, passing the language name as the last argument bypasses the global setting to directly retrieve the text content of that specific language.
-- **I18n Imports Signal**: The I18n module now imports the Signal module, allowing the use of `I18nSession.locale$` to monitor language changes.
-- **New RouterEvent**: Added a new `scrollrestoration` DOM event, which is a RouterEvent. You can retrieve `RouterEvent.Router` through this event.
-- **New ProtoProcess**: A brand-new asynchronous build processor API that handles Proto contexts more safely to prevent them from being easily lost. This solution resolves issues with functions like `$.meta` and `$.title` that heavily rely on the Proto context. It is highly recommended to apply this approach to all processes that require asynchronous building.
+- **I18n 支持获取指定语言的文本**: 在使用 `i18n.t` 或 `i18n.text` 时，在最后一个参数输入语言名称就能略过全局设定，直接获取该语言的文本内容。
+- **I18n 导入 Signal**：I18n 模块导入了 Signal 模块，现在可以使用 `I18nSession.locale$` 来监测语言的变化。
+- **New RouterEvent**：新增 `scrollrestoration` DOM 事件，该事件是一个 RouterEvent，透过该事件能获取 `RouterEvent.Router`.
+- **New ProtoProcess**：全新异步构建处理器 API，使用更安全的方式让 Proto 上下文不再轻易丢失。这个方案解决了诸如 `$.meta` `$.title` 这类非常依赖 Proto 上下文的函数，非常推荐将所有需要异步构建的过程套用到这个方案中。
   ```ts
   $('div', $$ => {
     $.process($$ => $$
@@ -53,40 +53,39 @@
     )
   })
   ```
-- **ContextMenu Supports Popup Position Configuration**: In the `ContextMenu.open` function configuration, you can now set the popup direction using `position`.
-- **SSR Middleware Processor**: SSR output results can now be controlled via `$.middleware.ssr`.
-- **New ElementProto API**: Remove DOM event listeners using `ElementProto.off`.
+- **ContextMenu 支持弹出位置设置**：在 `ContextMenu.open` 函数配置中，透过 `position` 就能够设置弹出方向。
+- **SSR 中间件处理器**：现在可以透过 `$.middleware.ssr` 控制 SSR 输出结果。
+- **New ElementProto API**: 透过 `ElementProto.off` 移除 DOM 事件监听器。
 - **New Utility Functions**: `merge`, `match`, `tuple`, `camelToDashedStyle`
 - **New UI Components**: `Container`, `Carousel`, `Progress`, `CardFooter`
 
 ### Changes
 - Remove padding of ComboboxChipRemoveButton.
-- When opening a ContextMenu, if it exceeds the display area, the context menu will automatically adjust its position.
-- Adjust the size of an `Icon` using the `size` attribute, eliminating the need to adjust `height` and `width` via CSS.
-- Multiple `CSSMap` inputs provided through `ElementProto.css` or the `Props.css` attribute will be consolidated into a single `CSSRule`, allowing better style overriding rules among multiple `CSSMap`s.
-- HMR will directly refresh the webpage upon file changes made to non-Widget components.
-- Remove the `select-value` DOM event.
-- When a ContextMenu pops up, all operations outside the ContextMenu area are disabled, including page scrolling.
-- Before a Node is created, `ElementProto.style` will parse the inputs and convert them into element attribute text, enabling custom element styling even during the SSR phase.
-- `$.context` no longer requires a `Proto` input, and this function will return the value returned by the callback function.
-- The original middleware processor `$.process` has been renamed to `$.middleware`.
-- The hover style for a Badge will only take effect when its `hover` attribute is explicitly configured.
-- All values processed by `Element.attr` will be converted to strings.
-- `Router.url` and `Router.prev` have been changed to static members.
-- Optimized the component styling for input-type elements.
-- Changed FieldLabel to `display: flex`.
-- `GlobalState.router.href` has been renamed to `GlobalState.router.url`.
-- The Waterfall component will automatically detect changes in image sizes and update the layout accordingly.
+- 打开 ContentMenu 时，如果超过显示范围，context menu 会自动调整位置。
+- 使用 `size` 属性调整 `Icon` 的大小，不再需要使用 css 调整 `height` 和 `width`。
+- 通过 `ElementProto.css` 或者在 `Props.css` 属性中输入的复数个 `CSSMap`，将会被整合成一个 `CSSRule`，这能更好的让多个 `CSSMap` 之间实现覆盖规则。
+- HMR 对非 Widget 组件的文件改动会直接刷新网页。
+- 移除 `select-value` DOM 事件。
+- ContextMenu 弹出时，禁用所有 ContextMenu 区域以外的操作，包括页面滚动。
+- 在尚未创建 Node 之前，`ElementProto.style` 将会解析输入内容并转换成元素属性文本，这让元素自定义样式也能在 SSR 阶段实现。
+- `$.context` 不再需要输入 `Proto`，并且此函数会返回 callback 函数所返回的值。
+- 原本的中间件处理器 `$.process` 重命名为 `$.middleware`。
+- Badge 只有在被设定 `hover` 属性时，hover 样式才会生效。
+- 所有经过 `Element.attr` 处理的值都会被转换成 string。
+- `Router.url` 和 `Router.prev` 变更为 static member。
+- 针对 input 类型的组件样式进行了优化。
+- FieldLabel 改为 `display: flex`。
+- `GlobalState.router.href` 重命名为 `GlobalState.router.url`。
+- Waterfall 组件会自动检测图片大小变化并更新布局。
 
 ### Fixes
-- Fixed an issue where the If component could not parse the `undefined` type.
-- Fixed an issue where some UI components used the `attr()` feature, which is not yet supported by certain browsers.
-- Fixed an issue where Textarea applied preset styles to the global `textarea` element.
-- Fixed an issue where the TabContent component would be built even if it was not selected for display.
-- Fixed a memory leak issue in I18nSession.
-- Fixed an issue where clicking a ContextMenuItem caused all events to be canceled because closing the ContextMenu released the component.
-- Fixed an issue where the URL origin used by `$.fetch` for data caching might differ from the origin of the original request.
-```
+- 修复 If 组件无法解析 `undefined` 类型的问题。
+- 修复部分 UI 组件使用了部分浏览器尚未支持的 `attr()` 功能。
+- 修复 Textarea 将预设样式应用到全局 `textarea` 元素的问题。
+- 修复 TabContent 组件即使尚未选择显示也会被构建的问题。
+- 修复 I18nSession 内存泄漏的问题。
+- 修复点击 ContextMenuItem 后，因为关闭 ContextMenu 让组件被释放而导致所有事件被取消的问题。
+- 修复 `$.fetch` 设定数据缓存使用的 URL origin 可能和原始请求的 origin 不相同的问题。
 
 ## [0.15.1] - 2026-05-26
 

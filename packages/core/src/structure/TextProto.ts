@@ -25,6 +25,7 @@ export class TextProto extends NodeProto<Text> {
         if (this.node) return [this.node];
         let node = new Text(this.#content);
         this.node = node;
+        node.$ = this;
         this.dispatch('dom', [this.node])
         return [node];
     }

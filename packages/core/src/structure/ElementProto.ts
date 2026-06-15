@@ -92,6 +92,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         let initialized = !!this.node;
         let element = this.node ?? document.createElement(this.tagname) as H;
         this.node = element;
+        element.$ = this;
         if (children) {
             if (this.#innerHTML && !initialized) this.node.innerHTML = this.#innerHTML;
             else if (!initialized || this.virtual) this.DOMProcess();

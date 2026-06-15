@@ -39,49 +39,49 @@ export const packages: Package[] = [
         mapped: true,
         listed: true
     }, {
-        name: "css-variable",
+        name: "css/variable",
         description: "CSS variable module",
         entry: 'css/src/ext/variable.ts',
         mapped: true,
         listed: false
     }, {
-        name: "css-keyframes",
+        name: "css/keyframes",
         description: "CSS keyframes module",
         entry: 'css/src/ext/keyframes.ts',
         mapped: true,
         listed: false
     }, {
-        name: "css-property",
+        name: "css/property",
         description: "CSS property module",
         entry: 'css/src/ext/property.ts',
         mapped: true,
         listed: false
     }, {
-        name: "css-colors",
+        name: "css/colors",
         description: "CSS Colors module",
         entry: 'css/src/ext/colors.ts',
         mapped: true,
         listed: false
     }, {
-        name: "css-fluent",
+        name: "css/fluent",
         description: "CSS Fluent module",
         entry: 'css/src/ext/fluent.ts',
         mapped: true,
         listed: false
     }, {
-        name: "css-fluents",
+        name: "css/fluents",
         description: "CSS Fluent Templates module",
         entry: 'css/src/ext/fluents.ts',
         mapped: true,
         listed: false
     }, {
-        name: "css-static-colors",
+        name: "css/static-colors",
         description: "CSS Static Colors module",
         entry: 'css/src/ext/static-colors.ts',
         mapped: true,
         listed: false
     }, {
-        name: "css-variables",
+        name: "css/variables",
         description: "CSS Preset Variables module",
         entry: 'css/src/ext/variables.ts',
         mapped: true,

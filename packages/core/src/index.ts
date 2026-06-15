@@ -105,10 +105,6 @@ export namespace $ {
     /** Props 是组件函数的参数，集合了该组件的自定义属性，以及组件 Layout 函数和元素属性的传递。 */
     export type Props<T = {}, H = HTMLElement> = { [key: string]: any } & T & Partial<AttrMap<H>>;
 
-    export type CraftMiddleware = (...args: any[]) => any;
-    export type TextMiddleware = (value: any) => Proto | undefined;
-    export type AttrMiddleware = (name: string, value: any, proto: ElementProto) => any;
-
     export interface Overload<I extends any[] = any> {
         protoConstructor: [
             input: [ProtoConstructor],
@@ -185,10 +181,16 @@ export namespace $ {
         mutate: [];
     }
 
+    export type CraftMiddleware = (...args: any[]) => any;
+    export type TextMiddleware = (value: any) => Proto | undefined;
+    export type AttrMiddleware = (name: string, value: any, proto: ElementProto) => any;
+    export type SSRMiddleware = ($html: ElementProto, $head: ElementProto) => void;
+
     export const middleware = {
         craft: new Set<CraftMiddleware>(),
         text: new Set<TextMiddleware>(),
-        attr: new Set<AttrMiddleware>()
+        attr: new Set<AttrMiddleware>(),
+        ssr: new Set<SSRMiddleware>()
     }
 
     export const craft: Craft = (...args: any) => createProto(false, ...args);

@@ -6,7 +6,7 @@ import { RouteGroup } from '#structure/RouteGroup';
 import { RouteNode } from '#structure/RouteNode';
 import { Router } from '#structure/Router';
 import { RouterConstructor } from '#structure/RouterConstructor';
-import { onclient, symbol_ProtoType } from '@amateras/core';
+import { onclient, onserver, symbol_ProtoType } from '@amateras/core';
 import { GlobalState } from '@amateras/core';
 import { Proto } from '@amateras/core';
 import { Utils } from '@amateras/utils';
@@ -99,6 +99,12 @@ $.middleware.craft.add((value) => {
         proto?.global.router.routers.add(router);
         return router;
     }
+})
+
+if (onserver()) $.middleware.ssr.add(($html, $head) => {
+    const $title = $.context($head, () => $.craft('title', () => $([$html.global.title])));
+    $head.append($title);
+    $title.build();
 })
 
 export * from "#structure/Link";

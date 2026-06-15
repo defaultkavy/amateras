@@ -1,5 +1,5 @@
 import { resolveMeta } from "#lib/resolveMeta";
-import { GlobalState, onclient, onserver } from "@amateras/core";
+import { onclient, onserver } from "@amateras/core";
 import { Proto } from "@amateras/core";
 import { Utils } from '@amateras/utils';
 import type { MetaConfig, MetaOutput } from "./types";
@@ -28,11 +28,11 @@ Utils.assign($, {
     }
 })
 
-if (onserver()) GlobalState.ssrHandlers.add(($html, $head) => {
+if (onserver()) $.middleware.ssr.add(($html, $head) => {
     const meta = $html.global.meta;
     let metaList = $.meta.resolve(meta);
     Utils.forEach(metaList, (meta => {
-        const $meta = $('meta', meta);
+        const $meta = $.context($head, () => $.craft('meta', meta));
         $head.append($meta);
         $meta.build();
     }))

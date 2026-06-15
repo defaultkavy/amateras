@@ -63,6 +63,19 @@ if (onclient() && !globalThis.prefetch) globalThis.prefetch = {
     expired: Date.now()
 }
 
+if (onserver()) $.middleware.ssr.add(($html, $head) => {
+    const $script = $.context($head, () => 
+        $('script', () => $`window.prefetch = ${JSON.stringify({
+            //@ts-ignore
+            caches: $html.global.prefetch.caches,
+            //@ts-ignore
+            expired: $html.global.prefetch.expired,
+        })}`)
+    );
+    $head.append($script);
+    $script.build();
+})
+
 Utils.assign($, {
     // 将资料注册到原型全局变量中：global.prefetch
     // 保证每次全局渲染都在抓取完毕之后：将 Promise 添加到 global.prefetch.fetches 让根原型能确保所有 fetch 运行结束

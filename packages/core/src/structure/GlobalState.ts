@@ -1,6 +1,5 @@
 import { Utils } from '@amateras/utils';
 import { Proto } from "./Proto";
-import type { ElementProto } from './ElementProto';
 
 export type GlobalStateInitial = (global: GlobalState) => object | void;
 
@@ -9,7 +8,6 @@ export class GlobalState {
     promises = new Set<Promise<any>>();
     root: Proto;
     static initials = new Set<GlobalStateInitial>();
-    static ssrHandlers = new Set<($html: ElementProto, $head: ElementProto) => void>();
     constructor(root: Proto) {
         Utils.forEach(GlobalState.initials, initial => {
             const obj = initial(this);

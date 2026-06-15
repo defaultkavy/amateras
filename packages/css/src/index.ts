@@ -125,6 +125,19 @@ $.middleware.attr.add((key, value, proto) => {
     }
 })
 
+if (onserver()) $.middleware.ssr.add(($html, $head) => {
+    let cssText = ''
+    Utils.forEach($.styleMap, ([constructor, css]) => {
+        if ($html.findBelow(proto => proto.constructor === constructor)) Utils.forEach(css, rule => cssText += rule);
+    })
+    cssText += $.CSS.text($html);
+    if (cssText.length) {
+        const $style = $.context($head, () => $.craft('style', {id: '__ssr__'}, () => $([ cssText ])));
+        $head.append($style);
+        $style.build();
+    }
+})
+
 export * from "#structure/$CSS";
 export * from "#structure/$CSSRule";
 export * from "./types";

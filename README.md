@@ -64,18 +64,18 @@ $.render(Counter, 'body');
 
 | Modules | Size | Gziped | Description |
 | --- | --- | --- | --- |
-| core | 8.33 kB | 3.31 kB | Core module |
+| core | 8.96 kB | 3.54 kB | Core module |
 | widget | 0.45 kB | 0.14 kB | Component module |
-| signal | 3.02 kB | 1.10 kB | Reactive data module |
-| store | 0.51 kB | 0.19 kB | Access data between widgets |
-| css | 1.64 kB | 0.72 kB | CSS-in-JS module |
+| signal | 3.05 kB | 1.11 kB | Reactive data module |
+| store | 0.51 kB | 0.18 kB | Access data between widgets |
+| css | 1.90 kB | 0.79 kB | CSS-in-JS module |
 | for | 1.25 kB | 0.41 kB | For loop control-flow |
-| if | 4.32 kB | 1.50 kB | If/Else/ElseIf control-flow |
+| if | 4.36 kB | 1.51 kB | If/Else/ElseIf control-flow |
 | match | 1.51 kB | 0.45 kB | Match/Case/Default control-flow |
-| router | 6.70 kB | 2.42 kB | Router module |
-| i18n | 3.38 kB | 1.14 kB | Translation module |
-| idb | 5.37 kB | 2.01 kB | IndexedDB module |
-| markdown | 7.48 kB | 2.91 kB | Markdown to HTML module |
+| router | 6.97 kB | 2.51 kB | Router module |
+| i18n | 3.82 kB | 1.27 kB | Translation module |
+| idb | 5.35 kB | 2.00 kB | IndexedDB module |
+| markdown | 7.49 kB | 2.90 kB | Markdown to HTML module |
 | prefetch | 1.01 kB | 0.46 kB | SSR data prefetch |
 | meta | 0.17 kB | 0.08 kB | SSR `meta` tag manager |
 | ui | 0.00 kB | 0.00 kB | UI components |

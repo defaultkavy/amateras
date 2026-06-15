@@ -86,7 +86,6 @@
 - Fixed a memory leak issue in I18nSession.
 - Fixed an issue where clicking a ContextMenuItem caused all events to be canceled because closing the ContextMenu released the component.
 - Fixed an issue where the URL origin used by `$.fetch` for data caching might differ from the origin of the original request.
-```
 
 ## [0.15.1] - 2026-05-26
 

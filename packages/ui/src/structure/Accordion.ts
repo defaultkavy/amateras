@@ -1,7 +1,8 @@
+import { toUICSS } from "#lib/toCSS";
 import { ElementProto } from "@amateras/core";
 import { Utils } from '@amateras/utils';
 
-const [ACCORDION, ACCORDION_ITEM, ACCORDION_TRIGGER, ACCORDION_CONTENT, ACCORDION_CONTAINER] = ['accordion', 'accordion-item', 'accordion-trigger', 'accordion-content', 'accordion-container'] as const;
+const [ACCORDION, ACCORDION_TRIGGER, ACCORDION_CONTENT, ACCORDION_CONTAINER] = ['accordion', 'accordion-trigger', 'accordion-content', 'accordion-container'] as const;
 
 export class Accordion extends ElementProto {
     $trigger: null | AccordionTrigger = Utils.Null;
@@ -11,12 +12,14 @@ export class Accordion extends ElementProto {
     }
 
     static {
-        $.style(Accordion, [
-            `${ACCORDION},${ACCORDION_ITEM},${ACCORDION_TRIGGER}{display:block}`,
-            `${ACCORDION_CONTAINER}{display:grid;grid-template-rows:0fr}`,
-            `${ACCORDION}[opened] ${ACCORDION_CONTAINER}{grid-template-rows:1fr}`,
-            `${ACCORDION_CONTENT}{overflow:hidden}`,
-        ])
+        $.style(this, toUICSS(ACCORDION, {
+            display: 'block',
+            '&[opened]': {
+                [ACCORDION_CONTAINER]: {
+                    gridTemplateRows: '1fr'
+                }
+            }
+        }))
     }
 
     open() {
@@ -38,6 +41,13 @@ export class AccordionContainer extends ElementProto {
         super(ACCORDION_CONTAINER, props, layout);
     }
 
+    static {
+        $.style(this, toUICSS(ACCORDION_CONTAINER, {
+            display: 'grid',
+            gridTemplateRows: '0fr',
+        }))
+    }
+
     override build(cascading?: boolean): this {
         let accordian = this.findAbove<Accordion>(proto => Utils.is(proto, Accordion));
         if (accordian) accordian.$container = this;
@@ -49,11 +59,24 @@ export class AccordionContent extends ElementProto {
     constructor(props: $.Props, layout?: $.Layout<AccordionContent>) {
         super(ACCORDION_CONTENT, props, layout);
     }
+    
+    static {
+        $.style(this, toUICSS(ACCORDION_CONTENT, {
+            display: 'block',
+            overflow: 'hidden',
+        }))
+    }
 }
 
 export class AccordionTrigger extends ElementProto {
     constructor(props: $.Props, layout?: $.Layout<AccordionTrigger>) {
         super(ACCORDION_TRIGGER, props, layout);
+    }
+    
+    static {
+        $.style(this, toUICSS(ACCORDION_TRIGGER, {
+            display: 'block',
+        }))
     }
 
     override build(cascading?: boolean): this {

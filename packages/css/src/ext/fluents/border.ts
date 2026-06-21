@@ -1,6 +1,8 @@
 import '#ext/fluent';
 import { Utils } from "@amateras/utils";
 import { radius } from "../variables/radius";
+import { colors } from '#ext/variables';
+import { valueFn } from '#lib/valueFn';
 
 const borderRadiusTemplate = {
     xs: radius.xs,
@@ -15,10 +17,6 @@ const borderRadiusTemplate = {
 
 const useBorderRadiusTemplate = <N extends string>(prefix: N) => Utils.fromEntries([...Utils.map(Utils.entries(borderRadiusTemplate), ([prop, value]) => [`${prefix}_${prop}`, value]), [prefix, (val: string) => val]]) as { [key in keyof (typeof borderRadiusTemplate) as `${N}_${key}`]: typeof borderRadiusTemplate[key] } & { [key in N]: (val: string) => string }
 const useGroupBorderRadiusTemplate = <N extends string>(prefix: N, ...props: string[]) => Utils.fromEntries([...Utils.map(Utils.entries(borderRadiusTemplate), ([prop, value]) => [`${prefix}_${prop}`, Utils.fromEntries(Utils.map(props, prop => [prop, value]))]), [prefix, (val: string) => Utils.fromEntries(Utils.map(props, prop => [prop, val]))]]) as { [key in keyof (typeof borderRadiusTemplate) as `${N}_${key}`]: $.CSSDeclarationMap } & { [key in N]: (val: string) => $.CSSDeclarationMap }
-
-const borderStyleTemplate = {
-    
-}
 
 export const border = $.css.fluent(f => f
     .prop('borderRadius', useBorderRadiusTemplate('rounded'))
@@ -44,6 +42,11 @@ export const border = $.css.fluent(f => f
         ridge: 'ridge',
         inset: 'inset',
         outset: 'outset'
+    })
+
+    .prop('borderColor', {
+        ...colors,
+        color: valueFn
     })
 
 )

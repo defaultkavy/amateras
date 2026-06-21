@@ -1,6 +1,7 @@
 import '#ext/fluent';
 import { colors } from "#ext/variables/colors";
 import { spacingFn } from "#lib/spacingFn";
+import { valueFn } from '#lib/valueFn';
 
 export const box = $.css.fluent(f => f
     .prop('paddingInline', {
@@ -97,6 +98,7 @@ export const box = $.css.fluent(f => f
         inline: 'inline',
         contents: 'contents',
         inline_block: 'inline-block',
+        none: 'none'
     })
     .prop('position', {
         absolute: 'absolute',
@@ -128,8 +130,56 @@ export const box = $.css.fluent(f => f
         auto: 'auto',
         end: 'end',
         start: 'start',
-        left: 'left',
-        right: 'right'
     })
     .option('size', (val: $.CSSValue) => ({ height: spacingFn(val), width: spacingFn(val) }))
+    .prop('zIndex', {
+        z: valueFn
+    })
+    .prop('top', {
+        top: valueFn
+    })
+    .prop('bottom', {
+        bottom: valueFn
+    })
+    .prop('right', {
+        right: valueFn
+    })
+    .prop('left', {
+        left: valueFn
+    })
+    .prop('inset', {
+        inset: valueFn
+    })
+    .prop('objectFit', {
+        cover: 'cover',
+        contain: 'contain',
+        fill: 'fill',
+        scaleDown: 'scale-down',
+        fit: (val: $.CSSDeclarationMap['objectFit']) => val
+    })
+    .prop('objectPosition', {
+        position: valueFn
+    })
+    .prop('aspectRatio', {
+        ratio: valueFn,
+        square: '1 / 1'
+    })
+    .prop('translate', {
+        translate: valueFn
+    })
+    .prop('scale', {
+        scale: valueFn
+    })
+    .prop('rotate', {
+        rotate: valueFn
+    })
+    .prop('opacity', {
+        opacity: valueFn
+    })
+    .prop('transition', {
+        transition: valueFn
+    })
+    .prop('cursor', {
+        cursor: (val: $.CSSDeclarationMap['cursor']) => val
+    })
 )

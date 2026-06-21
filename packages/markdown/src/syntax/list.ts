@@ -100,8 +100,8 @@ export const listProcessor = (parser: MarkdownParser) => {
 export const listTokenizer = (lexer: MarkdownLexer) => {
     const listHandle = (matches: RegExpMatchArray) => {
         const prefix = matches[0].split(/[-*]/)[0]!;
-        const spaces = prefix.match(/\s/)?.length ?? 0;
-        const tabs = prefix.match(/\t/)?.length ?? 0;
+        const spaces = prefix.match(/\s/g)?.length ?? 0;
+        const tabs = prefix.match(/\t/g)?.length ?? 0;
         return ({
         content: lexer.inlineTokenize(matches[1]!),
         data: {

@@ -1,7 +1,7 @@
 import { cssGlobalRuleSet, cssRuleByProtoMap } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { $CSSRule } from "#structure/$CSSRule";
-import { ElementProto, type Proto, onclient, onserver } from "@amateras/core";
+import { ElementProto, GlobalState, Proto, onclient, onserver } from "@amateras/core";
 import { UID, Utils } from '@amateras/utils';
 import type { $CSSDeclarationMap } from "./types";
 
@@ -16,24 +16,31 @@ declare global {
         export type CSSValueExtends = ValueOf<CSSValueMap>;
         export interface CSSValueMap {}
 
-        export type CSSMap = { [key: string]: $.CSSMap | $.CSSValue } | $.CSSDeclarationMap;
+        export type CSSMap = { [key: string]: OrArray<$.CSSMap> | $.CSSValue } | $.CSSDeclarationMap;
         export type CSSDeclarationMap = { [key in keyof $CSSDeclarationMap]?: $CSSDeclarationMap[key] | $.CSSValue }
         export type CSSRootMap = { [key: string]: $.CSSMap };
 
         export namespace CSS {
             export function text(proto: Proto): string;
             export function rules(proto: Proto): $CSSRule[];
+            export function imports(syntax: string[], proto?: Proto): $CSSRule;
         }
 
         export interface AttrMap<T> {
-            css: OrArray<$.CSSMap | $CSSRule>;
+            css: OrMatrix<$.CSSMap | $CSSRule>;
         }
     }
 }
 
 declare module "@amateras/core" {
     export interface ElementProto {
-        css(...cssObject: ($.CSSMap | $CSSRule)[]): this;
+        css(...cssObject: (OrArray<$.CSSMap | $CSSRule>)[]): this;
+    }
+
+    export interface GlobalState {
+        css: {
+            rules: $CSSRule[]
+        }
     }
 }
 
@@ -59,19 +66,37 @@ Utils.assign($, {
 })
 
 Utils.assign(ElementProto.prototype, {
-    css(this: ElementProto, ...cssMap: ($.CSSMap | $CSSRule)[]) {
-        mergeMaps(cssMap, this)
+    css(this: ElementProto, ...cssMap: (OrArray<$.CSSMap | $CSSRule>)[]) {
+        Utils.forEach(mergeMaps(cssMap), map => assignCSS(this, map));
         return this;
     }
 })
 
-const mergeMaps = (maps: OrArray<($.CSSMap | $CSSRule)[]>, proto: ElementProto) => {
-    let merge: null | {} = Utils.Null;
-    Utils.forEach(Utils.toArray(maps), map => {
-        if (Utils.isInstanceof(map, $CSSRule)) assignCSS(proto, map);
-        else merge = Utils.assign(merge ?? {}, map)
+// Assign GlobalState css
+GlobalState.assign(() => ({
+    css: {
+        rules: []
+    }
+}))
+
+GlobalState.disposers.add(({css}) => {
+    css.rules = [];
+})
+
+const mergeMaps = (maps: ($.CSSMap | $CSSRule)[]): ($.CSSMap | $CSSRule)[] => {
+    let merge = {};
+    let processedMaps: ($.CSSMap | $CSSRule)[] = [merge];
+    Utils.forEach(maps, map => {
+        // resolve matrix map
+        if (Utils.isArray(map)) {
+            let [mergedMap, ...rules] = mergeMaps(map);
+            Utils.assign(merge, mergedMap);
+            processedMaps.push(...rules);
+        }
+        else if (Utils.isInstanceof(map, $CSSRule)) processedMaps.push(map);
+        else merge = Utils.assign(merge, map)
     })
-    if (!Utils.isNull(merge)) assignCSS(proto, merge);
+    return processedMaps;
 }
 
 const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
@@ -84,26 +109,38 @@ const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
 }
 
 // Assign html render methods to $.CSS
-if (onserver()) {
-    Utils.assign($.CSS, {
-        rules(proto: Proto) {
-            let ruleSet = new Set<$CSSRule>();
+Utils.assign($.CSS, {
+    rules(proto: Proto) {
+        let ruleSet = new Set<$CSSRule>();
 
-            Utils.forEach([proto, ...proto.protos], childProto => {
-                let protoCSSRules = cssRuleByProtoMap.get(childProto as any);
-                Utils.forEach(protoCSSRules, rule => ruleSet.add(rule));
-                if (proto !== childProto)
-                    Utils.forEach(this.rules(childProto), rule => ruleSet.add(rule));
+        Utils.forEach([proto, ...proto.protos], childProto => {
+            let protoCSSRules = cssRuleByProtoMap.get(childProto as any);
+            Utils.forEach(protoCSSRules, rule => ruleSet.add(rule));
+            if (proto !== childProto)
+                Utils.forEach(this.rules(childProto), rule => ruleSet.add(rule));
+        })
+
+        return Utils.arrayFrom(ruleSet);
+    },
+
+    text(proto: Proto) {
+        return [...cssGlobalRuleSet, ...this.rules(proto)].join('\n');
+    },
+
+    imports(syntax: string[], proto = Proto.proto) {
+        const rules = Utils.map(syntax, syntax => new $CSSRule(`@import ${syntax}`))
+        if (proto) proto.global.css.rules.push(...rules);
+        else Utils.forEach(rules, rule => cssGlobalRuleSet.add(rule));
+
+        if (onclient()) {
+            Utils.forEach(rules, rule => {
+                const $style = document.createElement('style');
+                $style.innerHTML = `${rule}`;
+                document.head.append($style);
             })
-
-            return Utils.arrayFrom(ruleSet);
-        },
-
-        text(proto: Proto) {
-            return [...cssGlobalRuleSet, ...this.rules(proto)].join('\n');
         }
-    })
-}
+    }
+})
 
 if (onclient()) {
     // detect touch and set html[<pointer-type>] attribute
@@ -120,7 +157,7 @@ if (onclient()) {
 // Add processor of css attribute
 $.middleware.attr.add((key, value, proto) => {
     if (key === 'css') {
-        mergeMaps(value, proto);
+        Utils.forEach(mergeMaps(Utils.toArray(value)), map => assignCSS(proto, map));
         return true;
     }
 })

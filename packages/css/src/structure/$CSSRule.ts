@@ -7,19 +7,24 @@ export class $CSSRule extends $CSS {
     selector: string;
     parent: $CSSRule | null = Utils.Null;
     
-    readonly css: $.CSSMap;
-    constructor(selector: string, cssMap: $.CSSMap, parent: $CSSRule | null) {
+    #css: $.CSSMap | null;
+    constructor(selector: string, cssMap: $.CSSMap | null = Utils.Null, parent: $CSSRule | null = Utils.Null) {
         super();
         this.selector = selector;
         this.parent = parent;
         if (cssMap) processCSSMap(this, cssMap);
-        this.css = cssMap;
+        this.#css = cssMap;
+    }
+
+    get css(): $.CSSMap {
+        return this.#css ?? {}
     }
 
     toString(): string {
         let declarations = Utils.map(this.declarations, ([name, value]) => `${name.replaceAll(/[A-Z]/g, $0 => `-${$0.toLowerCase()}`)}: ${value};`);
         let rules = Utils.map(this.rules, ([_, rule]) => `${rule}`);
-        return `${this.selector} { ${[...declarations, ...rules].join(' ')} }`
+        if (this.#css) return `${this.selector} { ${[...declarations, ...rules].join(' ')} }`
+        else return this.selector;
     }
 }
 
@@ -35,6 +40,8 @@ const processCSSMap = (rule: $CSSRule, cssMap: $.CSSMap) => {
                 && !rule.parent // 如果是 root rule 就不会有 parent 
                 ?   key 
                 :   `${/^[@]|&/.test(key) ? key : `& ${key}`}`;
+            // 合并 CSSMap Array 
+            if (Utils.isArray(value)) value = Utils.merge(...Utils.map(value, (map: $CSSRule | $.CSSMap) => Utils.isInstanceof(map, $CSSRule) ? map.css : map));
             rule.rules.set(selector, new $CSSRule(selector, value as $.CSSMap, rule));
         }
     }

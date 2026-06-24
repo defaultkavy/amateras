@@ -21,7 +21,7 @@ export class Badge extends ElementProto<HTMLButtonElement> {
             padding: `0 calc(var(--spacing) * 2)`,
             borderRadius: 'calc(var(--radius) * 2.6)',
             height: 'calc(var(--spacing) * 5)',
-            lineHeight: 'var(--text-xs)',
+            lineHeight: '1em',
             transition: '0.2s all ease',
             fontSize: 'var(--text-xs)',
             fontWeight: 'var(--font-weight-medium)',

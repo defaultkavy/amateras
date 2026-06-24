@@ -21,7 +21,7 @@ export class Button extends ElementProto<HTMLButtonElement> {
             padding: `0 calc(var(--spacing) * 2.5)`,
             borderRadius: 'var(--radius)',
             height: 'calc(var(--spacing) * 8)',
-            lineHeight: '1rem',
+            lineHeight: '1em',
             transition: '0.2s all ease',
             fontWeight: 'var(--font-weight-medium)',
             fontFamily: 'inherit',

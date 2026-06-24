@@ -16,5 +16,9 @@ export const item_css = {
 
     '&[focus]': {
         outline: 'none'
+    },
+
+    '&[disabled]': {
+        opacity: '.5'
     }
 } satisfies CSSMap;

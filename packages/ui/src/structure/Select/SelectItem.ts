@@ -6,7 +6,8 @@ import { SelectContent } from "./SelectContent";
 import { item_css } from "../../style/combobox_style";
 
 export interface SelectItemProps {
-    value: OrSignal<any>
+    value: OrSignal<any>;
+    disabled?: OrSignal<boolean>;
 }
 
 export class SelectItem extends ElementProto {
@@ -18,6 +19,7 @@ export class SelectItem extends ElementProto {
         super(SelectItem.tagname, {tabindex: 0, ...props}, layout);
         this.on('mousedown', e => e.preventDefault())
         this.on('click', () => {
+            if (this.disabled()) return;
             this.$select?.close();
             this.select();
         })
@@ -27,9 +29,10 @@ export class SelectItem extends ElementProto {
         $.style(this, toUICSS(this.tagname, item_css))
     }
 
-    override props({ value, ...props }: $.Props): void {
+    override props({ value, disabled, ...props }: $.Props<SelectItemProps>): void {
         super.props(props);
         this.value(value);
+        this.disabled(disabled)
     }
 
     override build(cascading?: boolean): this {
@@ -48,6 +51,16 @@ export class SelectItem extends ElementProto {
         if (Utils.isUndefined(val)) return;
         $.resolve(val, val => {
             this.#value = val;
+        })
+    }
+
+    disabled(): boolean;
+    disabled(val?: OrSignal<boolean>): void;
+    disabled(val?: OrSignal<boolean>) {
+        if (!arguments.length) return this.hasAttr('disabled');
+        if (Utils.isUndefined(val)) return;
+        $.resolve(val, val => {
+            this.attr('disabled', val ? '' : Utils.Null);
         })
     }
 

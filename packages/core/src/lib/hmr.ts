@@ -4,7 +4,7 @@ import { ProxyProto } from "#structure/ProxyProto";
 declare global {
     interface Window {
         __registry_data__: Map<string, Constructor>;
-        __registry__: (component: Constructor, moduleId: string) => void;
+        __registry__: (component: Constructor, moduleId: string, compoenentName: string) => void;
         __reload_module__: () => void;
     }
 
@@ -21,9 +21,9 @@ if (import.meta.hot) {
     })
 
     window.__registry_data__ = new Map();
-    window.__registry__ = (component: Constructor, moduleId: string) => {
-        window.__registry_data__.set(new URL(moduleId).pathname, component);
-        component.moduleId = new URL(moduleId).pathname;
+    window.__registry__ = (component: Constructor, moduleId: string, componentName: string) => {
+        window.__registry_data__.set(`${new URL(moduleId).pathname} > ${componentName}`, component);
+        component.moduleId = `${new URL(moduleId).pathname} > ${componentName}`;
     }
     window.__reload_module__ = () => {
         const root = import.meta.hot.data.rootProto as Proto ?? rootProto;

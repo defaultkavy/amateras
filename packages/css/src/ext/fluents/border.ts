@@ -43,6 +43,9 @@ export const border = $.css.fluent(f => f
         inset: 'inset',
         outset: 'outset'
     })
+    .prop('borderSpacing', {
+        spacing: valueFn
+    })
 
     .prop('borderColor', {
         ...colors,

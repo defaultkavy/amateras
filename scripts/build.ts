@@ -1,10 +1,10 @@
 import { build } from "vite";
 import { packages, type Package } from "./packages";
-import package_json from '../package.json';
+import package_json from '../packages/core/package.json';
 import fs from 'fs';
 import path from 'path';
 
-const outputDir = path.resolve(__dirname + '/../build')
+const outputDir = path.resolve(__dirname + '/../packages/amateras/build')
 
 console.log(`[build] Start build js file on v${package_json.version}`);
 

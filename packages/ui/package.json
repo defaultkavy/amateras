@@ -1,16 +1,17 @@
 {
-    "name": "@amateras/ui",
-    "peerDependencies": {
-      "@amateras/core": "workspace:*",
-      "@amateras/utils": "workspace:*",
-      "@amateras/signal": "workspace:*"
-    },
-    "imports": {
-      "#structure/*": "./src/structure/*.ts",
-      "#lib/*": "./src/lib/*.ts"
-    },
-    "exports": {
-      ".": "./src/index.ts"
-    },
-    "sideEffects": false
+  "name": "@amateras/ui",
+  "peerDependencies": {
+    "@amateras/core": "workspace:*",
+    "@amateras/utils": "workspace:*",
+    "@amateras/signal": "workspace:*"
+  },
+  "imports": {
+    "#structure/*": "./src/structure/*.ts",
+    "#lib/*": "./src/lib/*.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "version": "0.0.2-beta.1"
 }

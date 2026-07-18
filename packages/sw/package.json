@@ -1,13 +1,13 @@
 {
-    "name": "@amateras/sw",
-    "type":"module",
-    "peerDependencies": {
-    },
-    "imports": {
-      "#structure/*": "./src/structure/*.ts",
-      "#lib/*": "./src/lib/*.ts"
-    },
-    "exports": {
-      ".": "./src/index.ts"
-    }
+  "name": "@amateras/sw",
+  "type": "module",
+  "peerDependencies": {},
+  "imports": {
+    "#structure/*": "./src/structure/*.ts",
+    "#lib/*": "./src/lib/*.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "version": "0.0.2-beta.1"
 }

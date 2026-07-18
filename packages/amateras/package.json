@@ -1,0 +1,37 @@
+{
+  "name": "amateras",
+  "version": "0.17.0-beta.3",
+  "description": "Amateras is a JavaScript library for building user interface.",
+  "module": "index.ts",
+  "type": "module",
+  "unpkg": "./build/import-map.js",
+  "author": {
+    "name": "defaultkavy",
+    "email": "defaultkavy@gmail.com",
+    "url": "https://github.com/defaultkavy"
+  },
+  "bugs": {
+    "url": "https://github.com/defaultkavy/amateras/issues"
+  },
+  "homepage": "https://github.com/defaultkavy/amateras",
+  "dependencies": {
+    "@amateras/core": "workspace:*",
+    "@amateras/utils": "workspace:*",
+    "@amateras/css": "workspace:*",
+    "@amateras/for": "workspace:*",
+    "@amateras/hmr": "workspace:*",
+    "@amateras/i18n": "workspace:*",
+    "@amateras/idb": "workspace:*",
+    "@amateras/if": "workspace:*",
+    "@amateras/markdown": "workspace:*",
+    "@amateras/match": "workspace:*",
+    "@amateras/meta": "workspace:*",
+    "@amateras/prefetch": "workspace:*",
+    "@amateras/router": "workspace:*",
+    "@amateras/signal": "workspace:*",
+    "@amateras/store": "workspace:*",
+    "@amateras/sw": "workspace:*",
+    "@amateras/ui": "workspace:*",
+    "@amateras/widget": "workspace:*"
+  }
+}

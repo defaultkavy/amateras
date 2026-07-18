@@ -1,6 +1,8 @@
 {
-  "name": "amateras",
-  "version": "0.16.2",
+  "name": "amateras-monorepo",
+  "publishConfig": {
+    "tag": "beta"
+  },
   "description": "Amateras is a JavaScript library for building user interface.",
   "module": "index.ts",
   "type": "module",
@@ -20,37 +22,16 @@
     "size": "bun ./scripts/vite-bundler-size.ts",
     "publish": "bun ./scripts/publish.ts"
   },
-  "exports": {
-    ".": {
-      "default": "./index.ts"
-    },
-    "./env": {
-      "browser": "./packages/core/src/env.browser.ts",
-      "node": "./packages/core/src/env.node.ts",
-      "default": "./packages/core/src/env.browser.ts"
-    },
-    "./utils": {
-      "browser": "./packages/utils/src/index.ts",
-      "bun": "./packages/utils/src/index.bun.ts",
-      "default": "./packages/utils/src/index.ts"
-    },
-    "./core": "./packages/core/src/index.ts",
-    "./css/*": "./packages/css/src/ext/*.ts",
-    "./markdown/syntax/*": "./packages/markdown/src/syntax/*.ts",
-    "./*": "./packages/*/src/index.ts"
-  },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
+  "workspaces": ["packages/*"],
   "devDependencies": {
     "@types/bun": "^1.3.14",
-    "vite": "^8.1.0",
-    "esbuild": "^0.28.1"
+    "esbuild": "^0.28.1",
+    "tsup": "^8.5.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5",
+    "vite-plugin-dts": "^5.0.3"
   },
   "files": [
-    "packages",
     "index.ts",
     "tsconfig.json",
     "build"

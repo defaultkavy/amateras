@@ -1,0 +1,1 @@
+import '@amateras/core';

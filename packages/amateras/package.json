@@ -1,6 +1,6 @@
 {
   "name": "amateras",
-  "version": "0.17.0-beta.3",
+  "version": "0.17.0-beta.4",
   "description": "Amateras is a JavaScript library for building user interface.",
   "module": "index.ts",
   "type": "module",

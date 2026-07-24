@@ -5,6 +5,7 @@
   "module": "index.ts",
   "type": "module",
   "unpkg": "./build/import-map.js",
+  "bin": "./cli.ts",
   "author": {
     "name": "defaultkavy",
     "email": "defaultkavy@gmail.com",

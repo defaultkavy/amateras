@@ -1,8 +1,8 @@
-import '#ext/fluent';
 import { Utils } from "@amateras/utils";
 import { radius } from "../variables/radius";
 import { colors } from '#ext/variables';
 import { valueFn } from '#lib/valueFn';
+import { Fluent } from '@amateras/fluent';
 
 const borderRadiusTemplate = {
     xs: radius.xs,
@@ -16,9 +16,12 @@ const borderRadiusTemplate = {
 }
 
 const useBorderRadiusTemplate = <N extends string>(prefix: N) => Utils.fromEntries([...Utils.map(Utils.entries(borderRadiusTemplate), ([prop, value]) => [`${prefix}_${prop}`, value]), [prefix, (val: string) => val]]) as { [key in keyof (typeof borderRadiusTemplate) as `${N}_${key}`]: typeof borderRadiusTemplate[key] } & { [key in N]: (val: string) => string }
-const useGroupBorderRadiusTemplate = <N extends string>(prefix: N, ...props: string[]) => Utils.fromEntries([...Utils.map(Utils.entries(borderRadiusTemplate), ([prop, value]) => [`${prefix}_${prop}`, Utils.fromEntries(Utils.map(props, prop => [prop, value]))]), [prefix, (val: string) => Utils.fromEntries(Utils.map(props, prop => [prop, val]))]]) as { [key in keyof (typeof borderRadiusTemplate) as `${N}_${key}`]: $.CSSDeclarationMap } & { [key in N]: (val: string) => $.CSSDeclarationMap }
+const useGroupBorderRadiusTemplate = <N extends string>(prefix: N, ...props: string[]) => 
+    Utils.fromEntries([
+        ...Utils.map(Utils.entries(borderRadiusTemplate), ([prop, value]) => 
+                [`${prefix}_${prop}`, Utils.fromEntries(Utils.map(props, prop => [prop, value]))]), [prefix, (val: string) => Utils.fromEntries(Utils.map(props, prop => [prop, val]))]]) as { [key in keyof (typeof borderRadiusTemplate) as `${N}_${key}`]: $.CSSDeclarationMap } & { [key in N]: (val: string) => $.CSSDeclarationMap }
 
-export const border = $.css.fluent(f => f
+export const border = new Fluent<$.CSSDeclarationMap>()
     .prop('borderRadius', useBorderRadiusTemplate('rounded'))
     .prop('borderTopLeftRadius', useBorderRadiusTemplate('rounded_tl'))
     .prop('borderTopRightRadius', useBorderRadiusTemplate('rounded_tr'))
@@ -28,7 +31,6 @@ export const border = $.css.fluent(f => f
     .group('borderRadiusBottom', useGroupBorderRadiusTemplate('rounded_b', 'borderBottomLeftRadius', 'borderBottomRightRadius'))
     .group('borderRadiusLeft', useGroupBorderRadiusTemplate('rounded_l', 'borderTopLeftRadius', 'borderBottomLeftRadius'))
     .group('borderRadiusRight', useGroupBorderRadiusTemplate('rounded_r', 'borderTopRightRadius', 'borderBottomRightRadius'))
-
     .prop('borderWidth', {
         w: (val: string | number) => val
     })
@@ -51,5 +53,4 @@ export const border = $.css.fluent(f => f
         ...colors,
         color: valueFn
     })
-
-)
+    .proxy()

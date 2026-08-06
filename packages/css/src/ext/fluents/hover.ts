@@ -1,4 +1,3 @@
-import '#ext/fluent';
 import { Utils } from "@amateras/utils";
 
 export const hover = (map: OrArray<$.CSSMap>) => ({

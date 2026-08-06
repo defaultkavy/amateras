@@ -1,9 +1,9 @@
-import '#ext/fluent';
 import { colors } from "#ext/variables/colors";
 import { spacingFn } from "#lib/spacingFn";
 import { valueFn } from '#lib/valueFn';
+import { Fluent } from '@amateras/fluent';
 
-export const box = $.css.fluent(f => f
+export const box = new Fluent<$.CSSDeclarationMap>()
     .prop('paddingInline', {
         px: spacingFn
     })
@@ -182,4 +182,4 @@ export const box = $.css.fluent(f => f
     .prop('cursor', {
         cursor: (val: $.CSSDeclarationMap['cursor']) => val
     })
-)
+    .proxy();

@@ -1,11 +1,11 @@
-import '#ext/fluent';
 import { colors } from "#ext/variables/colors";
 import { text } from "#ext/variables/text";
 import { weight } from "#ext/variables/weight";
 import { spacingFn } from '#lib/spacingFn';
 import { valueFn } from '#lib/valueFn';
+import { Fluent } from '@amateras/fluent';
 
-export const font = $.css.fluent(f => f
+export const font = new Fluent<$.CSSDeclarationMap>()
     .prop('fontSize', {...text})
     .prop('color', {
         ...colors,
@@ -26,4 +26,4 @@ export const font = $.css.fluent(f => f
     .prop('lineHeight', {
         lineHeight: spacingFn
     })
-)
+    .proxy()

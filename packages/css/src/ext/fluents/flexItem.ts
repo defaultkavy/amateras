@@ -1,7 +1,7 @@
-import '#ext/fluent';
 import { valueFn } from "#lib/valueFn";
+import { Fluent } from '@amateras/fluent';
 
-export const flexItem = $.css.fluent(f => f
+export const flexItem = new Fluent<$.CSSDeclarationMap>()
     .prop('flexGrow', {
         grow: valueFn
     })
@@ -17,4 +17,4 @@ export const flexItem = $.css.fluent(f => f
         none: 'none',
         flex: valueFn
     })
-)
+    .proxy()

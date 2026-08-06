@@ -1,0 +1,10 @@
+{
+  "name": "@amateras/fluent",
+  "peerDependencies": {
+    "@amateras/utils": "workspace:*"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "version": "0.1.0"
+}

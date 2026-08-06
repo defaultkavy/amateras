@@ -5,9 +5,10 @@ import packages from './package.json';
 console.log(`Amateras v${packages.version}`);
 
 const [a1, a2, mainCommand] = process.argv;
+const projectDir = process.cwd();
 
 if (mainCommand === 'link') {
-    await Bun.$`cd ${process.cwd()}`
+    await Bun.$`cd ${projectDir}`
     const linked: string[] = []
     const failed: string[] = []
 
@@ -19,4 +20,72 @@ if (mainCommand === 'link') {
 
     if (linked.length) console.log(`Packages linked:\n${linked.map(name => ` + ${name}`).join('\n')}`);
     if (failed.length) console.log(`Packages link failed:\n${failed.map(name => ` ! ${name}`).join('\n')}`);
+}
+
+if (mainCommand === 'init') {
+    await Bun.$`cd ${projectDir}`;
+    await Bun.$`bun init -y`.quiet();
+    await Bun.$`rm README.md`;
+    await Bun.$`rm index.ts`;
+    await Bun.$`bun add amateras vite`.quiet();
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.9">
+        <script type="module" src="src/index.ts"></script>
+    </head>
+    <body>
+    </body>
+</html>`
+
+    await Bun.write(`${projectDir}/index.html`, html);
+
+    const index = `import "amateras";
+import "@amateras/widget";
+
+const App = $.widget(() => {
+    $('h1', $$ => $\`Hello, World!\`)
+})
+
+$.render(App, 'body');`
+
+    await Bun.write(`${projectDir}/src/index.ts`, index);
+
+    const vite_config = `import { defineConfig } from "vite";
+import { ViteHMR } from "@amateras/hmr";
+
+export default defineConfig({
+    plugins: [
+        ViteHMR()
+    ]
+})`
+
+    await Bun.write(`${projectDir}/vite.config.ts`, vite_config);
+
+    const tsconfig_text = await Bun.file(`${projectDir}/tsconfig.json`).text();
+
+    await Bun.write(`${projectDir}/tsconfig.json`, tsconfig_text.replace('"lib": ["ESNext"],', '"lib": ["ESNext", "DOM"],'))
+
+    const package_json = await Bun.file(`${projectDir}/package.json`).json();
+
+    package_json.scripts = {
+        dev: "bunx --bun vite dev",
+        build: "bunx --bun vite build"
+    }
+
+    await Bun.write(`${projectDir}/package.json`, JSON.stringify(package_json, undefined, 2));
+
+    console.log(`Project initialized.
+        
++ src/index.ts
++ .gitignore
++ index.html
++ package.json
++ tsconfig.json
++ vite.config.ts
+
+Use \`bun run dev\` to start dev server.
+    `)
 }

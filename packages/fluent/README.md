@@ -49,6 +49,6 @@ const message = new Fluent()
     .proxy();
 
 message.he.sit.onsofa.text // => He is sitting on the sofa.
-message.run.text // => No one is running in something.
+message.run.text // => No one is running on something.
 message.onsofa.run.text // => No one is running on sofa.
 ```

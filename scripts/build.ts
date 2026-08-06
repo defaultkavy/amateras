@@ -1,14 +1,16 @@
 import { build } from "vite";
 import { packages, type Package } from "./packages";
-import package_json from '../packages/core/package.json';
+import package_json from '../packages/amateras/package.json';
 import fs from 'fs';
 import path from 'path';
 
-const outputDir = path.resolve(__dirname + '/../packages/amateras/build')
+const importMapDir = path.resolve(__dirname + '/../packages/amateras/build');
+const cdnDir = path.resolve(__dirname + '/../packages/cdn/build');
 
 console.log(`[build] Start build js file on v${package_json.version}`);
 
-if (fs.existsSync(outputDir)) fs.rm(outputDir, {force: true, recursive: true}, () => {});
+if (fs.existsSync(importMapDir)) fs.rm(importMapDir, {force: true, recursive: true}, () => {});
+if (fs.existsSync(cdnDir)) fs.rm(cdnDir, {force: true, recursive: true}, () => {});
 
 async function buildJS(pkg: Package) {
     await build({
@@ -27,7 +29,7 @@ async function buildJS(pkg: Package) {
             },
             emptyOutDir: false,
             write: true,
-            outDir: outputDir,
+            outDir: cdnDir,
             minify: 'terser',
         }
     });
@@ -38,6 +40,7 @@ await Promise.all(packages.map(buildJS));
 async function buildImportMapJS() {
     await build({
         configFile: false,
+        logLevel: 'silent',
         build: {
             emptyOutDir: false,
             lib: {
@@ -46,7 +49,7 @@ async function buildImportMapJS() {
                 name: 'import-name',
                 fileName: '[name]'
             },
-            outDir: outputDir,
+            outDir: importMapDir,
             minify: 'terser',
         }
     })

@@ -4,12 +4,12 @@ import package_json from '../packages/amateras/package.json';
 import fs from 'fs';
 import path from 'path';
 
-const importMapDir = path.resolve(__dirname + '/../packages/amateras/build');
+const importMapDir = path.resolve(__dirname + '/../packages/amateras');
 const cdnDir = path.resolve(__dirname + '/../packages/cdn/build');
 
 console.log(`[build] Start build js file on v${package_json.version}`);
 
-if (fs.existsSync(importMapDir)) fs.rm(importMapDir, {force: true, recursive: true}, () => {});
+// if (fs.existsSync(importMapDir)) fs.rm(importMapDir, {force: true, recursive: true}, () => {});
 if (fs.existsSync(cdnDir)) fs.rm(cdnDir, {force: true, recursive: true}, () => {});
 
 async function buildJS(pkg: Package) {
@@ -47,7 +47,7 @@ async function buildImportMapJS() {
                 entry: __dirname + '/import-map.ts',
                 formats: ['es'],
                 name: 'import-name',
-                fileName: '[name]'
+                fileName: 'map'
             },
             outDir: importMapDir,
             minify: 'terser',

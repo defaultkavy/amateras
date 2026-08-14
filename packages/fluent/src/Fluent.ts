@@ -45,6 +45,7 @@ export class Fluent<Compute extends any = any, MapType extends Record<string, an
         if (!this.optionMap.get(this.executorName)) {
             this.executor('$', result => result);
         }
+        this.reset();
         const proxy = new Proxy({}, {
             get: (_, propName) => {
                 const target = this.result;

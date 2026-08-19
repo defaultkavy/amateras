@@ -1,10 +1,11 @@
 #!/usr/bin/env bun
 
-import packages from './package.json';
+import packages_json from '../package.json';
+import { packages } from './packages';
 
-console.log(`Amateras v${packages.version}`);
+console.log(`Amateras v${packages_json.version}`);
 
-const [a1, a2, mainCommand] = process.argv;
+const [a1, a2, mainCommand, ...args] = process.argv;
 const projectDir = process.cwd();
 
 if (mainCommand === 'link') {
@@ -12,7 +13,8 @@ if (mainCommand === 'link') {
     const linked: string[] = []
     const failed: string[] = []
 
-    for (const [pkgName] of Object.entries(packages.dependencies)) {
+    for (const pkg of packages) {
+        const pkgName = `@amateras/${pkg.name}`
         await Bun.$`bun link ${pkgName}`.quiet()
             .then(() => linked.push(pkgName))
             .catch(() => failed.push(pkgName))
@@ -89,3 +91,14 @@ export default defineConfig({
 Use \`bun run dev\` to start dev server.
     `)
 }
+
+// if (mainCommand === 'add') {
+//     await Bun.$`cd ${projectDir}`
+//     const [arg1] = args;
+//     if (arg1 === 'all') {
+//         await Bun.$`bun add ${packages.filter(pkg => pkg.listed).map(pkg => `@amateras/${pkg.name}`).join(' ')}`
+//     } else {
+//         if (!arg1) throw 'No package name';
+//         await Bun.$`bun add ${args.map(name => `@amateras/${name}`)}`;
+//     }
+// }

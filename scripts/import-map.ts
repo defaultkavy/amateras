@@ -1,5 +1,5 @@
 import package_json from '../packages/amateras/package.json';
-import { packages } from './packages';
+import { packages } from '../packages/amateras/src/packages';
 const prefix = `https://unpkg.com/@amateras/cdn@${package_json.version}/build`
 
 const remap = {

@@ -1,5 +1,5 @@
 import { build } from "vite";
-import { packages, type Package } from "./packages";
+import { packages, type Package } from "../packages/amateras/src/packages";
 import package_json from '../packages/amateras/package.json';
 import fs from 'fs';
 import path from 'path';

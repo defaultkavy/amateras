@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.17.0] - 2026-08-19
+
+### Changes
+> [!WARNING]
+> 从这个版本起，所有模块包都会单独发布在 NPM `@amateras` 的命名空间中。以 `css` 库为例子，以往使用 `import "amateras/css"` 的导入方式将不再可用，请使用 `import "@amateras/css`。
+
+#### Proto 
+- 新增 `Node.$` 属性访问原型 Proto。
+
+#### Markdown
+- 修复列表 Tokenizer 无法正确识别空格和 Tab 的数量。
+
+#### CSS
+- 新增 `$.CSS.imports()` 实现 CSS Import 的语法。
+- 新增 `CSSMap` 的嵌套属性对于 `CSSRule` 数组的支持，可同时应用多个不同 `CSSRule` 并将其合并为一个 CSS 规则。
+
+#### CSS/Fluents
+- 新增多个 CSS 属性：
+  - `border.color('white')`
+  - `border.spacing(1)`
+  - `box.none`
+  - `box.z(1)`
+  - `box.top(0).bottom(0).left(0).right(0)`
+  - `box.inset(0)`
+  - `box.cover/contain/fill/scaleDown/fit()`
+  - `box.position('50% 50%')`
+  - `box.square/ratio('1 / 4')`
+  - `box.translate('0 100px')`
+  - `box.rotate('90deg')`
+  - `box.opacity(1)`
+  - `box.transition('all .3s ease')`
+  - `box.cursor('pointer')`
+  - `font.family('Noto Sans')`
+  - `font.lineHeight(2)`
+  - `grid.content_center/...`
+  - `grid.items_between/...`
+
+#### UI/Select
+- 新增 `disabled` 禁用属性以及样式。
+
+#### UI
+- `Button/Badge/Field` - 新增预设 `line-height: 1em` 样式。
+- `Field` - 移除预设的 `gap` 样式。
+
+#### Amateras Service Worker Vite Plugin
+- 新增 Service Worker Vite 插件，除了自动打包好指定的 worker 文件，也能实现在 Vite Dev Server 中对 worker 代码进行安装与除错。
+
+#### HMR
+- 修复一个文件中包含多个 `Widget` 导致无法正确热重载的问题。
+
+#### Fluent
+- 新增 `@amateras/fluent` 模块库，这是从 `@amateras/css` 独立出来的对象构建工具，可以在 TypeScript 类型推断的帮助下，只需一行代码便能构建一个完整的对象。类似的应用已经在 `@amateras/css/fluents` 中使用。
+
 ## [0.16.0] - 2026-06-15
 
 ### Features

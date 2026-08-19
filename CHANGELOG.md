@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.17.0] - 2026-08-19
+
+### Changes
+> [!WARNING]
+> Starting from this version, all module packages will be published separately under the NPM `@amateras` namespace. Taking the `css` library as an example, the previous import method `import "amateras/css"` will no longer be available. Please use `import "@amateras/css"`.
+
+#### Proto 
+- Added the `Node.$` property to access the Proto.
+
+#### Markdown
+- Fixed an issue where the list Tokenizer failed to correctly identify the number of spaces and Tabs.
+
+#### CSS
+- Added `$.CSS.imports()` to implement CSS Import syntax.
+- Added support for `CSSRule` arrays in nested properties of `CSSMap`, allowing multiple different `CSSRule`s to be applied simultaneously and merged into a single CSS rule.
+
+#### CSS/Fluents
+- Added multiple CSS properties:
+  - `border.color('white')`
+  - `border.spacing(1)`
+  - `box.none`
+  - `box.z(1)`
+  - `box.top(0).bottom(0).left(0).right(0)`
+  - `box.inset(0)`
+  - `box.cover/contain/fill/scaleDown/fit()`
+  - `box.position('50% 50%')`
+  - `box.square/ratio('1 / 4')`
+  - `box.translate('0 100px')`
+  - `box.rotate('90deg')`
+  - `box.opacity(1)`
+  - `box.transition('all .3s ease')`
+  - `box.cursor('pointer')`
+  - `font.family('Noto Sans')`
+  - `font.lineHeight(2)`
+  - `grid.content_center/...`
+  - `grid.items_between/...`
+
+#### UI/Select
+- Added `disabled` property and styles.
+
+#### UI
+- `Button/Badge/Field` - Added default `line-height: 1em` style.
+- `Field` - Removed default `gap` style.
+
+#### Amateras Service Worker Vite Plugin
+- Added Service Worker Vite Plugin, which not only automatically bundles specified worker files, but also enables installation and debugging of worker code in Vite Dev Server.
+
+#### HMR
+- Fixed an issue where a single file containing multiple `Widget`s failed to hot reload correctly.
+
+#### Fluent
+- Added `@amateras/fluent` module library, an object builder standalone tool extracted from `@amateras/css`. With the help of TypeScript type inference, a complete object can be built with just one line of code. Similar applications are already used in `@amateras/css/fluents`.
+
 ## [0.16.0] - 2026-06-15
 
 ### Features

@@ -1,4 +1,4 @@
-import { packages } from "./packages";
+import { packages } from "../packages/amateras/src/packages";
 
 const root = process.cwd() + `/size_temp`;
 const filename = root + `/index.ts`;

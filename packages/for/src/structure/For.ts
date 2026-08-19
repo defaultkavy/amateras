@@ -58,10 +58,12 @@ export class For<T extends [K: any, V: any] = [any, any]> extends ProxyProto {
     private exec() {
         let deleted = new Set(this.protos);
         let added = new Set<ForItem>();
-        Utils.forEach(Utils.arrayFrom(this.list$.value), (item, i) => {
+        const list = this.list$.value;
+        const IS_MAP = Utils.isInstanceof(list, Map);
+        Utils.forEach(Utils.arrayFrom(IS_MAP ? list.keys() : list), (item, i) => {
             $.context(this, () => {
                 let layout = this.#layout;
-                let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => layout(item as any, i));
+                let itemProto = this.#itemProtoMap.get(item) ?? new ForItem(() => layout(IS_MAP ? [item, list.get(item)] : item as any, i));
                 this.#itemProtoMap.set(item, itemProto);
                 deleted.delete(itemProto);
                 added.add(itemProto);

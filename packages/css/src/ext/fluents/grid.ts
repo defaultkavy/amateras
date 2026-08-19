@@ -1,7 +1,7 @@
-import '#ext/fluent';
 import { spacingFn } from "#lib/spacingFn";
+import { Fluent } from '@amateras/fluent';
 
-export const grid = $.css.fluent(f => f
+export const grid = new Fluent<$.CSSDeclarationMap>()
     .init({display: 'grid'})
     .prop('gridTemplateColumns', {
         cols: (val: $.CSSValue, n: $.CSSValue = 1) => `repeat(${n}, ${val})`
@@ -24,4 +24,4 @@ export const grid = $.css.fluent(f => f
         items_end: 'end',
         items_start: 'start'
     })
-)
+    .proxy()

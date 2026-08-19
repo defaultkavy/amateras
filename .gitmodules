@@ -1,0 +1,3 @@
+[submodule "libs/tsukimi"]
+	path = libs/tsukimi
+	url = git@github.com:defaultkavy/tsukimi

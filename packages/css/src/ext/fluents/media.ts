@@ -1,4 +1,3 @@
-import '#ext/fluent';
 import { Utils } from "@amateras/utils";
 
 const mediaFn = (condition: string) => (map: OrArray<$.CSSDeclarationMap>) => ({ [`@media ${condition}`]: Utils.merge(...Utils.toArray(map)) });

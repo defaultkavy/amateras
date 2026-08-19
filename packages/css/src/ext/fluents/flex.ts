@@ -1,7 +1,7 @@
-import '#ext/fluent';
 import { spacingFn } from "#lib/spacingFn";
+import { Fluent } from '@amateras/fluent';
 
-export const flex = $.css.fluent(f => f
+export const flex = new Fluent<$.CSSDeclarationMap>()
     .init({display: 'flex'})
     .prop('flexDirection', {
         row: 'row',
@@ -29,4 +29,4 @@ export const flex = $.css.fluent(f => f
         wrap: 'wrap',
         wrap_reverse: 'wrap-reverse'
     })
-)
+    .proxy()

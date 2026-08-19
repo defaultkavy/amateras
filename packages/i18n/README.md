@@ -3,7 +3,7 @@
 ## Import
 ```ts
 import 'amateras';
-import 'amateras/i18n';
+import "@amateras/i18n";
 ```
 
 ## Usage

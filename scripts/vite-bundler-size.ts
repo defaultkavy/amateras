@@ -1,5 +1,5 @@
 import { build } from 'vite';
-import { packages } from './packages';
+import { packages } from '../packages/amateras/src/packages';
 
 const root = process.cwd() + `/size_temp`;
 const filename = root + `/index.ts`;
@@ -21,7 +21,7 @@ async function analysisPackageSize() {
 
     for (const {name, description, codeInsert, listed} of packages) {
         if (!listed) continue;
-        const code = `import 'amateras'; ${codeInsert ?? `import "amateras/${name}";`}`
+        const code = `import 'amateras'; ${codeInsert ?? `import "@amateras/${name}";`}`
         console.log(`Packaging '${name}'...`)
         const packageSize = await getSize(code);
 

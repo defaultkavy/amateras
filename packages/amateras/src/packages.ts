@@ -63,12 +63,6 @@ export const packages: Package[] = [
         mapped: true,
         listed: false
     }, {
-        name: "css/fluent",
-        description: "CSS Fluent module",
-        entry: 'css/src/ext/fluent.ts',
-        mapped: true,
-        listed: false
-    }, {
         name: "css/fluents",
         description: "CSS Fluent Templates module",
         entry: 'css/src/ext/fluents.ts',
@@ -145,6 +139,12 @@ export const packages: Package[] = [
         name: "ui",
         description: "UI components",
         entry: 'ui/src/index.ts',
+        mapped: true,
+        listed: true
+    }, {
+        name: "fluent",
+        description: "One line object descriptor",
+        entry: 'fluent/src/index.ts',
         mapped: true,
         listed: true
     }, {

@@ -16,5 +16,5 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "version": "0.0.2-beta.1"
+  "version": "0.17.0"
 }

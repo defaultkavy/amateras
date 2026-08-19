@@ -1,7 +1,7 @@
 import { build } from 'vite';
 import { packages } from '../packages/amateras/src/packages';
 
-const root = process.cwd() + `/size_temp`;
+const root = process.cwd() + `/libs/size_temp`;
 const filename = root + `/index.ts`;
 const analysisOutput = root + '/stats.json';
 
@@ -18,6 +18,13 @@ async function analysisPackageSize() {
     const packageMap = new Map<string, ModuleInfo>();
     let coreSize = 0;
     let coreGzipSize = 0;
+
+    // create package.json file
+    await Bun.write(`${root}/package.json`, JSON.stringify({
+        name: 'size_temp',
+        dependencies: Object.fromEntries(packages.filter(pkg => pkg.listed).map(pkg => [`@amateras/${pkg.name}`, 'workspace:*']))
+    }))
+    await Bun.$`bun i`;
 
     for (const {name, description, codeInsert, listed} of packages) {
         if (!listed) continue;
@@ -41,6 +48,8 @@ async function analysisPackageSize() {
 
     }
 
+    await Bun.$`rm -rf ${root}`;
+    
     return Object.fromEntries(packageMap)
 }
 
@@ -80,8 +89,6 @@ async function getSize(code: string) {
             minify: 'esbuild',
         }
     });
-
-    await Bun.$`rm -rf ${root}`;
 
     return {moduleSize: size, gzipSize}
 }

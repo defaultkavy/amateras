@@ -1,4 +1,4 @@
-import { WidgetConstructor } from '#structure/Widget';
+import { WidgetConstructor, type Widget } from '#structure/Widget';
 import { symbol_ProtoType, type Proto } from '@amateras/core';
 import { Utils } from '@amateras/utils';
 
@@ -20,7 +20,7 @@ declare global {
     // export function $<Props, Parent extends Proto>(widget: WidgetConstructor<Props, Parent>, ...args: WidgetConstructorArguments<Props, Parent>): Widget<Props, Parent>;
 }
 
-export type WidgetBuilder<Props = any, Parent extends Proto = any> = (props: $.Props<Props>, children: $.Layout<Parent>) => void;
+export type WidgetBuilder<Props = any, Parent extends Proto = any> = (props: $.Props<Props>, children: $.Layout<Parent>, $$: Widget) => void;
 
 type WidgetConstructorArguments<Props, Parent extends Proto> = 
     RequiredKeys<Props> extends never

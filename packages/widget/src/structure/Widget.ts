@@ -7,7 +7,7 @@ export const WidgetConstructor = (builder: WidgetBuilder) => {
         static override name = 'Widget';
         static builder = builder;
         constructor(props: $.Props, layout?: $.Layout) {
-            super(() => Widget.builder(props, (proto) => layout?.(proto)));
+            super(() => Widget.builder(props, (proto) => layout?.(proto), this as unknown as Widget));
         }
     } as unknown as WidgetConstructor
     return Widget;

@@ -50,8 +50,8 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
                 }
 
                 if (selfSeg === '*') {
-                    pass();
-                    continue skipSeg;
+                    passPath = path;
+                    break skipSeg;
                 }
                 
                 if (selfSeg?.includes(':')) {

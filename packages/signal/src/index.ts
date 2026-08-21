@@ -115,7 +115,7 @@ let toProxyProto = (signal: Signal) => {
         let $text: undefined | TextProto = Utils.Undefined;
         let fn = (value: any) => {
             // improve text content update performance
-            if (Utils.isString(value) || Utils.isBoolean(value) || Utils.isNumber(value)) {
+            if (Utils.isString(value) || Utils.isBoolean(value) || Utils.isNumber(value) || Utils.isNull(value)) {
                 if ($text) $text.content = `${value}`;
                 else proxy.layout = () => $text = $([ value ]).at(0) as TextProto;
                 if (!proxy.builded) proxy.build();

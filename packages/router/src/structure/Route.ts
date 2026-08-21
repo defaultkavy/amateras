@@ -51,6 +51,7 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
 
                 if (selfSeg === '*') {
                     passPath = path;
+                    params['*'] = path.replace(this.path.split('*')[0]!, '')
                     break skipSeg;
                 }
                 
@@ -85,7 +86,9 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
     }
 
     private static resolvePath(path: string, params: any) {
-        return path.replaceAll(/:([^/]+)/g, (_, $1) => `${params[$1]}`);
+        return path
+        .replaceAll(/:([^/]+)/g, (_, $1) => `${params[$1]}`)
+        .replaceAll(/\*/g, () => `${params['*']}`)
     }
 
     alias<
@@ -100,8 +103,6 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
 }
 
 export interface Route<ParentPath extends RoutePath = any, Path extends RoutePath = any, Params = any> {
-
-    
     route<_Path extends string, Props>(
         path: ValidatePath<_Path, Props, PathConcat<ParentPath, Path, _Path>>,
         widget: Widget<Props>,
@@ -120,7 +121,6 @@ export interface Route<ParentPath extends RoutePath = any, Path extends RoutePat
     group<
         _Path extends RoutePath
     >(path: _Path, handle: (route: Route<ParentPath, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this;
-
 }
 
 

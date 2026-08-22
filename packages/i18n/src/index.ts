@@ -26,14 +26,16 @@ declare global {
 declare module '@amateras/core' {
     export interface GlobalState {
         i18n: {
-            session: I18nSession | null
+            session: I18nSession | null,
+            lang: string | null
         }
     }
 }
 
 GlobalState.assign(() => ({
     i18n: {
-        session: Utils.Null
+        session: Utils.Null,
+        lang: Utils.Null
     }
 }))
 
@@ -69,6 +71,9 @@ $.middleware.attr.add((name, value, proto) => {
         })
         value.update();
     }
+})
+$.middleware.ssr.add($html => {
+    $html.attr('lang', $html.global.i18n.session?.locale() ?? Utils.Null)
 })
 
 export * from "#structure/I18n";

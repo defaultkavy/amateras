@@ -1,7 +1,31 @@
 # Changelog
 
-## [0.17.0] - 2026-08-19
+## [0.18.0] - 2026-08-25
+### Changes
+> [!Warning]
+> **Breaking Changes**
+> 现在 `WidgetBuilder` 模板函数只传递 `Widget` 参数，你可以透过 `Widget.props` 获取自定义属性以及 `Widget.place()` 调用子原型模板函数。
 
+#### Proto
+- 现在 `build()` 在清理子原型时，不会调用子原型的 `Proto.dispose()` 了。这是为了避免父原型的构建函数在子原型构建之后才被调用，导致的子原型在构建后所有属性被释放。
+
+#### I18n
+- 现在你可以在 SSR 渲染中设定语言了，并且支持 `Accept-Language` Header 
+```ts
+$html.global.i18n.lang = "zh-CN"
+```
+
+#### Markdown
+- 局部重构 Alert 语法解析器，解决无法在 Alert 中换行的问题，并且支持嵌套 Blockquote 和 List。
+  
+#### Router
+- 路径匹配现在支持 `*` 通配符来匹配任何字段，并且可以透过 `params["*"]` 来获取该字段的内容。
+- `Router.route()` 支持直接传入 `WidgetBuilder` 函数。
+
+#### Signal
+- 修复 `null` 无法被正确转换成 `ProxyProto` 并正常更新数值的问题。
+
+## [0.17.0] - 2026-08-19
 ### Changes
 > [!WARNING]
 > 从这个版本起，所有模块包都会单独发布在 NPM `@amateras` 的命名空间中。以 `css` 库为例子，以往使用 `import "amateras/css"` 的导入方式将不再可用，请使用 `import "@amateras/css`。

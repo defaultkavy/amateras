@@ -1,17 +1,25 @@
 import { Proto, ProxyProto, symbol_ProtoType } from "@amateras/core";
-import type { WidgetBuilder } from "..";
+import { Utils } from "@amateras/utils";
 
 export const WidgetConstructor = (builder: WidgetBuilder) => {
     const Widget = class extends ProxyProto {
         static override readonly [symbol_ProtoType] = 'Widget' as any;
         static override name = 'Widget';
         static builder = builder;
+        props = {};
+        place: $.Layout | null = Utils.Null;
         constructor(props: $.Props, layout?: $.Layout) {
-            super(() => Widget.builder(props, (proto) => layout?.(proto), this as unknown as Widget));
+            super(() => {
+                this.props = props;
+                this.place = layout ?? Utils.Null;
+                Widget.builder(this as unknown as Widget)
+            });
         }
     } as unknown as WidgetConstructor
     return Widget;
 }
+
+export type WidgetBuilder<Props = any, Parent extends Proto = any> = ($$: Widget<Props, Parent>) => void;
 
 export interface WidgetConstructor<Props = {}, Parent extends Proto = any> {
     [symbol_ProtoType]: 'Widget';
@@ -20,6 +28,7 @@ export interface WidgetConstructor<Props = {}, Parent extends Proto = any> {
 }
 
 export interface Widget<Props = {}, Parent extends Proto = any> extends Proto {
-    props: Props;
+    props: $.Props<Props>;
     parent: Parent;
+    place: $.Layout | null
 }

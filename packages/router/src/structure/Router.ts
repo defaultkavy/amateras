@@ -1,8 +1,8 @@
 import { onclient, onserver } from "@amateras/core";
 import { Proto } from "@amateras/core";
 import { Utils } from '@amateras/utils';
-import type { Widget } from "@amateras/widget";
-import type { AsyncWidget, PageLayout, PathToParamsMap, RoutePath, ValidatePath } from "../types";
+import type { WidgetBuilder, WidgetConstructor } from "@amateras/widget";
+import type { AsyncWidget, PathToParamsMap, RoutePath, ValidatePath } from "../types";
 import type { Route } from "./Route";
 import { RouteSlot } from "./RouteSlot";
 
@@ -207,19 +207,18 @@ declare global {
 export interface Router {
     route<_Path extends RoutePath, Props>(
         path: ValidatePath<_Path, Props, _Path>,
-        widget: Widget<Props>,
+        widget: WidgetBuilder<Props>,
+        handle?: (route: Route<'', _Path, PathToParamsMap<_Path>>) => void): this
+
+    route<_Path extends RoutePath, Props>(
+        path: ValidatePath<_Path, Props, _Path>,
+        widget: WidgetConstructor<Props>,
         handle?: (route: Route<'', _Path, PathToParamsMap<_Path>>) => void): this
 
     route<_Path extends RoutePath, Props>(
         path: ValidatePath<_Path, Props, _Path>,
         widget: AsyncWidget<Props>,
         handle?: (route: Route<'', _Path, PathToParamsMap<_Path>>) => void): this
-
-    route<
-        Path extends RoutePath,
-        Layout extends PageLayout<Path>
-    >(path: Path, layout: Layout, handle?: (route: Route<'', Path, PathToParamsMap<Path>>) => void): this
-
 
     group<
         Path extends RoutePath

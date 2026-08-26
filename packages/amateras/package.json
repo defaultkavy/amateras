@@ -3,6 +3,7 @@
   "version": "0.18.0",
   "description": "Amateras is a JavaScript library for building user interface.",
   "module": "./src/index.ts",
+  "exports": "./src/index.ts",
   "type": "module",
   "unpkg": "./map.js",
   "bin": "./src/cli.ts",

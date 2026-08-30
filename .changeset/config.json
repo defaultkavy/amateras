@@ -3,7 +3,7 @@
   "baseBranch": "master",
   "access": "public",
   "format": "auto",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": false,
   "commit": false,
   "ignore": [],
   "fixed": [],

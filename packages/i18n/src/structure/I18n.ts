@@ -76,7 +76,7 @@ export class I18n<D extends I18nDictionaryContext = {}, L extends string[] = []>
     get session() {
         let parentProto = Proto.proto;
         if (parentProto) {
-            let session = parentProto.global.i18n.session ?? new I18nSession(this, parentProto.global);
+            let session = parentProto.global.i18n.session ?? new I18nSession(this as any, parentProto.global);
             parentProto.global.i18n.session = session;
             return session;
         }
@@ -84,11 +84,18 @@ export class I18n<D extends I18nDictionaryContext = {}, L extends string[] = []>
     }
 
     private readStoreLocale() {
-        if (onclient()) this.#locale = localStorage.getItem(I18n.key) ?? this.defaultLocale;
+        if (onclient()) {
+            const lang = document.documentElement.getAttribute('lang') ?? localStorage.getItem(I18n.key) ?? this.defaultLocale;
+            if (this.dictionaries.has(lang)) this.#locale = lang;
+            else this.#locale = this.defaultLocale;
+        }
     }
     
     private writeStoreLocale(locale: string) {
-        if (onclient()) localStorage.setItem(I18n.key, locale);
+        if (onclient()) {
+            document.documentElement.setAttribute('lang', locale);
+            localStorage.setItem(I18n.key, locale);
+        }
     }
 }
 

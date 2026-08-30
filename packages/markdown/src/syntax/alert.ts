@@ -1,21 +1,27 @@
 import { ALERT, ALERT_LINE, BLOCK } from "#lib/type";
-import { setBlockTokenizer, setProcessor } from "#lib/util";
+import { setBlockTokenizer, setProcessor, htmltag } from "#lib/util";
 import type { BlockToken, MarkdownLexer } from "#structure/MarkdownLexer";
 import type { MarkdownParser } from "#structure/MarkdownParser";
 import { Utils } from '@amateras/utils';
 
 export const alertProcessor = (parser: MarkdownParser) => setProcessor(parser, ALERT, (token, tokens) => {
-    let html = '';
+    // let html = '';
     let i = 1;
-    while (i < tokens.length) {
-        const token = tokens[i]!;
-        if (token.type !== ALERT_LINE) break;
-        html += parser.parse(token.content![0]!.content!);
-        i++;
+    const blockquote = (deep: number) => {
+        let html = '';
+        while (i < tokens.length) {
+            const {type, content, data} = tokens[i]!;
+            if (type !== ALERT_LINE) break;
+            if (data!.deep > deep) html += blockquote(data!.deep);
+            else if (data!.deep < deep) break;
+            else { html += parser.parse(content!); i++ }
+        }
+        if (deep === 0) return html;
+        return htmltag('blockquote', html)
     }
     const alertType = token.data?.alertType as string;
     return {
-        html: `<blockquote class="alert alert-${alertType}"><p class="alert-title">${Utils.uppercase(alertType, 0, 1)}</p>${html}</blockquote>`,
+        html: `<blockquote class="alert alert-${alertType}"><p class="alert-title">${Utils.uppercase(alertType, 0, 1)}</p>${blockquote(0)}</blockquote>`,
         skipTokens: i
     }
 })
@@ -29,8 +35,15 @@ export const alertTokenizer = (lexer: MarkdownLexer) => setBlockTokenizer(lexer,
         position++
         while (position < lines.length) {
             const line = lines[position]!;
-            const match = line.match(/^> ?(.+)/);
-            if (match) tokens.push({ layout: BLOCK, type: ALERT_LINE, content: lexer.blockTokenize(match[1]!) });
+            const match = line.match(/^(>+) ?(.+)/);
+            if (match) tokens.push({ 
+                layout: BLOCK, 
+                type: ALERT_LINE, 
+                content: lexer.blockTokenize(match[2]!),
+                data: {
+                    deep: (match[1]!.length - 1)
+                }
+            });
             else break;
             position++;
         }

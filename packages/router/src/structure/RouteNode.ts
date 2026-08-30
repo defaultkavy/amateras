@@ -1,6 +1,6 @@
 import { onclient, symbol_ProtoType } from "@amateras/core";
 import { Utils } from '@amateras/utils';
-import type { WidgetConstructor } from "@amateras/widget";
+import type { WidgetBuilder, WidgetConstructor } from "@amateras/widget";
 import type { AsyncWidget, PageLayout } from "../types";
 import { Page } from "./Page";
 import { Route } from "./Route";
@@ -9,8 +9,8 @@ import type { RouteSlot } from "./RouteSlot";
 export class RouteNode extends Route {
     pages = new Map<string, Page>();
     page: Page | null = Utils.Null;
-    #layout: WidgetConstructor | PageLayout | AsyncWidget;
-    constructor(path: string, layout: WidgetConstructor | PageLayout | AsyncWidget) {
+    #layout: WidgetConstructor | WidgetBuilder | AsyncWidget;
+    constructor(path: string, layout: WidgetConstructor | AsyncWidget) {
         super(path);
         this.#layout = layout;
     }
@@ -34,27 +34,25 @@ export class RouteNode extends Route {
         let page = this.pages.get(path)!;
         if (!page) {
             let layout = this.#layout;
-            let _layout;
+            let pageLayout: PageLayout;
             if (Utils.isArray(layout)) {
                 let promise = layout[0]()
                 if (onclient()) promise.catch(() => location.reload());
                 let widget = await promise.then(mod => mod.default);
-                _layout = () => $(widget, params, () => $(page!.slot));
-            } else {
-                //@ts-ignore
-                _layout = this.#layout[symbol_ProtoType] === 'Widget' // is widget constructor
-                ?   () => $(this.#layout as WidgetConstructor, params, () => $(page!.slot)) 
-                :   this.#layout as PageLayout;
+                pageLayout = ({slot, params}) => $(widget, params, () => $(slot));
             }
+            //@ts-ignore
+            else if (layout[symbol_ProtoType] === 'Widget') pageLayout = ({slot, params}) => {
+                $(this.#layout as WidgetConstructor, params, () => $(slot));
+            }
+            else pageLayout = ({slot, params}) => $($.widget(layout as WidgetBuilder), params, () => $(slot));
             $.context(slot, () => {
-                page = new Page(this, _layout, params);
+                page = new Page(this, pageLayout, params);
             })
             this.pages.set(path, page);
         }
-        // let prevPage = this.page;
         this.page = page;
         slot.switch(page);
-        // if (prevPage !== page) prevPage?.dispose();
         return page;
     }
 }

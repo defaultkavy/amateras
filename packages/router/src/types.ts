@@ -14,7 +14,9 @@ export type PathToParamsUnion<T extends RoutePath> =
     ? Param | PathToParamsUnion<Rest>
     : T extends `${infer _Start}:${infer Param}`
       ? Param
-      : never;
+      : T extends `${infer _Start}*${infer _End}`
+        ? '*'
+        : never
 
 export type ParamsArrayToParamsMap<ParamArray extends string[]> = ParamsUnionToMap<ParamArray[number]>
 // type Test_ParamsArrayToParamsMap = ParamsArrayToParamsMap<['test1' | 'test2' | 'test3?' | 'test4']>

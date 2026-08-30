@@ -148,7 +148,7 @@ export abstract class Proto {
     }
 
     build(cascading = true, clear = true): this {
-        if (clear) this.clear(true);
+        if (clear) this.clear();
         $.context(this, () => this.layout?.(this));
         this.builded = true;
         if (cascading) Utils.forEach(this.protos, proto => {

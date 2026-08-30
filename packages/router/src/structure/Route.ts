@@ -1,8 +1,8 @@
 import { Utils } from '@amateras/utils';
-import type { AliasRequired, AsyncWidget, PageLayout, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
+import type { AliasRequired, AsyncWidget, PathConcat, PathToParamsMap, RouteParams, RoutePath, ValidatePath } from "../types";
 import type { Page } from "./Page";
 import type { RouteSlot } from "./RouteSlot";
-import type { Widget } from "../../../widget/src";
+import type { Widget, WidgetBuilder } from "../../../widget/src";
 
 export abstract class Route<ParentPath extends RoutePath = any, Path extends RoutePath = any, Params = any> {
     declare protos: Set<Page | Route>;
@@ -50,8 +50,9 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
                 }
 
                 if (selfSeg === '*') {
-                    pass();
-                    continue skipSeg;
+                    passPath = path;
+                    params['*'] = path.replace(this.path.split('*')[0]!, '')
+                    break skipSeg;
                 }
                 
                 if (selfSeg?.includes(':')) {
@@ -85,7 +86,9 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
     }
 
     private static resolvePath(path: string, params: any) {
-        return path.replaceAll(/:([^/]+)/g, (_, $1) => `${params[$1]}`);
+        return path
+        .replaceAll(/:([^/]+)/g, (_, $1) => `${params[$1]}`)
+        .replaceAll(/\*/g, () => `${params['*']}`)
     }
 
     alias<
@@ -100,8 +103,6 @@ export abstract class Route<ParentPath extends RoutePath = any, Path extends Rou
 }
 
 export interface Route<ParentPath extends RoutePath = any, Path extends RoutePath = any, Params = any> {
-
-    
     route<_Path extends string, Props>(
         path: ValidatePath<_Path, Props, PathConcat<ParentPath, Path, _Path>>,
         widget: Widget<Props>,
@@ -109,18 +110,17 @@ export interface Route<ParentPath extends RoutePath = any, Path extends RoutePat
 
     route<_Path extends string, Props>(
         path: ValidatePath<_Path, Props, PathConcat<ParentPath, Path, _Path>>,
-        widget: AsyncWidget<Props>,
+        widget: WidgetBuilder<Props>,
         handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this
 
-    route<
-        _Path extends RoutePath,
-        Layout extends PageLayout<PathConcat<ParentPath, Path, _Path>>
-    >(path: _Path, layout: Layout, handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this
+    route<_Path extends string, Props>(
+        path: ValidatePath<_Path, Props, PathConcat<ParentPath, Path, _Path>>,
+        widget: AsyncWidget<Props>,
+        handle?: (route: Route<PathConcat<ParentPath, Path>, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this
 
     group<
         _Path extends RoutePath
     >(path: _Path, handle: (route: Route<ParentPath, _Path, PathToParamsMap<PathConcat<Path, _Path>>>) => void): this;
-
 }
 
 

@@ -119,7 +119,7 @@ export const packages: Package[] = [
     }, {
         name: "markdown",
         description: "Markdown to HTML module",
-        codeInsert: 'import { Markdown } from "amateras/markdown"; new Markdown();',
+        codeInsert: 'import { Markdown } from "@amateras/markdown"; new Markdown();',
         entry: 'markdown/src/index.ts',
         mapped: true,
         listed: true

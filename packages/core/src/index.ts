@@ -85,8 +85,15 @@ function createProto(insert: boolean, ...args: any) {
 
 type ElementProtoArguments<C extends Constructor> = 
     RequiredKeys<RemoveIndexSignature<ConstructorParameters<C>[0]>> extends never 
-    ?   [layout?: ConstructorParameters<C>[1]] | [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
-    :   [props: ConstructorParameters<C>[0], layout?: ConstructorParameters<C>[1]] 
+    ?   [layout?: ConstructorParameters<C>[1] | null] 
+        | [
+            props: ConstructorParameters<C>[0], 
+            layout?: ConstructorParameters<C>[1] | null
+        ] 
+    :   [
+            props: ConstructorParameters<C>[0], 
+            layout?: ConstructorParameters<C>[1] | null
+        ] 
 
 export function $<K extends $.Overload[keyof $.Overload][0][0], T extends $.OverloadResolver<[K]>>(arg1: K, ...args: T[1]): T[0];
 export function $<K extends $.Overload[keyof $.Overload][0][0], L extends $.Overload[keyof $.Overload][0][1], T extends $.OverloadResolver<[K, L]>>(arg1: K, arg2: L, ...args: T[1]): T[0];
@@ -148,14 +155,14 @@ export namespace $ {
                     :   never
                 : never
         ]
-        string: [
+        tag: [
             input: [string] | [keyof HTMLElementTagNameMap],
             output: I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto,
-            args: [
-                props?: I[0] extends keyof HTMLElementTagNameMap ? $.Props<{}, HTMLElementTagNameMap[I[0]]> : $.Props, 
-                layout?: 
-                    |   $.Layout<I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto>] 
-                    |   [layout?: $.Layout<I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto>
+            args: | [
+                    props?: I[0] extends keyof HTMLElementTagNameMap ? $.Props<{}, HTMLElementTagNameMap[I[0]]> : $.Props, 
+                    layout?: $.Layout<I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto> | null
+                ] | [
+                    layout?: $.Layout<I[0] extends keyof HTMLElementTagNameMap ? ElementProto<HTMLElementTagNameMap[I[0]]> : ElementProto> | null
                 ]
         ]
     }

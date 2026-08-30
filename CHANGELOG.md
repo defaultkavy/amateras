@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.18.0] - 2026-08-25
+### Changes
+> [!Warning]
+> **Breaking Changes**
+> Now the `WidgetBuilder` template function only receives the `Widget` parameter. You can access custom properties via `Widget.props` and invoke child prototype template functions using `Widget.place()`.
+
+#### Proto
+- Now when `build()` cleans up child prototypes, it no longer calls `Proto.dispose()` on them. This avoids cases where a parent prototype's build function is called *after* a child prototype is built, which previously caused all properties of the child prototype to be disposed of right after building.
+
+#### I18n
+- You can now set the language during SSR rendering, with support for the `Accept-Language` header:
+```ts
+$html.global.i18n.lang = "zh-CN"
+```
+
+#### Markdown
+- Partially refactored the Alert syntax parser to fix line-break issues within Alerts and added support for nested Blockquotes and Lists.
+  
+#### Router
+- Path matching now supports the `*` wildcard to match any segment, which can be accessed via `params["*"]`.
+- `Router.route()` now supports passing `WidgetBuilder` functions directly.
+
+#### Signal
+- Fixed an issue where `null` could not be properly converted into `ProxyProto` to update values correctly.
+
 ## [0.17.0] - 2026-08-19
 
 ### Changes

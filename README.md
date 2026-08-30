@@ -1,5 +1,5 @@
 # Amateras
-Amateras is a JavaScript library for building user interface. Its gold is to allow writing and running code directly without a compiler, enabling developers to build user interfaces efficiently using only JavaScript or TypeScript syntax.
+Amateras is a JavaScript library for building user interface. Its goal is to allow writing and running code directly without a compiler, enabling developers to build user interfaces efficiently using only JavaScript or TypeScript syntax.
 
 ## Advantages
 - **Minimalist Development**: No JSX, no compiler, zero setup.

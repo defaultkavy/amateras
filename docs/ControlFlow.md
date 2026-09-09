@@ -2,17 +2,17 @@
 Amateras 通过代理原型（Proxy Proto）实现了原型控制流，开发者可以使用控制流实现根据数据变化来显示或隐藏元素。
 
 ## 相关模块
-- `amateras/signal`
-- `amateras/for`
-- `amateras/if`
-- `amateras/match`
+- `@amateras/signal`
+- `@amateras/for`
+- `@amateras/if`
+- `@amateras/match`
 
 ## For 控制流
 这是个能够随着数组类型的 Signal 数据变化而改变原型内容的强大控制流原型，使用它能够非常轻松地进行高性能内容渲染。
 ```ts
 import 'amateras';
-import 'amateras/signal';
-import 'amateras/for';
+import '@amateras/signal';
+import '@amateras/for';
 
 const $App = $('app', () => {
     const list$ = $.signal([
@@ -57,8 +57,8 @@ $.render($App, document.body);
 
 ```ts
 import 'amateras';
-import 'amateras/signal';
-import 'amateras/if';
+import '@amateras/signal';
+import '@amateras/if';
 
 const $App = $('app', () => {
     const visible$ = $.signal(false);
@@ -104,8 +104,8 @@ $.render($App, document.body);
 Match 控制流原型也是由多个判断式原型组成，而它和 If 控制流的差异，是它的多个判断式都以一个 Signal 数据为参考。
 ```ts
 import 'amateras';
-import 'amateras/signal';
-import 'amateras/match';
+import '@amateras/signal';
+import '@amateras/match';
 
 const $App = $('app', () => {
     const mode$ = $.signal<1 | 2 | 3>(1);

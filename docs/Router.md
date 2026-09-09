@@ -13,7 +13,7 @@
 我们来构建一个简单的网页路由器，这个路由器拥有两个路径：`/` 和 `/about`。
 ```ts
 import 'amateras';
-import 'amateras/router';
+import '@amateras/router';
 
 const Router = $.router($$ => {
     $$.route('/', () => {
@@ -77,8 +77,8 @@ export default $.widget(() => {
 })
 
 // UserPage.ts
-export default $.widget((props: {username: string}) => {
-    $('h1', () => $`${props.username}'s Profile`)
+export default $.widget<{username: string}>($$ => {
+    $('h1', () => $`${$$.props.username}'s Profile`)
 })
 
 // index.ts

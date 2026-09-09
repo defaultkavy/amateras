@@ -1,5 +1,5 @@
 # 基础入门
-本文章将会解释最基础的 Amateras 使用方法，只涉及 `amateras/core` 核心库的范畴。
+本文章将会解释最基础的 Amateras 使用方法，只涉及 `@amateras/core` 核心库的范畴。
 
 ## 创建函数（Craft Function）`$`
 `$` 函数是 Amateras 项目调用次数最繁琐的功能，它的作用非常简单：**创建原型并将其添加到上一级原型中**。根据不同的参数输入类型，它能创建不同种类的原型并将其返回。
@@ -10,7 +10,7 @@
 // index.ts
 
 import 'amateras';
-// 相当于 import 'amateras/core';
+// 相当于 import '@amateras/core';
 ```
 
 只需在入口文件导入一次，`$` 就会被注册在全局环境中，透过入口文件引用的其它文件里都不需要再次导入了。

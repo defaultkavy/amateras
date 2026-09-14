@@ -21,7 +21,7 @@ export function ViteHMR(): Plugin {
                 map: null
             }
             if (!content.includes('import.meta.hot.accept')) {
-                const matches = content.matchAll(/export (?:const|let|var) (.+?) ?= ?\$.widget\(/g);
+                const matches = content.matchAll(/export (?:const|let|var) (.+?) ?= ?\$.widget\(/g).toArray();
                 const matchDefault = content.match(/export default \$.widget\(/)
                 if (matchDefault) {
                     content = content.replace('export default', 'const $__WIDGET__$ =');
@@ -31,7 +31,7 @@ export function ViteHMR(): Plugin {
                 matches.forEach(match => {
                     content += `\nwindow.__registry__(${match[1]}, import.meta.url, "${match[1]}");`
                 })
-                if (matches.toArray().length || matchDefault) {
+                if (matches.length || matchDefault) {
                     return {
                         code: `${content}
                         if (import.meta.hot) {

@@ -1,5 +1,58 @@
 # Changelog
 
+- ## [0.19.0]2026-11-5
+### Changes
+> [!Warning]
+> **Breaking Changes**
+> `@amateras/css/fluents` has been removed and replaced by `@amateras/css/cssc`. Basically, the calling method remains the same, but the invocation entry point has now been unified into `$.cssc`.
+
+#### OPFS (Origin Private File System)
+- Added `@amateras/opfs`, a utility library that simplifies native OPFS API operations.
+```ts
+import { OPFS } from "@amateras/opfs";
+
+const file = OPFS.file('path/to/file/video.mp4')
+file.arrayBuffer()
+file.bytes()
+file.text()
+file.name // string
+file.kind // 'file'
+file.file(); // File
+file.exists() // boolean
+file.remove() // remove file from parent directory
+
+const dir = OPFS.dir('path/to/dir')
+dir.name // string
+dir.kind // 'directory'
+dir.exists() // boolean
+dir.remove() // remove directory from parent directory
+dir.removeEntry('filename') // remove file from this directory
+```
+
+#### HMR
+- Fixed an issue where Widgets could not be hot-reloaded when saving files.
+
+#### IDB
+- `@amateras/idb` will serve as a completely independent utility library, and the `$.idb` entry point is no longer provided. Please use the `IDB.createIDB` function to create IndexedDB.
+
+#### Fluent
+- Refactored the entire library, focusing on improving the performance of TypeScript compile-time type checking.
+- The way to build Fluent Proxy has changed. For details, please refer to the building method of `@amateras/css/cssc`.
+
+#### Utils
+- Removed the `UID` class and added the `Utils.uid` function, which can be used to generate unique IDs.
+- Added the `Utils.hash` function, which can generate a simple hash value based on input content (using the MurmurHash algorithm).
+
+#### UI
+- Improved CSS compatibility for Buttons to avoid using the `oklch(from #000, l c h / a)` syntax.
+- Fixed an issue where `Icon.size` failed to change the icon size.
+
+#### CSS
+- Added the `$CSSSupoport` rule type and the `$.css.support` function.
+- Removed the `@amateras/css/fluents` library.
+- Added the `@amateras/css/cssc` library, which can be called using `$.cssc`.
+- Renamed `radius.round` to `radius.full`.
+
 ## [0.18.0] - 2026-08-25
 ### Changes
 > [!Warning]

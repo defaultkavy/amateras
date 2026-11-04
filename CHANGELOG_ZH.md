@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.19.0] - 2026-11-5
+### Changes
+> [!Warning]
+> **Breaking Changes**
+> `@amateras/css/fluents` 已被移除，并由 `@amateras/css/cssc` 取代，基本上调用方式还是一样，但现在调用入口被统整成 `$.cssc` 了。
+
+#### OPFS(Origin Private File System)
+- 新增 `@amateras/opfs` ，这是一套简化原生 OPFS API 操作的工具库。
+```ts
+import { OPFS } from "@amateras/opfs";
+
+const file = OPFS.file('path/to/file/video.mp4')
+file.arrayBuffer()
+file.bytes()
+file.text()
+file.name // string
+file.kind // 'file'
+file.file(); // File
+file.exists() // boolean
+file.remove() // remove file from parent directory
+
+const dir = OPFS.dir('path/to/dir')
+dir.name // string
+dir.kind // 'directory'
+dir.exists() // boolean
+dir.remove() // remove directory from parent directory
+dir.removeEntry('filename') // remove file from this directory
+```
+
+#### HMR
+- 修复保存文件时无法对 Widget 执行热重载的问题。
+
+#### IDB
+- `@amateras/idb` 将作为完全独立的工具库，不再提供 `$.idb` 入口，请使用 `IDB.createIDB` 函数创建 IndexedDB。
+
+#### Fluent
+- 我重构了整个库，专注提升 TypeScript 编辑时类型检查的性能。
+- 构建 Fluent Proxy 的方式迎来改变，详情可以参考 `@amateras/css/cssc` 的构建方式。
+
+#### Utils
+- 移除了 UID 类，新增 `Utils.uid` 函数，可用于生成唯一ID。
+- 新增 `Utils.hash` 函数，可基于输入内容生成简易哈希值（MurmurHash 算法）。
+
+#### UI
+- 提升 Button 的 CSS 兼容性，避免使用 `oklch(from #000, l c h / a)` 语法。
+- 修复 `Icon.size` 无法改变图标大小的问题。
+
+#### CSS
+- 新增 `$CSSSupoport` 规则类型，新增 `$.css.support` 函数。
+- 移除 `@amateras/css/fluents` 库。
+- 新增 `@amateras/css/cssc` 库，使用 `$.cssc` 即可调用。
+- 将 `radius.round` 重命名为 `radius.full`。
+
 ## [0.18.0] - 2026-08-25
 ### Changes
 > [!Warning]

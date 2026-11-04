@@ -35,6 +35,7 @@
     "@amateras/sw": "workspace:~",
     "@amateras/ui": "workspace:~",
     "@amateras/widget": "workspace:~",
-    "@amateras/fluent": "workspace:~"
+    "@amateras/fluent": "workspace:~",
+    "@amateras/opfs": "workspace:~"
   }
 }

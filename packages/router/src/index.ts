@@ -11,7 +11,7 @@ import { GlobalState } from '@amateras/core';
 import { Proto } from '@amateras/core';
 import { Utils } from '@amateras/utils';
 import './global';
-import type { PageLayout } from './types';
+import type { WidgetConstructor } from '@amateras/widget';
 
 declare module "@amateras/core" {
     export interface GlobalState {
@@ -30,7 +30,7 @@ declare module "@amateras/core" {
 }
 
 let routePlannerPrototype = {
-    route(this: Route | Router, path: string, layout: PageLayout<string>, handle?: (route: Route) => void) {
+    route(this: Route | Router, path: string, layout: WidgetConstructor, handle?: (route: Route) => void) {
         let route = new RouteNode(path, layout);
         this.routes.set(path, route);
         handle?.(route);

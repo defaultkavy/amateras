@@ -1,5 +1,5 @@
 import { ElementProto } from "@amateras/core";
-import { UID, Utils } from '@amateras/utils';
+import { Utils } from '@amateras/utils';
 
 export interface RadioGroupProps {
     value?: any;
@@ -33,7 +33,7 @@ export class RadioItem<T = any> extends ElementProto {
     value: T;
     constructor({inputId, name, value, ...props}: $.Props<RadioItemProps>, layout?: $.Layout<RadioItem<T>>) {
         super('radio-item', props, layout);
-        this.inputId = inputId ?? `input-${UID.persistInProto(this, 'radio-item')}`;
+        this.inputId = inputId ?? `input-${Utils.uid('radio-item')}`;
         this.name = name ?? Utils.Null;
         this.value = value;
     }

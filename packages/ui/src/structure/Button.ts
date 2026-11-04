@@ -25,13 +25,13 @@ export class Button extends ElementProto<HTMLButtonElement> {
             transition: '0.2s all ease',
             fontWeight: 'var(--font-weight-medium)',
             fontFamily: 'inherit',
-            outline: '0.1rem solid oklch(from var(--border) l c h / 0)',
+            outline: '0.1rem solid color-mix(in oklch, var(--border) 0%, transparent)',
             userSelect: 'none',
             gap: 'calc(var(--spacing) * 2.5)',
             
-            border: '1px solid oklch(from var(--input) l c h / .2)',
-            background: 'oklch(from var(--input) l c h / .025)',
-            color: 'oklch(from var(--fg) l c h / .9)',
+            border: '1px solid var(--input)',
+            background: 'color-mix(in oklch, var(--input) 15%, transparent)',
+            color: 'color-mix(in oklch, var(--fg) 90%, transparent)',
 
             '&:focus-visible': {
                 outline: '0.1rem solid var(--border)'
@@ -43,62 +43,62 @@ export class Button extends ElementProto<HTMLButtonElement> {
 
             [pointerHoverMediaQuery]: {
                 '&:not([disabled]):hover': {
-                    background: 'oklch(from var(--input) l c h / .1)',
+                    background: 'color-mix(in oklch, var(--input) 10%, transparent)',
                 },
             },
 
             '&[variant="primary"]': {
                 border: 'none',
-                color: 'oklch(from var(--primary-fg) l c h)',
+                color: 'var(--primary-fg)',
                 background: 'var(--primary-bg)',
 
                 [pointerHoverMediaQuery]: {
                     '&:not([disabled]):hover': {
-                        background: 'oklch(from var(--primary-bg) l c h / .8)',
+                        background: 'color-mix(in oklch, var(--primary-bg) 80%, transparent)',
                     }
                 }
             },
 
             '&[variant="secondary"]': {
                 border: 'none',
-                color: 'oklch(from var(--secondary-fg) l c h)',
+                color: 'var(--secondary-fg)',
                 background: 'var(--secondary-bg)',
 
                 [pointerHoverMediaQuery]: {
                     '&:not([disabled]):hover': {
-                        background: 'oklch(from var(--secondary-bg) l c h / .8)'
+                        background: 'color-mix(in oklch, var(--secondary-bg) 80%, transparent)'
                     }
                 },
             },
 
             '&[variant="destructive"]': {
                 border: 'none',
-                color: 'oklch(from var(--destructive-fg) l c h)',
-                background: 'oklch(from var(--destructive-bg) l c h / .3)',
+                color: 'var(--destructive-fg)',
+                background: 'color-mix(in oklch, var(--destructive-bg) 30%, transparent)',
 
                 [pointerHoverMediaQuery]: {
                     '&:not([disabled]):hover': {
-                        background: 'oklch(from var(--destructive-bg) l c h / .5)'
+                        background: 'color-mix(in oklch, var(--destructive-bg) 50%, transparent)'
                     }
                 },
             },
 
             '&[variant="ghost"]': {
                 border: 'none',
-                color: 'oklch(from var(--fg) l c h)',
-                background: 'oklch(from var(--input) l c h / 0)',
+                color: 'var(--fg)',
+                background: 'color-mix(in oklch, var(--input) 0%, transparent)',
 
                 [pointerHoverMediaQuery]: {
                     '&:not([disabled]):hover': {
-                        background: 'oklch(from var(--input) l c h / .1)'
+                        background: 'color-mix(in oklch, var(--input) 10%, transparent)'
                     }
                 },
             },
 
             '&[variant="link"]': {
                 border: 'none',
-                color: 'oklch(from var(--fg) l c h)',
-                background: 'oklch(from var(--input) l c h / 0)',
+                color: 'var(--fg)',
+                background: 'transparent',
 
                 [pointerHoverMediaQuery]: {
                     '&:not([disabled]):hover': {
@@ -160,5 +160,13 @@ export class Button extends ElementProto<HTMLButtonElement> {
                 opacity: '.5'
             }
         }))
+    }
+
+    variant(variant: ButtonProps['variant']) {
+        this.props({variant})
+    }
+
+    size(size: ButtonProps['size']) {
+        this.props({size})
     }
 }

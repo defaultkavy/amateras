@@ -43,7 +43,7 @@ export class Icon extends ElementProto {
 
     size(size: OrSignal<string> | undefined) {
         $.resolve(size, size => {
-            this.style({
+            size && this.style({
                 height: size,
                 width: size
             })

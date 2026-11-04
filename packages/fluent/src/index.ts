@@ -1,1 +1,1 @@
-export * from './Fluent';
+export * from './structure/Fluent';

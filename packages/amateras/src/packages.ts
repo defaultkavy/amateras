@@ -30,7 +30,7 @@ const packageSequences: PackageSequence[] = [
     ["css/keyframes", "CSS keyframes module", 'css/src/ext/keyframes.ts', true, false, false, false, true],
     ["css/property", "CSS property module", 'css/src/ext/property.ts', true, false, false, false, true],
     ["css/colors", "CSS Colors module", 'css/src/ext/colors.ts', true, false, false, false, true],
-    ["css/fluents", "CSS Fluent Templates module", 'css/src/ext/fluents.ts', true, false, false, false, true],
+    ["css/cssc", "CSS Fluent Templates module", 'css/src/ext/cssc.ts', true, false, false, false, true],
     ["css/static-colors", "CSS Static Colors module", 'css/src/ext/static-colors.ts', true, false, false, false, true],
     ["css/variables", "CSS Preset Variables module", 'css/src/ext/variables.ts', true, false, false, false, true],
     ["for", "For loop control-flow", 'for/src/index.ts', true, true, true, false, true],

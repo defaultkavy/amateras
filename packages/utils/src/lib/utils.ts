@@ -19,3 +19,5 @@ export * from './merge';
 export * from './tuple';
 export * from './match';
 export * from './camelToDashedStyle';
+export * from './hash';
+export * from './uid';

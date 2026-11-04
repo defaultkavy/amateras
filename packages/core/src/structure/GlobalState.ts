@@ -5,9 +5,9 @@ export type GlobalStateInitial = (global: GlobalState) => object | void;
 
 export class GlobalState {
     static disposers = new Set<(global: GlobalState) => void>()
+    static initials = new Set<GlobalStateInitial>();
     promises = new Set<Promise<any>>();
     root: Proto;
-    static initials = new Set<GlobalStateInitial>();
     constructor(root: Proto) {
         Utils.forEach(GlobalState.initials, initial => {
             const obj = initial(this);

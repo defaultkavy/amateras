@@ -1,11 +1,11 @@
 import { symbol_Statement } from "@amateras/core";
 import { Proto } from "@amateras/core";
 import { ProxyProto } from "@amateras/core";
-import type { SignalTypes } from "@amateras/signal";
+import type { SignalResolve } from "@amateras/signal";
 import { Utils } from '@amateras/utils';
 
 export type ForLayout<T extends any[] = [any]> = (item: T['length'] extends 1 ? T[0] : T, index: number) => void;
-export type ForIterable = SignalTypes<any[]> | SignalTypes<Set<any>> | SignalTypes<Map<any, any>>
+export type ForIterable = SignalResolve<any[]> | SignalResolve<Set<any>> | SignalResolve<Map<any, any>>
 
 export class For<T extends [K: any, V: any] = [any, any]> extends ProxyProto {
     static override [symbol_Statement] = true;

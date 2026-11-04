@@ -1,7 +1,7 @@
 import { Utils } from '@amateras/utils';
 import { ontrack, trackSet } from "#lib/track";
 import { Proto, symbol_Signal } from "@amateras/core";
-import type { SignalTypes } from "..";
+import type { SignalResolve } from "..";
 
 export interface Signal<T> {
     (): T;
@@ -126,8 +126,12 @@ export class Signal<T = any> extends Function {
         target$.subscribe(() => this.emit());
     }
 
-    is<T>(validator: (signal: this) => boolean): this is SignalTypes<T> {
+    is<T>(validator: (signal: this) => boolean): this is SignalResolve<T> {
         return validator(this)
+    }
+
+    exists<R>(callback: (signal: SignalResolve<Exclude<T, null>>) => R): R | Signal {
+        return this.value ? callback(this as any) : $.compute(() => this() ?? null);
     }
 
     override toString(): string {

@@ -5,9 +5,9 @@ import { Utils } from '@amateras/utils';
 
 declare global {
     export namespace $ {
-        export function signal<T>(value: T): SignalTypes<T>;
+        export function signal<T>(value: T): SignalResolve<T>;
         export function effect(callback: (untrack: UntrackFunction) => void, signals?: Signal[]): void;
-        export function compute<T>(callback: (untrack: UntrackFunction) => T, signals?: Signal[]): SignalTypes<T>;
+        export function compute<T>(callback: (untrack: UntrackFunction) => T, signals?: Signal[]): SignalResolve<T>;
         export function optional<T>(signal: Signal<T | undefined | null> | Signal<T | null> | Signal<T | undefined>): Signal<NonNullable<T>> | null
         export function resolve<T>(value: T, handle?: (value: T extends Signal<infer K> | SignalObject<infer K> ? K : T) => void): T;
 
@@ -20,7 +20,7 @@ declare global {
         }
     }
 
-    export type OrSignal<T = any> = T | SignalTypes<T>
+    export type OrSignal<T = any> = T | SignalResolve<T>
 }
 
 declare module '@amateras/core' {
@@ -29,7 +29,7 @@ declare module '@amateras/core' {
     }
 }
 
-export type SignalTypes<T> = 
+export type SignalResolve<T> = 
     [ResolveNestedSignal<T>] extends [infer Resolved] 
     ?   [Resolved] extends [object]
         ?   SignalObject<Resolved> 
@@ -39,8 +39,10 @@ export type SignalTypes<T> =
 type ResolveNestedSignal<T> = T extends Signal<infer R> | SignalObject<infer R> ? ResolveNestedSignal<R> : T;
 
 export type SignalObject<T> = Signal<T> & {
-    [key in keyof T as Exclude<T[key], undefined> extends Signal ? `${string & key}` : Exclude<T[key], undefined> extends Function ? never : `${string & key}$`]: T[key] extends Signal ? T[key] : SignalTypes<T[key]>
+    [key in keyof T as Exclude<T[key], undefined> extends Signal ? `${string & key}` : Exclude<T[key], undefined> extends Function ? never : `${string & key}$`]: T[key] extends Signal ? T[key] : SignalResolve<T[key]>
 }
+
+export type SignalType<S extends Signal> = S['value']
 
 GlobalState.assign(() => ({
     signals: new Set()

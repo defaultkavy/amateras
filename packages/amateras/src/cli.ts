@@ -14,6 +14,7 @@ if (mainCommand === 'link') {
     const failed: string[] = []
 
     for (const pkg of packages) {
+        if (!pkg.link) continue;
         const pkgName = `@amateras/${pkg.name}`
         await Bun.$`bun link ${pkgName}`.quiet()
             .then(() => linked.push(pkgName))

@@ -1,157 +1,63 @@
 export type Package = {
     name: string;
     description: string;
-    codeInsert?: string;
     entry: string;
     mapped: boolean;
     listed: boolean;
+    link: boolean;
+    standalone: boolean;
+    includedCore: boolean;
 }
 
-export const packages: Package[] = [
-    {
-        name: "core",
-        description: "Core module",
-        entry: 'core/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "widget",
-        description: "Component module",
-        entry: 'widget/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "signal",
-        description: "Reactive data module",
-        entry: 'signal/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: 'store',
-        description: 'Access data between widgets',
-        entry: 'store/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "css",
-        description: "CSS-in-JS module",
-        entry: 'css/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "css/variable",
-        description: "CSS variable module",
-        entry: 'css/src/ext/variable.ts',
-        mapped: true,
-        listed: false
-    }, {
-        name: "css/keyframes",
-        description: "CSS keyframes module",
-        entry: 'css/src/ext/keyframes.ts',
-        mapped: true,
-        listed: false
-    }, {
-        name: "css/property",
-        description: "CSS property module",
-        entry: 'css/src/ext/property.ts',
-        mapped: true,
-        listed: false
-    }, {
-        name: "css/colors",
-        description: "CSS Colors module",
-        entry: 'css/src/ext/colors.ts',
-        mapped: true,
-        listed: false
-    }, {
-        name: "css/fluents",
-        description: "CSS Fluent Templates module",
-        entry: 'css/src/ext/fluents.ts',
-        mapped: true,
-        listed: false
-    }, {
-        name: "css/static-colors",
-        description: "CSS Static Colors module",
-        entry: 'css/src/ext/static-colors.ts',
-        mapped: true,
-        listed: false
-    }, {
-        name: "css/variables",
-        description: "CSS Preset Variables module",
-        entry: 'css/src/ext/variables.ts',
-        mapped: true,
-        listed: false
-    }, {
-        name: "for",
-        description: "For loop control-flow",
-        entry: 'for/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "if",
-        description: "If/Else/ElseIf control-flow",
-        entry: 'if/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "match",
-        description: "Match/Case/Default control-flow",
-        entry: 'match/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "router",
-        description: "Router module",
-        entry: 'router/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "i18n",
-        description: "Translation module",
-        entry: 'i18n/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "idb",
-        description: "IndexedDB module",
-        entry: 'idb/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "markdown",
-        description: "Markdown to HTML module",
-        codeInsert: 'import { Markdown } from "@amateras/markdown"; new Markdown();',
-        entry: 'markdown/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "prefetch",
-        description: "SSR data prefetch",
-        entry: 'prefetch/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "meta",
-        description: "SSR `meta` tag manager",
-        entry: 'meta/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "ui",
-        description: "UI components",
-        entry: 'ui/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "fluent",
-        description: "One line object descriptor",
-        entry: 'fluent/src/index.ts',
-        mapped: true,
-        listed: true
-    }, {
-        name: "utils",
-        description: "Utilities module",
-        entry: 'utils/src/index.ts',
-        mapped: true,
-        listed: true
-    }
+type PackageSequence = [
+    name: string,
+    description: string,
+    entry: string,
+    mapped: boolean,
+    listed: boolean,
+    link: boolean,
+    standalone: boolean,
+    includedCore: boolean
 ]
+
+const packageSequences: PackageSequence[] = [
+    ["core", "Core module", 'core/src/index.ts', true, true, true, false, false],
+    ["widget", "Component module", 'widget/src/index.ts', true, true, true, false, true],
+    ["signal", "Reactive data module", 'signal/src/index.ts', true, true, true, false, true],
+    ['store', 'Access data between widgets', 'store/src/index.ts', true, true, true, false, true],
+    ["css", "CSS-in-JS module", 'css/src/index.ts', true, true, true, false, true],
+    ["css/variable", "CSS variable module", 'css/src/ext/variable.ts', true, false, false, false, true],
+    ["css/keyframes", "CSS keyframes module", 'css/src/ext/keyframes.ts', true, false, false, false, true],
+    ["css/property", "CSS property module", 'css/src/ext/property.ts', true, false, false, false, true],
+    ["css/colors", "CSS Colors module", 'css/src/ext/colors.ts', true, false, false, false, true],
+    ["css/fluents", "CSS Fluent Templates module", 'css/src/ext/fluents.ts', true, false, false, false, true],
+    ["css/static-colors", "CSS Static Colors module", 'css/src/ext/static-colors.ts', true, false, false, false, true],
+    ["css/variables", "CSS Preset Variables module", 'css/src/ext/variables.ts', true, false, false, false, true],
+    ["for", "For loop control-flow", 'for/src/index.ts', true, true, true, false, true],
+    ["if", "If/Else/ElseIf control-flow", 'if/src/index.ts', true, true, true, false, true],
+    ["match", "Match/Case/Default control-flow", 'match/src/index.ts', true, true, true, false, true],
+    ["router", "Router module", 'router/src/index.ts', true, true, true, false, true],
+    ["i18n", "Translation module", 'i18n/src/index.ts', true, true, true, false, true],
+    ["prefetch", "SSR data prefetch", 'prefetch/src/index.ts', true, true, true, false, true],
+    ["meta", "SSR `meta` tag manager", 'meta/src/index.ts', true, true, true, false, true],
+    ["hmr", "Utilities module", 'hmr/src/index.ts', false, false, true, false, true],
+    ["sw", "Utilities module", 'sw/src/index.ts', false, false, true, false, true],
+    ["ui", "UI components", 'ui/src/index.ts', true, true, true, true, true],
+
+    ["idb", "IndexedDB module", 'idb/src/index.ts', true, true, true, true, false],
+    ["markdown", "Markdown to HTML module", 'markdown/src/index.ts', true, true, true, true, false],
+    ["fluent", "One line object descriptor", 'fluent/src/index.ts', true, true, true, true, false],
+    ["utils", "Utilities module", 'utils/src/index.ts', true, true, true, true, false],
+    ["opfs", "OPFS module", 'opfs/src/index.ts', true, true, true, true, false]
+]
+
+export const packages: Package[] = packageSequences.map(([name, description, entry, mapped, listed, link, standalone, includedCore]) => ({
+    name,
+    description,
+    entry,
+    mapped,
+    listed,
+    link,
+    standalone,
+    includedCore
+}))

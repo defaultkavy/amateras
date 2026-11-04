@@ -11,7 +11,8 @@ type ModuleInfo = {
     total_gzip: string,
     diff_size: string,
     diff_gzip: string,
-    description: string
+    description: string,
+    standalone: boolean
 }
 
 async function analysisPackageSize() {
@@ -26,9 +27,9 @@ async function analysisPackageSize() {
     }))
     await Bun.$`bun i`;
 
-    for (const {name, description, codeInsert, listed} of packages) {
+    for (const {name, description, listed, standalone, includedCore} of packages) {
         if (!listed) continue;
-        const code = `import 'amateras'; ${codeInsert ?? `import "@amateras/${name}";`}`
+        const code = standalone ? `import * as x from "@amateras/${name}"; console.log(x)` : `import "@amateras/${name}";`
         console.log(`Packaging '${name}'...`)
         const packageSize = await getSize(code);
 
@@ -41,9 +42,10 @@ async function analysisPackageSize() {
             bytes: packageSize.moduleSize,
             total_size: toKB(packageSize.moduleSize),
             total_gzip: toKB(packageSize.gzipSize),
-            diff_size: toKB(packageSize.moduleSize - coreSize),
-            diff_gzip: toKB(packageSize.gzipSize - coreGzipSize),
-            description
+            diff_size: !includedCore ? toKB(packageSize.moduleSize) : toKB(packageSize.moduleSize - coreSize),
+            diff_gzip: !includedCore ? toKB(packageSize.gzipSize) : `~` + toKB(packageSize.gzipSize - coreGzipSize),
+            description,
+            standalone: !includedCore && standalone
         })
 
     }
@@ -97,11 +99,11 @@ const data = await analysisPackageSize()
 console.table(data);
 
 function toMarkdownTable(data: Record<string, ModuleInfo>) {
-    const header = ['Modules', 'Size', 'Gziped', 'Description'];
+    const header = ['Modules', 'Size', 'Gziped', 'Module Type', 'Description'];
     const contents: string[][] = [];
     for (const [name, info] of Object.entries(data)) {
-        if (name === 'core') contents.push([name, info.total_size, info.total_gzip, info.description])
-        else contents.push([name, info.diff_size, info.diff_gzip, info.description]);
+        if (name === 'core') contents.push([name, info.total_size, info.total_gzip, 'The Core', info.description])
+        else contents.push([name, info.diff_size, info.diff_gzip, !info.standalone ? 'Extension Module' : 'Standalone Tool', info.description]);
     }
 
     const headerLines = header.map(() => '---');

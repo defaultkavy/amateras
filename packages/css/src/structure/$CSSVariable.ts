@@ -28,7 +28,7 @@ export class $CSSVariable<V = string> extends $CSS {
         return {[this.name]: `${value ?? this.value}`}
     }
 
-    toString(): string {
+    override toString(): string {
         return `var(${this.name})`
     }
 }

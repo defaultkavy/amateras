@@ -2,7 +2,7 @@ import { cssGlobalRuleSet, cssRuleByProtoMap } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { $CSSRule } from "#structure/$CSSRule";
 import { ElementProto, GlobalState, Proto, onclient, onserver } from "@amateras/core";
-import { UID, Utils } from '@amateras/utils';
+import { Utils } from '@amateras/utils';
 import type { $CSSDeclarationMap } from "./types";
 
 declare global {
@@ -27,7 +27,7 @@ declare global {
         }
 
         export interface AttrMap<T> {
-            css: OrMatrix<$.CSSMap | $CSSRule>;
+            css: OrMatrix<$.CSSMap | $CSSRule | undefined>;
         }
     }
 }
@@ -50,7 +50,7 @@ Utils.assign($, {
     css(cssMap: $.CSSMap | $CSSRule) {
         // If argument is $CSSRule, return it.
         if (Utils.isInstanceof(cssMap, $CSSRule)) return cssMap;
-        return createRule(() => `.${UID.generate('css')}`, cssMap);
+        return createRule((json) => `.c_${Utils.hash(json)}`, cssMap);
     },
     
     CSS(cssRootMap: $.CSSRootMap) {
@@ -83,7 +83,7 @@ GlobalState.disposers.add(({css}) => {
     css.rules = [];
 })
 
-const mergeMaps = (maps: ($.CSSMap | $CSSRule)[]): ($.CSSMap | $CSSRule)[] => {
+const mergeMaps = (maps: OrArray<$.CSSMap | $CSSRule>[]): ($.CSSMap | $CSSRule)[] => {
     let merge = {};
     let processedMaps: ($.CSSMap | $CSSRule)[] = [merge];
     Utils.forEach(maps, map => {
@@ -99,7 +99,8 @@ const mergeMaps = (maps: ($.CSSMap | $CSSRule)[]): ($.CSSMap | $CSSRule)[] => {
     return processedMaps;
 }
 
-const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule) => {
+const assignCSS = (proto: ElementProto, cssMap: $.CSSMap | $CSSRule | undefined) => {
+    if (!cssMap) return;
     let rule = $.css(cssMap);
     let selector = rule.selector.slice(1);
     proto.addClass(selector);

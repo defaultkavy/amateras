@@ -11,7 +11,7 @@ import { cssRuleByJSONMap } from "./cache";
  * 4. Cache the rule into {@link cssRuleByJSONMap}
  * 5. Return the rule.
  */
-export const createRule = (selector: () => string, cssMap: $.CSSMap, cache = true) => {
+export const createRule = (selector: (json: string) => string, cssMap: $.CSSMap, cache = true) => {
     // Convert $CSSObject to JSON,
     // use JSON string as Map key of $CSSRule cache.
     let cssObjectJSON = cache ? Utils.stringify(cssMap) : '';
@@ -22,7 +22,7 @@ export const createRule = (selector: () => string, cssMap: $.CSSMap, cache = tru
         if (cachedRule) return cachedRule;
     }
     // If the rule is not cached, create new one.
-    let rule = new $CSSRule(selector(), cssMap, Utils.Null);
+    let rule = new $CSSRule(selector(cssObjectJSON), cssMap, Utils.Null);
     // Insert rule into stylesheet.
     $.style(Utils.Null, `${rule}`);
     // Save the JSON and $CSSRule in cache.

@@ -1,5 +1,5 @@
 import { $CSSVariable } from "#structure/$CSSVariable";
-import { UID, Utils } from '@amateras/utils';
+import { Utils } from '@amateras/utils';
 import { camelCaseToDash } from "../lib/utils";
 
 declare global {
@@ -24,7 +24,7 @@ export interface $CSSVariableOptions {
 
 Utils.assign($.css, {
     variable<T extends $.CSSVariableType | string>(varMap: T, options?: $CSSVariableOptions) {
-        let id = options?.unique ? '_' + UID.generate('css-variable', {lettercase: 'lower'}) : '';
+        let id = options?.unique ? '_' + Utils.uid('css-variable', {lettercase: 'lower'}) : '';
         if (Utils.isObject(varMap)) {
             const variables = Utils.fromEntries(
                 Utils.map(Utils.entries(varMap), (([key, value]) => [

@@ -7,7 +7,7 @@ export class $CSSKeyframes extends $CSS {
         this.name = name;
     }
 
-    toString(): string {
+    override toString(): string {
         return `${this.name.replace('@keyframes ', '')}`
     }
 }

@@ -2,7 +2,7 @@ import { cssGlobalRuleSet } from "#lib/cache";
 import { createRule } from "#lib/createRule";
 import { camelCaseToDash } from "#lib/utils";
 import { $CSSProperty } from "#structure/$CSSProperty";
-import { UID, Utils } from '@amateras/utils';
+import { Utils } from '@amateras/utils';
 
 declare global {
     export namespace $ {
@@ -33,7 +33,7 @@ declare global {
 
 Utils.assign($.css, {
     property(resolver: $.CSSPropertyMap | string, initialValue?: string | number, inherits?: boolean) {
-        let id = UID.generate('css-property', {lettercase: 'lower'})
+        let id = Utils.uid('css-property', {lettercase: 'lower'})
         if (Utils.isString(resolver)) {
             if (Utils.isUndefined(initialValue) || Utils.isUndefined(inherits)) throw 'Register CSS Property Error';
             let name = `--${id}`;

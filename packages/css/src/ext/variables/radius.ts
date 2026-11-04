@@ -7,7 +7,9 @@ export const radius = $.css.variable({
     lg: 'calc(var(--radius) * 1.2)',
     xl: 'calc(var(--radius) * 1.4)',
     xl2: 'calc(var(--radius) * 1.6)',
-    round: '50%'
+    xl3: 'calc(var(--radius) * 2.4)',
+    xl4: 'calc(var(--radius) * 3.2)',
+    full: 'calc(infinity * 1px)'
 }, {
     prefix: 'radius-'
 })

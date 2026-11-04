@@ -20,7 +20,7 @@ export class $CSSRule extends $CSS {
         return this.#css ?? {}
     }
 
-    toString(): string {
+    override toString(): string {
         let declarations = Utils.map(this.declarations, ([name, value]) => `${name.replaceAll(/[A-Z]/g, $0 => `-${$0.toLowerCase()}`)}: ${value};`);
         let rules = Utils.map(this.rules, ([_, rule]) => `${rule}`);
         if (this.#css) return `${this.selector} { ${[...declarations, ...rules].join(' ')} }`
@@ -32,7 +32,8 @@ const processCSSMap = (rule: $CSSRule, cssMap: $.CSSMap) => {
     for (let [key, value] of Utils.entries(cssMap)) {
         // not record __selector__ in cssMap
         if (key === '__selector__') continue;
-        if (Utils.isString(value) || Utils.isNumber(value) || Utils.isInstanceof(value, $CSS)) rule.declarations.set(key, `${value}`);
+        if (Utils.isString(value) || Utils.isNumber(value)) rule.declarations.set(key, `${value}`);
+        else if (Utils.isInstanceof(value, $CSS)) value.setRule(key, rule)
         else {
             // 兼容较旧浏览器不支持无 & 前缀的子规则
             let selector = 

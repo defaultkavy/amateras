@@ -15,7 +15,7 @@ export class $CSSProperty extends $CSS {
         Utils.assign(this, options);
     }
 
-    toString() {
+    override toString() {
         return `var(${this.name})`
     }
 

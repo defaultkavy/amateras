@@ -11,7 +11,10 @@ export const text = $.css.variable({
     xl3: '1.875rem',
     xl4: '2.25rem',
     xl5: '3rem',
+    xl6: '3.75rem',
     xl7: '4.5rem',
+    xl8: '6rem',
+    xl9: '8rem',
 }, {
     prefix: 'text-'
 })

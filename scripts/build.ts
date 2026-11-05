@@ -5,12 +5,13 @@ import fs from 'fs';
 import path from 'path';
 
 const importMapDir = path.resolve(__dirname + '/../packages/amateras');
-const cdnDir = path.resolve(__dirname + '/../packages/cdn/build');
+const cdnDir = path.resolve(__dirname + '/../packages/cdn');
+const cdnBuildDir = path.resolve(__dirname + '/../packages/cdn/build');
 
 console.log(`[build] Start build js file on v${package_json.version}`);
 
 // if (fs.existsSync(importMapDir)) fs.rm(importMapDir, {force: true, recursive: true}, () => {});
-if (fs.existsSync(cdnDir)) fs.rm(cdnDir, {force: true, recursive: true}, () => {});
+if (fs.existsSync(cdnBuildDir)) fs.rm(cdnBuildDir, {force: true, recursive: true}, () => {});
 
 async function buildJS(pkg: Package) {
     await build({
@@ -29,7 +30,7 @@ async function buildJS(pkg: Package) {
             },
             emptyOutDir: false,
             write: true,
-            outDir: cdnDir,
+            outDir: cdnBuildDir,
             minify: 'terser',
         }
     });
@@ -57,4 +58,6 @@ async function buildImportMapJS() {
 
 await buildImportMapJS();
 
-console.debug('[build] Done')
+await Bun.$`cd ${cdnDir} && bun pm version ${package_json.version}`.quiet();
+
+console.log('[build] Done.')

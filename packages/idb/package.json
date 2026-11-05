@@ -1,8 +1,6 @@
 {
   "name": "@amateras/idb",
   "peerDependencies": {
-    "@amateras/core": "workspace:*",
-    "@amateras/signal": "workspace:*",
     "@amateras/utils": "workspace:*"
   },
   "imports": {
@@ -13,5 +11,5 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "version": "0.1.2"
+  "version": "0.1.3"
 }

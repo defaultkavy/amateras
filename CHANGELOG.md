@@ -1,6 +1,6 @@
 # Changelog
 
-- ## [0.19.0]2026-11-5
+## [0.19.0] - 2026-11-5
 ### Changes
 > [!Warning]
 > **Breaking Changes**

@@ -8,9 +8,10 @@
 - 编写开发工具时，请以 Bun 作为首要运行时环境。
 
 ## 版本发布指南
-1. 使用 `bun run change` 设定新版本号记录。
-2. 使用 `bun run version` 应用版本号记录。
-4. 使用 `bun run build` 编译 JavaScript 文件和 `map.js`。
-5. 使用 `bun run size` 更新 `README.md` 的模块资讯表格。
-5. 使用 `bun run publish` 发布所有拥有新版本号的模块库。
-6. 完成发布。
+1. 使用 `bun run size` 更新 `README.md` 的模块资讯表格。
+2. 使用 `bun run release` 执行自动发布流程：
+   1. 使用 `bun run change` 设定新版本号记录。
+   2. 使用 `bun run version` 应用版本号记录。
+   3. 使用 `bun run build` 编译 JavaScript 文件和 `map.js`。
+   4. 使用 `bun run publish` 发布所有拥有新版本号的模块库。
+3. 完成发布。

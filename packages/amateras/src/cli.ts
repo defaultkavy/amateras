@@ -3,10 +3,10 @@
 import packages_json from '../package.json';
 import { packages } from './packages';
 
-console.log(`Amateras v${packages_json.version}`);
-
 const [a1, a2, mainCommand, ...args] = process.argv;
 const projectDir = process.cwd();
+
+console.log(`Amateras v${packages_json.version} ${a1}`);
 
 if (mainCommand === 'link') {
     await Bun.$`cd ${projectDir}`
@@ -74,8 +74,8 @@ export default defineConfig({
     const package_json = await Bun.file(`${projectDir}/package.json`).json();
 
     package_json.scripts = {
-        dev: "bunx --bun vite dev",
-        build: "bunx --bun vite build"
+        dev: "bunx vite dev",
+        build: "bunx vite build"
     }
 
     await Bun.write(`${projectDir}/package.json`, JSON.stringify(package_json, undefined, 2));

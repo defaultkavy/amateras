@@ -1,5 +1,5 @@
 # Amateras
-Amateras is a JavaScript library for building user interface. Its gold is to allow writing and running code directly without a compiler, enabling developers to build user interfaces efficiently using only JavaScript or TypeScript syntax.
+Amateras is a JavaScript library for building user interface. Its goal is to allow writing and running code directly without a compiler, enabling developers to build user interfaces efficiently using only JavaScript or TypeScript syntax.
 
 ## Advantages
 - **Minimalist Development**: No JSX, no compiler, zero setup.
@@ -18,25 +18,26 @@ Amateras is a JavaScript library for building user interface. Its gold is to all
 - Server-Side Rendering ([tsukimi](https://github.com/defaultkavy/tsukimi))
 
 ## How to Use
-Amateras provides two ways to import the library.
-
-1. **Using Import Map**
+- **Install via Package Manager**
+   ```sh
+   bun add amateras
+   ```
+- **Quick Setup via Command**
+  ```sh
+  bunx amateras init
+  ```
+- **Using Import Map**
    
    This script will create a import map in your page, insert this line before your project code.
    ```html
    <script src="https://unpkg.com/amateras"></script>
    ```
 
-2. **Install via Package Manager**
-   ```sh
-   bun add amateras
-   ```
-
-## Example
+## Hello World Example
 ```ts
 import 'amateras';
 
-const $h1 = $('h1', {class: 'title'}, () => $`Hello World!`)
+const $h1 = $('h1', {class: 'title'}, () => $`Hello, World!`)
 
 $.render($h1, 'body');
 ```
@@ -62,22 +63,23 @@ const Counter = $.widget(() => {
 $.render(Counter, 'body');
 ```
 
-| Modules | Size | Gziped | Description |
-| --- | --- | --- | --- |
-| core | 9.03 kB | 3.59 kB | Core module |
-| widget | 0.56 kB | 0.19 kB | Component module |
-| signal | 3.47 kB | 1.21 kB | Reactive data module |
-| store | 0.54 kB | 0.20 kB | Access data between widgets |
-| css | 3.24 kB | 1.27 kB | CSS-in-JS module |
-| for | 1.54 kB | 0.46 kB | For loop control-flow |
-| if | 5.06 kB | 1.66 kB | If/Else/ElseIf control-flow |
-| match | 1.77 kB | 0.50 kB | Match/Case/Default control-flow |
-| router | 7.70 kB | 2.74 kB | Router module |
-| i18n | 4.80 kB | 1.63 kB | Translation module |
-| idb | 5.69 kB | 2.08 kB | IndexedDB module |
-| markdown | 8.04 kB | 3.02 kB | Markdown to HTML module |
-| prefetch | 1.90 kB | 0.74 kB | SSR data prefetch |
-| meta | 1.01 kB | 0.38 kB | SSR `meta` tag manager |
-| ui | 0.00 kB | 0.00 kB | UI components |
-| fluent | 0.00 kB | 0.00 kB | One line object descriptor |
-| utils | 0.00 kB | 0.00 kB | Utilities module |
+| Modules | Size | Gziped | Module Type | Description |
+| --- | --- | --- | --- | --- |
+| core | 9.03 kB | 3.59 kB | The Core | Core module |
+| widget | 0.50 kB | ~0.16 kB | Extension Module | Component module |
+| signal | 3.17 kB | ~1.15 kB | Extension Module | Reactive data module |
+| store | 0.50 kB | ~0.19 kB | Extension Module | Access data between widgets |
+| css | 2.66 kB | ~1.21 kB | Extension Module | CSS-in-JS module |
+| for | 1.31 kB | ~0.43 kB | Extension Module | For loop control-flow |
+| if | 4.50 kB | ~1.56 kB | Extension Module | If/Else/ElseIf control-flow |
+| match | 1.54 kB | ~0.46 kB | Extension Module | Match/Case/Default control-flow |
+| router | 7.32 kB | ~2.66 kB | Extension Module | Router module |
+| i18n | 4.43 kB | ~1.57 kB | Extension Module | Translation module |
+| prefetch | 1.72 kB | ~0.70 kB | Extension Module | SSR data prefetch |
+| meta | 0.67 kB | ~0.31 kB | Extension Module | SSR `meta` tag manager |
+| ui | 58.15 kB | ~12.97 kB | Extension Module | UI components |
+| idb | 6.64 kB | 2.76 kB | Standalone Tool | IndexedDB module |
+| markdown | 8.88 kB | 3.72 kB | Standalone Tool | Markdown to HTML module |
+| fluent | 2.30 kB | 1.06 kB | Standalone Tool | One line object descriptor |
+| utils | 3.72 kB | 1.91 kB | Standalone Tool | Utilities module |
+| opfs | 3.15 kB | 1.31 kB | Standalone Tool | OPFS module |

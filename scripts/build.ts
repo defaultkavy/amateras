@@ -115,5 +115,5 @@ async function buildImportMapJS() {
 
 await tsc(packages.sw);
 await buildImportMapJS();
-await Bun.$`cd ${cdnDir} && bun pm version ${package_json.version}`.quiet();
+
 console.log('[build] Done.')

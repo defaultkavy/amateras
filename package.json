@@ -35,7 +35,7 @@
     "publish": "bun ./scripts/publish.ts",
     "link": "for dir in packages/*/; do (cd \"$dir\" && bun link); done",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} + && rm -f bun.lock bun.lockb && bun install",
-    "change": "bunx changeset",
+    "change": "bunx changeset add -m update",
     "version": "bunx changeset version && bun i",
     "release": "bun run change && bun run version && bun run build && bun run publish"
   },

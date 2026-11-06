@@ -10,7 +10,7 @@ const map = {
     ...Object.fromEntries(
         Object.values(packages).map((pkg) => {
             const packageUrl = `${prefix}/${pkg.name}.js`;
-            return [pkg.name, packageUrl]
+            return [`@amateras/${pkg.name}`, packageUrl]
         })
     )
 }

@@ -7,9 +7,9 @@ import * as ts_async from 'typescript/async';
 import { ScriptTarget } from "typescript/ast";
 import { ModuleDetectionKind } from "typescript/proto";
 
-const importMapDir = path.resolve(__dirname + '/../packages/amateras');
+const importMapDir = path.resolve(__dirname + '/../packages/amateras/dist');
 const cdnDir = path.resolve(__dirname + '/../packages/cdn');
-const cdnBuildDir = path.resolve(__dirname + '/../packages/cdn/build');
+const cdnBuildDir = path.resolve(__dirname + '/../packages/cdn/dist');
 
 console.log(`[build] Start build js file on v${package_json.version}`);
 
@@ -102,10 +102,10 @@ async function buildImportMapJS() {
         build: {
             emptyOutDir: false,
             lib: {
-                entry: __dirname + '/import-map.ts',
+                entry: __dirname + '/importmap.ts',
                 formats: ['es'],
                 name: 'import-name',
-                fileName: () => 'import-map.js'
+                fileName: () => 'importmap.js'
             },
             outDir: importMapDir,
             minify: 'terser'

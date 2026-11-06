@@ -1,8 +1,8 @@
 import { packages } from '../packages/amateras/src/packages';
 import { version } from '../packages/amateras/package.json';
-const prefix = `https://unpkg.com/@amateras/cdn@${version}/build`
+const prefix = `https://unpkg.com/@amateras/cdn@${version}/dist`
 const remap = {
-    'amateras': `${prefix}/@amateras/core/${version}`
+    'amateras': `${prefix}/core`
 }
 
 const map = {
@@ -10,7 +10,7 @@ const map = {
     ...Object.fromEntries(
         Object.values(packages).map((pkg) => {
             const packageUrl = `${prefix}/${pkg.name}.js`;
-            return [`@amateras/${pkg.name}`, packageUrl]
+            return [pkg.name, packageUrl]
         })
     )
 }

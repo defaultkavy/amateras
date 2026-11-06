@@ -20,14 +20,16 @@ async function analysisPackageSize() {
     let coreSize = 0;
     let coreGzipSize = 0;
 
+    const packageList = Object.values(packages);
+
     // create package.json file
     await Bun.write(`${root}/package.json`, JSON.stringify({
         name: 'size_temp',
-        dependencies: Object.fromEntries(packages.filter(pkg => pkg.listed).map(pkg => [`@amateras/${pkg.name}`, 'workspace:*']))
+        dependencies: Object.fromEntries(packageList.filter(pkg => pkg.listed).map(pkg => [`@amateras/${pkg.name}`, 'workspace:*']))
     }))
     await Bun.$`bun i`;
 
-    for (const {name, description, listed, standalone, includedCore} of packages) {
+    for (const {name, description, listed, standalone, includedCore} of packageList) {
         if (!listed) continue;
         const code = standalone ? `import * as x from "@amateras/${name}"; console.log(x)` : `import "@amateras/${name}";`
         console.log(`Packaging '${name}'...`)

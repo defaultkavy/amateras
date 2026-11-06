@@ -51,7 +51,7 @@ async function analysisPackageSize() {
     let coreSize = 0;
     let coreGzipSize = 0;
 
-    for (const {name, description} of packages) {
+    for (const {name, description} of Object.values(packages)) {
         const code = `import 'amateras'; import '${name}';`
         console.log(`Packaging '${name}'...`)
         const packageSize = await getSize(code);

@@ -1,8 +1,11 @@
 import { build } from "vite";
-import { packages, type Package } from "../packages/amateras/src/packages";
+import { packages, type Package, Env } from "../packages/amateras/src/packages";
 import package_json from '../packages/amateras/package.json';
 import fs from 'fs';
 import path from 'path';
+import * as ts_async from 'typescript/async';
+import { ScriptTarget } from "typescript/ast";
+import { ModuleDetectionKind } from "typescript/proto";
 
 const importMapDir = path.resolve(__dirname + '/../packages/amateras');
 const cdnDir = path.resolve(__dirname + '/../packages/cdn');
@@ -13,7 +16,7 @@ console.log(`[build] Start build js file on v${package_json.version}`);
 // if (fs.existsSync(importMapDir)) fs.rm(importMapDir, {force: true, recursive: true}, () => {});
 if (fs.existsSync(cdnBuildDir)) fs.rm(cdnBuildDir, {force: true, recursive: true}, () => {});
 
-async function buildJS(pkg: Package) {
+async function buildCDN(pkg: Package) {
     await build({
         configFile: false,
         logLevel: 'silent',
@@ -36,7 +39,61 @@ async function buildJS(pkg: Package) {
     });
 }
 
-await Promise.all(packages.map(buildJS));
+async function buildESM(pkg: Package) {
+    const [package_root_name, package_ext_name] = pkg.name.split('/');
+    return build({
+        configFile: false,
+        logLevel: 'silent',
+        root: __dirname + `/../packages/${package_root_name}`,
+        build: {
+            lib: {
+                entry: __dirname + `/../packages/${pkg.entry}`,
+                formats: ['es'],
+                fileName: () => `index.js`
+            },
+            rollupOptions: {
+                external: [
+                    /^@amateras/,
+                ]
+            },
+            emptyOutDir: true,
+            write: true,
+            outDir: package_ext_name ? `dist/${package_ext_name}` : `dist`,
+            minify: 'terser'
+        }
+    })
+}
+
+async function tsc(pkg: Package) {
+    const api = new ts_async.API();
+    const program = await api.createProgram([__dirname + `/../packages/${pkg.entry}`], {
+        target: ScriptTarget.ES2026,
+        module: ts_async.ModuleKind.Preserve,
+        moduleDetection: ModuleDetectionKind.Force,
+        types: ["bun"],
+        outDir: __dirname + `/../packages/${pkg.name}/dist`,
+
+        // Bundler mode
+        "moduleResolution": ts_async.ModuleResolutionKind.Bundler,
+        "allowImportingTsExtensions": true,
+        "verbatimModuleSyntax": true,
+
+        // Best practices
+        "strict": true,
+        "skipLibCheck": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedIndexedAccess": true,
+        "noImplicitOverride": true,
+
+        // Some stricter flags (disabled by default)
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noPropertyAccessFromIndexSignature": false
+    })
+    return program.emit().then(() => api.close())
+}
+
+await Promise.all(Object.values(packages).filter(pkg => pkg.env !== Env.Server).map(buildCDN));
 
 async function buildImportMapJS() {
     await build({
@@ -48,16 +105,15 @@ async function buildImportMapJS() {
                 entry: __dirname + '/import-map.ts',
                 formats: ['es'],
                 name: 'import-name',
-                fileName: 'map'
+                fileName: () => 'import-map.js'
             },
             outDir: importMapDir,
-            minify: 'terser',
+            minify: 'terser'
         }
     })
 }
 
+await tsc(packages.sw);
 await buildImportMapJS();
-
 await Bun.$`cd ${cdnDir} && bun pm version ${package_json.version}`.quiet();
-
 console.log('[build] Done.')

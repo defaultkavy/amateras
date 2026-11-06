@@ -1,20 +1,16 @@
-import package_json from '../packages/amateras/package.json';
 import { packages } from '../packages/amateras/src/packages';
-const prefix = `https://unpkg.com/@amateras/cdn@${package_json.version}/build`
-
+import { version } from '../packages/amateras/package.json';
+const prefix = `https://unpkg.com/@amateras/cdn@${version}/build`
 const remap = {
-    'amateras': `${prefix}/core.js`
+    'amateras': `${prefix}/@amateras/core/${version}`
 }
-
-const packageNames = packages.map(p => p.name);
 
 const map = {
     ...remap,
     ...Object.fromEntries(
-        packageNames.map(name => {
-            const packageName = `amateras/${name}`;
-            const packageUrl = `${prefix}/${name}.js`;
-            return [`@${packageName}`, packageUrl]
+        Object.values(packages).map((pkg) => {
+            const packageUrl = `${prefix}/${pkg.name}.js`;
+            return [`@amateras/${pkg.name}`, packageUrl]
         })
     )
 }

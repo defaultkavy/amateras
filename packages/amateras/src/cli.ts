@@ -13,7 +13,7 @@ if (mainCommand === 'link') {
     const linked: string[] = []
     const failed: string[] = []
 
-    for (const pkg of packages) {
+    for (const pkg of Object.values(packages)) {
         if (!pkg.link) continue;
         const pkgName = `@amateras/${pkg.name}`
         await Bun.$`bun link ${pkgName}`.quiet()

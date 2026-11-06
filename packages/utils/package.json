@@ -6,12 +6,8 @@
     "#node/*": "./src/node/*.ts"
   },
   "exports": {
-    ".": {
-      "browser": "./src/index.ts",
-      "bun": "./src/index.bun.ts",
-      "default": "./src/index.ts"
-    }
+    ".": "./src/index.ts"
   },
   "sideEffects": false,
-  "version": "0.2.0"
+  "version": "0.2.1"
 }

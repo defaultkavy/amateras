@@ -3,10 +3,10 @@
 import packages_json from '../package.json';
 import { packages } from './packages';
 
-const [a1, a2, mainCommand, ...args] = process.argv;
+const [,, mainCommand, ...args] = process.argv;
 const projectDir = process.cwd();
 
-console.log(`Amateras v${packages_json.version} ${a1}`);
+console.log(`amateras ${mainCommand} v${packages_json.version}`);
 
 if (mainCommand === 'link') {
     await Bun.$`cd ${projectDir}`
@@ -26,80 +26,64 @@ if (mainCommand === 'link') {
 }
 
 if (mainCommand === 'init') {
+    const SSR = args.includes('--ssr');
+
     await Bun.$`cd ${projectDir}`;
     await Bun.$`bun init -y`.quiet();
     await Bun.$`rm README.md`;
     await Bun.$`rm index.ts`;
-    await Bun.$`bun add amateras vite`.quiet();
 
-    const html = `<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=0.9">
-        <script type="module" src="src/index.ts"></script>
-    </head>
-    <body>
-    </body>
-</html>`
+    const libs = ['amateras', 'vite'];
+    if (SSR) libs.push('tsukimi');
 
+    await Bun.$`bun add ${libs}`.quiet();
+
+    const html = await Bun.file(`${import.meta.dir}/template/index.html`).text();
     await Bun.write(`${projectDir}/index.html`, html);
 
-    const index = `import "amateras";
-import "@amateras/widget";
-
-const App = $.widget(() => {
-    $('h1', $$ => $\`Hello, World!\`)
-})
-
-$.render(App, 'body');`
-
+    // Setup index.ts
+    const index = await Bun.file(`${import.meta.dir}/template/index.ts`).text();
     await Bun.write(`${projectDir}/src/index.ts`, index);
 
-    const vite_config = `import { defineConfig } from "vite";
-import { ViteHMR } from "@amateras/hmr";
+    // Setup index.ts
+    const app = await Bun.file(`${import.meta.dir}/template/App.ts`).text();
+    await Bun.write(`${projectDir}/src/widget/App.ts`, app);
 
-export default defineConfig({
-    plugins: [
-        ViteHMR()
-    ]
-})`
-
+    // Setup vite.config.ts
+    const vite_config = await Bun.file(`${import.meta.dir}/template/vite.config.ts`).text();
     await Bun.write(`${projectDir}/vite.config.ts`, vite_config);
 
+    // Setup tsconfig.json
     const tsconfig_text = await Bun.file(`${projectDir}/tsconfig.json`).text();
-
     await Bun.write(`${projectDir}/tsconfig.json`, tsconfig_text.replace('"lib": ["ESNext"],', '"lib": ["ESNext", "DOM"],'))
 
+    // Setup package.json
     const package_json = await Bun.file(`${projectDir}/package.json`).json();
-
     package_json.scripts = {
-        dev: "bunx vite dev",
-        build: "bunx vite build"
+        dev: "bunx --bun vite dev",
+        build: "bunx --bun vite build",
+        ...(SSR ? {
+            start: "bun server.ts"
+        } : {})
     }
-
     await Bun.write(`${projectDir}/package.json`, JSON.stringify(package_json, undefined, 2));
 
-    console.log(`Project initialized.
-        
-+ src/index.ts
-+ .gitignore
-+ index.html
-+ package.json
-+ tsconfig.json
-+ vite.config.ts
+    if (args.includes('--ssr')) {
+        // Setup server.ts
+        const server = await Bun.file(`${import.meta.dir}/template/server.ts`).text();
+        await Bun.write(`${projectDir}/server.ts`, server);
+    }
 
-Use \`bun run dev\` to start dev server.
+    const files = [
+        'index.html',
+        SSR ? 'server.ts' : undefined,
+        'src/index.ts',
+        'src/widget/App.ts',
+        'package.json',
+        'tsconfig.json',
+        'vite.config.ts'
+    ]
+
+    console.log(`Project initialized.\n\n${files.filter(f => f).map(t => `+ ${t}`).join('\n')}\n\nUse \`bun run dev\` to start dev server.
     `)
 }
-
-// if (mainCommand === 'add') {
-//     await Bun.$`cd ${projectDir}`
-//     const [arg1] = args;
-//     if (arg1 === 'all') {
-//         await Bun.$`bun add ${packages.filter(pkg => pkg.listed).map(pkg => `@amateras/${pkg.name}`).join(' ')}`
-//     } else {
-//         if (!arg1) throw 'No package name';
-//         await Bun.$`bun add ${args.map(name => `@amateras/${name}`)}`;
-//     }
-// }

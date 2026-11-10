@@ -282,7 +282,7 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
     filter: valueFn<$.CSSDeclarationMap['filter']>,
 
     insert: Fluent.method((map: OrMatrix<$.CSSMap | $CSSRule>) => map),
-    hover: (map: OrMatrix<$.CSSMap | $CSSRule>) => map,
+    hover: (map: OrMatrix<$.CSSMap | $CSSRule>) => ({'html:not([touch]) &:hover': map}),
     media_sm: mediaFn('(width < 40rem)'),
     media_md: mediaFn('(width < 48rem)'),
     media_lg: mediaFn('(width < 64rem)'),

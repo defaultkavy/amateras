@@ -28,7 +28,7 @@ export class Switch extends ElementProto {
                 height: 'calc(var(--spacing) * 5)',
                 width: 'calc(var(--spacing) * 5)',
                 background: 'var(--fg)',
-                borderRadius: 'var(--radius-round)',
+                borderRadius: 'var(--radius-full)',
                 transition: 'all .3s ease'
             },
 

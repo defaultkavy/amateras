@@ -56,24 +56,15 @@ GlobalState.disposers.add(global => {
 Utils.assign($, {
     signal: (value: any) => new Signal(value),
 
-    effect(
-        callback: (
-            untrack: UntrackFunction
-        ) => void,
-        signals: Signal[] = []
-    ) {
+    effect(callback: (untrack: UntrackFunction) => void, signals: Signal[] = []) {
+        let cacheParentProto = Proto.proto;
         track(callback);
         Utils.forEach(signals, signal => trackSet.add(signal));
-        Utils.forEach(trackSet, signal => signal.subscribe(_ => callback(untrack)));
+        Utils.forEach(trackSet, signal => signal.subscribe(_ => $.context(cacheParentProto, () => callback(untrack))));
         trackSet.clear();
     },
     
-    compute<T>(
-        callback: (
-            untrack: UntrackFunction
-        ) => T,
-        signals: Signal[] = []
-    ) {
+    compute<T>(callback: (untrack: UntrackFunction) => T, signals: Signal[] = []) {
         let result = track(callback);
         let compute = $.signal(result);
         let proto = Proto.proto;

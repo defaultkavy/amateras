@@ -48,9 +48,14 @@ export class Fluent<Compute = Record<string, any>, Map extends Record<FluentKey,
                     return result
                 }
                 const value = this.optionMap.get(propName);
-                if (Utils.isFunction(value)) return (...args: any) => {
-                    Utils.assign(target, value(...args))
-                    return proxy;
+                let cacheTarget = target;
+                if (Utils.isFunction(value)) {
+                    this.reset(); // avoid nested fluent build into parent result
+                    return (...args: any) => {
+                        Utils.assign(cacheTarget, value(...args));
+                        this.result = cacheTarget; // recovery
+                        return proxy;
+                    }
                 }
                 else Utils.assign(target, value)
                 return proxy;

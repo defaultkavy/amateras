@@ -10,6 +10,7 @@ export class ProxyProto extends NodeProto<Text> {
     }
 
     override toDOM(): Node[] {
+        this.node!.$ = this;
         return [this.node!, ...super.toDOM()]
     }
 

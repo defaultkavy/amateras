@@ -1,7 +1,3 @@
-// window and document
-export const _window = undefined;
-export const _document = undefined;
-
 interface onclient {
     (): boolean;
     (fn: Function): void

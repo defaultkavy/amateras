@@ -1,4 +1,4 @@
-import { _document, onclient } from "@amateras/core";
+import { onclient } from "@amateras/core";
 import { $CSS } from "./$CSS";
 
 export class $CSSVariable<V = string> extends $CSS {
@@ -11,12 +11,12 @@ export class $CSSVariable<V = string> extends $CSS {
     }
 
     set(value: string) {
-        if (onclient()) _document.documentElement.style.setProperty(`${this.name}`, value);
+        if (onclient()) document.documentElement.style.setProperty(`${this.name}`, value);
         return this;
     }
 
     reset() {
-        if (onclient()) _document.documentElement.style.removeProperty(`${this.name}`);
+        if (onclient()) document.documentElement.style.removeProperty(`${this.name}`);
         return this;
     }
 

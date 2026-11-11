@@ -95,7 +95,7 @@ export class ElementProto<H extends HTMLElement = HTMLElement> extends NodeProto
         element.$ = this;
         if (children) {
             if (this.#innerHTML && !initialized) this.node.innerHTML = this.#innerHTML;
-            else if (!initialized || this.virtual) this.DOMProcess();
+            else if (!initialized || this.virtual) this.childNodeProcess();
         }
         if (!initialized) Utils.forEach(Utils.entries(this.#attr), ([key, value]) => element.setAttribute(key, value));
         if (!initialized) this.dispatch('dom', [this.node])

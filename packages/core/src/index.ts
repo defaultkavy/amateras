@@ -183,8 +183,8 @@ export namespace $ {
     
     export interface ProtoEventMap<P extends Proto> {
         dispose: [];
-        builded: [];
         dom: [node: P extends NodeProto ? Exclude<P['node'], null> : Node];
+        mount: [];
         mutate: [];
     }
 
@@ -207,12 +207,15 @@ export namespace $ {
         if (onserver()) return;
 
         let $proto = $(proto as Proto)
-        let nodes = $proto.build().toDOM()
+        let nodes = $proto.build().toDOM();
         let element = document.querySelector(query);
         if (!element) return;
         await Promise.all($proto.global.promises);
         if (hmr(element, $proto)) {
-        } else element?.replaceChildren(...nodes);
+        } else {
+            element.replaceChildren();
+            Utils.forEach(nodes, node => node.$.mount(element))
+        }
 
         if (onclient()) document.querySelector('style#__ssr__')?.remove();
     }

@@ -22,7 +22,13 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
         this.node?.remove();
     }
 
-    protected DOMProcess() {
+    override mount(parent: Node, beforeSibling: Node | null = null) {
+        if (!this.node) return;
+        parent.insertBefore(this.node, beforeSibling)
+        if (parent.isConnected) this.dispatch('mount', [])
+    }
+
+    protected childNodeProcess() {
         let thisNode = this.node;
         if (thisNode) {
             let protos = this.protos;
@@ -33,7 +39,7 @@ export class NodeProto<N extends Node & ChildNode = Node & ChildNode> extends Pr
                 if (currentNode !== node) {
                     if (!nodes.includes(currentNode as any)) nextNode = currentNode ?? Utils.Null;
                     else nextNode = thisNode.childNodes[i + 1] ?? Utils.Null;
-                    thisNode.insertBefore(node, nextNode);
+                    node.$.mount(thisNode, nextNode);
                 }
             })
         }

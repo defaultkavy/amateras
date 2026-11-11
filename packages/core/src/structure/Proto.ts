@@ -211,6 +211,11 @@ export abstract class Proto {
      */
     mutate() {}
 
+    /**
+     * This method will be called when rendered object mount into view tree.
+     */
+    mount(...args: any) {}
+
     get text(): string {
         return this.children.map(proto => proto.text).join('')
     }

@@ -4,14 +4,12 @@ import { radius } from "#ext/variables/radius";
 import { text } from "#ext/variables/text";
 import { weight } from "#ext/variables/weight";
 import { colors } from "#ext/variables/colors";
-import { $CSSRule } from "#structure/$CSSRule";
+import { type $CSSRule } from "#structure/$CSSRule";
 
 const spacingFn = (val: $.CSSValue) => Utils.isNumber(val) ? `calc(var(--spacing) * ${val})` : val;
 const valueFn = <T extends any = $.CSSValue>(val: T) => val;
-const objectBuild = <P extends string, T extends Record<string, any>>(prefix: P, object: T): {
-    [key in keyof T & string as key extends '_' ? P : `${P}_${key}`]: T[key]
-} => Utils.fromEntries(Utils.entries(object).map(([key, value]) => [key === '_' ? prefix : `${prefix}_${key}`, value])) as any
-const dimensionBuild = <P extends string>(prefix: P) => objectBuild(prefix, {
+
+const dimensionBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
     full: '100%',
     min: 'min-content',
     max: 'max-content',
@@ -19,12 +17,39 @@ const dimensionBuild = <P extends string>(prefix: P) => objectBuild(prefix, {
     auto: 'auto',
     _: spacingFn
 } as const)
-const overflowBuild = <P extends string>(prefix: P) => objectBuild(prefix, {
+const overflowBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
     hidden: 'hidden',
     visible: 'visible',
     scroll: 'scroll',
     auto: 'auto'
 } as const)
+const lineStyleBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
+    solid: 'solid',
+    dashed: 'dashed',
+    hidden: 'hidden',
+    dotted: 'dotted',
+    double: 'double',
+    groove: 'groove',
+    ridge: 'ridge',
+    inset: 'inset',
+    outset: 'outset'
+} as const)
+const lineWidthBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
+    thin: 'thin',
+    medium: 'medium',
+    thick: 'thick',
+    width: spacingFn
+} as const)
+const timingFunctionBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
+    ease: 'ease',
+    ease_in: 'ease-in',
+    ease_out: 'ease-out',
+    ease_in_out: 'ease-in-out',
+    linear: 'linear',
+    step_start: 'step-start',
+    step_end: 'step-end'
+} as const)
+
 const dimensionValue = <V extends $.CSSValue>(value: V) => ({ width: value, height: value })
 const useBorderRadiusTemplate = <N extends string>(prefix: N) => Utils.fromEntries([...Utils.map(Utils.entries(radius), ([prop, value]) => [`${prefix}_${prop}`, value]), [prefix, (val: string) => val]]) as { [key in keyof (typeof radius) as `${N}_${key}`]: typeof radius[key] } & { [key in N]: (val: string) => string }
 const useGroupBorderRadiusTemplate = <N extends string>(prefix: N, ...props: string[]) => 
@@ -148,7 +173,10 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
     opacity: Fluent.values({ opacity: valueFn<$.CSSDeclarationMap['opacity']> }),
 
     transition: Fluent.values({ transition: valueFn<$.CSSDeclarationMap['transition']> }),
-    transitionDuration: Fluent.values({ duration: valueFn<$.CSSDeclarationMap['transitionDuration']> }),
+    transitionDuration: Fluent.values({ t_duration: valueFn<$.CSSDeclarationMap['transitionDuration']> }),
+    transitionProperty: Fluent.values({ t_property: valueFn<$.CSSDeclarationMap['transitionProperty']> }),
+    transitionDelay: Fluent.values({ t_delay: valueFn<$.CSSDeclarationMap['transitionDelay']> }),
+    transitionTimingFunction: Fluent.values(timingFunctionBuild('t')),
 
     cursor: valueFn<$.CSSDeclarationMap['cursor']>,
     pointerEvent: Fluent.values({
@@ -205,37 +233,28 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
     borderBottomRadius: Fluent.group(useGroupBorderRadiusTemplate('rounded_t', 'borderBottomLeftRadius', 'borderBottomRightRadius')),
     borderLeftRadius: Fluent.group(useGroupBorderRadiusTemplate('rounded_t', 'borderTopLeftRadius', 'borderBottomLeftRadius')),
     borderRightRadius: Fluent.group(useGroupBorderRadiusTemplate('rounded_t', 'borderTopRightRadius', 'borderBottomRightRadius')),
-    borderStyle: Fluent.values({
-        b_solid: 'solid',
-        b_dashed: 'dashed',
-        b_hidden: 'hidden',
-        b_dotted: 'dotted',
-        b_double: 'double',
-        b_groove: 'groove',
-        b_ridge: 'ridge',
-        b_inset: 'inset',
-        b_outset: 'outset'
-    }),
+
+    borderStyle: Fluent.values(lineStyleBuild('b')),
     borderSpacing: Fluent.values({ b_spacing: spacingFn }),
     borderColor: Fluent.values({ b_color: valueFn<$.CSSDeclarationMap['borderColor']> }),
-    borderWidth: Fluent.values({
-        b_thin: 'thin',
-        b_medium: 'medium',
-        b_thick: 'thick',
-        b_width: spacingFn
-    }),
+    borderWidth: Fluent.values(lineWidthBuild('b')),
+
+    outlineStyle: Fluent.values(Fluent.values(lineStyleBuild('o'))),
+    outlineOffset: Fluent.values({ o_spacing: spacingFn }),
+    outlineColor: Fluent.values({ o_color: valueFn<$.CSSDeclarationMap['outlineColor']> }),
+    outlineWidth: Fluent.values(lineWidthBuild('o')),
 
     fontSize: Fluent.values({ 
-        ...objectBuild('text', text),
+        ...Utils.prefixKeys('text', text),
         text: valueFn<$.CSSDeclarationMap['fontSize']>
     }),
     fontFamily: Fluent.values({ font: valueFn }),
     fontWeight: Fluent.values({
-        ...objectBuild('text', weight),
+        ...Utils.prefixKeys('text', weight),
         weight: valueFn<$.CSSDeclarationMap['fontWeight']>
     }),
     color: Fluent.values({
-        ...objectBuild('text', colors),
+        ...Utils.prefixKeys('text', colors),
         color: valueFn
     }),
 
@@ -263,7 +282,7 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
     lineHeight: Fluent.values({ line_height: spacingFn }),
 
     background: Fluent.values({ bg: valueFn<$.CSSDeclarationMap['background']> }),
-    backgroundColor: Fluent.values({ ...objectBuild('bg', colors) }),
+    backgroundColor: Fluent.values({ ...Utils.prefixKeys('bg', colors) }),
     backgroundImage: Fluent.values({ bg_img: valueFn<$.CSSDeclarationMap['backgroundImage']> }),
     backgroundAttachment: Fluent.values({ bg_attachment: valueFn<$.CSSDeclarationMap['backgroundAttachment']> }),
     backgroundBlendMode: Fluent.values({ bg_blend: valueFn<$.CSSDeclarationMap['backgroundBlendMode']> }),
@@ -281,7 +300,37 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
     boxShadow: Fluent.values({ shadow: valueFn<$.CSSDeclarationMap['boxShadow']> }),
     filter: valueFn<$.CSSDeclarationMap['filter']>,
 
-    insert: Fluent.method((map: OrMatrix<$.CSSMap | $CSSRule>) => map),
+    animation: Fluent.values({
+        animation: valueFn<$.CSSDeclarationMap['animation']>
+    }),
+    animationDuration: Fluent.values({
+        a_duration: valueFn<$.CSSDeclarationMap['animationDuration']>
+    }),
+    animationIterationCount: Fluent.values({
+        a_infinite: 'infinite',
+        a_iteration: valueFn<$.CSSDeclarationMap['animationIterationCount']>
+    }),
+    animationComposition: Fluent.values({
+        a_replace: 'replace',
+        a_add: 'add',
+        a_accumulate: 'accumulate'
+    }),
+    animationDelay: Fluent.values({
+        a_delay: valueFn<$.CSSDeclarationMap['animationDelay']>
+    }),
+    animationFillMode: Fluent.values({
+        a_none: 'none',
+        a_forwards: 'forwards',
+        a_backwards: 'backwards',
+        a_both: 'both'
+    }),
+    animationPlayState: Fluent.values({
+        a_running: 'running',
+        a_paused: 'paused'
+    }),
+    animationTimingFunction: Fluent.values(timingFunctionBuild('a')),
+
+    insert: Fluent.method((map: OrMatrix<$.CSSMap>) => map),
     hover: (map: OrMatrix<$.CSSMap | $CSSRule>) => ({'html:not([touch]) &:hover': map}),
     media_sm: mediaFn('(width < 40rem)'),
     media_md: mediaFn('(width < 48rem)'),

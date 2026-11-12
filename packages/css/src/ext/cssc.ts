@@ -8,8 +8,12 @@ import { type $CSSRule } from "#structure/$CSSRule";
 
 const spacingFn = (val: $.CSSValue) => Utils.isNumber(val) ? `calc(var(--spacing) * ${val})` : val;
 const valueFn = <T extends any = $.CSSValue>(val: T) => val;
+const prefixKeys = <P extends string, T extends Record<string, any>>(prefix: P, object: T): {
+    [key in keyof T & string as key extends '_' ? P : `${P}${key}`]: T[key]
+} => 
+    Utils.fromEntries(Utils.entries(object).map(([key, value]) => [key === '_' ? prefix : `${prefix}${key}`, value])) as any
 
-const dimensionBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
+const dimensionBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     full: '100%',
     min: 'min-content',
     max: 'max-content',
@@ -17,13 +21,13 @@ const dimensionBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${pref
     auto: 'auto',
     _: spacingFn
 } as const)
-const overflowBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
+const overflowBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     hidden: 'hidden',
     visible: 'visible',
     scroll: 'scroll',
     auto: 'auto'
 } as const)
-const lineStyleBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
+const lineStyleBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     solid: 'solid',
     dashed: 'dashed',
     hidden: 'hidden',
@@ -34,13 +38,13 @@ const lineStyleBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${pref
     inset: 'inset',
     outset: 'outset'
 } as const)
-const lineWidthBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
+const lineWidthBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     thin: 'thin',
     medium: 'medium',
     thick: 'thick',
     width: spacingFn
 } as const)
-const timingFunctionBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`${prefix}_`, {
+const timingFunctionBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     ease: 'ease',
     ease_in: 'ease-in',
     ease_out: 'ease-out',
@@ -51,11 +55,11 @@ const timingFunctionBuild = <P extends string>(prefix: P) => Utils.prefixKeys(`$
 } as const)
 
 const dimensionValue = <V extends $.CSSValue>(value: V) => ({ width: value, height: value })
-const useBorderRadiusTemplate = <N extends string>(prefix: N) => Utils.fromEntries([...Utils.map(Utils.entries(radius), ([prop, value]) => [`${prefix}_${prop}`, value]), [prefix, (val: string) => val]]) as { [key in keyof (typeof radius) as `${N}_${key}`]: typeof radius[key] } & { [key in N]: (val: string) => string }
+const useBorderRadiusTemplate = <N extends string>(prefix: N) => Utils.fromEntries([...Utils.map(Utils.entries(radius), ([prop, value]) => [`${prefix}${prop}`, value]), [prefix, (val: string) => val]]) as { [key in keyof (typeof radius) as `${N}_${key}`]: typeof radius[key] } & { [key in N]: (val: string) => string }
 const useGroupBorderRadiusTemplate = <N extends string>(prefix: N, ...props: string[]) => 
     Utils.fromEntries([
         ...Utils.map(Utils.entries(radius), ([prop, value]) => 
-                [`${prefix}_${prop}`, Utils.fromEntries(Utils.map(props, prop => [prop, value]))]), [prefix, (val: string) => Utils.fromEntries(Utils.map(props, prop => [prop, val]))]]) as { [key in keyof (typeof radius) as `${N}_${key}`]: $.CSSDeclarationMap } & { [key in N]: (val: string) => $.CSSDeclarationMap }
+                [`${prefix}${prop}`, Utils.fromEntries(Utils.map(props, prop => [prop, value]))]), [prefix, (val: string) => Utils.fromEntries(Utils.map(props, prop => [prop, val]))]]) as { [key in keyof (typeof radius) as `${N}_${key}`]: $.CSSDeclarationMap } & { [key in N]: (val: string) => $.CSSDeclarationMap }
 
 const mediaFn = (condition: string) => (map: OrMatrix<$.CSSMap | $CSSRule>) => ({ [`@media ${condition}`]: map });
 
@@ -245,16 +249,16 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
     outlineWidth: Fluent.values(lineWidthBuild('o')),
 
     fontSize: Fluent.values({ 
-        ...Utils.prefixKeys('text', text),
+        ...prefixKeys('text', text),
         text: valueFn<$.CSSDeclarationMap['fontSize']>
     }),
     fontFamily: Fluent.values({ font: valueFn }),
     fontWeight: Fluent.values({
-        ...Utils.prefixKeys('text', weight),
+        ...prefixKeys('text', weight),
         weight: valueFn<$.CSSDeclarationMap['fontWeight']>
     }),
     color: Fluent.values({
-        ...Utils.prefixKeys('text', colors),
+        ...prefixKeys('text', colors),
         color: valueFn
     }),
 
@@ -282,7 +286,7 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
     lineHeight: Fluent.values({ line_height: spacingFn }),
 
     background: Fluent.values({ bg: valueFn<$.CSSDeclarationMap['background']> }),
-    backgroundColor: Fluent.values({ ...Utils.prefixKeys('bg', colors) }),
+    backgroundColor: Fluent.values({ ...prefixKeys('bg', colors) }),
     backgroundImage: Fluent.values({ bg_img: valueFn<$.CSSDeclarationMap['backgroundImage']> }),
     backgroundAttachment: Fluent.values({ bg_attachment: valueFn<$.CSSDeclarationMap['backgroundAttachment']> }),
     backgroundBlendMode: Fluent.values({ bg_blend: valueFn<$.CSSDeclarationMap['backgroundBlendMode']> }),

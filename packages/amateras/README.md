@@ -68,21 +68,21 @@ $.render(Counter, 'body');
 
 | Modules | Size | Gziped | Module Type | Description |
 | --- | --- | --- | --- | --- |
-| core | 9.03 kB | 3.59 kB | The Core | Core module |
-| widget | 0.50 kB | ~0.16 kB | Extension Module | Component module |
-| signal | 3.17 kB | ~1.15 kB | Extension Module | Reactive data module |
+| core | 9.16 kB | 3.65 kB | The Core | Core module |
+| widget | 0.52 kB | ~0.17 kB | Extension Module | Component module |
+| signal | 3.22 kB | ~1.16 kB | Extension Module | Reactive data module |
 | store | 0.50 kB | ~0.19 kB | Extension Module | Access data between widgets |
 | css | 2.66 kB | ~1.21 kB | Extension Module | CSS-in-JS module |
-| for | 1.31 kB | ~0.43 kB | Extension Module | For loop control-flow |
-| if | 4.50 kB | ~1.56 kB | Extension Module | If/Else/ElseIf control-flow |
-| match | 1.54 kB | ~0.46 kB | Extension Module | Match/Case/Default control-flow |
-| router | 7.32 kB | ~2.66 kB | Extension Module | Router module |
-| i18n | 4.43 kB | ~1.57 kB | Extension Module | Translation module |
+| for | 1.33 kB | ~0.44 kB | Extension Module | For loop control-flow |
+| if | 4.55 kB | ~1.58 kB | Extension Module | If/Else/ElseIf control-flow |
+| match | 1.55 kB | ~0.47 kB | Extension Module | Match/Case/Default control-flow |
+| router | 7.33 kB | ~2.68 kB | Extension Module | Router module |
+| i18n | 4.45 kB | ~1.58 kB | Extension Module | Translation module |
 | prefetch | 1.72 kB | ~0.70 kB | Extension Module | SSR data prefetch |
 | meta | 0.67 kB | ~0.31 kB | Extension Module | SSR `meta` tag manager |
-| ui | 58.15 kB | ~12.97 kB | Extension Module | UI components |
+| ui | 58.16 kB | ~12.97 kB | Extension Module | UI components |
 | idb | 6.64 kB | 2.76 kB | Standalone Tool | IndexedDB module |
 | markdown | 8.88 kB | 3.72 kB | Standalone Tool | Markdown to HTML module |
-| fluent | 2.30 kB | 1.06 kB | Standalone Tool | One line object descriptor |
+| fluent | 2.33 kB | 1.08 kB | Standalone Tool | One line object descriptor |
 | utils | 3.72 kB | 1.91 kB | Standalone Tool | Utilities module |
 | opfs | 3.15 kB | 1.31 kB | Standalone Tool | OPFS module |

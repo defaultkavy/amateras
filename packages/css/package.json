@@ -15,5 +15,5 @@
     ".": "./src/index.ts",
     "./*": "./src/ext/*.ts"
   },
-  "version": "0.2.2"
+  "version": "0.2.3"
 }

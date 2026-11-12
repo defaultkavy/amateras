@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.20.0] - 2026-11-12
+### Core
+- Fixed an issue where `ProxyProto.node` did not register the `$` property.
+
+### Fluent
+- Fixed an issue where using the same Fluent Proxy to build child objects while constructing the root object caused context invalidation.
+
+### CSS
+- Added multiple CSSC builder properties and functions related to the following CSS properties: `outline`, `animation`, and `transition`.
+- Renamed `$.css.keyframes` to `$.css.keyframesMap` for creating multiple distinct keyframe animation rules.
+- The `$.css.keyframes` function now only creates a single keyframe animation rule.
+- Fixed an issue where the `$.cssc.hover` function returned incorrect results.
+
+### UI
+- Fixed an issue where the Switch component had not updated its CSS variable names.
+
+### Signal
+- The execution content of the `$.effect` function now remembers the current Proto scope, allowing functions such as `$.fetch` and `$.process` to run safely.
+
 ## [0.19.0] - 2026-11-5
 ### Changes
 > [!Warning]

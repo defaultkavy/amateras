@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.20.0] - 2026-11-12
+### Core
+- 修复 `ProxyProto.node` 没有注册 `$` 属性的问题。
+
+### Fluent
+- 修复构建根对象过程中使用相同的 Fluent Proxy 构建子对象导致上下文失效的问题。
+
+### CSS
+- 新增多个 CSSC 构建属性和函数，相关的 CSS 属性：`outline`、`animation`、`transition`
+- 重命名 `$.css.keyframes` 为 `$.css.keyframesMap`，用于创建多个不同的动画帧规则。
+- 现在 `$.css.keyframes` 函数只能创建单一动画帧规则。
+- 修复 `$.cssc.hover` 函数返回错误的结果。
+
+### UI
+- 修复 Switch 组件尚未更新 CSS 变量名的问题。
+
+### Signal
+- 现在 `$.effect` 函数所运行的内容将会记得当前所在的 Proto 作用域，可以安全地运行诸如 `$.fetch` `$.process` 等函数。
+
 ## [0.19.0] - 2026-11-5
 ### Changes
 > [!Warning]

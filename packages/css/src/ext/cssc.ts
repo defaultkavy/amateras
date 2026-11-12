@@ -9,9 +9,9 @@ import { type $CSSRule } from "#structure/$CSSRule";
 const spacingFn = (val: $.CSSValue) => Utils.isNumber(val) ? `calc(var(--spacing) * ${val})` : val;
 const valueFn = <T extends any = $.CSSValue>(val: T) => val;
 const prefixKeys = <P extends string, T extends Record<string, any>>(prefix: P, object: T): {
-    [key in keyof T & string as key extends '_' ? P : `${P}${key}`]: T[key]
+    [key in keyof T & string as key extends '_' ? P : `${P}_${key}`]: T[key]
 } => 
-    Utils.fromEntries(Utils.entries(object).map(([key, value]) => [key === '_' ? prefix : `${prefix}${key}`, value])) as any
+    Utils.fromEntries(Utils.entries(object).map(([key, value]) => [key === '_' ? prefix : `${prefix}_${key}`, value])) as any
 
 const dimensionBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     full: '100%',
@@ -21,6 +21,7 @@ const dimensionBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     auto: 'auto',
     _: spacingFn
 } as const)
+
 const overflowBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     hidden: 'hidden',
     visible: 'visible',

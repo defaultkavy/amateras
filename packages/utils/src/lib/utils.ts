@@ -21,4 +21,3 @@ export * from './match';
 export * from './camelToDashedStyle';
 export * from './hash';
 export * from './uid';
-export * from './prefixKeys';

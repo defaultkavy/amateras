@@ -33,6 +33,9 @@ Amateras is a JavaScript library for building user interface. Its goal is to all
    <script src="https://unpkg.com/amateras"></script>
    ```
 
+## Playground
+This framework is so simple, even JSFiddle can handle it. [Open JSFiddle Editor](https://jsfiddle.net/defaultkavy/ydtzm3oj/)
+
 ## Hello World Example
 ```ts
 import 'amateras';

@@ -10,8 +10,13 @@ const spacingFn = (val: $.CSSValue) => Utils.isNumber(val) ? `calc(var(--spacing
 const valueFn = <T extends any = $.CSSValue>(val: T) => val;
 const prefixKeys = <P extends string, T extends Record<string, any>>(prefix: P, object: T): {
     [key in keyof T & string as key extends '_' ? P : `${P}_${key}`]: T[key]
-} => 
-    Utils.fromEntries(Utils.entries(object).map(([key, value]) => [key === '_' ? prefix : `${prefix}_${key}`, value])) as any
+} => Utils.fromEntries(Utils.entries(object).map(([key, value]) => [key === '_' ? prefix : `${prefix}_${key}`, value])) as any
+const groupValue = <const P extends string[], T extends Record<string, any>>(props: P, object: T): {
+    [key in keyof T & string]: {
+        [k in P[number]]: T[key]
+    }
+} => Utils.fromEntries(Utils.entries(object).map(([prop, value]) => [prop, Utils.fromEntries(props.map(p => [p, value]))])) as any
+
 
 const dimensionBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
     full: '100%',
@@ -56,12 +61,11 @@ const timingFunctionBuild = <P extends string>(prefix: P) => prefixKeys(prefix, 
 } as const)
 
 const dimensionValue = <V extends $.CSSValue>(value: V) => ({ width: value, height: value })
-const useBorderRadiusTemplate = <N extends string>(prefix: N) => Utils.fromEntries([...Utils.map(Utils.entries(radius), ([prop, value]) => [`${prefix}${prop}`, value]), [prefix, (val: string) => val]]) as { [key in keyof (typeof radius) as `${N}_${key}`]: typeof radius[key] } & { [key in N]: (val: string) => string }
-const useGroupBorderRadiusTemplate = <N extends string>(prefix: N, ...props: string[]) => 
-    Utils.fromEntries([
-        ...Utils.map(Utils.entries(radius), ([prop, value]) => 
-                [`${prefix}${prop}`, Utils.fromEntries(Utils.map(props, prop => [prop, value]))]), [prefix, (val: string) => Utils.fromEntries(Utils.map(props, prop => [prop, val]))]]) as { [key in keyof (typeof radius) as `${N}_${key}`]: $.CSSDeclarationMap } & { [key in N]: (val: string) => $.CSSDeclarationMap }
-
+const borderRadiusBuild = <P extends string>(prefix: P) => prefixKeys(prefix, {
+    ...radius,
+    _: valueFn
+})
+const borderRadiusGroupBuild = <P extends string, const Props extends string[]>(prefix: P, ...props: Props) => groupValue(props, borderRadiusBuild(prefix))
 const mediaFn = (condition: string) => (map: OrMatrix<$.CSSMap | $CSSRule>) => ({ [`@media ${condition}`]: map });
 
 export const _cssc = new Fluent<$.CSSDeclarationMap>()
@@ -229,15 +233,15 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
     rowGap: Fluent.values({ row_gap: spacingFn }),
     columnGap: Fluent.values({ col_gap: spacingFn }),
 
-    borderRadius: Fluent.values(useBorderRadiusTemplate('rounded')),
-    borderTopLeftRadius: Fluent.values(useBorderRadiusTemplate('rounded_tl')),
-    borderTopRightRadius: Fluent.values(useBorderRadiusTemplate('rounded_tr')),
-    borderBottomLeftRadius: Fluent.values(useBorderRadiusTemplate('rounded_bl')),
-    borderBottomRightRadius: Fluent.values(useBorderRadiusTemplate('rounded_br')),
-    borderTopRadius: Fluent.group(useGroupBorderRadiusTemplate('rounded_t', 'borderTopLeftRadius', 'borderTopRightRadius')),
-    borderBottomRadius: Fluent.group(useGroupBorderRadiusTemplate('rounded_t', 'borderBottomLeftRadius', 'borderBottomRightRadius')),
-    borderLeftRadius: Fluent.group(useGroupBorderRadiusTemplate('rounded_t', 'borderTopLeftRadius', 'borderBottomLeftRadius')),
-    borderRightRadius: Fluent.group(useGroupBorderRadiusTemplate('rounded_t', 'borderTopRightRadius', 'borderBottomRightRadius')),
+    borderRadius: Fluent.values(borderRadiusBuild('rounded')),
+    borderTopLeftRadius: Fluent.values(borderRadiusBuild('rounded_tl')),
+    borderTopRightRadius: Fluent.values(borderRadiusBuild('rounded_tr')),
+    borderBottomLeftRadius: Fluent.values(borderRadiusBuild('rounded_bl')),
+    borderBottomRightRadius: Fluent.values(borderRadiusBuild('rounded_br')),
+    borderTopRadius: Fluent.group(borderRadiusGroupBuild('rounded_t', 'borderTopLeftRadius', 'borderTopRightRadius')),
+    borderBottomRadius: Fluent.group(borderRadiusGroupBuild('rounded_t', 'borderBottomLeftRadius', 'borderBottomRightRadius')),
+    borderLeftRadius: Fluent.group(borderRadiusGroupBuild('rounded_t', 'borderTopLeftRadius', 'borderBottomLeftRadius')),
+    borderRightRadius: Fluent.group(borderRadiusGroupBuild('rounded_t', 'borderTopRightRadius', 'borderBottomRightRadius')),
 
     borderStyle: Fluent.values(lineStyleBuild('b')),
     borderSpacing: Fluent.values({ b_spacing: spacingFn }),

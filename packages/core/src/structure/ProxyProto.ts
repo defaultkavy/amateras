@@ -6,11 +6,13 @@ export class ProxyProto extends NodeProto<Text> {
     declare node: Text | null
     constructor(layout?: $.Layout) {
         super(layout);
-        if (onclient()) this.node = new Text();
+        if (onclient()) {
+            this.node = new Text();
+            this.node.$ = this;
+        }
     }
 
     override toDOM(): Node[] {
-        this.node!.$ = this;
         return [this.node!, ...super.toDOM()]
     }
 

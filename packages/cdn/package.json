@@ -1,6 +1,6 @@
 {
     "name": "@amateras/cdn",
-    "version": "0.20.1",
+    "version": "0.20.2",
     "dependencies": {
         "amateras": "workspace:*"
     }

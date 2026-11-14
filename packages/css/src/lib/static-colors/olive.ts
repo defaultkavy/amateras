@@ -1,0 +1,11 @@
+export const c050 = 'oklch(98.8% 0.003 106.5)';
+export const c100 = 'oklch(96.6% 0.005 106.5)';
+export const c200 = 'oklch(93% 0.007 106.5)';
+export const c300 = 'oklch(88% 0.011 106.6)';
+export const c400 = 'oklch(73.7% 0.021 106.9)';
+export const c500 = 'oklch(58% 0.031 107.3)';
+export const c600 = 'oklch(46.6% 0.025 107.3)';
+export const c700 = 'oklch(39.4% 0.023 107.4)';
+export const c800 = 'oklch(28.6% 0.016 107.4)';
+export const c900 = 'oklch(22.8% 0.013 107.4)';
+export const c950 = 'oklch(15.3% 0.006 107.1)';

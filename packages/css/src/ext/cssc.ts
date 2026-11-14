@@ -116,7 +116,7 @@ export const _cssc = new Fluent<$.CSSDeclarationMap>()
         d_max: dimensionValue('max-content'),
         d_min: dimensionValue('min-content'),
         d_fit: dimensionValue('fit-content'),
-        d: (value: $.CSSValue) => dimensionValue(value)
+        d: (value: $.CSSValue) => dimensionValue(spacingFn(value))
     }),
 
     overflow: Fluent.values(overflowBuild('overflow')),

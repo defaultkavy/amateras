@@ -31,6 +31,13 @@ console.log(`Publish Packages:\n${publishPackages.map(pkg => {
 
 const confirm = prompt('Publish all packages? (y/N)');
 
+const user = await Bun.$`npm whoami`.quiet().catch(() => undefined);
+if (!user) {
+    console.log('Required Login NPM')
+    await Bun.$`npm login`;
+}
+else console.log(`NPM User: ${user}`);
+
 if (!confirm) process.exit();
 else if (confirm.toLowerCase() === 'n') process.exit();
 else if (confirm.toLowerCase() === 'y') {

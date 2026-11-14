@@ -111,7 +111,7 @@ export class ContextMenuContent extends ElementProto {
     static {
         $.style(this, toUICSS(this.tagname, {
             ...content_css,
-            background: 'oklch(from var(--secondary-bg) l c h)',
+            background: 'var(--secondary-bg)',
 
             'context-menu[touch] &': {
                 borderRadius: 'calc(var(--radius) * 2)',
@@ -178,7 +178,7 @@ export class ContextMenuItem extends ElementProto {
             },
 
             '&:hover, :not(:has(select-item:hover)) &:focus': {
-                background: 'oklch(from var(--input) l c h / .1)'
+                background: 'color-mix(in oklch, var(--secondary-bg), var(--input) 80%)'
             },
 
             '&:focus': {

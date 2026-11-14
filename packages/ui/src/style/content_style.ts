@@ -8,7 +8,7 @@ export const content_css = {
     flexDirection: 'column',
     boxSizing: 'border-box',
     border: '1px solid var(--input)',
-    background: 'oklch(from var(--bg) l c h)',
+    background: 'var(--bg)',
     padding: 'calc(var(--spacing) * 2) calc(var(--spacing) * 1.25)',
     borderRadius: 'var(--radius)',
     userSelect: 'none',

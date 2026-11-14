@@ -11,7 +11,7 @@ export const item_css = {
     lineHeight: '1',
 
     '&:hover, :not(:has(select-item:hover)) &[focus]': {
-        background: 'oklch(from var(--input) l c h / .1)'
+        background: 'color-mix(in oklch, var(--input), transparent 30%)'
     },
 
     '&[focus]': {

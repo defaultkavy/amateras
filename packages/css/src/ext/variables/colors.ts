@@ -28,5 +28,5 @@ export const colors = $.css.variable({
 
     muted: lightDark(mainColor.c500, mainColor.c400),
     border: lightDark(mainColor.c400, mainColor.c600),
-    input: lightDark(`oklch(from ${mainColor.c900} l c h / .15)`, `oklch(from ${mainColor.c100} l c h / .15)`),
+    input: `color-mix(in oklch, var(--secondary-fg), transparent 90%)`,
 })
